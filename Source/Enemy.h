@@ -8,7 +8,7 @@
 class Enemy : public Character
 {
 public:
-	Enemy(ID3D11Device* device);
+	Enemy() {}
 	~Enemy() override {}
 
 	// 更新処理
@@ -16,7 +16,7 @@ public:
 	// 描画処理
 	virtual void Render(ID3D11DeviceContext* dc, Shader* shader) = 0;
 	// デバッグプリミティブ描画
-	void DrawDebugPrimitive();
+	virtual void DrawDebugPrimitive() = 0;
 	// 破棄
 	void Destroy();
 

@@ -162,9 +162,6 @@
     <ClCompile Include="Source\Input\Mouse.cpp">
       <Filter>Source\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Player.cpp">
-      <Filter>Source\Character</Filter>
-    </ClCompile>
     <ClCompile Include="Source\SceneGame.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
@@ -215,6 +212,18 @@
     </ClCompile>
     <ClCompile Include="Source\ResourceManager.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Enemy.cpp">
+      <Filter>Source\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyManager.cpp">
+      <Filter>Source\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Player.cpp">
+      <Filter>Source\Character\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyGunner.cpp">
+      <Filter>Source\Character\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -304,9 +313,6 @@
     <ClInclude Include="Source\Input\Mouse.h">
       <Filter>Source\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Player.h">
-      <Filter>Source\Character</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SceneGame.h">
       <Filter>Source\Scenes</Filter>
     </ClInclude>
@@ -360,6 +366,18 @@
     </ClInclude>
     <ClInclude Include="Source\ResourceManager.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Enemy.h">
+      <Filter>Source\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyManager.h">
+      <Filter>Source\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Player.h">
+      <Filter>Source\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyGunner.h">
+      <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -439,6 +457,12 @@
     </Filter>
     <Filter Include="Imgui">
       <UniqueIdentifier>{2b288803-5ad1-4662-81f3-9ff9d1dc2a69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Character\Enemy">
+      <UniqueIdentifier>{ae7b50dd-1052-47b2-840e-8db103108fa9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Character\Player">
+      <UniqueIdentifier>{101dffe8-15d5-4059-ad7f-e3292d945ef9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
