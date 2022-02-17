@@ -202,6 +202,9 @@
     <ClCompile Include="Source\Character.cpp" />
     <ClCompile Include="Source\Collision.cpp" />
     <ClCompile Include="Source\DebugRenderer.cpp" />
+    <ClCompile Include="Source\Enemy.cpp" />
+    <ClCompile Include="Source\EnemyGunner.cpp" />
+    <ClCompile Include="Source\EnemyManager.cpp" />
     <ClCompile Include="Source\Framebuffer.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\FullscreenQuad.cpp" />
@@ -251,6 +254,8 @@
     <ClInclude Include="Source\Character.h" />
     <ClInclude Include="Source\Collision.h" />
     <ClInclude Include="Source\DebugRenderer.h" />
+    <ClInclude Include="Source\Enemy.h" />
+    <ClInclude Include="Source\EnemyManager.h" />
     <ClInclude Include="Source\Framebuffer.h" />
     <ClInclude Include="Source\FullscreenQuad.h" />
     <ClInclude Include="Source\Graphics\Blender.h" />
@@ -288,6 +293,7 @@
     <ClInclude Include="Source\StageMain.h" />
     <ClInclude Include="Source\StageManager.h" />
     <ClInclude Include="Source\StageSkybox.h" />
+    <ClInclude Include="Source\EnemyGunner.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\Constants.hlsli" />
