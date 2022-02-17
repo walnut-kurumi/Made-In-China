@@ -29,12 +29,6 @@ public:
 
 	Vec3 GetMoveVec() const;
 
-	const Vec3& GetCoPos1() const { return copos; }
-	const Vec3& GetCoPos2() const { return copos1; }
-	const Vec3& GetCoPos3() const { return copos2; }
-	const Vec3& GetCoPos4() const { return copos3; }
-	const Vec3& GetCoPos5() const { return copos4; }
-
 	bool GetDead() { return isDead; }
 
 private:
@@ -66,10 +60,6 @@ protected:
 	void TransitionJumpState();
 	void UpdateJumpState(float elapsedTime);
 
-
-	//あたり判定用のポジション計算
-	void TransPos(const DirectX::XMFLOAT3 mpo, DirectX::XMFLOAT3& cpos);
-
 private:
 	template<class Type, typename Return, typename ...Args>
 	using Temp = Return(Type::*)(Args...);
@@ -83,12 +73,6 @@ private:
 
 	bool aim = false;
 	float stepSpeed = 60.0f;
-
-	Vec3 copos{};
-	Vec3 copos1{};
-	Vec3 copos2{};
-	Vec3 copos3{};
-	Vec3 copos4{};
 
 	std::unique_ptr<DebugRenderer> debugRenderer;
 	SkinnedMesh* skinned;

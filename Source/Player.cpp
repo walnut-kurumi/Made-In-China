@@ -69,8 +69,6 @@ void Player::Init()
 void Player::Update(float elapsedTime)
 {
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
-    // 重力
-    //Grav(elapsedTime);
 
     UpdateSpeed(elapsedTime);
 
@@ -83,35 +81,6 @@ void Player::Update(float elapsedTime)
     model->UpdateAnimation(elapsedTime);
     //モデル行列更新
     model->UpdateTransform(transform);
-
-
-    //pos{ 0,80,0 } radius 4
-    TransPos({ 0,80,0 }, copos);
-    TransPos({ 0,30,0 }, copos2);
-    TransPos({ 0,80,0 }, copos3);
-    TransPos({ 0,130,0 }, copos4);
-    if (position.z < -116)
-    {
-
-        position.z = -115;
-    }
-    if (position.x < -110)
-    {
-        position.x = -109;
-    }
-    if (position.x > 100)
-    {
-        position.x = 99;
-    }
-    if (position.z > 115)
-    {
-        position.z = 114;
-    }
-    if (position.x <= 5.0f && position.x >= -5.0f && position.y <= 5.0f && position.y >= -5.0f && position.z <= 5.0f && position.z >= -5.0f)
-    {
-        position = saveposition;
-    }
-
 }
 
 
@@ -165,14 +134,6 @@ void Player::DrawDebugGUI()
     }
     ImGui::End();
 #endif
-}
-
-void Player::TransPos(const DirectX::XMFLOAT3 mpo, DirectX::XMFLOAT3& cpos)
-{
-    DirectX::XMMATRIX W = DirectX::XMLoadFloat4x4(&transform);
-    DirectX::XMVECTOR A = DirectX::XMLoadFloat3(&mpo);
-    DirectX::XMVECTOR N = DirectX::XMVector3Transform(A, W);
-    DirectX::XMStoreFloat3(&cpos, N);
 }
 
 Vec3 Player::GetMoveVec() const

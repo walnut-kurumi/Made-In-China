@@ -69,13 +69,9 @@ private:
 
 protected:
 	void Move(float vx, float vz, float speed);
-	void Step(float vx, float vz, float speed);
 	void Turn(float elapsedTime, float vx, float vz, float speed);
 	void UpdateSpeed(float elapsedTime);
 	void UpdateInvincibleTimer(float elapsedTime);
-
-	// èdóÕèàóù
-	void Grav(float elapsedTime);
 
 	virtual void OnLanding() {}
 
@@ -111,10 +107,10 @@ protected:
 	Vec4 quaternionStans{};
 	DirectX::XMFLOAT4X4 rotaStans{};
 
-	float gravity = 1.0f;
+	float gravity = -1.0f;
 
 	Vec3 velocity = { 0,0,0 };
-	float velocityMax = 20.0f;
+	float velocityMax = -20.0f;
 
 	bool isGround = false;
 	float height = 4.0f;

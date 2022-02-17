@@ -24,134 +24,11 @@ void Character::UpdateTransform()
     // 位置行列を作成
     DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
     // 3つの行列を組み合わせ、ワールド行列を作成
-    DirectX::XMMATRIX W = S * Q * T;
+    DirectX::XMMATRIX W = S * R * T;
     // 計算したワールド行列を取り出す
     DirectX::XMStoreFloat4x4(&transform, W);
 
     //DirectX::XMVector3Transform()
-}
-
-void Character::Grav(float elapsedTime)
-{
-    // 経過フレーム
-    float elapsedFrame = 60.0f * elapsedTime;
-
-    Vec3 grav{};
-
-    // ブラックホール（オブジェクトの中心点）
-    int stagecount = StageManager::Instance().GetStageCount();
-    for (int i = 0; i < stagecount; i++) {
-        Stage* stage = StageManager::Instance().GetStage(i);
-        if (stage->GetType() == Stage::Type::Main) {
-
-            Vec3 dir = VecMath::Normalize(stage->GetPos() - position);
-            grav = dir * (gravity * elapsedFrame);
-            // 移動処理
-            velocity += grav;
-
-            // 法線を反映
-            normal = -dir;
-        }
-    }
-    // 最大値処理
-    if (abs(velocity.x) > velocityMax)
-        velocity.x = velocityMax * VecMath::sign(velocity.x);
-    if (abs(velocity.y) > velocityMax)
-        velocity.y = velocityMax * VecMath::sign(velocity.y);
-    if (abs(velocity.z) > velocityMax)
-        velocity.z = velocityMax * VecMath::sign(velocity.z);
-
-    // レイの開始位置は足元より法線方向へちょい移動（埋まると処理されない）
-    Vec3 start = position + (normal * stepOffset);
-    // 例の終点位置は移動先
-    Vec3 end = position + grav;
-    //pos1 = start;
-    //pos2 = end;
-    // レイキャストするオブジェクトの中心点へ
-    // 重力処理をし、その先へレイキャスト
-
-    // レイキャストによる地面判定
-    HitResult hit;
-    // レイの終点位置は移動後の位置
-    if (StageManager::Instance().RayCast(start, end, hit)) {
-        // 地面に接地している
-        position = hit.position;
-
-        //pos1 = start;
-        //pos2 = end;
-
-        isGround = true;
-    }
-    else {
-        isGround = false;
-    }
-    if (!isGround) {
-        position += velocity * elapsedTime;
-    }
-
-
-    // これが本物だぁっ！！
-    // クォータニオン回転行列作成
-    {
-        // 最初に姿勢（地面の法線に沿った回転）   
-        // 上ベクトルと法線のベクトル間の角度＋外積で回転軸を求める
-        DirectX::XMVECTOR Up;
-        Vec3 n = Vec3(0, 1, 0);
-        Up = DirectX::XMLoadFloat3(&n);
-        DirectX::XMVECTOR Norm = DirectX::XMLoadFloat3(&normal);
-        float stansAng;
-        DirectX::XMStoreFloat(&stansAng, DirectX::XMVector3AngleBetweenVectors(Up, Norm));
-        DirectX::XMVECTOR QuaternionStans;
-        if (stansAng) {
-            QuaternionStans = DirectX::XMQuaternionRotationAxis(DirectX::XMVector3Cross(Up, Norm), stansAng);
-            DirectX::XMStoreFloat4(&quaternion, QuaternionStans);
-            DirectX::XMStoreFloat4(&quaternionStans, QuaternionStans);
-        }
-
-
-        // 現段階での上べ区を求める
-        DirectX::XMFLOAT4X4 tran;
-        {
-            // スケール行列を作成
-            DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
-            DirectX::XMMATRIX Q = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&quaternion));
-            // 位置行列を作成
-            DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
-            // 3つの行列を組み合わせ、ワールド行列を作成
-            DirectX::XMMATRIX W = S * Q * T;
-            // 計算したワールド行列を取り出す
-            DirectX::XMStoreFloat4x4(&tran, W);
-        }
-
-        // 次に向き（移動方向への回転）        
-        // 前ベクトルを求めて、進行方向ベクトルを求めてその間の回転
-        Vec3 front = VecMath::Normalize({ tran._31,tran._32,tran._33 });
-        Vec3 right = VecMath::Normalize({ tran._11,tran._12,tran._13 });
-
-        if (posMae == posAto && dir == Vec3()) {
-            dir = front;
-        }
-        else if(posMae != posAto)dir = VecMath::Normalize(VecMath::Subtract(posAto, posMae));
-        float dirAng = VecMath::AngleBetweenVectors(front, dir);
-        DirectX::XMVECTOR QuaternionDir;
-        if (dirAng) {
-            //左右判定　幹人先生神
-            float dirAng2 = VecMath::AngleBetweenVectors(right, dir);
-            if (DirectX::XMConvertToDegrees(dirAng2) > 90) dirAng = -dirAng;
-
-            QuaternionDir = DirectX::XMQuaternionRotationAxis(Norm, dirAng);
-        
-            //***************
-            //クォータニオンを合成
-            //***************
-            if (stansAng) 
-                DirectX::XMStoreFloat4(&quaternion, DirectX::XMQuaternionMultiply(DirectX::XMLoadFloat4(&quaternion), QuaternionDir));
-            else 
-                DirectX::XMStoreFloat4(&quaternion, QuaternionDir);
-        }
-
-
-    }
 }
 
 void Character::Move(float vx, float vz, float speed)
@@ -210,17 +87,6 @@ void Character::UpdateSpeed(float elapsedTime)
 
     // 移動更新処理
     UpdateMove(elapsedTime);
-
-
-    //// 垂直速力更新処理
-    //UpdateVerticalVelocitiy(elapsedFrame);
-    //// 水平速力更新処理
-    //UpdateHorizontalVelocity(elapsedFrame);
-
-    //// 垂直移動更新処理
-    //UpdateVerticalMove(elapsedTime);
-    //// 水平移動更新処理
-    //UpdateHorizontalMove(elapsedTime);
 }
 
 bool Character::ApplyDamage(int damage, float invincibleTime)
@@ -250,31 +116,12 @@ void Character::UpdateInvincibleTimer(float elapsedTime)
 
 void Character::UpdateVerticalVelocitiy(float elapsedFrame)
 {
-    int stageCount = StageManager::Instance().GetStageCount();
-    for (int i = 0; i < stageCount; i++) {
-        Stage* stage = StageManager::Instance().GetStage(i);
-        if (stage->GetType() == Stage::Type::Main) {
-
-            Vec3 dir = VecMath::Normalize((stage->GetPos() + Vec3(0, -150, 0)) - position);
-            Vec3 gra = dir * (gravity * elapsedFrame);
-            // 移動処理
-            velocity += gra;
-
-            // 法線を反映
-            normal = -dir;
-        }
-    }
-
-
     // 移動処理
-    //velocity.y += gravity * elapsedFrame;
+    velocity.y += gravity * elapsedFrame;
+
     // 最大値処理
-    if (abs(velocity.x) > velocityMax)
-        velocity.x = velocityMax * VecMath::sign(velocity.x);
-    if (abs(velocity.y) > velocityMax)
-        velocity.y = velocityMax * VecMath::sign(velocity.y);
-    if (abs(velocity.z) > velocityMax)
-        velocity.z = velocityMax * VecMath::sign(velocity.z);
+    if (velocity.y < velocityMax)
+        velocity.y = velocityMax;
 }
 
 void Character::UpdateVerticalMove(float elapsedTime)
