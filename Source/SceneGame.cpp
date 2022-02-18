@@ -5,6 +5,9 @@
 #include "Input/Input.h"
 #include "Graphics/Graphics.h"
 
+#include "EnemyManager.h"
+#include "EnemyGunner.h"
+
 #include "StageManager.h"
 #include "StageSkybox.h"
 #include "StageMain.h"
@@ -27,12 +30,25 @@ void SceneGame::Initialize()
     player = new Player(device);
     player->Init(); 
 
+    // エネミー初期化			
+    EnemyManager::Instance().ModelLoading(device);
+    for (int i = 0; i < 1; i++)
+    {
+        EnemyGunner* gunner = new EnemyGunner(device);
+        gunner->SetPosition(DirectX::XMFLOAT3(i * 1.0f, 0, 0));
+        EnemyManager::Instance().Register(gunner);
+    }
+    EnemyManager::Instance().Init();
+
     Input::Instance().GetMouse().SetMoveCursor(false);
 }
 
 // 終了化
 void SceneGame::Finalize()
 {
+    // エネミー終了処理	
+    EnemyManager::Instance().Clear();
+
     StageManager::Instance().Clear();
     StageManager::Destory();    
 }
@@ -82,6 +98,11 @@ void SceneGame::Update(float elapsedTime)
 
     Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
     CameraManager::Instance().SetTarget(target);
+
+    // エネミー更新処理
+    EnemyManager::Instance().Update(elapsedTime);
+    // ソート
+    EnemyManager::Instance().SortLengthSq(player->GetPosition());
 }
 
 // 描画処理
@@ -94,8 +115,12 @@ void SceneGame::Render(float elapsedTime)
  
     // モデル描画
     {
+        // ステージ描画
         StageManager::Instance().Render(dc, elapsedTime);
+        // プレイヤー描画
         player->Render(dc);
+        // エネミー描画
+        EnemyManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
     }
    
     // デバック
