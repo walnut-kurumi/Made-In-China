@@ -124,7 +124,7 @@ void SceneGame::Render(float elapsedTime)
    
     // デバック
     {
-        player->DrawDebugGUI();
+        player->DrawDebugGUI();        
     }
     
     // 2D描画

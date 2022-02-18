@@ -33,7 +33,7 @@ public:
 	// 更新処理
 	void Update(float elapsedTime);
 	// 描画処理
-	void Render(ID3D11DeviceContext* dc, Shader* shader);
+	void Render(ID3D11DeviceContext* dc, Shader* shader);	
 	// エネミー登録
 	void Register(Enemy* enemy);
 	// エネミー削除

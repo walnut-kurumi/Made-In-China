@@ -53,6 +53,7 @@ void EnemyManager::Render(ID3D11DeviceContext* dc, Shader* shader)
 	}
 }
 
+
 // エネミー登録
 void EnemyManager::Register(Enemy* enemy)
 {
@@ -94,7 +95,7 @@ void EnemyManager::SortLengthSq(const DirectX::XMFLOAT3 playerPos)
 // エネミー同士の衝突処理
 void EnemyManager::CollisionEnemyVsEnemies()
 {
-	/*size_t enemyCount = enemies.size();
+	size_t enemyCount = enemies.size();
 	for (int i = 0; i < enemyCount; ++i)
 	{
 		Enemy* enemyA = enemies.at(i);
@@ -103,25 +104,14 @@ void EnemyManager::CollisionEnemyVsEnemies()
 			Enemy* enemyB = enemies.at(j);
 			DirectX::XMFLOAT3 outPosition;
 			if (Collision::IntersectSphereVsSphere(
-				enemyA->GetPosition(),
+				enemyA->GetCenterPosition(),
 				enemyA->GetRadius(),
-				enemyB->GetPosition(),
+				enemyB->GetCenterPosition(),
 				enemyB->GetRadius(),
 				outPosition))
 			{
 				enemyB->SetPosition(outPosition);
-			}
-			if (Collision::IntersectCylinderVsCylinder(
-				enemyA->GetPosition(),
-				enemyA->GetRadius(),
-				enemyA->GetHeight(),
-				enemyB->GetPosition(),
-				enemyB->GetRadius(),
-				enemyB->GetHeight(),
-				outPosition))
-			{
-				enemyB->SetPosition(outPosition);
-			}
+			}			
 		}
-	}*/
+	}
 }

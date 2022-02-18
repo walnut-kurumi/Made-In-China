@@ -23,6 +23,8 @@ public:
 	void SetScale(const Vec3& scale) { this->scale = scale; }
 	const DirectX::XMFLOAT4X4 GetTransform() const { return transform; }
 
+	const Vec3& GetCenterPosition() const { return centerPosition; }
+
 	const Vec3& GetVelocity() const { return velocity; }
 
 	// çÇÇ≥èàóù
@@ -91,6 +93,7 @@ protected:
 
 	Vec3 position = { 0,0,0 };
 	Vec3 saveposition = { 0,0,0 };
+	Vec3 centerPosition = { 0,0,0 };
 	Vec3 posMae = {};
 	Vec3 posAto = {};
 	Vec3 angle = { 0,0,0 };

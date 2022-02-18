@@ -2,6 +2,7 @@
 #include "Framework.h"
 #include "Graphics/Shaders.h"
 #include "StageManager.h"
+#include "Camera/CameraManager.h"
 
 #include "HitManager.h"
 
@@ -31,7 +32,7 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     UpdateState[static_cast<int>(State::Blow)] = &EnemyGunner::UpdateBlowState;
     UpdateState[static_cast<int>(State::Death)] = &EnemyGunner::UpdateDeathState;
 
-    position = { 0.0f, 0.0f, 0.0f };
+    position = { 0.0f, 0.0f, 0.0f };    
 
     scale = { 0.05f, 0.05f, 0.05f };
        
@@ -60,6 +61,10 @@ void EnemyGunner::Init()
     moveVecX = 0.0f;
     moveVecZ = 0.0f;
     health = 40;
+
+    centerPosition = position;
+    centerPosition.y += 1.0f;
+    radius = 2.5;
 
     isDead = false;
 
@@ -90,18 +95,18 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
     model->Begin(dc, *shader);    
     model->Render(dc);
 
+    // 中心座標更新
+    centerPosition = position;
+    centerPosition.y += 1.0f;
 
     //// 必要なったら追加
-    //debugRenderer.get()->DrawSphere(copos, 4, Vec4(1, 0, 0, 1));
+    debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos2, 1.5f, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
-void EnemyGunner::DrawDebugGUI()
-{
-}
 
 
 // 徘徊  ←左true　false右→
@@ -109,7 +114,7 @@ void EnemyGunner::MoveWalk(bool direction)
 {
     float vx;
     (direction ? vx = -1 : vx = 1);
-    Move(vx, 0.0f, 5.0f);
+    Move(vx, 0.0f,moveSpeed);
 }
 
 // プレイヤーを索敵
@@ -156,12 +161,14 @@ void EnemyGunner::UpdateIdleState(float elapsedTime)
     
     //IdleTimerUpdate()
 
-    TransitionWalkState();
+    // 歩きステートへ移動
+    //TransitionWalkState();
 }
 
 // ターンするまでのタイマー更新
 void EnemyGunner::IdleTimerUpdate()
 {
+    idleTimer = 0;
 }
 
 
@@ -169,7 +176,7 @@ void EnemyGunner::IdleTimerUpdate()
 void EnemyGunner::TransitionWalkState()
 {
     state = State::Walk;
-    moveSpeed = 10;
+    moveSpeed = 5;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
@@ -178,12 +185,19 @@ void EnemyGunner::UpdateWalkState(float elapsedTime)
 {   
     // 徘徊
     MoveWalk(direction);
+    WalkTimerUpdate();
 
     // プレイヤー発見したら走る
     if (Search())
     {
         TransitionRunState();
     }
+}
+
+// 止まるまでのタイマー更新処理
+void EnemyGunner::WalkTimerUpdate()
+{
+    walkTimer = 0;
 }
 
 
