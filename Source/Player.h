@@ -33,6 +33,8 @@ public:
 
 	bool GetDead() { return isDead; }
 
+	float GetPlaybackSpeed() { return playbackSpeed; }
+
 private:
 
 	// 移動入力処理
@@ -40,6 +42,12 @@ private:
 
 	// ジャンプ入力処理
 	void InputJump();
+
+	// スローモーション入力処理
+	void InputSlow();
+
+	// SB入力処理
+	void InputSB();
 	
 	// 死亡した時に呼ばれる
 	void OnDead() override { isDead = true; }
@@ -84,6 +92,8 @@ private:
 
 	std::unique_ptr<DebugRenderer> debugRenderer;
 	SkinnedMesh* skinned;
+
+	float playbackSpeed = 1.0f;
 
 	bool isDead = false;
 };
