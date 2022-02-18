@@ -7,8 +7,7 @@
 
 #include "HitManager.h"
 
-Player::Player(ID3D11Device* device)
-{
+Player::Player(ID3D11Device* device) {
 
     const char* idle = "Data/Models/Player/Animations/Idle.fbx";
     const char* run = "Data/Models/Player/Animations/Running.fbx";
@@ -38,13 +37,11 @@ Player::Player(ID3D11Device* device)
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
-Player::~Player()
-{
+Player::~Player() {
     delete model;
 }
 
-void Player::Init()
-{
+void Player::Init() {
     SetPosition({ 0, 1, 0 });
     posMae = position;
     posAto = position;
@@ -64,10 +61,12 @@ void Player::Init()
     health = 40;
 
     isDead = false;
+
+    slowSpeed = 0.25f;
+    slow = false;
 }
 
-void Player::Update(float elapsedTime)
-{
+void Player::Update(float elapsedTime) {
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
     UpdateSpeed(elapsedTime);
@@ -90,8 +89,7 @@ void Player::Update(float elapsedTime)
 }
 
 
-void Player::Render(ID3D11DeviceContext* dc)
-{
+void Player::Render(ID3D11DeviceContext* dc) {
     model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
     //model->Begin(dc, Shaders::Ins()->GetRampShader());
     model->Render(dc);
@@ -105,8 +103,7 @@ void Player::Render(ID3D11DeviceContext* dc)
     //debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
-void Player::DrawDebugGUI()
-{
+void Player::DrawDebugGUI() {
 #ifdef USE_IMGUI
     ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
@@ -142,8 +139,7 @@ void Player::DrawDebugGUI()
 #endif
 }
 
-Vec3 Player::GetMoveVec() const
-{
+Vec3 Player::GetMoveVec() const {
     // 入力情報を所得
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();
@@ -188,8 +184,7 @@ Vec3 Player::GetMoveVec() const
     return vec;
 }
 
-bool Player::InputMove(float elapsedTime)
-{
+bool Player::InputMove(float elapsedTime) {
     if (deathFlag) return false;
     
     // 進行ベクトル所得
@@ -242,31 +237,43 @@ void Player::InputJump() {
     }
 }
 
-void Player::InputSlow()
-{
+void Player::InputSlow() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     if (gamePad.GetButton() & GamePad::BTN_B) {
-        playbackSpeed = 0.25f;
+        slow = true;
+        return;
     }
-    else {
-        playbackSpeed = 1.0f;
-    }
+    slow = false;
 }
 
-void Player::InputSB()
-{
+void Player::InputSB() {
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    // 武器を持っている場合
+    if (weapon) {
+        if (gamePad.GetButtonDown() & GamePad::BTN_X) {
+            // 武器を投げる
+            weapon = false;
+        }
+    }
+    // 武器を持っていない
+    else {
+        // 投げた武器の場所にワープ
+    }
+    
+
+}
+
+void Player::InputAttack() {
 }
 
 // 待機ステート遷移
-void Player::TransitionIdleState()
-{
+void Player::TransitionIdleState() {
     state = State::Idle;
     model->PlayAnimation(static_cast<int>(state),true);
 }
 
 // 待機ステート更新処理
-void Player::UpdateIdleState(float elapsedTime)
-{
+void Player::UpdateIdleState(float elapsedTime) {
     //  移動入力処理
     if (InputMove(elapsedTime)) TransitionWalkState();
     
@@ -274,16 +281,14 @@ void Player::UpdateIdleState(float elapsedTime)
 }
 
 // 移動ステートへ遷移
-void Player::TransitionWalkState()
-{
+void Player::TransitionWalkState() {
     state = State::Walk;
     moveSpeed = 10;
     model->PlayAnimation(static_cast<int>(state),true);
 }
 
 // 移動ステート更新処理
-void Player::UpdateWalkState(float elapsedTime)
-{
+void Player::UpdateWalkState(float elapsedTime) {
     Key& key = Input::Instance().GetKey();
     //  移動入力処理
     if (!InputMove(elapsedTime)) TransitionIdleState();
@@ -296,16 +301,14 @@ void Player::UpdateWalkState(float elapsedTime)
 }
 
 //走るステート遷移
-void Player::TransitionRunState()
-{
+void Player::TransitionRunState() {
     state = State::Run;
     moveSpeed = 15;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
 //走るステート更新処理
-void Player::UpdateRunState(float elapsedTime)
-{
+void Player::UpdateRunState(float elapsedTime) {
     Key& key = Input::Instance().GetKey();
     //  移動入力処理
     if (!InputMove(elapsedTime)) TransitionIdleState();
@@ -318,15 +321,13 @@ void Player::UpdateRunState(float elapsedTime)
 }
 
 //回避ステート遷移
-void Player::TransitionJumpState()
-{
+void Player::TransitionJumpState() {
     state = State::Jump;
     model->PlayAnimation(static_cast<int>(state), false);
 }
 
 //回避ステート更新処理
-void Player::UpdateJumpState(float elapsedTime)
-{
+void Player::UpdateJumpState(float elapsedTime) {
     // 入力情報を所得
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();

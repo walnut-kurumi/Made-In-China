@@ -33,7 +33,7 @@ public:
 
 	bool GetDead() { return isDead; }
 
-	float GetPlaybackSpeed() { return playbackSpeed; }
+	float GetPlaybackSpeed() { return slow ? slowSpeed : playbackSpeed; }
 
 private:
 
@@ -48,6 +48,9 @@ private:
 
 	// SB入力処理
 	void InputSB();
+
+	// 通常攻撃&パリィ
+	void InputAttack();
 	
 	// 死亡した時に呼ばれる
 	void OnDead() override { isDead = true; }
@@ -93,7 +96,13 @@ private:
 	std::unique_ptr<DebugRenderer> debugRenderer;
 	SkinnedMesh* skinned;
 
+	// スローモーション用
 	float playbackSpeed = 1.0f;
+	float slowSpeed = 0.25f;
+	bool slow = false;
+
+	// SB用
+	bool weapon = true;		// 武器を持っているか否か
 
 	bool isDead = false;
 };
