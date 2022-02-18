@@ -78,6 +78,9 @@ void Player::Update(float elapsedTime)
     // ジャンプ入力処理
     InputJump();
 
+    // スロー
+    InputSlow();
+
     //オブジェクト行列更新
     UpdateTransform();
     // モデルアニメーション更新処理
@@ -144,7 +147,7 @@ Vec3 Player::GetMoveVec() const
     // 入力情報を所得
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();
-    float ay = gamePad.GetAxisLY();
+    //float ay = gamePad.GetAxisLY();
 
     // カメラ方向とスティックの入力値によって進行方向を計算する
     const DirectX::XMFLOAT3& cameraRight = CameraManager::Instance().mainC.GetRight();
@@ -177,8 +180,8 @@ Vec3 Player::GetMoveVec() const
     // スティックの垂直入力値をカメラ前方向に反映し、
     // 進行ベクトルを計算する
     Vec3 vec;
-    vec.z = cameraFrontZ * ay + cameraRightZ * ax;
-    vec.x = cameraFrontX * ay + cameraRightX * ax;
+    vec.z = /*cameraFrontZ * ay + */cameraRightZ * ax;
+    vec.x = /*cameraFrontX * ay + */cameraRightX * ax;
     // Y軸方向には移動しない
     vec.y = 0.0f;
 
@@ -237,6 +240,21 @@ void Player::InputJump() {
             Jump(jumpSpeed);
         }
     }
+}
+
+void Player::InputSlow()
+{
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    if (gamePad.GetButton() & GamePad::BTN_B) {
+        playbackSpeed = 0.25f;
+    }
+    else {
+        playbackSpeed = 1.0f;
+    }
+}
+
+void Player::InputSB()
+{
 }
 
 // 待機ステート遷移

@@ -55,6 +55,8 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+    elapsedTime = elapsedTime * player->GetPlaybackSpeed();
+
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
     //マウス左クリック
