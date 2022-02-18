@@ -26,7 +26,7 @@ public:
 	void Init();
 	void Update(float elapsedTime);
 
-	void Render(ID3D11DeviceContext* dc);
+	void Render(ID3D11DeviceContext* dc,Shader* shader);
 
 	void DrawDebugGUI();
 	

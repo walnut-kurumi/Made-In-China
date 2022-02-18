@@ -25,11 +25,18 @@ void EnemyManager::ModelLoading(ID3D11Device* device)
 	model->LoadAnimation(attack, 0, static_cast<int>(State::Attack));
 	model->LoadAnimation(blow, 0, static_cast<int>(State::Blow));
 	model->LoadAnimation(death, 0, static_cast<int>(State::Death));	
+	
+}
 
+// 初期化処理
+void EnemyManager::Init()
+{
 	for (Enemy* enemy : enemies)
-	{		
+	{
 		enemy->SetModel(model);
+		enemy->Init();
 	}
+
 }
 
 // 更新処理
@@ -90,16 +97,6 @@ void EnemyManager::Clear()
 	for (Enemy* enemy : enemies)
 	{
 		delete enemy;
-	}
-}
-
-// デバッグプリミティブ描画
-void EnemyManager::DrawDebugPrimitive()
-{	
-	// 衝突判定用のデバッグ球を描画
-	for (Enemy* enemy : enemies)
-	{
-		enemy->DrawDebugPrimitive();
 	}
 }
 

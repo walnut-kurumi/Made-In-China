@@ -17,9 +17,7 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     position = { 0.0f, 0.0f, 0.0f };
 
     scale = { 0.05f, 0.05f, 0.05f };
-   
-    TransitionIdleState();
-
+       
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
@@ -48,6 +46,8 @@ void EnemyGunner::Init()
     health = 40;
 
     isDead = false;
+
+    TransitionIdleState();
 }
 
 void EnemyGunner::Update(float elapsedTime)
@@ -67,9 +67,9 @@ void EnemyGunner::Update(float elapsedTime)
     model->UpdateTransform(transform);
 }
 
-void EnemyGunner::Render(ID3D11DeviceContext* dc)
+void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 {
-    model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());    
+    model->Begin(dc, *shader);    
     model->Render(dc);
 
 
@@ -83,39 +83,6 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc)
 
 void EnemyGunner::DrawDebugGUI()
 {
-//#ifdef USE_IMGUI
-//    ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
-//    ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
-//    //ImGui::PushStyleColor(ImGuiCond_FirstUseEver, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
-//
-//    if (ImGui::Begin("Enemy", nullptr, ImGuiWindowFlags_None))
-//    {
-//        // トランスフォーム
-//        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
-//        {
-//
-//
-//
-//            ImGui::SliderFloat("Position X", &position.x, -2000, 2000);
-//            ImGui::SliderFloat("Position Y", &position.y, -2000, 2000);
-//            ImGui::SliderFloat("Position Z", &position.z, -2000, 2000);
-//
-//
-//            ImGui::SliderFloat("SpeedMax", &maxMoveSpeed, 0, 100);
-//            ImGui::SliderFloat("Speed", &moveSpeed, 0, 20);
-//
-//            int a = static_cast<int>(state);
-//            ImGui::SliderInt("State", &a, 0, static_cast<int>(State::End));
-//        }
-//
-//        ImGui::SliderFloat("Angle X", &angle.y, DirectX::XMConvertToRadians(-180), DirectX::XMConvertToRadians(180));
-//
-//        ImGui::RadioButton("death", deathFlag);
-//
-//
-//    }
-//    ImGui::End();
-//#endif
 }
 
 

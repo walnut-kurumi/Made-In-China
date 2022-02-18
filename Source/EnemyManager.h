@@ -30,6 +30,8 @@ public:
 	}
 	// モデルロード
 	void ModelLoading(ID3D11Device* device);
+	// 初期化処理
+	void Init();
 	// 更新処理
 	void Update(float elapsedTime);
 	// 描画処理
@@ -39,9 +41,7 @@ public:
 	// エネミー削除
 	void Remove(Enemy* enemy);
 	// エネミー全削除
-	void Clear();
-	// デバッグプリミティブ描画
-	void DrawDebugPrimitive();
+	void Clear();	
 	// エネミー数取得
 	int GetEnemyCount() const { return static_cast<int>(enemies.size()); }
 	// エネミー取得
