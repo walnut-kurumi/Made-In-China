@@ -52,6 +52,7 @@ private:
 protected:
 
 	// 状態遷移
+	// 
 	// 待機ステート
 	void TransitionIdleState();
 	void UpdateIdleState(float elapsedTime);
@@ -61,6 +62,8 @@ protected:
 	// 移動ステート
 	void TransitionWalkState();
 	void UpdateWalkState(float elapsedTime);
+	// 待機タイマー更新
+	void WalkTimerUpdate();
 
 	// 走るステート
 	void TransitionRunState();
@@ -96,6 +99,8 @@ private:
 
 	// 待機用タイマー
 	int idleTimer = 0;
+	// 歩き用タイマー(ターンまでの時間)
+	int walkTimer = 0;
 
 	// 移動する向き
 	bool direction = false;

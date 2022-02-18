@@ -31,14 +31,13 @@ void SceneGame::Initialize()
     player->Init(); 
 
     // エネミー初期化			
-    EnemyManager::Instance().ModelLoading(device);
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 3; i++)
     {
         EnemyGunner* gunner = new EnemyGunner(device);
-        gunner->SetPosition(DirectX::XMFLOAT3(i * 1.0f, 0, 0));
+        gunner->SetPosition(DirectX::XMFLOAT3(i * 5.0f, 0, 0));
         EnemyManager::Instance().Register(gunner);
+        EnemyManager::Instance().Init();
     }
-    EnemyManager::Instance().Init();
 
     Input::Instance().GetMouse().SetMoveCursor(false);
 }

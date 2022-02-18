@@ -5,38 +5,13 @@
 #include <algorithm>
 
 
-// ƒ‚ƒfƒ‹“Ç‚İ‚İ
-void EnemyManager::ModelLoading(ID3D11Device* device)
-{
-	const char* idle = "Data/Models/Enemy/Animations/Idle.fbx";
-	const char* run = "Data/Models/Enemy/Animations/Running.fbx";
-	const char* walk = "Data/Models/Enemy/Animations/Walking.fbx";
-	const char* attack = "Data/Models/Enemy/Animations/Attack.fbx";
-	const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
-	const char* death = "Data/Models/Enemy/Animations/Death.fbx";
-
-
-
-	model = new Model(device, "Data/Models/Enemy/Jummo.fbx", true, 0);
-
-	model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
-	model->LoadAnimation(run, 0, static_cast<int>(State::Run));
-	model->LoadAnimation(walk, 0, static_cast<int>(State::Walk));
-	model->LoadAnimation(attack, 0, static_cast<int>(State::Attack));
-	model->LoadAnimation(blow, 0, static_cast<int>(State::Blow));
-	model->LoadAnimation(death, 0, static_cast<int>(State::Death));	
-	
-}
-
 // ‰Šú‰»ˆ—
 void EnemyManager::Init()
 {
 	for (Enemy* enemy : enemies)
-	{
-		enemy->SetModel(model);
+	{	
 		enemy->Init();
 	}
-
 }
 
 // XVˆ—
