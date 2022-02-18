@@ -27,9 +27,7 @@ public:
 	{
 		static EnemyManager instance;
 		return instance;
-	}
-	// モデルロード
-	void ModelLoading(ID3D11Device* device);
+	}	
 	// 初期化処理
 	void Init();
 	// 更新処理
