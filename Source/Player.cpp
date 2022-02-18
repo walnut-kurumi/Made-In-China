@@ -75,6 +75,9 @@ void Player::Update(float elapsedTime)
     // 無敵時間更新
     UpdateInvincibleTimer(elapsedTime);
 
+    // ジャンプ入力処理
+    InputJump();
+
     //オブジェクト行列更新
     UpdateTransform();
     // モデルアニメーション更新処理
@@ -184,58 +187,56 @@ Vec3 Player::GetMoveVec() const
 
 bool Player::InputMove(float elapsedTime)
 {
-    //if (deathFlag) return false;
+    if (deathFlag) return false;
+    
+    // 進行ベクトル所得
+    Vec3 moveVec = GetMoveVec();
+    
+    // 移動処理
+    Move(moveVec.x, moveVec.z, moveSpeed);
+    
+    // 旋回処理(エイムしてない時だけ)
+    Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
+    
+    // 進行ベクトルがゼロベクトルでない場合は入力された
+    return moveVec.x || moveVec.y || moveVec.z;
+     
+    //// 入力情報を所得
+    //GamePad& gamePad = Input::Instance().GetGamePad();
+    //float ax = gamePad.GetAxisLX();
+    //float ay = gamePad.GetAxisLY();
     //
-    //// 進行ベクトル所得
-    //Vec3 moveVec = GetMoveVec();
+    //// 右
+    //Vec3 cameraRight = VecMath::Normalize(CameraManager::Instance().mainC.GetRight());
+    //// 前
+    //Vec3 cameraFront = VecMath::Normalize(VecMath::Cross(cameraRight, normal));
+    //// 上記の前と右を合体！
+    //Vec3 translate = cameraRight * ax + cameraFront * ay;
     //
-    //// 移動処理
+    //// 移動前を保存
+    //posMae = position;
+    //position += translate * moveSpeed * elapsedTime;
+    //posAto = position;
+    //
+    //Vec3 moveVec = posAto - posMae;
+    //
+    ////移動ベクトル
+    //DirectX::XMFLOAT3 moveVec = GetMoveVec();
     //Move(moveVec.x, moveVec.z, moveSpeed);
+    //Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
     //
-    //// 旋回処理(エイムしてない時だけ)
-    //if(!aim)Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
-    //
-    //// 進行ベクトルがゼロベクトルでない場合は入力された
-    //return moveVec.x || moveVec.y || moveVec.z;
-    // 入力情報を所得
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    float ax = gamePad.GetAxisLX();
-    float ay = gamePad.GetAxisLY();
-
-    // 右
-    Vec3 cameraRight = VecMath::Normalize(CameraManager::Instance().mainC.GetRight());
-    // 前
-    Vec3 cameraFront = VecMath::Normalize(VecMath::Cross(cameraRight, normal));
-    // 上記の前と右を合体！
-    Vec3 translate = cameraRight * ax + cameraFront * ay;
-
-    // 移動前を保存
-    posMae = position;
-    position += translate * moveSpeed * elapsedTime;
-    posAto = position;
-
-    Vec3 moveVec = posAto - posMae;
-
-    return moveVec.x || moveVec.y || moveVec.z;;
+    //return moveVec.x || moveVec.y || moveVec.z;;
 }
 
-bool Player::Step(float elapsedTime, float leftRight, float backFront)
-{
-    // 右
-    Vec3 cameraRight = VecMath::Normalize(CameraManager::Instance().mainC.GetRight());
-    // 前
-    Vec3 cameraFront = VecMath::Normalize(VecMath::Cross(cameraRight, normal));
-    // 上記の前と右を合体！
-    Vec3 translate = cameraRight * (2 * VecMath::sign(leftRight)) + cameraFront * (2 * VecMath::sign(backFront));
-
-    // 移動前を保存
-    posMae = position;
-    position += translate * (moveSpeed) * elapsedTime;
-    posAto = position;
-
-    Vec3 moveVec = posAto - posMae;
-
-    return moveVec.x || moveVec.y || moveVec.z;;
+// ジャンプ入力処理
+void Player::InputJump() {
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    if (gamePad.GetButtonDown() & GamePad::BTN_A) {
+        jumpCount++;
+        if (jumpCount <= jumpLimit) {
+            Jump(jumpSpeed);
+        }
+    }
 }
 
 // 待機ステート遷移
@@ -332,7 +333,10 @@ void Player::UpdateJumpState(float elapsedTime)
         backFront = 0;
     }
 
-    // 入力していなかったら、右方向へ 
 
-    Step(elapsedTime, leftRight, backFront);
+
+}
+
+void Player::OnLanding() {
+    jumpCount = 0;
 }

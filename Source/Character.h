@@ -74,6 +74,7 @@ private:
 protected:
 	void Move(float vx, float vz, float speed);
 	void Turn(float elapsedTime, float vx, float vz, float speed);
+	void Jump(float speed);
 	void UpdateSpeed(float elapsedTime);
 	void UpdateInvincibleTimer(float elapsedTime);
 

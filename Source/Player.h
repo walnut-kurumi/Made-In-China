@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Character.h"
 #include "DebugRenderer.h"
@@ -9,11 +9,13 @@ private:
 
 	enum class State
 	{
-		Idle,
-		Run,
-		Walk,
-		Jump,
-		End,
+		Idle,	//ã€€å¾…æ©Ÿ
+		Run,	//ã€€èµ°ã‚Š
+		Walk,	//ã€€æ­©ã
+		Jump,	//ã€€ã‚¸ãƒ£ãƒ³ãƒ—é–‹å§‹
+		Fall,	//ã€€è½ä¸‹
+		Land,	//ã€€ç€åœ°
+		End,	//ã€€ãŠã€€ã‚ã€€ã‚Šã€€ğŸ’›
 	};
 
 public:
@@ -33,32 +35,37 @@ public:
 
 private:
 
-	// ˆÚ“®“ü—Íˆ—
+	// ç§»å‹•å…¥åŠ›å‡¦ç†
 	bool InputMove(float elapsedTime);
-	// ‰ñ”ğˆ—
-	bool Step(float elapsedTime, float leftRight, float backFront);
+
+	// ã‚¸ãƒ£ãƒ³ãƒ—å…¥åŠ›å‡¦ç†
+	void InputJump();
 	
-	// €–S‚µ‚½‚ÉŒÄ‚Î‚ê‚é
+	// æ­»äº¡ã—ãŸæ™‚ã«å‘¼ã°ã‚Œã‚‹
 	void OnDead() override { isDead = true; }
 
 protected:
+	void OnLanding() override;
 
-	// ó‘Ô‘JˆÚ
-	// ‘Ò‹@ƒXƒe[ƒg
+	// çŠ¶æ…‹é·ç§»
+	// å¾…æ©Ÿã‚¹ãƒ†ãƒ¼ãƒˆ
 	void TransitionIdleState();
 	void UpdateIdleState(float elapsedTime);
 
-	// ˆÚ“®ƒXƒe[ƒg
+	// ç§»å‹•ã‚¹ãƒ†ãƒ¼ãƒˆ
 	void TransitionWalkState();
 	void UpdateWalkState(float elapsedTime);
 
-	// ‘–‚éƒXƒe[ƒg
+	// èµ°ã‚‹ã‚¹ãƒ†ãƒ¼ãƒˆ
 	void TransitionRunState();
 	void UpdateRunState(float elapsedTime);
 
-	// ƒXƒeƒbƒv‰ñ”ğƒXƒe[ƒgi‰¡•ûŒüj
+	// ã‚¹ãƒ†ãƒƒãƒ—å›é¿ã‚¹ãƒ†ãƒ¼ãƒˆï¼ˆæ¨ªæ–¹å‘ï¼‰
 	void TransitionJumpState();
 	void UpdateJumpState(float elapsedTime);
+
+
+
 
 private:
 	template<class Type, typename Return, typename ...Args>
@@ -71,8 +78,9 @@ private:
 	float moveSpeed = 5.0f;
 	float turnSpeed = DirectX::XMConvertToRadians(720);
 
-	bool aim = false;
-	float stepSpeed = 60.0f;
+	float jumpSpeed = 20.0f;
+	int jumpCount = 0;
+	int jumpLimit = 1;
 
 	std::unique_ptr<DebugRenderer> debugRenderer;
 	SkinnedMesh* skinned;
