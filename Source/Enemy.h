@@ -10,7 +10,7 @@ class Enemy : public Character
 public:
 	Enemy() {}
 	~Enemy() override {}
-
+	
 	// XVˆ—
 	virtual void Update(float elapsedTime) = 0;
 	// •`‰æˆ—

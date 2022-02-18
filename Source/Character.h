@@ -50,6 +50,10 @@ public:
 
 	float GetRadius() const { return radius; }
 
+	// 読み込んだモデルセット
+	void SetModel(Model* md) { model = md; }
+
+
 private:
 	// 垂直速力更新処理
 	void UpdateVerticalVelocitiy(float elapsedFrame);
@@ -79,7 +83,7 @@ protected:
 	virtual void OnDamaged() {}
 
 	// 死亡した時に呼ばれる
-	virtual void OnDead() {}
+	virtual void OnDead() {}	
 
 protected:
 	Model* model{};
