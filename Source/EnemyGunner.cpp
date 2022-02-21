@@ -3,6 +3,7 @@
 #include "Graphics/Shaders.h"
 #include "StageManager.h"
 #include "Camera/CameraManager.h"
+#include "EnemyBulletStraight.h"
 
 #include "HitManager.h"
 
@@ -70,7 +71,7 @@ void EnemyGunner::Init()
 
     direction = true;
 
-    TransitionWalkState();
+    TransitionAttackState();
 }
 
 void EnemyGunner::Update(float elapsedTime)
@@ -81,6 +82,9 @@ void EnemyGunner::Update(float elapsedTime)
 
     // 無敵時間更新
     UpdateInvincibleTimer(elapsedTime);
+
+    // 弾丸更新処理
+    bulletManager.Update(elapsedTime);
 
     //オブジェクト行列更新
     UpdateTransform();
@@ -95,9 +99,12 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
     model->Begin(dc, *shader);    
     model->Render(dc);
 
+    // 弾丸描画処理
+    bulletManager.Render(dc, shader);
+
     // 中心座標更新
     centerPosition = position;
-    centerPosition.y += 1.0f;
+    centerPosition.y += height;
 
     //// 必要なったら追加
     debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
@@ -142,6 +149,24 @@ bool EnemyGunner::CheckAttackRange()
 // 攻撃
 void EnemyGunner::MoveAttack()
 {
+    ID3D11Device* device = Graphics::Ins().GetDevice();
+    
+    // 直進弾丸発射   
+    {
+        float vx;
+        (direction ? vx = -1 : vx = 1);
+        // 発射する向き
+        DirectX::XMFLOAT3 dir;
+        dir.x = vx;
+        dir.y = 0.0f;
+        dir.z = 0.0f;       
+        // 発射
+        EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &bulletManager);
+        bullet->Launch(dir, centerPosition);
+
+        // クールダウン設定
+        attackCooldown = 90;
+    }
 }
 
 // 吹っ飛ぶ
@@ -166,7 +191,7 @@ void EnemyGunner::TransitionIdleState()
 void EnemyGunner::UpdateIdleState(float elapsedTime)
 {   
     Move(0.0f, 0.0f, moveSpeed);
-    IdleTimerUpdate();
+    IdleTimerUpdate(elapsedTime);
 
     if (walkFlag)
     {
@@ -178,9 +203,9 @@ void EnemyGunner::UpdateIdleState(float elapsedTime)
 }
 
 // ターンするまでのタイマー更新
-void EnemyGunner::IdleTimerUpdate()
+void EnemyGunner::IdleTimerUpdate(float elapsedTime)
 {
-    if (idleTimer > 0)idleTimer--;
+    if (idleTimer > 0)idleTimer-= elapsedTime;
     else walkFlag = true;
 }
 
@@ -203,7 +228,7 @@ void EnemyGunner::UpdateWalkState(float elapsedTime)
     if (walkFlag)
     {
         MoveWalk(direction);
-        WalkTimerUpdate();
+        WalkTimerUpdate(elapsedTime);
     }
 
     if (turnFlag)
@@ -220,9 +245,9 @@ void EnemyGunner::UpdateWalkState(float elapsedTime)
 }
 
 // 止まるまでのタイマー更新処理
-void EnemyGunner::WalkTimerUpdate()
+void EnemyGunner::WalkTimerUpdate(float elapsedTime)
 {
-    if (walkTimer > 0)walkTimer--;
+    if (walkTimer > 0)walkTimer-= elapsedTime;
     else turnFlag = true;
 }
 
@@ -253,6 +278,7 @@ void EnemyGunner::TransitionAttackState()
 {
     state = State::Attack; 
     moveSpeed = 0;
+    attackCooldown = 0;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
@@ -262,12 +288,18 @@ void EnemyGunner::UpdateAttackState(float elapsedTime)
     // 止まる
     Move(0.0f, 0.0f, moveSpeed);
     // 攻撃
-    MoveAttack();
+    if (attackCooldown > 0) {
+        attackCooldown -= elapsedTime;
+    }
+    else {
+        MoveAttack();
+    }
+
 
     // 射程距離外なら走るステートへ
     if (!CheckAttackRange())
     {
-        TransitionRunState();
+        //TransitionRunState();
     }
 }
 

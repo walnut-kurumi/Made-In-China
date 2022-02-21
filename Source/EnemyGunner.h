@@ -55,13 +55,13 @@ protected:
 	void TransitionIdleState();
 	void UpdateIdleState(float elapsedTime);
 	// 待機タイマー更新
-	void IdleTimerUpdate();
+	void IdleTimerUpdate(float elapsedTime);
 
 	// 移動ステート
 	void TransitionWalkState();
 	void UpdateWalkState(float elapsedTime);
 	// 待機タイマー更新
-	void WalkTimerUpdate();
+	void WalkTimerUpdate(float elapsedTime);
 
 	// 走るステート
 	void TransitionRunState();
@@ -99,10 +99,17 @@ private:
 	int idleTimer = 0;
 	// ターンフラグ
 	bool turnFlag = false;
+
 	// 歩き用タイマー(ターンまでの時間)
 	int walkTimer = 0;
 	// 歩きフラグ
-	bool walkFlag = false;
+	bool walkFlag = false;	
+	
+	// 索敵範囲　短形
+	Vec2 searchAreaPos = { position.x - 30, position.y - height };
+
+	// 攻撃CD
+	int attackCooldown = 0;
 
 	// 移動する向き
 	bool direction = false;

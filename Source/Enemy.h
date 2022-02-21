@@ -3,6 +3,7 @@
 #include "Graphics/Shader.h"
 #include "Character.h"
 #include "DebugRenderer.h"
+#include "EnemyBulletManager.h"
 
 // エネミー
 class Enemy : public Character
@@ -26,6 +27,9 @@ public:
 
 protected:
 	float lengthSq = 0;
+
+	// 弾マネ
+	EnemyBulletManager bulletManager;
 
 	// デバッグ
 	std::unique_ptr<DebugRenderer> debugRenderer;

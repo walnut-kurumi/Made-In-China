@@ -203,6 +203,9 @@
     <ClCompile Include="Source\Collision.cpp" />
     <ClCompile Include="Source\DebugRenderer.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
+    <ClCompile Include="Source\EnemyBullet.cpp" />
+    <ClCompile Include="Source\EnemyBulletManager.cpp" />
+    <ClCompile Include="Source\EnemyBulletStraight.cpp" />
     <ClCompile Include="Source\EnemyGunner.cpp" />
     <ClCompile Include="Source\EnemyManager.cpp" />
     <ClCompile Include="Source\Framebuffer.cpp" />
@@ -255,6 +258,9 @@
     <ClInclude Include="Source\Collision.h" />
     <ClInclude Include="Source\DebugRenderer.h" />
     <ClInclude Include="Source\Enemy.h" />
+    <ClInclude Include="Source\EnemyBullet.h" />
+    <ClInclude Include="Source\EnemyBulletManager.h" />
+    <ClInclude Include="Source\EnemyBulletStraight.h" />
     <ClInclude Include="Source\EnemyManager.h" />
     <ClInclude Include="Source\Framebuffer.h" />
     <ClInclude Include="Source\FullscreenQuad.h" />
