@@ -70,7 +70,7 @@ void EnemyGunner::Init()
 
     direction = true;
 
-    TransitionIdleState();
+    TransitionWalkState();
 }
 
 void EnemyGunner::Update(float elapsedTime)
@@ -114,6 +114,7 @@ void EnemyGunner::MoveWalk(bool direction)
 {
     float vx;
     (direction ? vx = -1 : vx = 1);
+    angle.y = 90 * vx;
     Move(vx, 0.0f,moveSpeed);
 }
 
@@ -124,8 +125,12 @@ bool EnemyGunner::Search()
 }
 
 // 射程距離まで走る
-void EnemyGunner::MoveRun()
+void EnemyGunner::MoveRun(bool direction)
 {
+    float vx;
+    (direction ? vx = -1 : vx = 1);
+    angle.y = 90 * vx;
+    Move(vx, 0.0f, moveSpeed);
 }
 
 // 射程距離かどうか
@@ -150,25 +155,33 @@ void EnemyGunner::MoveBlow()
 void EnemyGunner::TransitionIdleState()
 {
     state = State::Idle;
+    turnFlag = false;
+    walkFlag = false;
+    idleTimer = 120;
+    moveSpeed = 0;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
 // 待機ステート更新処理
 void EnemyGunner::UpdateIdleState(float elapsedTime)
 {   
-    // 数カウントしてから向きを変えて移動ステートへ
-    //direction = true;
-    
-    //IdleTimerUpdate()
+    Move(0.0f, 0.0f, moveSpeed);
+    IdleTimerUpdate();
 
-    // 歩きステートへ移動
-    //TransitionWalkState();
+    if (walkFlag)
+    {
+        // 数カウントしてから向きを変えて移動ステートへ
+        direction = !direction;
+        // 歩きステートへ移動
+        TransitionWalkState();
+    }
 }
 
 // ターンするまでのタイマー更新
 void EnemyGunner::IdleTimerUpdate()
 {
-    idleTimer = 0;
+    if (idleTimer > 0)idleTimer--;
+    else walkFlag = true;
 }
 
 
@@ -176,6 +189,9 @@ void EnemyGunner::IdleTimerUpdate()
 void EnemyGunner::TransitionWalkState()
 {
     state = State::Walk;
+    turnFlag = false;
+    walkFlag = true;
+    walkTimer = 120;
     moveSpeed = 5;
     model->PlayAnimation(static_cast<int>(state), true);
 }
@@ -184,8 +200,17 @@ void EnemyGunner::TransitionWalkState()
 void EnemyGunner::UpdateWalkState(float elapsedTime)
 {   
     // 徘徊
-    MoveWalk(direction);
-    WalkTimerUpdate();
+    if (walkFlag)
+    {
+        MoveWalk(direction);
+        WalkTimerUpdate();
+    }
+
+    if (turnFlag)
+    {
+        TransitionIdleState();        
+    }
+
 
     // プレイヤー発見したら走る
     if (Search())
@@ -197,7 +222,8 @@ void EnemyGunner::UpdateWalkState(float elapsedTime)
 // 止まるまでのタイマー更新処理
 void EnemyGunner::WalkTimerUpdate()
 {
-    walkTimer = 0;
+    if (walkTimer > 0)walkTimer--;
+    else turnFlag = true;
 }
 
 
@@ -212,26 +238,30 @@ void EnemyGunner::TransitionRunState()
 //走るステート更新処理
 void EnemyGunner::UpdateRunState(float elapsedTime)
 {    
-    // 射程距離入るまでプレイヤーに向かって走り続ける
-    MoveRun();
     // 射程距離内なら攻撃ステートへ
     if (CheckAttackRange())
     {
         TransitionAttackState();
     }
+    // 射程距離入るまでプレイヤーに向かって走り続ける
+    MoveRun(direction);
 }
 
 
 //攻撃ステート遷移
 void EnemyGunner::TransitionAttackState()
 {
-    state = State::Attack;    
+    state = State::Attack; 
+    moveSpeed = 0;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
 //攻撃ステート更新処理
 void EnemyGunner::UpdateAttackState(float elapsedTime)
 {
+    // 止まる
+    Move(0.0f, 0.0f, moveSpeed);
+    // 攻撃
     MoveAttack();
 
     // 射程距離外なら走るステートへ

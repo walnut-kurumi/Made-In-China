@@ -36,7 +36,7 @@ private:
 	// 索敵　引っかかったらtrue返す
 	bool Search();
 	// 接敵
-	void MoveRun();
+	void MoveRun(bool direction);
 	// 射程距離チェック 射程距離内ならtrue返して攻撃
 	bool CheckAttackRange();
 	// 射撃攻撃
@@ -97,8 +97,12 @@ private:
 
 	// 待機用タイマー
 	int idleTimer = 0;
+	// ターンフラグ
+	bool turnFlag = false;
 	// 歩き用タイマー(ターンまでの時間)
 	int walkTimer = 0;
+	// 歩きフラグ
+	bool walkFlag = false;
 
 	// 移動する向き
 	bool direction = false;
