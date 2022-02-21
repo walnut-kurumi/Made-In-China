@@ -40,7 +40,7 @@ private:
 	// 射程距離チェック 射程距離内ならtrue返して攻撃
 	bool CheckAttackRange();
 	// 射撃攻撃
-	void MoveAttack();
+	void MoveAttack(float cooldown);
 	// 吹っ飛び プレイヤー攻撃の方向に吹っ飛ぶ
 	void MoveBlow();
 	
@@ -70,6 +70,8 @@ protected:
 	// 攻撃ステート
 	void TransitionAttackState();
 	void UpdateAttackState(float elapsedTime);
+	// 攻撃クールダウン更新
+	void AttackCooldownUpdate(float elapsedTime);
 
 	// 吹っ飛びステート
 	void TransitionBlowState();
@@ -96,12 +98,12 @@ private:
 	bool isDead = false;
 
 	// 待機用タイマー
-	int idleTimer = 0;
+	float idleTimer = 0;
 	// ターンフラグ
 	bool turnFlag = false;
 
 	// 歩き用タイマー(ターンまでの時間)
-	int walkTimer = 0;
+	float walkTimer = 0;
 	// 歩きフラグ
 	bool walkFlag = false;	
 	
@@ -109,7 +111,7 @@ private:
 	Vec2 searchAreaPos = { position.x - 30, position.y - height };
 
 	// 攻撃CD
-	int attackCooldown = 0;
+	float attackCooldown = 0;
 
 	// 移動する向き
 	bool direction = false;

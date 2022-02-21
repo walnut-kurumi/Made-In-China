@@ -147,8 +147,13 @@ bool EnemyGunner::CheckAttackRange()
 }
 
 // 攻撃
-void EnemyGunner::MoveAttack()
+void EnemyGunner::MoveAttack(float cooldown)
 {
+    if (attackCooldown > 0.0f) return;
+
+    // クールダウン設定
+    attackCooldown = cooldown;
+
     ID3D11Device* device = Graphics::Ins().GetDevice();
     
     // 直進弾丸発射   
@@ -162,10 +167,7 @@ void EnemyGunner::MoveAttack()
         dir.z = 0.0f;       
         // 発射
         EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &bulletManager);
-        bullet->Launch(dir, centerPosition);
-
-        // クールダウン設定
-        attackCooldown = 90;
+        bullet->Launch(dir, centerPosition);        
     }
 }
 
@@ -182,7 +184,7 @@ void EnemyGunner::TransitionIdleState()
     state = State::Idle;
     turnFlag = false;
     walkFlag = false;
-    idleTimer = 120;
+    idleTimer = 5.0f;
     moveSpeed = 0;
     model->PlayAnimation(static_cast<int>(state), true);
 }
@@ -205,7 +207,7 @@ void EnemyGunner::UpdateIdleState(float elapsedTime)
 // ターンするまでのタイマー更新
 void EnemyGunner::IdleTimerUpdate(float elapsedTime)
 {
-    if (idleTimer > 0)idleTimer-= elapsedTime;
+    if (idleTimer > 0.0f)idleTimer-= elapsedTime;    
     else walkFlag = true;
 }
 
@@ -216,7 +218,7 @@ void EnemyGunner::TransitionWalkState()
     state = State::Walk;
     turnFlag = false;
     walkFlag = true;
-    walkTimer = 120;
+    walkTimer = 5.0f;
     moveSpeed = 5;
     model->PlayAnimation(static_cast<int>(state), true);
 }
@@ -247,7 +249,7 @@ void EnemyGunner::UpdateWalkState(float elapsedTime)
 // 止まるまでのタイマー更新処理
 void EnemyGunner::WalkTimerUpdate(float elapsedTime)
 {
-    if (walkTimer > 0)walkTimer-= elapsedTime;
+    if (walkTimer > 0.0f)walkTimer-= elapsedTime;
     else turnFlag = true;
 }
 
@@ -278,7 +280,7 @@ void EnemyGunner::TransitionAttackState()
 {
     state = State::Attack; 
     moveSpeed = 0;
-    attackCooldown = 0;
+    attackCooldown = 0.0f;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
@@ -287,19 +289,22 @@ void EnemyGunner::UpdateAttackState(float elapsedTime)
 {
     // 止まる
     Move(0.0f, 0.0f, moveSpeed);
-    // 攻撃
-    attackCooldown -= elapsedTime;    
-    if(attackCooldown <= 0.0f)
-    {
-        MoveAttack();
-    }
-
+    // 攻撃      
+    MoveAttack(1.5f);    
+    // 攻撃クールダウン更新
+    AttackCooldownUpdate(elapsedTime);
 
     // 射程距離外なら走るステートへ
     if (!CheckAttackRange())
     {
         //TransitionRunState();
     }
+}
+
+// 攻撃クールダウン更新
+void EnemyGunner::AttackCooldownUpdate(float elapsedTime)
+{
+    if (attackCooldown > 0.0f)attackCooldown -= elapsedTime;
 }
 
 
