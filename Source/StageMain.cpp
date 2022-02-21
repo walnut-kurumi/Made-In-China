@@ -9,9 +9,11 @@ StageMain::StageMain(ID3D11Device* device)
 {
 
 
-    model = new Model(device, ".\\Data\\Models\\Stage\\ExampleStage.fbx");
-    scale = { 1, 1, 1 };                                
+    model = new Model(device, ".\\Data\\Models\\Stage\\stage.fbx",true,0);
+    scale.x = scale.y = scale.z = 0.05f;
    
+    angle.y = DirectX::XMConvertToRadians(-90);
+
     type = Type::Main;
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }

@@ -31,7 +31,7 @@ void SceneGame::Initialize()
     player->Init(); 
 
     // エネミー初期化			
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 1; i++)
     {
         EnemyGunner* gunner = new EnemyGunner(device);
         gunner->SetPosition(DirectX::XMFLOAT3(i * 5.0f, 0, 0));

@@ -121,7 +121,7 @@ void EnemyGunner::MoveWalk(bool direction)
 {
     float vx;
     (direction ? vx = -1 : vx = 1);
-    angle.y = 90 * vx;
+    angle.y = DirectX::XMConvertToRadians(90 * vx);
     Move(vx, 0.0f,moveSpeed);
 }
 
@@ -136,7 +136,7 @@ void EnemyGunner::MoveRun(bool direction)
 {
     float vx;
     (direction ? vx = -1 : vx = 1);
-    angle.y = 90 * vx;
+    angle.y = DirectX::XMConvertToRadians(90 * vx);
     Move(vx, 0.0f, moveSpeed);
 }
 
@@ -288,10 +288,9 @@ void EnemyGunner::UpdateAttackState(float elapsedTime)
     // Ž~‚Ü‚é
     Move(0.0f, 0.0f, moveSpeed);
     // UŒ‚
-    if (attackCooldown > 0) {
-        attackCooldown -= elapsedTime;
-    }
-    else {
+    attackCooldown -= elapsedTime;    
+    if(attackCooldown <= 0.0f)
+    {
         MoveAttack();
     }
 
