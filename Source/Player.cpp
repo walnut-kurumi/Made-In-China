@@ -96,11 +96,11 @@ void Player::Render(ID3D11DeviceContext* dc) {
 
 
     //// •K—v‚È‚Á‚½‚ç’Ç‰Á
-    //debugRenderer.get()->DrawSphere(copos, 4, Vec4(1, 0, 0, 1));
+    debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos2, 1.5f, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 void Player::DrawDebugGUI() {

@@ -92,6 +92,15 @@ void EnemyManager::SortLengthSq(const DirectX::XMFLOAT3 playerPos)
 		[](Enemy* a, Enemy* b)->int {return a->GetLengthSq() < b->GetLengthSq(); });
 }
 
+
+void EnemyManager::SetPlayerPos(Vec2 playerPos)
+{	
+	for (Enemy* enemy : enemies)
+	{
+		enemy->SetPlayerPos(playerPos);
+	}
+}
+
 // エネミー同士の衝突処理
 void EnemyManager::CollisionEnemyVsEnemies()
 {

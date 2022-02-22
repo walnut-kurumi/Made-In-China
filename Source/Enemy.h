@@ -25,11 +25,16 @@ public:
 	void SetLengthSq(float sq) { lengthSq = sq; }
 	float GetLengthSq()const { return lengthSq; }
 
+	void SetPlayerPos(Vec2 player) { playerPos = player; };
+
 protected:
 	float lengthSq = 0;
 
 	// 弾マネ
 	EnemyBulletManager bulletManager;
+
+	// プレイヤーの座標
+	Vec2 playerPos = {};
 
 	// デバッグ
 	std::unique_ptr<DebugRenderer> debugRenderer;
