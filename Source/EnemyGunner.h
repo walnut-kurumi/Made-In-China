@@ -29,6 +29,7 @@ public:
 	void Render(ID3D11DeviceContext* dc,Shader* shader);	
 	
 	bool GetDead() { return isDead; }
+	
 
 private:	
 	// 徘徊  ←左true　false右→
@@ -40,7 +41,7 @@ private:
 	// 射程距離チェック 射程距離内ならtrue返して攻撃
 	bool CheckAttackRange();
 	// 射撃攻撃
-	void MoveAttack();
+	void MoveAttack(float cooldown);
 	// 吹っ飛び プレイヤー攻撃の方向に吹っ飛ぶ
 	void MoveBlow();
 	
@@ -50,18 +51,18 @@ private:
 protected:
 
 	// 状態遷移
-	// 
+	 
 	// 待機ステート
 	void TransitionIdleState();
 	void UpdateIdleState(float elapsedTime);
 	// 待機タイマー更新
-	void IdleTimerUpdate();
+	void IdleTimerUpdate(float elapsedTime);
 
 	// 移動ステート
 	void TransitionWalkState();
 	void UpdateWalkState(float elapsedTime);
 	// 待機タイマー更新
-	void WalkTimerUpdate();
+	void WalkTimerUpdate(float elapsedTime);
 
 	// 走るステート
 	void TransitionRunState();
@@ -70,6 +71,8 @@ protected:
 	// 攻撃ステート
 	void TransitionAttackState();
 	void UpdateAttackState(float elapsedTime);
+	// 攻撃クールダウン更新
+	void AttackCooldownUpdate(float elapsedTime);
 
 	// 吹っ飛びステート
 	void TransitionBlowState();
@@ -96,13 +99,23 @@ private:
 	bool isDead = false;
 
 	// 待機用タイマー
-	int idleTimer = 0;
+	float idleTimer = 0;
 	// ターンフラグ
 	bool turnFlag = false;
+
 	// 歩き用タイマー(ターンまでの時間)
-	int walkTimer = 0;
+	float walkTimer = 0;
 	// 歩きフラグ
-	bool walkFlag = false;
+	bool walkFlag = false;	
+	
+	// 索敵範囲　短形
+	Vec2 searchAreaPos	 = {};
+	Vec2 searchAreaScale = {};
+
+	// 攻撃範囲
+	float attackRange = 30.0f;
+	// 攻撃CD
+	float attackCooldown = 0;
 
 	// 移動する向き
 	bool direction = false;

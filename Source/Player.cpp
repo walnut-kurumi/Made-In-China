@@ -96,11 +96,11 @@ void Player::Render(ID3D11DeviceContext* dc) {
 
 
     //// 必要なったら追加
-    //debugRenderer.get()->DrawSphere(copos, 4, Vec4(1, 0, 0, 1));
+    debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos2, 1.5f, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 void Player::DrawDebugGUI() {
@@ -228,8 +228,10 @@ bool Player::InputMove(float elapsedTime) {
 
 // ジャンプ入力処理
 void Player::InputJump() {
+    Key& key = Input::Instance().GetKey();
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonDown() & GamePad::BTN_A) {
+    if (gamePad.GetButtonDown() & GamePad::BTN_A
+        || key.STATE(VK_SPACE)) {
         jumpCount++;
         if (jumpCount <= jumpLimit) {
             Jump(jumpSpeed);

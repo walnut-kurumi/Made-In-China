@@ -227,6 +227,16 @@
     </ClCompile>
     <ClCompile Include="Source\Effect.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
+    <ClCompile Include="Source\EnemyBulletManager.cpp">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyBulletStraight.cpp">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyBullet.cpp">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClCompile>
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framebuffer.h" />
@@ -383,6 +393,15 @@
     </ClInclude>
     <ClInclude Include="Source\Effect.h" />
     <ClInclude Include="Source\EffectManager.h" />
+    <ClInclude Include="Source\EnemyBulletManager.h">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyBulletStraight.h">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyBullet.h">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\Constants.hlsli">
@@ -467,6 +486,9 @@
     </Filter>
     <Filter Include="Source\Character\Player">
       <UniqueIdentifier>{101dffe8-15d5-4059-ad7f-e3292d945ef9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Character\Enemy\Bullet">
+      <UniqueIdentifier>{6eee86dc-3585-41ee-ac32-91500a79fa5e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
