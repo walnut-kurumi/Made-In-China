@@ -228,8 +228,10 @@ bool Player::InputMove(float elapsedTime) {
 
 // ƒWƒƒƒ“ƒv“ü—Íˆ—
 void Player::InputJump() {
+    Key& key = Input::Instance().GetKey();
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonDown() & GamePad::BTN_A) {
+    if (gamePad.GetButtonDown() & GamePad::BTN_A
+        || key.STATE(VK_SPACE)) {
         jumpCount++;
         if (jumpCount <= jumpLimit) {
             Jump(jumpSpeed);
