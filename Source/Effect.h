@@ -23,10 +23,6 @@ public:
 	void SetScale(Effekseer::Handle handle, const DirectX::XMFLOAT3& scale);
 
 private:
-<<<<<<< HEAD
 	Effekseer::EffectRef effekseerEffect = nullptr;
-=======
-	Effekseer::Effect* effekseerEffect = nullptr;
->>>>>>> e00caf0c2bf18823ecd619cfa3ec9020f21e7b12
 
 };
