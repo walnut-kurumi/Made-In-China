@@ -31,11 +31,20 @@ public:
 	//描画処理
 	void Render(const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection);
 
+<<<<<<< HEAD
 	//Effekseerマネージャーの取得
 	Effekseer::ManagerRef GetEffekseerManager() { return effekseerManager; }
 
 private:
 	Effekseer::ManagerRef effekseerManager = nullptr;
 	EffekseerRenderer::RendererRef effekseerRenderer = nullptr;
+=======
+	//Effeckseerマネージャーの取得
+	Effekseer::Manager* GetEffekseerManager() { return effekseerManager; }
+
+private:
+	Effekseer::Manager* effekseerManager = nullptr;
+	EffekseerRenderer::Renderer* effekseerRenderer = nullptr;
+>>>>>>> e00caf0c2bf18823ecd619cfa3ec9020f21e7b12
 
 };

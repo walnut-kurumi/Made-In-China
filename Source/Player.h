@@ -7,11 +7,12 @@ class Player : public Character
 {
 private:
 
-	enum class State
+	enum class AnimeState
 	{
 		Idle,	//　待機
 		Run,	//　走り
 		Walk,	//　歩き
+		Attack, // 攻撃
 		Jump,	//　ジャンプ開始
 		Fall,	//　落下
 		Land,	//　着地
@@ -50,7 +51,7 @@ private:
 	void InputSB();
 
 	// 通常攻撃&パリィ
-	void InputAttack();
+	bool InputAttack();
 	
 	// 死亡した時に呼ばれる
 	void OnDead() override { isDead = true; }
@@ -75,19 +76,21 @@ protected:
 	void TransitionJumpState();
 	void UpdateJumpState(float elapsedTime);
 
-
+	// 攻撃ステート
+	void TransitionAttackState();
+	void UpdateAttackState(float elapsedTime);
 
 
 private:
 	template<class Type, typename Return, typename ...Args>
 	using Temp = Return(Type::*)(Args...);
-	Temp<Player, void, float> UpdateState[static_cast<int>(State::End)];
+	Temp<Player, void, float> UpdateState[static_cast<int>(AnimeState::End)];
 	
-	State state = State::Idle;
+	AnimeState state = AnimeState::Idle;
 
 private:
-	float moveSpeed = 5.0f;
-	float turnSpeed = DirectX::XMConvertToRadians(720);
+	float moveSpeed = 20.0f;
+	float turnSpeed = DirectX::XMConvertToRadians(3600);
 
 	float jumpSpeed = 20.0f;
 	int jumpCount = 0;

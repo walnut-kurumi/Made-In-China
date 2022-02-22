@@ -75,6 +75,7 @@ private:
 
 protected:
 	void Move(float vx, float vz, float speed);
+	void AttackMove(float vx, float vy, float speed);
 	void Turn(float elapsedTime, float vx, float vz, float speed);
 	void Jump(float speed);
 	void UpdateSpeed(float elapsedTime);
@@ -117,6 +118,9 @@ protected:
 
 	float gravity = -1.0f;
 
+	bool gravFlag = true;
+
+
 	Vec3 velocity = { 0,0,0 };
 	float velocityMax = -20.0f;
 
@@ -129,8 +133,9 @@ protected:
 	float invincibleTimer = 0.0f;
 	float friction = 0.4f;
 	float acceleration = 1.0f;
-	float maxMoveSpeed = 40.0f;
+	float maxMoveSpeed = 80.0f;
 	float moveVecX = 0.0f;
+	float moveVecY = 0.0f;
 	float moveVecZ = 0.0f;
 	float airControl = 0.3f;
 	float stepOffset = 1.0f;

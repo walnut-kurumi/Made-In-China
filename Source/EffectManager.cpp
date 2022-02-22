@@ -13,17 +13,28 @@ void EffectManager::Initialize()
 	//Effekseerマネージャー生成
 	effekseerManager = Effekseer::Manager::Create(2048);
 
+<<<<<<< HEAD
 	//Effekseerレンダラの各種設定(特別なカスタマイズをしない場合は定型的にいかのせっていでOK)
+=======
+	//Effekseerレンダラの各種設定(特別なカスタマイズをしない場合は定型的に以下の設定でOK)
+>>>>>>> e00caf0c2bf18823ecd619cfa3ec9020f21e7b12
 	effekseerManager->SetSpriteRenderer(effekseerRenderer->CreateSpriteRenderer());
 	effekseerManager->SetRibbonRenderer(effekseerRenderer->CreateRibbonRenderer());
 	effekseerManager->SetRingRenderer(effekseerRenderer->CreateRingRenderer());
 	effekseerManager->SetTrackRenderer(effekseerRenderer->CreateTrackRenderer());
 	effekseerManager->SetModelRenderer(effekseerRenderer->CreateModelRenderer());
+<<<<<<< HEAD
 	//Effekseer内でのローダーの設定(特別なカスタマイズをしない場合は以下の設定でOK)
 	effekseerManager->SetTextureLoader(effekseerRenderer->CreateTextureLoader());
 	effekseerManager->SetModelLoader(effekseerRenderer->CreateModelLoader());
 	effekseerManager->SetMaterialLoader(effekseerRenderer->CreateMaterialLoader());
 	effekseerManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
+=======
+	//Effekseer内でのローダー設定(特別なカスタマイズをしない場合は以下の設定でOK)
+	effekseerManager->SetTextureLoader(effekseerRenderer->CreateTextureLoader());
+	effekseerManager->SetModelLoader(effekseerRenderer->CreateModelLoader());
+	effekseerManager->SetMaterialLoader(effekseerRenderer->CreateMaterialLoader());
+>>>>>>> e00caf0c2bf18823ecd619cfa3ec9020f21e7b12
 
 	//Effekseerを左手座標系で計算する
 	effekseerManager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
@@ -35,12 +46,20 @@ void EffectManager::Finalize()
 {
 	if (effekseerManager != nullptr)
 	{
+<<<<<<< HEAD
 		effekseerManager.Reset();
+=======
+		effekseerManager->Destroy();
+>>>>>>> e00caf0c2bf18823ecd619cfa3ec9020f21e7b12
 		effekseerManager = nullptr;
 	}
 	if (effekseerRenderer != nullptr)
 	{
+<<<<<<< HEAD
 		effekseerRenderer.Reset();
+=======
+		effekseerRenderer->Destroy();
+>>>>>>> e00caf0c2bf18823ecd619cfa3ec9020f21e7b12
 		effekseerRenderer = nullptr;
 	}
 }
@@ -49,15 +68,23 @@ void EffectManager::Finalize()
 void EffectManager::Update(float elapsedTime)
 {
 	//エフェクト更新処理(引数にはフレームの経過時間を渡す)
+<<<<<<< HEAD
 	effekseerManager->Update();
 	effekseerRenderer->SetTime(elapsedTime / 60.0f);
+=======
+	effekseerManager->Update(elapsedTime * 60.0f);
+>>>>>>> e00caf0c2bf18823ecd619cfa3ec9020f21e7b12
 }
 
 //描画処理
 void EffectManager::Render(const DirectX::XMFLOAT4X4& view, const DirectX::XMFLOAT4X4& projection)
 {
+<<<<<<< HEAD
 	//ビュー＆プロジェクション行列をEffekseerレンダラに設定
 
+=======
+	//ビュー&プロジェクション行列をEffekseerレンダラに設定
+>>>>>>> e00caf0c2bf18823ecd619cfa3ec9020f21e7b12
 	effekseerRenderer->SetCameraMatrix(*reinterpret_cast<const Effekseer::Matrix44*>(&view));
 	effekseerRenderer->SetProjectionMatrix(*reinterpret_cast<const Effekseer::Matrix44*>(&projection));
 
@@ -65,8 +92,13 @@ void EffectManager::Render(const DirectX::XMFLOAT4X4& view, const DirectX::XMFLO
 	effekseerRenderer->BeginRendering();
 
 	//Effekseer描画実行
+<<<<<<< HEAD
 	//マネージャー単位で描画するので描画順を制御する場合はマネージャーを複数個作成し、
 	//Draw()関数を実行する順序で制御できそう
+=======
+	//マネージャー単位で描画するので描画順を制御するマネージャーを複数個作成し、
+	//Draw()関数を実行する順序で制御出来そう
+>>>>>>> e00caf0c2bf18823ecd619cfa3ec9020f21e7b12
 	effekseerManager->Draw();
 
 	//Effekseer描画終了
