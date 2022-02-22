@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <memory>
 #include <iostream>
+#include<mutex>
 
 class Graphics
 {
@@ -46,6 +47,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState>		depthStencilState;	
 	std::unique_ptr<Blender> blender;
 
+	std::mutex  mutex;
+
 public:
 
 	// デバイス取得
@@ -73,4 +76,6 @@ public:
 	ID3D11DepthStencilState* GetDepthStencilState() { return depthStencilState.Get(); }
 	Blender* GetBlender() { return blender.get(); }
 
+	//ミューテックス取得
+	std::mutex& GetMutex() { return mutex; }
 };

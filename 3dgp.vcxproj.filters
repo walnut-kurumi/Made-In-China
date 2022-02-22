@@ -225,6 +225,8 @@
     <ClCompile Include="Source\EnemyGunner.cpp">
       <Filter>Source\Character\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Effect.cpp" />
+    <ClCompile Include="Source\EffectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framebuffer.h" />
@@ -379,6 +381,8 @@
     <ClInclude Include="Source\EnemyGunner.h">
       <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Effect.h" />
+    <ClInclude Include="Source\EffectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\Constants.hlsli">
