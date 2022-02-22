@@ -61,7 +61,7 @@ void EnemyGunner::Init()
 
     moveVecX = 0.0f;
     moveVecZ = 0.0f;
-    health = 40;
+    health = 1;
 
     centerPosition = position;
     centerPosition.y += 1.0f;
@@ -76,8 +76,15 @@ void EnemyGunner::Init()
 
 void EnemyGunner::Update(float elapsedTime)
 {
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    if (gamePad.GetButtonDown() & GamePad::BTN_A)TransitionBlowState();
+
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
+    // 死んでたら 吹っ飛びステートへ
+    if (health <= 0) TransitionBlowState();
+
+    // 速度更新
     UpdateSpeed(elapsedTime);
 
     // 無敵時間更新
@@ -108,8 +115,8 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
    
     //// 必要なったら追加
     debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y,0.0), 1.0f, Vec4(0, 1, 0, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,0.0), 1.0f, Vec4(0, 1, 0, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y,+5.0), 1.0f, Vec4(0, 1, 0, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,+5.0), 1.0f, Vec4(0, 1, 0, 1));
     //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
@@ -120,6 +127,7 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 // 徘徊  ←左true　false右→
 void EnemyGunner::MoveWalk(bool direction)
 {
+    // walk
     float vx;
     (direction ? vx = -1 : vx = 1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
@@ -149,6 +157,11 @@ bool EnemyGunner::Search()
 // 射程距離まで走る
 void EnemyGunner::MoveRun(bool direction)
 {
+    // 向きをプレイヤーの方向へ
+    if (playerPos.x > position.x)direction = false;
+    else if (playerPos.x < position.x) direction = true;
+
+    // run
     float vx;
     (direction ? vx = -1 : vx = 1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
@@ -167,7 +180,7 @@ bool EnemyGunner::CheckAttackRange()
     //　ベクトルから距離取得    
     float range =  VecMath::LengthVec3(distance);
     // 射程距離より小さいならtrue
-    if (attackRange >= range)true;
+    if (attackRange >= range)return true;
     // 射程距離より大きいならfalse
     else return false;    
 }
@@ -190,6 +203,8 @@ void EnemyGunner::MoveAttack(float cooldown)
     {
         float vx;
         (direction ? vx = -1 : vx = 1);
+        angle.y = DirectX::XMConvertToRadians(90 * vx);
+
         // 発射する向き
         DirectX::XMFLOAT3 dir;
         dir.x = vx;
@@ -203,7 +218,13 @@ void EnemyGunner::MoveAttack(float cooldown)
 
 // 吹っ飛ぶ
 void EnemyGunner::MoveBlow()
-{
+{    
+    // プレイヤーの攻撃方向へ吹き飛ばす
+    float blowPower = 25.0f;
+    //Vec3 blowDirection = { playerAttackDirection.x * blowPower,playerAttackDirection.y * blowPower,0.0f };
+    Vec3 blowDirection = { 10.0f* blowPower,0.0f,0.0f };
+    AddImpulse(blowDirection);
+ 
 }
 
 
@@ -222,6 +243,7 @@ void EnemyGunner::TransitionIdleState()
 // 待機ステート更新処理
 void EnemyGunner::UpdateIdleState(float elapsedTime)
 {   
+ 
     Move(0.0f, 0.0f, moveSpeed);
     IdleTimerUpdate(elapsedTime);
 
@@ -310,7 +332,7 @@ void EnemyGunner::TransitionAttackState()
 {
     state = State::Attack; 
     moveSpeed = 0;
-    attackCooldown = 0.0f;
+    attackCooldown = 0.75f;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
@@ -341,7 +363,8 @@ void EnemyGunner::AttackCooldownUpdate(float elapsedTime)
 //吹っ飛びステート遷移
 void EnemyGunner::TransitionBlowState()
 {
-    state = State::Blow;   
+    state = State::Blow;  
+    blowTimer = 1.0f;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
@@ -350,9 +373,12 @@ void EnemyGunner::UpdateBlowState(float elapsedTime)
 {
     // 吹っ飛ばす
     MoveBlow();
+    
+    // 吹き飛ばしタイマー更新
+    if (blowTimer > 0.0f)blowTimer -= elapsedTime;    
 
     // 吹っ飛ばしたら死亡ステートへ
-    TransitionDeathState();
+    if(blowTimer < 0.0f)TransitionDeathState();
 }
 
 
@@ -360,12 +386,15 @@ void EnemyGunner::UpdateBlowState(float elapsedTime)
 void EnemyGunner::TransitionDeathState()
 {
     state = State::Death;
+    moveSpeed = 0;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
 //死亡ステート更新処理
 void EnemyGunner::UpdateDeathState(float elapsedTime)
 {
+    // 止まる
+    Move(0.0f, 0.0f, moveSpeed);
    // 死亡アニメーション終わったら消滅させる
     OnDead();
 }

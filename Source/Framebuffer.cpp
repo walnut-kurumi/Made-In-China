@@ -1,6 +1,7 @@
 #include "Framebuffer.h"
 #include "Graphics/Misc.h"
 
+
 Framebuffer::Framebuffer(ID3D11Device* device, uint32_t width, uint32_t height)
 {
 	HRESULT hr{ S_OK };

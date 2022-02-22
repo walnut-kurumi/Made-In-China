@@ -102,7 +102,10 @@ void SceneGame::Update(float elapsedTime)
     EnemyManager::Instance().Update(elapsedTime);
     // ソート
     EnemyManager::Instance().SortLengthSq(player->GetPosition());
+    // プレイヤー座標取得
     EnemyManager::Instance().SetPlayerPos(Vec2(player->GetPosition().x, player->GetPosition().y));
+    // プレイヤー攻撃方向取得
+    EnemyManager::Instance().SetPlayerAttackDirection(Vec2(player->GetMoveVec().x, player->GetMoveVec().y));
 }
 
 // 描画処理
