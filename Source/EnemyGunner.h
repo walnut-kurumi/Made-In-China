@@ -29,6 +29,7 @@ public:
 	void Render(ID3D11DeviceContext* dc,Shader* shader);	
 	
 	bool GetDead() { return isDead; }
+	
 
 private:	
 	// œpœj  ©¶true@false‰E¨
@@ -50,7 +51,7 @@ private:
 protected:
 
 	// ó‘Ô‘JˆÚ
-	// 
+	 
 	// ‘Ò‹@ƒXƒe[ƒg
 	void TransitionIdleState();
 	void UpdateIdleState(float elapsedTime);
@@ -108,8 +109,11 @@ private:
 	bool walkFlag = false;	
 	
 	// õ“G”ÍˆÍ@’ZŒ`
-	Vec2 searchAreaPos = { position.x - 30, position.y - height };
+	Vec2 searchAreaPos	 = {};
+	Vec2 searchAreaScale = {};
 
+	// UŒ‚”ÍˆÍ
+	float attackRange = 30.0f;
 	// UŒ‚CD
 	float attackCooldown = 0;
 

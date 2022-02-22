@@ -71,7 +71,7 @@ void EnemyGunner::Init()
 
     direction = true;
 
-    TransitionAttackState();
+    TransitionWalkState();
 }
 
 void EnemyGunner::Update(float elapsedTime)
@@ -105,10 +105,11 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
     // 中心座標更新
     centerPosition = position;
     centerPosition.y += height;
-
+   
     //// 必要なったら追加
     debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos2, 1.5f, Vec4(1, 0, 0, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y,0.0), 1.0f, Vec4(0, 1, 0, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,0.0), 1.0f, Vec4(0, 1, 0, 1));
     //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
@@ -123,12 +124,26 @@ void EnemyGunner::MoveWalk(bool direction)
     (direction ? vx = -1 : vx = 1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
     Move(vx, 0.0f,moveSpeed);
+
+    // 索敵範囲更新
+    searchAreaPos = { position.x - (10 * vx), position.y -2.0f };
+    searchAreaScale = { 35 * vx, height + 2.0f };
 }
 
 // プレイヤーを索敵
 bool EnemyGunner::Search()
 {
-    return false;
+    //searchArea（短形） と playerPos（点）で当たり判定
+    
+    //当たっていたら索敵範囲内なのでtrue
+    if (Collision::PointVsRect(playerPos, searchAreaPos, searchAreaScale))
+    {
+        if (playerPos.x > position.x)direction = false;
+        else if (playerPos.x < position.x) direction = true;
+        return true;
+    }
+    //当たっていなければfalse    
+    else return false;    
 }
 
 // 射程距離まで走る
@@ -138,18 +153,33 @@ void EnemyGunner::MoveRun(bool direction)
     (direction ? vx = -1 : vx = 1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
     Move(vx, 0.0f, moveSpeed);
+
+    // 索敵範囲更新
+    searchAreaPos = { position.x - (10 * vx), position.y - 2.0f };
+    searchAreaScale = { 35 * vx, height + 2.0f };
 }
 
 // 射程距離かどうか
 bool EnemyGunner::CheckAttackRange()
 {
-    return false;
+    // プレイヤーの座標とガンナーの座標でベクトル作成
+    Vec3 distance = { Vec3(playerPos.x,playerPos.y,0.0f) - position };
+    //　ベクトルから距離取得    
+    float range =  VecMath::LengthVec3(distance);
+    // 射程距離より小さいならtrue
+    if (attackRange >= range)true;
+    // 射程距離より大きいならfalse
+    else return false;    
 }
 
 // 攻撃
 void EnemyGunner::MoveAttack(float cooldown)
 {
     if (attackCooldown > 0.0f) return;
+
+    // 攻撃する向きをプレイヤーの方向へ
+    if (playerPos.x > position.x)direction = false;
+    else if (playerPos.x < position.x) direction = true;
 
     // クールダウン設定
     attackCooldown = cooldown;
@@ -297,7 +327,7 @@ void EnemyGunner::UpdateAttackState(float elapsedTime)
     // 射程距離外なら走るステートへ
     if (!CheckAttackRange())
     {
-        //TransitionRunState();
+        TransitionRunState();
     }
 }
 

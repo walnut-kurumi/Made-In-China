@@ -225,6 +225,8 @@
     <ClCompile Include="Source\EnemyGunner.cpp">
       <Filter>Source\Character\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Effect.cpp" />
+    <ClCompile Include="Source\EffectManager.cpp" />
     <ClCompile Include="Source\EnemyBulletManager.cpp">
       <Filter>Source\Character\Enemy\Bullet</Filter>
     </ClCompile>
@@ -234,6 +236,7 @@
     <ClCompile Include="Source\EnemyBullet.cpp">
       <Filter>Source\Character\Enemy\Bullet</Filter>
     </ClCompile>
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framebuffer.h" />
@@ -388,6 +391,8 @@
     <ClInclude Include="Source\EnemyGunner.h">
       <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Effect.h" />
+    <ClInclude Include="Source\EffectManager.h" />
     <ClInclude Include="Source\EnemyBulletManager.h">
       <Filter>Source\Character\Enemy\Bullet</Filter>
     </ClInclude>

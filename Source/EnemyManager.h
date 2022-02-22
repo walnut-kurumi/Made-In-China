@@ -47,6 +47,8 @@ public:
 	// ソート
 	void SortLengthSq(const DirectX::XMFLOAT3 playerPos);
 
+	void SetPlayerPos(Vec2 playerPos);
+
 private:
 	// エネミー同士の衝突処理
 	void CollisionEnemyVsEnemies();
