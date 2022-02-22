@@ -13,24 +13,27 @@ Player::Player(ID3D11Device* device) {
     const char* run = "Data/Models/Player/Animations/Running.fbx";
     const char* walk = "Data/Models/Player/Animations/Walking.fbx";
     const char* jump = "Data/Models/Player/Animations/Jump.fbx";
+    const char* attack = "Data/Models/Player/Animations/Attack.fbx";
 
     //model = new Model(device, "Data/Models/Player/Jummo/Jummo.fbx", true, 0);
     model = new Model(device, "Data/Models/Player/Jummo.fbx", true, 0);
     
 
-    model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
-    model->LoadAnimation(run, 0, static_cast<int>(State::Run));
-    model->LoadAnimation(walk, 0, static_cast<int>(State::Walk));
-    model->LoadAnimation(jump, 0, static_cast<int>(State::Jump));
+    model->LoadAnimation(idle, 0, static_cast<int>(AnimeState::Idle));
+    model->LoadAnimation(run, 0, static_cast<int>(AnimeState::Run));
+    model->LoadAnimation(walk, 0, static_cast<int>(AnimeState::Walk));
+    model->LoadAnimation(jump, 0, static_cast<int>(AnimeState::Jump));
+    model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Attack));
 
     position = { 0.0f, 0.0f, 0.0f };
 
     scale = { 0.05f, 0.05f, 0.05f };
 
-    UpdateState[static_cast<int>(State::Idle)] = &Player::UpdateIdleState;
-    UpdateState[static_cast<int>(State::Run)] = &Player::UpdateRunState;
-    UpdateState[static_cast<int>(State::Walk)] = &Player::UpdateWalkState;
-    UpdateState[static_cast<int>(State::Jump)] = &Player::UpdateJumpState;
+    UpdateState[static_cast<int>(AnimeState::Idle)] = &Player::UpdateIdleState;
+    UpdateState[static_cast<int>(AnimeState::Run)] = &Player::UpdateRunState;
+    UpdateState[static_cast<int>(AnimeState::Walk)] = &Player::UpdateWalkState;
+    UpdateState[static_cast<int>(AnimeState::Jump)] = &Player::UpdateJumpState;
+    UpdateState[static_cast<int>(AnimeState::Attack)] = &Player::UpdateAttackState;
 
     TransitionIdleState();
 
@@ -62,7 +65,7 @@ void Player::Init() {
 
     isDead = false;
 
-    slowSpeed = 0.25f;
+    slowSpeed = 0.35f;
     slow = false;
 }
 
@@ -126,7 +129,7 @@ void Player::DrawDebugGUI() {
             ImGui::SliderFloat("Speed", &moveSpeed, 0, 20);
             
             int a = static_cast<int>(state);
-            ImGui::SliderInt("State", &a, 0, static_cast<int>(State::End));
+            ImGui::SliderInt("State", &a, 0, static_cast<int>(AnimeState::End));
         }
 
         ImGui::SliderFloat("Angle X", &angle.y, DirectX::XMConvertToRadians(-180), DirectX::XMConvertToRadians(180));
@@ -241,7 +244,7 @@ void Player::InputJump() {
 
 void Player::InputSlow() {
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButton() & GamePad::BTN_B) {
+    if (gamePad.GetButton() & GamePad::BTN_RIGHT_SHOULDER) {
         slow = true;
         return;
     }
@@ -252,7 +255,7 @@ void Player::InputSB() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     // 武器を持っている場合
     if (weapon) {
-        if (gamePad.GetButtonDown() & GamePad::BTN_X) {
+        if (gamePad.GetButtonDown() & GamePad::BTN_Y) {
             // 武器を投げる
             weapon = false;
         }
@@ -265,12 +268,22 @@ void Player::InputSB() {
 
 }
 
-void Player::InputAttack() {
+bool Player::InputAttack() {
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    // 武器を持っている　
+    if (weapon) {
+        // 攻撃
+        if (gamePad.GetButtonDown() & GamePad::BTN_X) {
+
+            return true;
+        }
+    }
+    return false;
 }
 
 // 待機ステート遷移
 void Player::TransitionIdleState() {
-    state = State::Idle;
+    state = AnimeState::Idle;
     model->PlayAnimation(static_cast<int>(state),true);
 }
 
@@ -278,13 +291,15 @@ void Player::TransitionIdleState() {
 void Player::UpdateIdleState(float elapsedTime) {
     //  移動入力処理
     if (InputMove(elapsedTime)) TransitionWalkState();
+    // 攻撃入力処理
+    if (InputAttack()) TransitionAttackState();
     
     Key& key = Input::Instance().GetKey();
 }
 
 // 移動ステートへ遷移
 void Player::TransitionWalkState() {
-    state = State::Walk;
+    state = AnimeState::Walk;
     moveSpeed = 10;
     model->PlayAnimation(static_cast<int>(state),true);
 }
@@ -295,6 +310,9 @@ void Player::UpdateWalkState(float elapsedTime) {
     //  移動入力処理
     if (!InputMove(elapsedTime)) TransitionIdleState();
 
+    // 攻撃入力処理
+    if (InputAttack()) TransitionAttackState();
+
     // 走り入力処理
     if (key.STATE(VK_SHIFT)) TransitionRunState();
 
@@ -304,7 +322,7 @@ void Player::UpdateWalkState(float elapsedTime) {
 
 //走るステート遷移
 void Player::TransitionRunState() {
-    state = State::Run;
+    state = AnimeState::Run;
     moveSpeed = 15;
     model->PlayAnimation(static_cast<int>(state), true);
 }
@@ -315,6 +333,9 @@ void Player::UpdateRunState(float elapsedTime) {
     //  移動入力処理
     if (!InputMove(elapsedTime)) TransitionIdleState();
 
+    // 攻撃入力処理
+    if (InputAttack()) TransitionAttackState();
+
     // 歩き入力処理
     if (!key.STATE(VK_SHIFT)) TransitionWalkState();
 
@@ -324,38 +345,53 @@ void Player::UpdateRunState(float elapsedTime) {
 
 //回避ステート遷移
 void Player::TransitionJumpState() {
-    state = State::Jump;
+    state = AnimeState::Jump;
     model->PlayAnimation(static_cast<int>(state), false);
 }
 
 //回避ステート更新処理
 void Player::UpdateJumpState(float elapsedTime) {
+    // アニメーションが終わるまで回避行動
+    if (!model->IsPlayAnimatimon()) {
+        // 終わったらアイドル状態へ
+        TransitionIdleState();
+    }
+}
+
+void Player::TransitionAttackState() {
+    state = AnimeState::Attack;
+    // 移動を止める
+    velocity = {0, 0, 0};
+    Move(0, 0, 0);
+    // 重力を止める
+    gravFlag = false;
+    model->PlayAnimation(static_cast<int>(state), false);
+}
+
+void Player::UpdateAttackState(float elapsedTime) {
     // 入力情報を所得
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
 
     static bool first = false;
-    static float leftRight = 0.0f;
-    static float backFront = 0.0f;
     // 一回目処理
     if (!first) {
         first = true;
         // 左右どっちか
-        leftRight = ax;
-        backFront = ay;
+        AttackMove(-ax, ay, 30);
     }
-    // アニメーションが終わるまで回避行動
+
+    // アニメーションが終わるまで攻撃
     if (!model->IsPlayAnimatimon()) {
         // 終わったらアイドル状態へ
         TransitionIdleState();
         first = false;
-        leftRight = 0;
-        backFront = 0;
+        // 重力を再びオン
+        gravFlag = true;
+
+        AttackMove(0, 0, 30);
     }
-
-
-
 }
 
 void Player::OnLanding() {
