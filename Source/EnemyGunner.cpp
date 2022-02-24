@@ -116,8 +116,10 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
    
     //// 必要なったら追加
     debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 1, 0, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 1, 0, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
     //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
@@ -133,27 +135,40 @@ void EnemyGunner::MoveWalk(bool direction)
     (direction ? vx = -1 : vx = 1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
     Move(vx, 0.0f,moveSpeed);
+}
 
-    // 索敵範囲更新
-    searchAreaPos = { position.x - (10 * vx), position.y -2.0f };
-    searchAreaScale = { 35 * vx, height + 2.0f };
+// 索敵エリア更新
+void EnemyGunner::UpdateSearchArea()
+{    
+    if (!direction)
+    {        
+        searchAreaPos = { position.x - 10, position.y - 2.0f };        
+        searchAreaScale = { 35, height + 2.0f };
+    }
+    else
+    {        
+        searchAreaPos = { position.x - 35, position.y - 2.0f };        
+        searchAreaScale = { 45, height + 2.0f };
+    }    
 }
 
 // プレイヤーを索敵
 bool EnemyGunner::Search()
 {
+    // 索敵エリア更新
+    UpdateSearchArea();
     // TODO:サーチ範囲見直す　後ろ怪しい
-    //searchArea（短形） と playerPos（点）で当たり判定
-    
+    //searchArea（短形） と playerPos（点）で当たり判定    
     //当たっていたら索敵範囲内なのでtrue
     if (Collision::PointVsRect(playerPos, searchAreaPos, searchAreaScale))
     {
         if (playerPos.x > position.x)direction = false;
         else if (playerPos.x < position.x) direction = true;
+
         return true;
     }
     //当たっていなければfalse    
-    else return false;    
+    return false;
 }
 
 // 射程距離まで走る
@@ -168,10 +183,6 @@ void EnemyGunner::MoveRun(bool direction)
     (direction ? vx = -1 : vx = 1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
     Move(vx, 0.0f, moveSpeed);
-
-    // 索敵範囲更新
-    searchAreaPos = { position.x - (10 * vx), position.y - 2.0f };
-    searchAreaScale = { 35 * vx, height + 2.0f };
 }
 
 // 射程距離かどうか
@@ -240,8 +251,7 @@ void EnemyGunner::MoveBlow()
     vx /= lengthXY;
     vy /= lengthXY;
    
-    const Vec3& blowDirection = { ep.x * blowPower , ep.y * blowPower,0.0f };
-    //const Vec3& blowDirection = { vx * blowPower , vy * blowPower,0.0f };
+    const Vec3& blowDirection = { ep.x * blowPower , ep.y * blowPower,0.0f };    
    
     // 吹っ飛ばす
     AddImpulse(blowDirection);
@@ -276,6 +286,12 @@ void EnemyGunner::UpdateIdleState(float elapsedTime)
         direction = !direction;
         // 歩きステートへ移動
         TransitionWalkState();
+    }
+
+    // プレイヤー発見したら走る
+    if (Search())
+    {
+        TransitionRunState();
     }
 }
 
@@ -397,7 +413,7 @@ void EnemyGunner::TransitionBlowState()
 {
     state = State::Blow;  
 
-    blowTimer = 0.5f;
+    blowTimer = 0.3f;
 
     model->PlayAnimation(static_cast<int>(state), true);
 
@@ -409,7 +425,6 @@ void EnemyGunner::TransitionBlowState()
 //吹っ飛びステート更新処理
 void EnemyGunner::UpdateBlowState(float elapsedTime)
 {
-    // TODO:吹っ飛ばない不具合を直す
     // 吹っ飛ばす
     MoveBlow();
     

@@ -34,6 +34,8 @@ public:
 private:	
 	// 徘徊  ←左true　false右→
 	void MoveWalk(bool direction );
+	// 索敵エリア更新
+	void UpdateSearchArea();
 	// 索敵　引っかかったらtrue返す
 	bool Search();
 	// 接敵
