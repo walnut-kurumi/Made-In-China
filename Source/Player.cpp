@@ -25,13 +25,8 @@ Player::Player(ID3D11Device* device) {
     model->LoadAnimation(jump, 0, static_cast<int>(AnimeState::Jump));
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Attack));
 
-<<<<<<< HEAD
     position = { 0.0f, 0.0f, 0.0f };
     waistPos = { 0,3,0 };
-=======
-    position = { 0.0f, 0.0f, 0.0f };    
-
->>>>>>> d74dff8c496ecd730f8c4140f0fe4cb7ab6363b9
     scale = { 0.05f, 0.05f, 0.05f };
 
     UpdateState[static_cast<int>(AnimeState::Idle)] = &Player::UpdateIdleState;
@@ -106,15 +101,8 @@ void Player::Render(ID3D11DeviceContext* dc) {
     centerPosition.y += height;
 
     //// •K—v‚È‚Á‚½‚ç’Ç‰Á
-<<<<<<< HEAD
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
     if(atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, 1, Vec4(1, 1, 0, 1));
-=======
-    debugRenderer.get()->DrawSphere(centerPosition, 1, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos2, 1.5f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
->>>>>>> d74dff8c496ecd730f8c4140f0fe4cb7ab6363b9
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
