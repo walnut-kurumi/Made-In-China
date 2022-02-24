@@ -78,12 +78,7 @@ void EnemyGunner::Update(float elapsedTime)
 {
 
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
-
-       
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonDown() & GamePad::BTN_X) {
-        health = 0;          
-    }
+ 
    
     // ë¨ìxçXêV
     UpdateSpeed(elapsedTime);
