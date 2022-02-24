@@ -275,11 +275,21 @@ void Player::InputSB() {
 }
 
 bool Player::InputAttack() {
+    // “ü—Íî•ñ‚ðŠ“¾
     GamePad& gamePad = Input::Instance().GetGamePad();
+    float ax = gamePad.GetAxisLX();
+    float ay = gamePad.GetAxisLY();
+
     // •Ší‚ðŽ‚Á‚Ä‚¢‚é@
     if (weapon) {
         // UŒ‚
         if (gamePad.GetButtonDown() & GamePad::BTN_X) {
+            // UŒ‚‚ÌêŠ
+            Vec3 front = VecMath::Normalize({ transform._31,transform._32,transform._33 });
+            if (ax && ay)atkPos = { -ax, ay, 0 };
+            else atkPos = { front.x,0,0 };
+            atkPos = VecMath::Normalize(atkPos) * 5;
+            atk = true;
 
             CollisionPanchiVsEnemies();
             CollisionPanchiVsProjectile();
@@ -369,22 +379,12 @@ void Player::UpdateJumpState(float elapsedTime) {
 }
 
 void Player::TransitionAttackState() {
-    // “ü—Íî•ñ‚ðŠ“¾
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    float ax = gamePad.GetAxisLX();
-    float ay = gamePad.GetAxisLY();
-
     state = AnimeState::Attack;
     // ˆÚ“®‚ðŽ~‚ß‚é
     velocity = {0, 0, 0};
     Move(0, 0, 0);
     // d—Í‚ðŽ~‚ß‚é
     gravFlag = false;
-
-    // UŒ‚‚ÌêŠ
-    atkPos = { -ax, ay, 0 };
-    atkPos = VecMath::Normalize(atkPos) * 5;
-    atk = true;
 
     model->PlayAnimation(static_cast<int>(state), false);
 }
