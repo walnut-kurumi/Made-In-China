@@ -4,6 +4,7 @@
 #include "SceneTitle.h"
 #include "Graphics/Texture.h"
 #include "Graphics/Blender.h"
+#include"EffectManager.h"
 
 
 Framework::Framework(HWND hwnd)
@@ -24,9 +25,13 @@ bool Framework::initialize() {
 	ID3D11Device* device = gfx.GetDevice();
 	ID3D11DeviceContext* dc = gfx.GetDeviceContext();
 
+	//エフェクトマネージャー初期化
+	EffectManager::Instance().Initialize();
+
 	// シーン初期化
 	SceneManager::Instance().Init();
 	SceneManager::Instance().ChangeScene(new SceneTitle);
+
 
 	return true;
 }
@@ -53,10 +58,12 @@ void Framework::render(float elapsedTime){
 	HRESULT hr = S_OK;
 
 
-	std::lock_guard<std::mutex> lock(SceneManager::Instance().GetMutex());
+	//std::lock_guard<std::mutex> lock(SceneManager::Instance().GetMutex());
+	std::lock_guard<std::mutex> lock(Graphics::Ins().GetMutex());
 	ID3D11DeviceContext* dc = gfx.GetDeviceContext();
 	ID3D11RenderTargetView* rtv = gfx.GetRenderTargetView();	
-	ID3D11DepthStencilView* dsv = gfx.GetDepthStencilView();		
+	ID3D11DepthStencilView* dsv = gfx.GetDepthStencilView();
+
 
 	FLOAT color[] = { 0.6f,0.6f,0.6f,1.0f };
 	dc->ClearRenderTargetView(rtv, color);
@@ -86,6 +93,8 @@ void Framework::render(float elapsedTime){
 
 
 bool Framework::uninitialize(){
+	//エフェクトマネージャー終了化
+	EffectManager::Instance().Finalize();
 	releaseAllTextures();
 	return true;
 }

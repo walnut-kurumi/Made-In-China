@@ -14,6 +14,8 @@
 
 #include "Framework.h"
 
+#include"EffectManager.h"
+
 // 初期化
 void SceneGame::Initialize()
 {
@@ -65,8 +67,8 @@ void SceneGame::Update(float elapsedTime)
 
     // なにかボタンを押したらゲームシーン切り替え
     const GamePadButton anyButton =
-        GamePad::BTN_A
-        | GamePad::BTN_B
+        /*GamePad::BTN_A
+        | */GamePad::BTN_B
         | GamePad::BTN_BACK
         | GamePad::BTN_DOWN
         | GamePad::BTN_LEFT
@@ -106,6 +108,9 @@ void SceneGame::Update(float elapsedTime)
     EnemyManager::Instance().SetPlayerPos(Vec2(player->GetPosition().x, player->GetPosition().y));
     // プレイヤー攻撃方向取得
     EnemyManager::Instance().SetPlayerAttackDirection(Vec2(player->GetMoveVec().x, player->GetMoveVec().y));
+
+    //エフェクト更新処理
+    EffectManager::Instance().Update(elapsedTime);
 }
 
 // 描画処理
@@ -114,6 +119,7 @@ void SceneGame::Render(float elapsedTime)
     Graphics& gfx = Graphics::Ins();
     ID3D11Device* device = gfx.GetDevice();
     ID3D11DeviceContext* dc = gfx.GetDeviceContext();    
+    CameraManager& cameraMgr = CameraManager::Instance();
 
  
     // モデル描画
@@ -131,6 +137,11 @@ void SceneGame::Render(float elapsedTime)
         player->DrawDebugGUI();        
     }
     
+    //3Dエフェクト描画
+    {
+        EffectManager::Instance().Render(cameraMgr.GetView(), cameraMgr.GetProjection());
+    }
+
     // 2D描画
     {
     }

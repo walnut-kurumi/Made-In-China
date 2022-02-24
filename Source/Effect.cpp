@@ -5,6 +5,11 @@
 //コンストラクタ
 Effect::Effect(const char* filename)
 {
+	// エフェクトを読み込みする前にロックする
+	// ※マルチスレッドでEffectを作成するとDeviceContextを同時アクセスして
+	// フリーズする可能性があるので排他制御する
+	std::lock_guard<std::mutex> lock(Graphics::Ins().GetMutex());
+
 	//Effekseerのリソースを読み込む
 	//EffekseerはUTF-16のファイルパス以外は対応していないため文字コード変換が必要
 	char16_t utf16Filename[256];
@@ -14,7 +19,7 @@ Effect::Effect(const char* filename)
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
 
 	//Effekseerエフェクトを読み込み
-	effekseerEffect = Effekseer::Effect::Create(effekseerManager, (EFK_CHAR*)utf16Filename);
+	effekseerEffect = Effekseer::Effect::Create(effekseerManager, (const char16_t*)utf16Filename);
 }
 
 //デストラクタ
