@@ -23,7 +23,7 @@ Player::Player(ID3D11Device* device) {
     model->LoadAnimation(walk, 0, static_cast<int>(State::Walk));
     model->LoadAnimation(jump, 0, static_cast<int>(State::Jump));
 
-    position = { 0.0f, 0.0f, 0.0f };
+    position = { 0.0f, 0.0f, 0.0f };    
 
     scale = { 0.05f, 0.05f, 0.05f };
 
@@ -94,9 +94,11 @@ void Player::Render(ID3D11DeviceContext* dc) {
     //model->Begin(dc, Shaders::Ins()->GetRampShader());
     model->Render(dc);
 
+    centerPosition = position;
+    centerPosition.y += height;
 
     //// •K—v‚È‚Á‚½‚ç’Ç‰Á
-    debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
+    debugRenderer.get()->DrawSphere(centerPosition, 1, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos2, 1.5f, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));

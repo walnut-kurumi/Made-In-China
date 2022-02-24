@@ -125,8 +125,8 @@ void Character::UpdateVerticalVelocitiy(float elapsedFrame)
     velocity.y += gravity * elapsedFrame;
 
     // Å‘å’lˆ—
-    if (velocity.y < velocityMax)
-        velocity.y = velocityMax;
+    /*if (velocity.y < velocityMax)
+        velocity.y = velocityMax;*/
 }
 
 void Character::UpdateVerticalMove(float elapsedTime)

@@ -48,6 +48,7 @@ public:
 	void SortLengthSq(const DirectX::XMFLOAT3 playerPos);
 
 	void SetPlayerPos(Vec2 playerPos);
+	void SetPlayerAttackDirection(Vec2 attackDirection);
 
 private:
 	// エネミー同士の衝突処理

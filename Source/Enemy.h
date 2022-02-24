@@ -26,6 +26,7 @@ public:
 	float GetLengthSq()const { return lengthSq; }
 
 	void SetPlayerPos(Vec2 player) { playerPos = player; };
+	void SetPlayerATKDirection(Vec2 pAtkD) { playerAttackDirection = pAtkD; };
 
 protected:
 	float lengthSq = 0;
@@ -35,6 +36,8 @@ protected:
 
 	// プレイヤーの座標
 	Vec2 playerPos = {};
+	// プレイヤーの攻撃方向
+	Vec2 playerAttackDirection = {};
 
 	// デバッグ
 	std::unique_ptr<DebugRenderer> debugRenderer;

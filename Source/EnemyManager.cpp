@@ -101,6 +101,14 @@ void EnemyManager::SetPlayerPos(Vec2 playerPos)
 	}
 }
 
+void EnemyManager::SetPlayerAttackDirection(Vec2 attackDirection)
+{
+	for (Enemy* enemy : enemies)
+	{
+		enemy->SetPlayerATKDirection(attackDirection);
+	}
+}
+
 // エネミー同士の衝突処理
 void EnemyManager::CollisionEnemyVsEnemies()
 {
