@@ -79,12 +79,10 @@ void EnemyGunner::Update(float elapsedTime)
 
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
-   const Vec3& im = { -5,5,0 };
-    
+       
     GamePad& gamePad = Input::Instance().GetGamePad();
     if (gamePad.GetButtonDown() & GamePad::BTN_X) {
-        health = 0;
-        AddImpulse(im);
+        health = 0;          
     }
    
     // 速度更新
@@ -225,14 +223,16 @@ void EnemyGunner::MoveAttack(float cooldown)
 void EnemyGunner::MoveBlow()
 {    
     // プレイヤーの攻撃方向へ吹き飛ばす
-    const float blowPower = 10.0f;
-    Vec3 blowDirection = {};
- 
+    const float blowPower = 0.15f;
+    
     // プレイヤーの中心座標
     const Vec3& p = { playerPos.x,playerPos.y,0.0f };
     // エネミーの中心座標
     const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
 
+
+    Vec3 ep = { e - p };
+    VecMath::Normalize(ep);
 
     float vx = e.x - p.x;
     float vy = e.y - p.y;
@@ -240,10 +240,10 @@ void EnemyGunner::MoveBlow()
     vx /= lengthXY;
     vy /= lengthXY;
    
-    blowDirection.x = vx * blowPower;
-    blowDirection.y = vy * blowPower;
-    blowDirection.z = 0.0f;
-
+    const Vec3& blowDirection = { ep.x * blowPower , ep.y * blowPower,0.0f };
+    //const Vec3& blowDirection = { vx * blowPower , vy * blowPower,0.0f };
+   
+    // 吹っ飛ばす
     AddImpulse(blowDirection);
  
 }
@@ -397,7 +397,7 @@ void EnemyGunner::TransitionBlowState()
 {
     state = State::Blow;  
 
-    blowTimer = 0.4f;
+    blowTimer = 0.5f;
 
     model->PlayAnimation(static_cast<int>(state), true);
 
@@ -430,6 +430,7 @@ void EnemyGunner::TransitionDeathState()
     // 止まる
     moveSpeed = 0;
     Move(0.0f, 0.0f, moveSpeed);
+    velocity = { 0,0,0 };
 }
 
 //死亡ステート更新処理

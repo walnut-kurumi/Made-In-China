@@ -118,7 +118,7 @@ private:
 	float attackCooldown = 0;
 
 	// ‚Á”ò‚Î‚·ŠÔ
-	float blowTimer = 0;
+	float blowTimer = 0;	
 
 	// ˆÚ“®‚·‚éŒü‚«
 	bool direction = false;
