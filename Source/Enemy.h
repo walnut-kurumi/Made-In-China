@@ -31,9 +31,6 @@ public:
 protected:
 	float lengthSq = 0;
 
-	// 弾マネ
-	EnemyBulletManager bulletManager;
-
 	// プレイヤーの座標
 	Vec2 playerPos = {};
 	// プレイヤーの攻撃方向

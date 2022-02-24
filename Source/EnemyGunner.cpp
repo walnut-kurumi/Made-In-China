@@ -92,7 +92,7 @@ void EnemyGunner::Update(float elapsedTime)
     UpdateInvincibleTimer(elapsedTime);
 
     // 弾丸更新処理
-    bulletManager.Update(elapsedTime);
+    EnemyBulletManager::Instance().Update(elapsedTime);
 
     //オブジェクト行列更新
     UpdateTransform();
@@ -108,7 +108,7 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
     model->Render(dc);
 
     // 弾丸描画処理
-    bulletManager.Render(dc, shader);
+    EnemyBulletManager::Instance().Render(dc, shader);
 
     // 中心座標更新
     centerPosition = position;
@@ -214,7 +214,7 @@ void EnemyGunner::MoveAttack(float cooldown)
         dir.y = 0.0f;
         dir.z = 0.0f;       
         // 発射
-        EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &bulletManager);
+        EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
         bullet->Launch(dir, centerPosition);        
     }
 }

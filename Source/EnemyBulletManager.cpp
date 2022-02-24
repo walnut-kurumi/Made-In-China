@@ -1,9 +1,6 @@
 #include "EnemyBulletManager.h"
 
 
-EnemyBulletManager::EnemyBulletManager()
-{
-}
 
 EnemyBulletManager::~EnemyBulletManager()
 {
