@@ -437,7 +437,7 @@ void EnemyGunner::TransitionBlowState()
 
     blowTimer = 0.3f;
 
-    model->PlayAnimation(static_cast<int>(state), true);
+    model->PlayAnimation(static_cast<int>(state), false);
 
     // 止まる
     moveSpeed = 0;
@@ -453,8 +453,8 @@ void EnemyGunner::UpdateBlowState(float elapsedTime)
     // 吹き飛ばしタイマー更新
     if (blowTimer > 0.0f)blowTimer -= elapsedTime;    
 
-    // 吹っ飛ばしたら死亡ステートへ
-    if(blowTimer < 0.0f)TransitionDeathState();
+    // 吹っ飛ばしたら死亡ステートへ               
+    if (blowTimer < 0.0f)TransitionDeathState();    
 }
 
 
@@ -462,7 +462,7 @@ void EnemyGunner::UpdateBlowState(float elapsedTime)
 void EnemyGunner::TransitionDeathState()
 {
     state = State::Death;    
-    model->PlayAnimation(static_cast<int>(state), true);
+    model->PlayAnimation(static_cast<int>(state), false);
 
     // 止まる
     moveSpeed = 0;
@@ -475,4 +475,8 @@ void EnemyGunner::UpdateDeathState(float elapsedTime)
 {    
    // 死亡アニメーション終わったら消滅させる
     OnDead();
+    if (!model->IsPlayAnimatimon())
+    {
+        Destroy();
+    }
 }
