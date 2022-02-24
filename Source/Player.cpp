@@ -26,7 +26,7 @@ Player::Player(ID3D11Device* device) {
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Attack));
 
     position = { 0.0f, 0.0f, 0.0f };
-
+    waistPos = { 0,3,0 };
     scale = { 0.05f, 0.05f, 0.05f };
 
     UpdateState[static_cast<int>(AnimeState::Idle)] = &Player::UpdateIdleState;
@@ -100,9 +100,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
 
     //// 必要なったら追加
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos2, 1.5f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
+    if(atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, 1, Vec4(1, 1, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
@@ -359,12 +357,23 @@ void Player::UpdateJumpState(float elapsedTime) {
 }
 
 void Player::TransitionAttackState() {
+    // 入力情報を所得
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    float ax = gamePad.GetAxisLX();
+    float ay = gamePad.GetAxisLY();
+
     state = AnimeState::Attack;
     // 移動を止める
     velocity = {0, 0, 0};
     Move(0, 0, 0);
     // 重力を止める
     gravFlag = false;
+
+    // 攻撃の場所
+    atkPos = { -ax, ay, 0 };
+    atkPos = VecMath::Normalize(atkPos) * 5;
+    atk = true;
+
     model->PlayAnimation(static_cast<int>(state), false);
 }
 
@@ -382,7 +391,7 @@ void Player::UpdateAttackState(float elapsedTime) {
         AttackMove(-ax, ay, 30);
     }
 
-    // アニメーションが終わるまで攻撃
+    // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
         // 終わったらアイドル状態へ
         TransitionIdleState();
@@ -391,6 +400,9 @@ void Player::UpdateAttackState(float elapsedTime) {
         gravFlag = true;
 
         AttackMove(0, 0, 30);
+
+        atkPos = { 0,0,0};
+        atk = false;
     }
 }
 

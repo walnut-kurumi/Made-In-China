@@ -91,6 +91,8 @@ private:
 private:
 	// 攻撃判定用
 	Vec3 atkPos{};
+	Vec3 waistPos{};
+	bool atk = false;
 
 
 	float moveSpeed = 20.0f;
