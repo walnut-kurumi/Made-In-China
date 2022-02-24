@@ -41,6 +41,17 @@ void Character::Move(float vx, float vz, float speed)
     maxMoveSpeed = speed;
 }
 
+void Character::AttackMove(float vx, float vy, float speed)
+{
+    // 移動方向ベクトル設定
+    moveVecX = vx;
+    moveVecY = vy;
+
+    // 最大速度設定
+    maxMoveSpeed = speed;
+}
+
+
 void Character::Turn(float elapsedTime, float vx, float vz, float speed)
 {
     speed *= elapsedTime;
@@ -122,7 +133,8 @@ void Character::UpdateInvincibleTimer(float elapsedTime)
 void Character::UpdateVerticalVelocitiy(float elapsedFrame)
 {
     // 移動処理
-    velocity.y += gravity * elapsedFrame;
+    if(moveVecY) velocity.y = moveVecY * elapsedFrame* maxMoveSpeed;
+    if(gravFlag) velocity.y += gravity * elapsedFrame;
 
     // 最大値処理
     /*if (velocity.y < velocityMax)
@@ -211,14 +223,14 @@ void Character::AddImpulse(const Vec3& impulse)
 #include <math.h>
 
 // 水平速力更新処理
-void Character::UpdateHorizontalVelocity(float elapsedTime)
+void Character::UpdateHorizontalVelocity(float elapsedFrame)
 {
     moveVecX = min(moveVecX, maxMoveSpeed);
     moveVecZ = min(moveVecZ, maxMoveSpeed);
 
 
-    velocity.x = moveVecX * elapsedTime * maxMoveSpeed;
-    velocity.z = moveVecZ * elapsedTime * maxMoveSpeed;
+    velocity.x = moveVecX * elapsedFrame * maxMoveSpeed;
+    velocity.z = moveVecZ * elapsedFrame * maxMoveSpeed;
 
     // 下り坂でガタガタしないのが描いてある
 

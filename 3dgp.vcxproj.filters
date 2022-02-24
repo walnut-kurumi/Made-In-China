@@ -2,94 +2,94 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <FxCompile Include="shader\BlurPs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\debug_ps.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\debug_vs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\DestructionGs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\DestructionPs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\DestructionVs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\FullscreenQuadPS.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\FullscreenQuadVS.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\GeometricPrimitivePs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\GeometricPrimitiveVs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\GrassDs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\GrassGs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\GrassHs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\GrassPs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\GrassVs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\LuminanceExtractionPS.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\OutLineGs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\OutLinePs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\OutLineVs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\RampPs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\RampVs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\ShadowmapCasterVS.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\SkinnedMeshPs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\SkinnedMeshVs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\SkyboxPs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\SkyboxVs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\SpritePs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\SpriteVs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\StaticMeshPs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\StaticMeshVs.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +123,24 @@
     <ClCompile Include="Source\DebugRenderer.cpp">
       <Filter>Source\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Enemy.cpp">
+      <Filter>Source\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyBullet.cpp">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyBulletManager.cpp">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyBulletStraight.cpp">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyGunner.cpp">
+      <Filter>Source\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemyManager.cpp">
+      <Filter>Source\Character\Enemy</Filter>
+    </ClCompile>
     <ClCompile Include="Source\FullscreenQuad.cpp">
       <Filter>Source\Graphics</Filter>
     </ClCompile>
@@ -136,31 +154,43 @@
       <Filter>Source\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_draw.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_dx11.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_impl_win32.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_ja_gryph_ranges.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_widgets.cpp">
-      <Filter>Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Input\Input.cpp">
-      <Filter>Source\Input</Filter>
+      <Filter>imgui</Filter>
     </ClCompile>
     <ClCompile Include="Source\Input\Keyboard.cpp">
       <Filter>Source\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Input\Input.cpp">
+      <Filter>Source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Model.cpp">
+      <Filter>Source\Character</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Input\Mouse.cpp">
       <Filter>Source\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Effect.cpp">
+      <Filter>Source\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EffectManager.cpp">
+      <Filter>Source\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Player.cpp">
+      <Filter>Source\Character\Player</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneGame.cpp">
       <Filter>Source\Scenes</Filter>
@@ -207,32 +237,8 @@
     <ClCompile Include="Source\Graphics\Texture.cpp">
       <Filter>Source\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Model.cpp">
-      <Filter>Source\Character</Filter>
-    </ClCompile>
     <ClCompile Include="Source\ResourceManager.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Enemy.cpp">
-      <Filter>Source\Character\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EnemyManager.cpp">
-      <Filter>Source\Character\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Player.cpp">
-      <Filter>Source\Character\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EnemyGunner.cpp">
-      <Filter>Source\Character\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EnemyBulletManager.cpp">
-      <Filter>Source\Character\Enemy\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EnemyBulletStraight.cpp">
-      <Filter>Source\Character\Enemy\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\EnemyBullet.cpp">
-      <Filter>Source\Character\Enemy\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -265,6 +271,9 @@
     <ClInclude Include="Source\Collision.h">
       <Filter>Source\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="Source\DebugRenderer.h">
+      <Filter>Source\Debug</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Graphics\Blender.h">
       <Filter>Source\Graphics</Filter>
     </ClInclude>
@@ -274,8 +283,23 @@
     <ClInclude Include="Source\Graphics\ConstantBufferTypes.h">
       <Filter>Source\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\DebugRenderer.h">
-      <Filter>Source\Debug</Filter>
+    <ClInclude Include="Source\Enemy.h">
+      <Filter>Source\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyBullet.h">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyBulletManager.h">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyBulletStraight.h">
+      <Filter>Source\Character\Enemy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyGunner.h">
+      <Filter>Source\Character\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyManager.h">
+      <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\FullscreenQuad.h">
       <Filter>Source\Graphics</Filter>
@@ -290,37 +314,52 @@
       <Filter>Source\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imconfig.h">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui.h">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_dx11.h">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_impl_win32.h">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imgui_internal.h">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_rectpack.h">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_textedit.h">
-      <Filter>Imgui</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui\imstb_truetype.h">
-      <Filter>Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Input\Input.h">
-      <Filter>Source\Input</Filter>
+      <Filter>imgui</Filter>
     </ClInclude>
     <ClInclude Include="Source\Input\Keyboard.h">
       <Filter>Source\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Input\Input.h">
+      <Filter>Source\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Model.h">
+      <Filter>Source\Character</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Input\Mouse.h">
       <Filter>Source\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Effect.h">
+      <Filter>Source\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectManager.h">
+      <Filter>Source\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Player.h">
+      <Filter>Source\Character\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene.h">
+      <Filter>Source\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneGame.h">
       <Filter>Source\Scenes</Filter>
@@ -332,9 +371,6 @@
       <Filter>Source\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneTitle.h">
-      <Filter>Source\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Scene.h">
       <Filter>Source\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\Shader.h">
@@ -370,120 +406,99 @@
     <ClInclude Include="Source\Graphics\Texture.h">
       <Filter>Source\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Model.h">
-      <Filter>Source\Character</Filter>
-    </ClInclude>
     <ClInclude Include="Source\ResourceManager.h">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Enemy.h">
-      <Filter>Source\Character\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EnemyManager.h">
-      <Filter>Source\Character\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Player.h">
-      <Filter>Source\Character\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EnemyGunner.h">
-      <Filter>Source\Character\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EnemyBulletManager.h">
-      <Filter>Source\Character\Enemy\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EnemyBulletStraight.h">
-      <Filter>Source\Character\Enemy\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\EnemyBullet.h">
-      <Filter>Source\Character\Enemy\Bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\Constants.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\debug.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\Destruction.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\FullscreenQuad.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\GeometricPrimitive.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\Grass.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\OutLine.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\Ramp.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\RenderingEquation.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\SkinnedMesh.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\Skybox.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\Sprite.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
     <None Include="shader\StaticMesh.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Shader</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{9ee45806-d3d7-49f6-b01a-951a19ccdde0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source">
-      <UniqueIdentifier>{ff0288f5-29b0-4c5f-ba87-e423e08197a4}</UniqueIdentifier>
+      <UniqueIdentifier>{bfeca716-1a1f-425a-bb6f-11efa5037e75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{d5a0cf11-3868-45dd-bded-039506e92303}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Audio">
-      <UniqueIdentifier>{74e16366-af76-4fa4-bd1a-4f035dba0f34}</UniqueIdentifier>
+      <UniqueIdentifier>{c394f5d3-7093-4ccd-9c4c-fe259098d34b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Camera">
-      <UniqueIdentifier>{5fcdecd6-d95e-49af-a6a6-796d78410504}</UniqueIdentifier>
+      <UniqueIdentifier>{32793d27-dcb2-4c72-84ba-f181e6302070}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Character">
-      <UniqueIdentifier>{60954929-f86e-4aba-9593-452c2036e1d8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Collision">
-      <UniqueIdentifier>{3ec5b729-85b8-4f60-8412-4b2a8b0a873d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Debug">
-      <UniqueIdentifier>{89cccc70-3a52-4bf4-860c-71afa30c4d17}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Graphics">
-      <UniqueIdentifier>{e0911176-9ec8-44c2-a659-ed3d5a2f36cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Input">
-      <UniqueIdentifier>{edbe8417-1a9c-4c38-9751-50013a2abe4c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Scenes">
-      <UniqueIdentifier>{402d5716-70fa-47cb-972f-13974005fbcc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Stages">
-      <UniqueIdentifier>{dbc2aa75-41c2-4a51-91a4-547cc8cdb0d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui">
-      <UniqueIdentifier>{2b288803-5ad1-4662-81f3-9ff9d1dc2a69}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Character\Enemy">
-      <UniqueIdentifier>{ae7b50dd-1052-47b2-840e-8db103108fa9}</UniqueIdentifier>
+      <UniqueIdentifier>{88ca9e35-6721-4782-b881-45f517c7106d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Character\Player">
-      <UniqueIdentifier>{101dffe8-15d5-4059-ad7f-e3292d945ef9}</UniqueIdentifier>
+      <UniqueIdentifier>{abf91a74-36b6-4a86-ac6f-e2a788e4abd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Character\Enemy">
+      <UniqueIdentifier>{ae46d7d0-95e2-479e-9066-76e18358e77c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Character\Enemy\Bullet">
-      <UniqueIdentifier>{6eee86dc-3585-41ee-ac32-91500a79fa5e}</UniqueIdentifier>
+      <UniqueIdentifier>{fbbfa7e6-370a-4fa4-b152-2242b3e0cb24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Collision">
+      <UniqueIdentifier>{4724d3ca-90f7-42dc-8d8b-8e5343da1d37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Debug">
+      <UniqueIdentifier>{4a6ce9e8-456c-4379-aa07-15f350489b2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Graphics">
+      <UniqueIdentifier>{defdcb5b-8b54-4275-8e04-47130dc18931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Input">
+      <UniqueIdentifier>{194bf04d-19d4-4e66-a31a-6707099761ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{53261cbf-5aec-4d1f-b786-2ed524126394}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Effect">
+      <UniqueIdentifier>{af7be389-405c-4cd6-929e-3cc702ef8d2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scenes">
+      <UniqueIdentifier>{424f9949-46ae-4f30-8441-74201d15fdf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Stages">
+      <UniqueIdentifier>{3ed1787a-0a1d-47c5-872a-3e99ea613dd9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

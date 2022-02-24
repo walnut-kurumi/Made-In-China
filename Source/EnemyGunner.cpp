@@ -80,16 +80,14 @@ void EnemyGunner::Update(float elapsedTime)
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
    const Vec3& im = { -5,5,0 };
-
     
-
     GamePad& gamePad = Input::Instance().GetGamePad();
     if (gamePad.GetButtonDown() & GamePad::BTN_X) {
         health = 0;
         AddImpulse(im);
     }
-
-    // 速度更新    
+   
+    // 速度更新
     UpdateSpeed(elapsedTime);
 
     // 無敵時間更新
@@ -398,7 +396,9 @@ void EnemyGunner::AttackCooldownUpdate(float elapsedTime)
 void EnemyGunner::TransitionBlowState()
 {
     state = State::Blow;  
+
     blowTimer = 0.4f;
+
     model->PlayAnimation(static_cast<int>(state), true);
 
     // 止まる
@@ -434,7 +434,7 @@ void EnemyGunner::TransitionDeathState()
 
 //死亡ステート更新処理
 void EnemyGunner::UpdateDeathState(float elapsedTime)
-{   
-    // 死亡アニメーション終わったら消滅させる
+{    
+   // 死亡アニメーション終わったら消滅させる
     OnDead();
 }

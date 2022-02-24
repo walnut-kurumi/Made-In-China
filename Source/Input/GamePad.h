@@ -18,10 +18,10 @@ public:
 	static const GamePadButton BTN_BACK				= (1 <<  9);
 	static const GamePadButton BTN_LEFT_THUMB		= (1 << 10);
 	static const GamePadButton BTN_RIGHT_THUMB		= (1 << 11);
-	static const GamePadButton BTN_LEFT_SHOULDER	= (1 << 12);
-	static const GamePadButton BTN_RIGHT_SHOULDER	= (1 << 13);
-	static const GamePadButton BTN_LEFT_TRIGGER		= (1 << 14);
-	static const GamePadButton BTN_RIGHT_TRIGGER	= (1 << 15);
+	static const GamePadButton BTN_LEFT_SHOULDER	= (1 << 12); // Žè‘O
+	static const GamePadButton BTN_RIGHT_SHOULDER	= (1 << 13); // Žè‘O
+	static const GamePadButton BTN_LEFT_TRIGGER		= (1 << 14); // ‰œ
+	static const GamePadButton BTN_RIGHT_TRIGGER	= (1 << 15); // ‰œ
 	static const GamePadButton BTN_W				= (1 << 16);
 	static const GamePadButton BTN_S				= (1 << 17);	
 
