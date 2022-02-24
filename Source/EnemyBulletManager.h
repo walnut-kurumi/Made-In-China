@@ -7,8 +7,16 @@
 class EnemyBulletManager
 {
 public:
-	EnemyBulletManager();
+	EnemyBulletManager() {};
 	~EnemyBulletManager();
+
+	// 唯一のインスタンス取得
+	static EnemyBulletManager& Instance()
+	{
+		static EnemyBulletManager instance;
+		return instance;
+	}
+
 	// 更新処理
 	void Update(float elapsedTime);
 	// 描画処理

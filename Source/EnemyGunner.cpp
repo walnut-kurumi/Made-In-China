@@ -16,8 +16,7 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
     const char* death = "Data/Models/Enemy/Animations/Death.fbx";
 
-
-    model = new Model(device, "Data/Models/Enemy/Jummo.fbx", true, 0);
+    model = new Model(device, "Data/Models/Player/Jummo.fbx", true, 0);
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(State::Run));
@@ -76,13 +75,11 @@ void EnemyGunner::Init()
 
 void EnemyGunner::Update(float elapsedTime)
 {
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonDown() & GamePad::BTN_A)TransitionBlowState();
 
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
-
-    // 死んでたら 吹っ飛びステートへ
-    if (health <= 0) TransitionBlowState();
+ 
+    // 反射した弾丸との衝突判定
+    CollisionProjectileVsEnemies();
 
     // 速度更新
     UpdateSpeed(elapsedTime);
@@ -91,7 +88,7 @@ void EnemyGunner::Update(float elapsedTime)
     UpdateInvincibleTimer(elapsedTime);
 
     // 弾丸更新処理
-    bulletManager.Update(elapsedTime);
+    EnemyBulletManager::Instance().Update(elapsedTime);
 
     //オブジェクト行列更新
     UpdateTransform();
@@ -107,7 +104,7 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
     model->Render(dc);
 
     // 弾丸描画処理
-    bulletManager.Render(dc, shader);
+    EnemyBulletManager::Instance().Render(dc, shader);
 
     // 中心座標更新
     centerPosition = position;
@@ -115,14 +112,37 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
    
     //// 必要なったら追加
     debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y,+5.0), 1.0f, Vec4(0, 1, 0, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,+5.0), 1.0f, Vec4(0, 1, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+    
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 
+// 反射した弾丸との衝突判定
+void EnemyGunner::CollisionProjectileVsEnemies()
+{
+    EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();
+    int enemyBCount = enemyBManager.GetProjectileCount();
+    for (int i = 0; i < enemyBCount; ++i)
+    {
+        EnemyBullet* enemyB = enemyBManager.GetProjectile(i);
+        // 衝突処理
+        if (Collision::SphereVsSphere(enemyB->GetPosition(), centerPosition, enemyB->GetRadius(), radius))
+        {
+            // 反射してたら
+            if (enemyB->GetReflectionFlag())
+            {
+                // ダメージ与える
+                ApplyDamage(1, 0.0f);
+
+                enemyBManager.Remove(enemyB);
+            }
+        }
+    }
+}
 
 // 徘徊  ←左true　false右→
 void EnemyGunner::MoveWalk(bool direction)
@@ -132,26 +152,39 @@ void EnemyGunner::MoveWalk(bool direction)
     (direction ? vx = -1 : vx = 1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
     Move(vx, 0.0f,moveSpeed);
+}
 
-    // 索敵範囲更新
-    searchAreaPos = { position.x - (10 * vx), position.y -2.0f };
-    searchAreaScale = { 35 * vx, height + 2.0f };
+// 索敵エリア更新
+void EnemyGunner::UpdateSearchArea()
+{    
+    if (!direction)
+    {        
+        searchAreaPos = { position.x - 10, position.y - 2.0f };        
+        searchAreaScale = { 35, height + 2.0f };
+    }
+    else
+    {        
+        searchAreaPos = { position.x - 35, position.y - 2.0f };        
+        searchAreaScale = { 45, height + 2.0f };
+    }    
 }
 
 // プレイヤーを索敵
 bool EnemyGunner::Search()
 {
-    //searchArea（短形） と playerPos（点）で当たり判定
-    
+    // 索敵エリア更新
+    UpdateSearchArea();    
+    //searchArea（短形） と playerPos（点）で当たり判定    
     //当たっていたら索敵範囲内なのでtrue
     if (Collision::PointVsRect(playerPos, searchAreaPos, searchAreaScale))
     {
         if (playerPos.x > position.x)direction = false;
         else if (playerPos.x < position.x) direction = true;
+
         return true;
     }
     //当たっていなければfalse    
-    else return false;    
+    return false;
 }
 
 // 射程距離まで走る
@@ -166,10 +199,6 @@ void EnemyGunner::MoveRun(bool direction)
     (direction ? vx = -1 : vx = 1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
     Move(vx, 0.0f, moveSpeed);
-
-    // 索敵範囲更新
-    searchAreaPos = { position.x - (10 * vx), position.y - 2.0f };
-    searchAreaScale = { 35 * vx, height + 2.0f };
 }
 
 // 射程距離かどうか
@@ -199,20 +228,27 @@ void EnemyGunner::MoveAttack(float cooldown)
 
     ID3D11Device* device = Graphics::Ins().GetDevice();
     
+    // TODO:プレイヤーの中心座標に向けて発射
     // 直進弾丸発射   
     {
+        // 体の向き
         float vx;
         (direction ? vx = -1 : vx = 1);
         angle.y = DirectX::XMConvertToRadians(90 * vx);
 
-        // 発射する向き
-        DirectX::XMFLOAT3 dir;
-        dir.x = vx;
-        dir.y = 0.0f;
-        dir.z = 0.0f;       
+        // プレイヤーの中心座標
+        const Vec3& p = { playerPos.x,playerPos.y,0.0f };
+        // エネミーの中心座標
+        const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
+
+        // 発射する向き       
+        // プレイヤーに向かって
+        Vec3 pe = { p - e };
+        VecMath::Normalize(pe);
+
         // 発射
-        EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &bulletManager);
-        bullet->Launch(dir, centerPosition);        
+        EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
+        bullet->Launch(pe, centerPosition);        
     }
 }
 
@@ -220,9 +256,26 @@ void EnemyGunner::MoveAttack(float cooldown)
 void EnemyGunner::MoveBlow()
 {    
     // プレイヤーの攻撃方向へ吹き飛ばす
-    float blowPower = 25.0f;
-    //Vec3 blowDirection = { playerAttackDirection.x * blowPower,playerAttackDirection.y * blowPower,0.0f };
-    Vec3 blowDirection = { 10.0f* blowPower,0.0f,0.0f };
+    const float blowPower = 0.15f;
+    
+    // プレイヤーの中心座標
+    const Vec3& p = { playerPos.x,playerPos.y,0.0f };
+    // エネミーの中心座標
+    const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
+
+
+    Vec3 ep = { e - p };
+    VecMath::Normalize(ep);
+
+    float vx = e.x - p.x;
+    float vy = e.y - p.y;
+    float lengthXY = sqrtf(vx * vx + vy * vy);
+    vx /= lengthXY;
+    vy /= lengthXY;
+   
+    const Vec3& blowDirection = { ep.x * blowPower , ep.y * blowPower,0.0f };    
+   
+    // 吹っ飛ばす
     AddImpulse(blowDirection);
  
 }
@@ -243,7 +296,9 @@ void EnemyGunner::TransitionIdleState()
 // 待機ステート更新処理
 void EnemyGunner::UpdateIdleState(float elapsedTime)
 {   
- 
+    // 死んでたら 吹っ飛びステートへ
+    if (health <= 0) TransitionBlowState();
+
     Move(0.0f, 0.0f, moveSpeed);
     IdleTimerUpdate(elapsedTime);
 
@@ -253,6 +308,12 @@ void EnemyGunner::UpdateIdleState(float elapsedTime)
         direction = !direction;
         // 歩きステートへ移動
         TransitionWalkState();
+    }
+
+    // プレイヤー発見したら走る
+    if (Search())
+    {
+        TransitionRunState();
     }
 }
 
@@ -278,6 +339,9 @@ void EnemyGunner::TransitionWalkState()
 // 移動ステート更新処理
 void EnemyGunner::UpdateWalkState(float elapsedTime)
 {   
+    // 死んでたら 吹っ飛びステートへ
+    if (health <= 0) TransitionBlowState();
+
     // 徘徊
     if (walkFlag)
     {
@@ -317,6 +381,9 @@ void EnemyGunner::TransitionRunState()
 //走るステート更新処理
 void EnemyGunner::UpdateRunState(float elapsedTime)
 {    
+    // 死んでたら 吹っ飛びステートへ
+    if (health <= 0) TransitionBlowState();
+
     // 射程距離内なら攻撃ステートへ
     if (CheckAttackRange())
     {
@@ -339,6 +406,9 @@ void EnemyGunner::TransitionAttackState()
 //攻撃ステート更新処理
 void EnemyGunner::UpdateAttackState(float elapsedTime)
 {
+    // 死んでたら 吹っ飛びステートへ
+    if (health <= 0) TransitionBlowState();
+
     // 止まる
     Move(0.0f, 0.0f, moveSpeed);
     // 攻撃      
@@ -364,8 +434,14 @@ void EnemyGunner::AttackCooldownUpdate(float elapsedTime)
 void EnemyGunner::TransitionBlowState()
 {
     state = State::Blow;  
-    blowTimer = 1.0f;
+
+    blowTimer = 0.3f;
+
     model->PlayAnimation(static_cast<int>(state), true);
+
+    // 止まる
+    moveSpeed = 0;
+    Move(0.0f, 0.0f, moveSpeed);
 }
 
 //吹っ飛びステート更新処理
@@ -385,16 +461,18 @@ void EnemyGunner::UpdateBlowState(float elapsedTime)
 //死亡ステート遷移
 void EnemyGunner::TransitionDeathState()
 {
-    state = State::Death;
-    moveSpeed = 0;
+    state = State::Death;    
     model->PlayAnimation(static_cast<int>(state), true);
+
+    // 止まる
+    moveSpeed = 0;
+    Move(0.0f, 0.0f, moveSpeed);
+    velocity = { 0,0,0 };
 }
 
 //死亡ステート更新処理
 void EnemyGunner::UpdateDeathState(float elapsedTime)
-{
-    // 止まる
-    Move(0.0f, 0.0f, moveSpeed);
+{    
    // 死亡アニメーション終わったら消滅させる
     OnDead();
 }

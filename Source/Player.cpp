@@ -5,6 +5,9 @@
 #include "Camera/CameraManager.h"
 #include "StageManager.h"
 
+#include "EnemyManager.h"
+#include "EnemyBulletManager.h"
+
 #include "HitManager.h"
 
 Player::Player(ID3D11Device* device) {
@@ -26,6 +29,7 @@ Player::Player(ID3D11Device* device) {
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Attack));
 
     position = { 0.0f, 0.0f, 0.0f };
+    waistPos = { 0,3,0 };
 
     scale = { 0.05f, 0.05f, 0.05f };
 
@@ -67,6 +71,8 @@ void Player::Init() {
 
     slowSpeed = 0.35f;
     slow = false;
+
+    atkRadius = 4;
 }
 
 void Player::Update(float elapsedTime) {
@@ -97,12 +103,12 @@ void Player::Render(ID3D11DeviceContext* dc) {
     //model->Begin(dc, Shaders::Ins()->GetRampShader());
     model->Render(dc);
 
+    centerPosition = position;
+    centerPosition.y += height;
 
     //// 必要なったら追加
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos2, 1.5f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
+    if(atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, 1, Vec4(1, 1, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
@@ -275,6 +281,10 @@ bool Player::InputAttack() {
         // 攻撃
         if (gamePad.GetButtonDown() & GamePad::BTN_X) {
 
+            CollisionPanchiVsEnemies();
+            CollisionPanchiVsProjectile();
+
+
             return true;
         }
     }
@@ -359,12 +369,23 @@ void Player::UpdateJumpState(float elapsedTime) {
 }
 
 void Player::TransitionAttackState() {
+    // 入力情報を所得
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    float ax = gamePad.GetAxisLX();
+    float ay = gamePad.GetAxisLY();
+
     state = AnimeState::Attack;
     // 移動を止める
     velocity = {0, 0, 0};
     Move(0, 0, 0);
     // 重力を止める
     gravFlag = false;
+
+    // 攻撃の場所
+    atkPos = { -ax, ay, 0 };
+    atkPos = VecMath::Normalize(atkPos) * 5;
+    atk = true;
+
     model->PlayAnimation(static_cast<int>(state), false);
 }
 
@@ -382,7 +403,7 @@ void Player::UpdateAttackState(float elapsedTime) {
         AttackMove(-ax, ay, 30);
     }
 
-    // アニメーションが終わるまで攻撃
+    // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
         // 終わったらアイドル状態へ
         TransitionIdleState();
@@ -391,9 +412,43 @@ void Player::UpdateAttackState(float elapsedTime) {
         gravFlag = true;
 
         AttackMove(0, 0, 30);
+
+        atkPos = { 0,0,0};
+        atk = false;
     }
 }
 
 void Player::OnLanding() {
     jumpCount = 0;
+}
+
+// 弾丸と敵の衝突判定
+void Player::CollisionPanchiVsEnemies() {
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    int enemyCount = enemyManager.GetEnemyCount();
+    for (int i = 0; i < enemyCount; ++i) {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+        // 衝突処理
+        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
+
+
+
+        }
+    }
+}
+
+void Player::CollisionPanchiVsProjectile() {
+    EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();
+    int enemyBCount = enemyBManager.GetProjectileCount();
+    for (int i = 0; i < enemyBCount; ++i) {
+        EnemyBullet* enemy = enemyBManager.GetProjectile(i);
+        // 衝突処理
+        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
+
+            enemy->SetReflectionFlag(true);
+            enemy->SetDirection(-enemy->GetDirection());
+
+        }
+    }
+
 }

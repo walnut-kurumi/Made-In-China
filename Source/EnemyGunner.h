@@ -30,10 +30,14 @@ public:
 	
 	bool GetDead() { return isDead; }
 	
+	// ’eŠÛ‚Æ‚ÌÕ“Ë”»’è
+	void CollisionProjectileVsEnemies();
 
 private:	
 	// œpœj  ©¶true@false‰E¨
 	void MoveWalk(bool direction );
+	// õ“GƒGƒŠƒAXV
+	void UpdateSearchArea();
 	// õ“G@ˆø‚Á‚©‚©‚Á‚½‚çtrue•Ô‚·
 	bool Search();
 	// Ú“G
@@ -118,7 +122,7 @@ private:
 	float attackCooldown = 0;
 
 	// ‚Á”ò‚Î‚·ŠÔ
-	float blowTimer = 0;
+	float blowTimer = 0;	
 
 	// ˆÚ“®‚·‚éŒü‚«
 	bool direction = false;

@@ -36,6 +36,9 @@ public:
 
 	float GetPlaybackSpeed() { return slow ? slowSpeed : playbackSpeed; }
 
+	void CollisionPanchiVsEnemies();
+	void CollisionPanchiVsProjectile();
+
 private:
 
 	// 移動入力処理
@@ -89,6 +92,13 @@ private:
 	AnimeState state = AnimeState::Idle;
 
 private:
+	// 攻撃判定用
+	Vec3 atkPos{};
+	Vec3 waistPos{};
+	bool atk = false;
+	float atkRadius;
+
+
 	float moveSpeed = 20.0f;
 	float turnSpeed = DirectX::XMConvertToRadians(3600);
 

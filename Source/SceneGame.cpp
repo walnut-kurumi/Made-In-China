@@ -33,10 +33,10 @@ void SceneGame::Initialize()
     player->Init(); 
 
     // エネミー初期化			
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 2; i++)
     {
         EnemyGunner* gunner = new EnemyGunner(device);
-        gunner->SetPosition(DirectX::XMFLOAT3(i * 5.0f - 35.0f, 0, 0));        
+        gunner->SetPosition(DirectX::XMFLOAT3(i * 25.0f - 35.0f, 0, 0));        
         EnemyManager::Instance().Register(gunner);
         EnemyManager::Instance().Init();
     }
@@ -100,15 +100,18 @@ void SceneGame::Update(float elapsedTime)
     Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
     CameraManager::Instance().SetTarget(target);
 
-    // エネミー更新処理
-    EnemyManager::Instance().Update(elapsedTime);
-    // ソート
-    EnemyManager::Instance().SortLengthSq(player->GetPosition());
-    // プレイヤー座標取得
-    EnemyManager::Instance().SetPlayerPos(Vec2(player->GetPosition().x, player->GetPosition().y));
-    // プレイヤー攻撃方向取得
-    EnemyManager::Instance().SetPlayerAttackDirection(Vec2(player->GetMoveVec().x, player->GetMoveVec().y));
-
+    // エネミー
+    {
+        // プレイヤー座標取得
+        EnemyManager::Instance().SetPlayerPos(Vec2(player->GetCenterPosition().x, player->GetCenterPosition().y));
+        // プレイヤー攻撃方向取得
+        EnemyManager::Instance().SetPlayerAttackDirection(Vec2(player->GetMoveVec().x, player->GetMoveVec().y));
+        // ソート
+        EnemyManager::Instance().SortLengthSq(player->GetPosition());
+        // エネミー更新処理
+        EnemyManager::Instance().Update(elapsedTime);
+    }
+    
     //エフェクト更新処理
     EffectManager::Instance().Update(elapsedTime);
 }

@@ -20,11 +20,18 @@ public:
 	// 位置取得
 	const Vec3& GetPosition() const { return position; }
 	// 方向取得
+	void SetDirection(Vec3 d)  { direction = d ; }
+	// 方向取得
 	const Vec3& GetDirection() const { return direction; }
 	// スケール取得
 	const Vec3& GetScale() const { return scale; }
 	// 半径取得
 	float GetRadius() const { return radius; }
+	// パリィフラグ設定
+	void SetReflectionFlag(bool r) { reflectionFlag = r; }
+	// パリィフラグ取得
+	bool GetReflectionFlag() const { return reflectionFlag; }
+
 	// 破棄
 	void Destroy();
 
@@ -40,4 +47,7 @@ protected:
 	EnemyBulletManager* manager = nullptr;
 
 	float radius = 0.5f;
+
+	// パリィした弾かどうか -> 弾き返してたら敵に当たるようになる
+	bool reflectionFlag = false;
 };
