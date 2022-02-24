@@ -36,6 +36,9 @@ public:
 
 	float GetPlaybackSpeed() { return slow ? slowSpeed : playbackSpeed; }
 
+	void CollisionPanchiVsEnemies();
+	void CollisionPanchiVsProjectile();
+
 private:
 
 	// 移動入力処理
@@ -93,6 +96,7 @@ private:
 	Vec3 atkPos{};
 	Vec3 waistPos{};
 	bool atk = false;
+	float atkRadius;
 
 
 	float moveSpeed = 20.0f;

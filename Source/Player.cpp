@@ -5,6 +5,9 @@
 #include "Camera/CameraManager.h"
 #include "StageManager.h"
 
+#include "EnemyManager.h"
+#include "EnemyBulletManager.h"
+
 #include "HitManager.h"
 
 Player::Player(ID3D11Device* device) {
@@ -27,6 +30,7 @@ Player::Player(ID3D11Device* device) {
 
     position = { 0.0f, 0.0f, 0.0f };
     waistPos = { 0,3,0 };
+
     scale = { 0.05f, 0.05f, 0.05f };
 
     UpdateState[static_cast<int>(AnimeState::Idle)] = &Player::UpdateIdleState;
@@ -410,4 +414,34 @@ void Player::UpdateAttackState(float elapsedTime) {
 
 void Player::OnLanding() {
     jumpCount = 0;
+}
+
+// íeä€Ç∆ìGÇÃè’ìÀîªíË
+void Player::CollisionPanchiVsEnemies() {
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    int enemyCount = enemyManager.GetEnemyCount();
+    for (int i = 0; i < enemyCount; ++i) {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+        // è’ìÀèàóù
+        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos, enemy->GetRadius(), atkRadius)) {
+
+
+
+        }
+    }
+}
+
+void Player::CollisionPanchiVsProjectile() {
+    EnemyBulletManager& enemyBManager = EnemyBulletManager::();
+    int enemyCount = enemyBManager.GetEnemyCount();
+    for (int i = 0; i < enemyCount; ++i) {
+        Enemy* enemy = enemyBManager.GetEnemy(i);
+        // è’ìÀèàóù
+        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos, enemy->GetRadius(), atkRadius)) {
+
+
+
+        }
+    }
+
 }
