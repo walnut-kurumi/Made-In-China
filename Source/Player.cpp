@@ -315,6 +315,9 @@ void Player::UpdateIdleState(float elapsedTime) {
     if (InputAttack()) TransitionAttackState();
 
     Key& key = Input::Instance().GetKey();
+    // 回避入力処理
+    if (key.STATE(VK_SPACE)) TransitionJumpState();
+
 }
 
 // 移動ステートへ遷移

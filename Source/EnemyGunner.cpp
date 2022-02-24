@@ -227,8 +227,7 @@ void EnemyGunner::MoveAttack(float cooldown)
     attackCooldown = cooldown;
 
     ID3D11Device* device = Graphics::Ins().GetDevice();
-    
-    // TODO:プレイヤーの中心座標に向けて発射
+        
     // 直進弾丸発射   
     {
         // 体の向き
