@@ -20,6 +20,8 @@ public:
 	// 位置取得
 	const Vec3& GetPosition() const { return position; }
 	// 方向取得
+	void SetDirection(Vec3 d)  { direction = d ; }
+	// 方向取得
 	const Vec3& GetDirection() const { return direction; }
 	// スケール取得
 	const Vec3& GetScale() const { return scale; }

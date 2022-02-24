@@ -71,6 +71,8 @@ void Player::Init() {
 
     slowSpeed = 0.35f;
     slow = false;
+
+    atkRadius = 4;
 }
 
 void Player::Update(float elapsedTime) {
@@ -279,6 +281,10 @@ bool Player::InputAttack() {
         // çUåÇ
         if (gamePad.GetButtonDown() & GamePad::BTN_X) {
 
+            CollisionPanchiVsEnemies();
+            CollisionPanchiVsProjectile();
+
+
             return true;
         }
     }
@@ -423,7 +429,7 @@ void Player::CollisionPanchiVsEnemies() {
     for (int i = 0; i < enemyCount; ++i) {
         Enemy* enemy = enemyManager.GetEnemy(i);
         // è’ìÀèàóù
-        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos, enemy->GetRadius(), atkRadius)) {
+        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
 
 
 
@@ -432,14 +438,15 @@ void Player::CollisionPanchiVsEnemies() {
 }
 
 void Player::CollisionPanchiVsProjectile() {
-    EnemyBulletManager& enemyBManager = EnemyBulletManager::();
-    int enemyCount = enemyBManager.GetEnemyCount();
-    for (int i = 0; i < enemyCount; ++i) {
-        Enemy* enemy = enemyBManager.GetEnemy(i);
+    EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();
+    int enemyBCount = enemyBManager.GetProjectileCount();
+    for (int i = 0; i < enemyBCount; ++i) {
+        EnemyBullet* enemy = enemyBManager.GetProjectile(i);
         // è’ìÀèàóù
-        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos, enemy->GetRadius(), atkRadius)) {
+        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
 
-
+            enemy->SetReflectionFlag(true);
+            enemy->SetDirection(-enemy->GetDirection());
 
         }
     }
