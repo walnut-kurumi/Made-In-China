@@ -30,6 +30,8 @@ public:
 	
 	bool GetDead() { return isDead; }
 	
+	// ’eŠÛ‚Æ‚ÌÕ“Ë”»’è
+	void CollisionProjectileVsEnemies();
 
 private:	
 	// œpœj  ©¶true@false‰E¨

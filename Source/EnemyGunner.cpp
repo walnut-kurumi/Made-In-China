@@ -16,8 +16,7 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
     const char* death = "Data/Models/Enemy/Animations/Death.fbx";
 
-
-    model = new Model(device, "Data/Models/Enemy/Jummo.fbx", true, 0);
+    model = new Model(device, "Data/Models/Player/Jummo.fbx", true, 0);
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(State::Run));
@@ -79,7 +78,9 @@ void EnemyGunner::Update(float elapsedTime)
 
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
  
-   
+    // 反射した弾丸との衝突判定
+    CollisionProjectileVsEnemies();
+
     // 速度更新
     UpdateSpeed(elapsedTime);
 
@@ -115,12 +116,33 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
     debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
     debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
     debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
-    //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
+    
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 
+// 反射した弾丸との衝突判定
+void EnemyGunner::CollisionProjectileVsEnemies()
+{
+    EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();
+    int enemyBCount = enemyBManager.GetProjectileCount();
+    for (int i = 0; i < enemyBCount; ++i)
+    {
+        EnemyBullet* enemyB = enemyBManager.GetProjectile(i);
+        // 衝突処理
+        if (Collision::SphereVsSphere(enemyB->GetPosition(), centerPosition, enemyB->GetRadius(), radius))
+        {
+            // 反射してたら
+            if (enemyB->GetReflectionFlag())
+            {
+                // ダメージ与える
+                ApplyDamage(1, 0.0f);
+
+                enemyBManager.Remove(enemyB);
+            }
+        }
+    }
+}
 
 // 徘徊  ←左true　false右→
 void EnemyGunner::MoveWalk(bool direction)
@@ -415,7 +437,7 @@ void EnemyGunner::TransitionBlowState()
 
     blowTimer = 0.3f;
 
-    model->PlayAnimation(static_cast<int>(state), true);
+    model->PlayAnimation(static_cast<int>(state), false);
 
     // 止まる
     moveSpeed = 0;
@@ -431,8 +453,8 @@ void EnemyGunner::UpdateBlowState(float elapsedTime)
     // 吹き飛ばしタイマー更新
     if (blowTimer > 0.0f)blowTimer -= elapsedTime;    
 
-    // 吹っ飛ばしたら死亡ステートへ
-    if(blowTimer < 0.0f)TransitionDeathState();
+    // 吹っ飛ばしたら死亡ステートへ               
+    if (blowTimer < 0.0f)TransitionDeathState();    
 }
 
 
@@ -440,7 +462,7 @@ void EnemyGunner::UpdateBlowState(float elapsedTime)
 void EnemyGunner::TransitionDeathState()
 {
     state = State::Death;    
-    model->PlayAnimation(static_cast<int>(state), true);
+    model->PlayAnimation(static_cast<int>(state), false);
 
     // 止まる
     moveSpeed = 0;
@@ -453,4 +475,8 @@ void EnemyGunner::UpdateDeathState(float elapsedTime)
 {    
    // 死亡アニメーション終わったら消滅させる
     OnDead();
+    if (!model->IsPlayAnimatimon())
+    {
+        Destroy();
+    }
 }

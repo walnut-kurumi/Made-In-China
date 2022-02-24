@@ -24,7 +24,7 @@ void EffectManager::Initialize()
 	effekseerManager->SetTextureLoader(effekseerRenderer->CreateTextureLoader());
 	effekseerManager->SetModelLoader(effekseerRenderer->CreateModelLoader());
 	effekseerManager->SetMaterialLoader(effekseerRenderer->CreateMaterialLoader());
-	effekseerManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
+	//effekseerManager->SetCurveLoader(Effekseer::MakeRefPtr<Effekseer::CurveLoader>());
 
 	//Effekseer‚ð¶ŽèÀ•WŒn‚ÅŒvŽZ‚·‚é
 	effekseerManager->SetCoordinateSystem(Effekseer::CoordinateSystem::LH);
