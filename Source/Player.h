@@ -89,6 +89,10 @@ private:
 	AnimeState state = AnimeState::Idle;
 
 private:
+	// 攻撃判定用
+	Vec3 atkPos{};
+
+
 	float moveSpeed = 20.0f;
 	float turnSpeed = DirectX::XMConvertToRadians(3600);
 
