@@ -31,10 +31,10 @@ void SceneGame::Initialize()
     player->Init(); 
 
     // エネミー初期化			
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < 2; i++)
     {
         EnemyGunner* gunner = new EnemyGunner(device);
-        gunner->SetPosition(DirectX::XMFLOAT3(i * 5.0f - 35.0f, 0, 0));        
+        gunner->SetPosition(DirectX::XMFLOAT3(i * 25.0f - 35.0f, 0, 0));        
         EnemyManager::Instance().Register(gunner);
         EnemyManager::Instance().Init();
     }

@@ -16,8 +16,7 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
     const char* death = "Data/Models/Enemy/Animations/Death.fbx";
 
-
-    model = new Model(device, "Data/Models/Enemy/Jummo.fbx", true, 0);
+    model = new Model(device, "Data/Models/Player/Jummo.fbx", true, 0);
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(State::Run));
@@ -79,7 +78,9 @@ void EnemyGunner::Update(float elapsedTime)
 
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
  
-   
+    // ”½Ë‚µ‚½’eŠÛ‚Æ‚ÌÕ“Ë”»’è
+    CollisionProjectileVsEnemies();
+
     // ‘¬“xXV
     UpdateSpeed(elapsedTime);
 
@@ -115,12 +116,33 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
     debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
     debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
     debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
-    //debugRenderer.get()->DrawSphere(copos3, 1.5f, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(copos4, 1.6f, Vec4(1, 0, 0, 1));
+    
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 
+// ”½Ë‚µ‚½’eŠÛ‚Æ‚ÌÕ“Ë”»’è
+void EnemyGunner::CollisionProjectileVsEnemies()
+{
+    EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();
+    int enemyBCount = enemyBManager.GetProjectileCount();
+    for (int i = 0; i < enemyBCount; ++i)
+    {
+        EnemyBullet* enemyB = enemyBManager.GetProjectile(i);
+        // Õ“Ëˆ—
+        if (Collision::SphereVsSphere(enemyB->GetPosition(), centerPosition, enemyB->GetRadius(), radius))
+        {
+            // ”½Ë‚µ‚Ä‚½‚ç
+            if (enemyB->GetReflectionFlag())
+            {
+                // ƒ_ƒ[ƒW—^‚¦‚é
+                ApplyDamage(1, 0.0f);
+
+                enemyBManager.Remove(enemyB);
+            }
+        }
+    }
+}
 
 // œpœj  ©¶true@false‰E¨
 void EnemyGunner::MoveWalk(bool direction)
