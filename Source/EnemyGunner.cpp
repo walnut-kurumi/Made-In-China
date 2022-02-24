@@ -156,8 +156,7 @@ void EnemyGunner::UpdateSearchArea()
 bool EnemyGunner::Search()
 {
     // 索敵エリア更新
-    UpdateSearchArea();
-    // TODO:サーチ範囲見直す　後ろ怪しい
+    UpdateSearchArea();    
     //searchArea（短形） と playerPos（点）で当たり判定    
     //当たっていたら索敵範囲内なのでtrue
     if (Collision::PointVsRect(playerPos, searchAreaPos, searchAreaScale))
@@ -215,18 +214,24 @@ void EnemyGunner::MoveAttack(float cooldown)
     // TODO:プレイヤーの中心座標に向けて発射
     // 直進弾丸発射   
     {
+        // 体の向き
         float vx;
         (direction ? vx = -1 : vx = 1);
         angle.y = DirectX::XMConvertToRadians(90 * vx);
 
-        // 発射する向き
-        DirectX::XMFLOAT3 dir;
-        dir.x = vx;
-        dir.y = 0.0f;
-        dir.z = 0.0f;       
+        // プレイヤーの中心座標
+        const Vec3& p = { playerPos.x,playerPos.y,0.0f };
+        // エネミーの中心座標
+        const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
+
+        // 発射する向き       
+        // プレイヤーに向かって
+        Vec3 pe = { p - e };
+        VecMath::Normalize(pe);
+
         // 発射
         EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
-        bullet->Launch(dir, centerPosition);        
+        bullet->Launch(pe, centerPosition);        
     }
 }
 
