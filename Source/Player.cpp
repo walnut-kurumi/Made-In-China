@@ -13,18 +13,18 @@
 Player::Player(ID3D11Device* device) {
 
     const char* idle = "Data/Models/Player/Animations/Idle.fbx";
-    const char* run = "Data/Models/Player/Animations/Running.fbx";
-    const char* walk = "Data/Models/Player/Animations/Walking.fbx";
+    const char* run = "Data/Models/Player/Animations/Run.fbx";
+    //const char* walk = "Data/Models/Player/Animations/Walking.fbx";
     const char* jump = "Data/Models/Player/Animations/Jump.fbx";
     const char* attack = "Data/Models/Player/Animations/Attack.fbx";
 
     //model = new Model(device, "Data/Models/Player/Jummo/Jummo.fbx", true, 0);
-    model = new Model(device, "Data/Models/Player/Jummo.fbx", true, 0);
-    
+    model = new Model(device, "Data/Models/Player/Player.fbx", true, 0);
+
 
     model->LoadAnimation(idle, 0, static_cast<int>(AnimeState::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(AnimeState::Run));
-    model->LoadAnimation(walk, 0, static_cast<int>(AnimeState::Walk));
+    //model->LoadAnimation(walk, 0, static_cast<int>(AnimeState::Walk));
     model->LoadAnimation(jump, 0, static_cast<int>(AnimeState::Jump));
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Attack));
 
@@ -108,7 +108,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
 
     //// 必要なったら追加
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
-    if(atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, 1, Vec4(1, 1, 0, 1));
+    if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, 1, Vec4(1, 1, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
@@ -124,16 +124,16 @@ void Player::DrawDebugGUI() {
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
         {
 
-            
-            
+
+
             ImGui::SliderFloat("Position X", &position.x, -2000, 2000);
             ImGui::SliderFloat("Position Y", &position.y, -2000, 2000);
             ImGui::SliderFloat("Position Z", &position.z, -2000, 2000);
-            
-            
+
+
             ImGui::SliderFloat("SpeedMax", &maxMoveSpeed, 0, 100);
             ImGui::SliderFloat("Speed", &moveSpeed, 0, 20);
-            
+
             int a = static_cast<int>(state);
             ImGui::SliderInt("State", &a, 0, static_cast<int>(AnimeState::End));
         }
@@ -195,19 +195,19 @@ Vec3 Player::GetMoveVec() const {
 
 bool Player::InputMove(float elapsedTime) {
     if (deathFlag) return false;
-    
+
     // 進行ベクトル所得
     Vec3 moveVec = GetMoveVec();
-    
+
     // 移動処理
     Move(moveVec.x, moveVec.z, moveSpeed);
-    
+
     // 旋回処理(エイムしてない時だけ)
     Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
-    
+
     // 進行ベクトルがゼロベクトルでない場合は入力された
     return moveVec.x || moveVec.y || moveVec.z;
-     
+
     //// 入力情報を所得
     //GamePad& gamePad = Input::Instance().GetGamePad();
     //float ax = gamePad.GetAxisLX();
@@ -270,7 +270,7 @@ void Player::InputSB() {
     else {
         // 投げた武器の場所にワープ
     }
-    
+
 
 }
 
@@ -304,24 +304,24 @@ bool Player::InputAttack() {
 // 待機ステート遷移
 void Player::TransitionIdleState() {
     state = AnimeState::Idle;
-    model->PlayAnimation(static_cast<int>(state),true);
+    model->PlayAnimation(static_cast<int>(state), true);
 }
 
 // 待機ステート更新処理
 void Player::UpdateIdleState(float elapsedTime) {
     //  移動入力処理
-    if (InputMove(elapsedTime)) TransitionWalkState();
+    if (InputMove(elapsedTime)) TransitionRunState();
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
-    
+
     Key& key = Input::Instance().GetKey();
 }
 
 // 移動ステートへ遷移
 void Player::TransitionWalkState() {
-    state = AnimeState::Walk;
+    state = AnimeState::Run;
     moveSpeed = 10;
-    model->PlayAnimation(static_cast<int>(state),true);
+    model->PlayAnimation(static_cast<int>(state), true);
 }
 
 // 移動ステート更新処理
@@ -357,7 +357,7 @@ void Player::UpdateRunState(float elapsedTime) {
     if (InputAttack()) TransitionAttackState();
 
     // 歩き入力処理
-    if (!key.STATE(VK_SHIFT)) TransitionWalkState();
+    //if (!key.STATE(VK_SHIFT)) TransitionWalkState();
 
     // 回避入力処理
     if (key.STATE(VK_SPACE)) TransitionJumpState();
@@ -381,7 +381,7 @@ void Player::UpdateJumpState(float elapsedTime) {
 void Player::TransitionAttackState() {
     state = AnimeState::Attack;
     // 移動を止める
-    velocity = {0, 0, 0};
+    velocity = { 0, 0, 0 };
     Move(0, 0, 0);
     // 重力を止める
     gravFlag = false;
@@ -413,7 +413,7 @@ void Player::UpdateAttackState(float elapsedTime) {
 
         AttackMove(0, 0, 30);
 
-        atkPos = { 0,0,0};
+        atkPos = { 0,0,0 };
         atk = false;
     }
 }
