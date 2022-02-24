@@ -25,6 +25,11 @@ public:
 	const Vec3& GetScale() const { return scale; }
 	// ”¼ŒaŽæ“¾
 	float GetRadius() const { return radius; }
+	// ƒpƒŠƒBƒtƒ‰ƒOÝ’è
+	void SetReflectionFlag(bool r) { reflectionFlag = r; }
+	// ƒpƒŠƒBƒtƒ‰ƒOŽæ“¾
+	bool GetReflectionFlag() const { return reflectionFlag; }
+
 	// ”jŠü
 	void Destroy();
 
@@ -40,4 +45,7 @@ protected:
 	EnemyBulletManager* manager = nullptr;
 
 	float radius = 0.5f;
+
+	// ƒpƒŠƒB‚µ‚½’e‚©‚Ç‚¤‚© -> ’e‚«•Ô‚µ‚Ä‚½‚ç“G‚É“–‚½‚é‚æ‚¤‚É‚È‚é
+	bool reflectionFlag = false;
 };
