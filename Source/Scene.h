@@ -21,6 +21,14 @@ public:
 	// 準備完了設定
 	void SetReady() { ready = true; }
 
+	// ロード％セット
+	void AddLoadPerf(float l) { LoadPerf += l; }
+	void SetLoadPerf(float l) { LoadPerf = l; }
+	float GetLoadPerf() { return LoadPerf; }
+
 private:
 	bool ready = false;	
+
+public:
+	float LoadPerf = 0.0f;
 };

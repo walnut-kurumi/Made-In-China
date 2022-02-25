@@ -32,12 +32,16 @@ public:
 	
 	// 弾丸との衝突判定
 	void CollisionProjectileVsEnemies();
+	// 弾丸とプレイヤーの衝突判定
+	void CollisionProjectileVsPlayer();
 
 private:	
 	// 徘徊  ←左true　false右→
 	void MoveWalk(bool direction );
 	// 索敵エリア更新
 	void UpdateSearchArea();
+	// 中心座標
+	void UpdateCenterPosition();
 	// 索敵　引っかかったらtrue返す
 	bool Search();
 	// 接敵
