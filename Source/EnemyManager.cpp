@@ -17,9 +17,7 @@ void EnemyManager::Init()
 // 更新処理
 void EnemyManager::Update(float elapsedTime)
 {
-	// 弾丸更新処理
-	EnemyBulletManager::Instance().Update(elapsedTime);
-
+	
 	// 更新処理
 	for (Enemy* enemy : enemies)
 	{
@@ -96,26 +94,19 @@ void EnemyManager::SortLengthSq(const DirectX::XMFLOAT3 playerPos)
 }
 
 
-void EnemyManager::SetPlayerPos(Vec2 playerPos)
-{	
-	for (Enemy* enemy : enemies)
-	{
-		enemy->SetPlayerPos(playerPos);
-	}
-}
-
-void EnemyManager::SetPlayerAttackDirection(Vec2 attackDirection)
+void EnemyManager::SetPlayer(Player* p)
 {
 	for (Enemy* enemy : enemies)
 	{
-		enemy->SetPlayerATKDirection(attackDirection);
+		enemy->SetPlayer(p);
 	}
 }
+
 
 // エネミー同士の衝突処理
 void EnemyManager::CollisionEnemyVsEnemies()
 {
-	/*size_t enemyCount = enemies.size();
+	size_t enemyCount = enemies.size();
 	for (int i = 0; i < enemyCount; ++i)
 	{
 		Enemy* enemyA = enemies.at(i);
@@ -124,14 +115,15 @@ void EnemyManager::CollisionEnemyVsEnemies()
 			Enemy* enemyB = enemies.at(j);
 			DirectX::XMFLOAT3 outPosition;
 			if (Collision::IntersectSphereVsSphere(
-				enemyA->GetCenterPosition(),
+				enemyA->GetPosition(),
 				enemyA->GetRadius(),
-				enemyB->GetCenterPosition(),
+				enemyB->GetPosition(),
 				enemyB->GetRadius(),
 				outPosition))
-			{
+			{				
+				outPosition.z = 0;
 				enemyB->SetPosition(outPosition);
 			}			
 		}
-	}*/
+	}
 }

@@ -78,6 +78,10 @@ void EnemyGunner::Update(float elapsedTime)
 
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
  
+
+    // 中心座標更新
+    UpdateCenterPosition();
+
     // 反射した弾丸との衝突判定
     CollisionProjectileVsEnemies();
 
@@ -102,12 +106,8 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
     model->Render(dc,materialColor);
 
     // 弾丸描画処理
-    EnemyBulletManager::Instance().Render(dc, shader);
+    EnemyBulletManager::Instance().Render(dc, shader);  
 
-    // 中心座標更新
-    centerPosition = position;
-    centerPosition.y += height;
-   
     //// 必要なったら追加
     debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
     debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
@@ -142,6 +142,27 @@ void EnemyGunner::CollisionProjectileVsEnemies()
     }
 }
 
+// プレイヤーとの衝突判定
+void EnemyGunner::CollisionProjectileVsPlayer()
+{
+    EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();
+    int enemyBCount = enemyBManager.GetProjectileCount();
+    for (int i = 0; i < enemyBCount; ++i)
+    {
+        EnemyBullet* enemyB = enemyBManager.GetProjectile(i);
+        // 衝突処理
+        if (Collision::SphereVsSphere(enemyB->GetPosition(), player->GetCenterPosition(), enemyB->GetRadius(), player->GetRadius()))
+        {
+            // 反射してたら
+            if (!enemyB->GetReflectionFlag())
+            {
+                // ダメージ与える
+                player->ApplyDamage(1, 0.8f);                
+            }
+        }
+    }
+}
+
 // 徘徊  ←左true　false右→
 void EnemyGunner::MoveWalk(bool direction)
 {
@@ -167,6 +188,14 @@ void EnemyGunner::UpdateSearchArea()
     }    
 }
 
+// 中心座標
+void EnemyGunner::UpdateCenterPosition()
+{
+    // 中心座標更新
+    centerPosition = position;
+    centerPosition.y += height;
+}
+
 // プレイヤーを索敵
 bool EnemyGunner::Search()
 {
@@ -174,10 +203,10 @@ bool EnemyGunner::Search()
     UpdateSearchArea();    
     //searchArea（短形） と playerPos（点）で当たり判定    
     //当たっていたら索敵範囲内なのでtrue
-    if (Collision::PointVsRect(playerPos, searchAreaPos, searchAreaScale))
+    if (Collision::PointVsRect(Vec2(player->GetCenterPosition().x, player->GetCenterPosition().y), searchAreaPos, searchAreaScale))
     {
-        if (playerPos.x > position.x)direction = false;
-        else if (playerPos.x < position.x) direction = true;        
+        if (player->GetCenterPosition().x > position.x)direction = false;
+        else if (player->GetCenterPosition().x < position.x) direction = true;
 
         materialColor = { 1.0f,0.25f,0.25f,1.0f };
 
@@ -191,8 +220,8 @@ bool EnemyGunner::Search()
 void EnemyGunner::MoveRun(bool direction)
 {
     // 向きをプレイヤーの方向へ
-    if (playerPos.x > position.x)direction = false;
-    else if (playerPos.x < position.x) direction = true;
+    if (player->GetCenterPosition().x > position.x)direction = false;
+    else if (player->GetCenterPosition().x < position.x) direction = true;
 
     // run
     float vx;
@@ -205,7 +234,7 @@ void EnemyGunner::MoveRun(bool direction)
 bool EnemyGunner::CheckAttackRange()
 {
     // プレイヤーの座標とガンナーの座標でベクトル作成
-    Vec3 distance = { Vec3(playerPos.x,playerPos.y,0.0f) - position };
+    Vec3 distance = { player->GetCenterPosition() - position };
     //　ベクトルから距離取得    
     float range =  VecMath::LengthVec3(distance);
     // 射程距離より小さいならtrue
@@ -223,8 +252,8 @@ void EnemyGunner::MoveAttack(float cooldown)
     }
 
     // 攻撃する向きをプレイヤーの方向へ
-    if (playerPos.x > position.x)direction = false;
-    else if (playerPos.x < position.x) direction = true;
+    if (player->GetCenterPosition().x > position.x)direction = false;
+    else if (player->GetCenterPosition().x < position.x) direction = true;
 
     // クールダウン設定
     attackCooldown = cooldown;
@@ -242,7 +271,7 @@ void EnemyGunner::MoveAttack(float cooldown)
         model->PlayAnimation(static_cast<int>(state), false);
 
         // プレイヤーの中心座標
-        const Vec3& p = { playerPos.x,playerPos.y,0.0f };
+        const Vec3& p = { player->GetCenterPosition() };
         // エネミーの中心座標
         const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
 
@@ -250,10 +279,11 @@ void EnemyGunner::MoveAttack(float cooldown)
         // プレイヤーに向かって
         Vec3 pe = { p - e };
         VecMath::Normalize(pe);
+        pe *= 0.5f;
 
         // 発射
         EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
-        bullet->Launch(pe, centerPosition);        
+        bullet->Launch(pe, e);        
     }
 }
 
@@ -264,7 +294,7 @@ void EnemyGunner::MoveBlow()
     const float blowPower = 0.15f;
     
     // プレイヤーの中心座標
-    const Vec3& p = { playerPos.x,playerPos.y,0.0f };
+    const Vec3& p = { player->GetCenterPosition() };
     // エネミーの中心座標
     const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
 

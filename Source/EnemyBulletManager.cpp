@@ -28,7 +28,10 @@ void EnemyBulletManager::Update(float elapsedTime)
 			projectiles.erase(it);
 		}
 		// ’eŠÛ‚Ì”jŠüˆ—
-		delete projectile;
+		if (projectile) {
+			projectile = nullptr;
+			delete projectile;
+		}
 	}
 	// ”jŠüƒŠƒXƒg‚ğƒNƒŠƒA
 	removes.clear();

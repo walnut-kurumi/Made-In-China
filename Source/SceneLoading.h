@@ -34,4 +34,6 @@ private:
 	Scene* nextScene = nullptr;
 	
 	Sprite* loadSprite{};
+	Sprite* Bar{};
+	Sprite* LoadBar{};
 };

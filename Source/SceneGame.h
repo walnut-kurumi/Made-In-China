@@ -36,7 +36,7 @@ private:
 
 	Model* model = nullptr;
 
-	Vec2 enemyPos[10] = {};
+	Vec2 enemyPos[9] = {};
 
 	SkinnedMesh* sk[8];
 };
