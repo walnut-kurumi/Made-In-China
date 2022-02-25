@@ -17,6 +17,9 @@ void EnemyManager::Init()
 // 更新処理
 void EnemyManager::Update(float elapsedTime)
 {
+	// 弾丸更新処理
+	EnemyBulletManager::Instance().Update(elapsedTime);
+
 	// 更新処理
 	for (Enemy* enemy : enemies)
 	{

@@ -32,11 +32,14 @@ void SceneGame::Initialize()
     player = new Player(device);
     player->Init(); 
 
+    // エネミー座標設定
+    EnemyPositionSetting();
+
     // エネミー初期化			
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 5; i++)
     {
         EnemyGunner* gunner = new EnemyGunner(device);
-        gunner->SetPosition(DirectX::XMFLOAT3(i * 25.0f - 35.0f, 0, 0));        
+        gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
         EnemyManager::Instance().Register(gunner);
         EnemyManager::Instance().Init();
     }
@@ -168,4 +171,19 @@ void SceneGame::Render(float elapsedTime)
 
 void SceneGame::Reset()
 {
+}
+
+// エネミー座標設定
+void SceneGame::EnemyPositionSetting()
+{
+    enemyPos[0] = {-35,0};
+    enemyPos[1] = {-45,0};
+    enemyPos[2] = {-55,0};
+    enemyPos[3] = {-35,15};
+    enemyPos[4] = {-15,15};
+    enemyPos[5] = {-45,15};
+    enemyPos[6] = {-55,15};
+    enemyPos[7] = {-15,30};
+    enemyPos[8] = {-55,30};
+    enemyPos[9] = {-65,30};
 }

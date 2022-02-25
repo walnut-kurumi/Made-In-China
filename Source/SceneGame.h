@@ -29,11 +29,14 @@ public:
 	// ゲームリセット
 	void Reset();
 
+	void EnemyPositionSetting();
+
 private:	
 	Player* player{};
 
 	Model* model = nullptr;
 
+	Vec2 enemyPos[10] = {};
 
 	SkinnedMesh* sk[8];
 };

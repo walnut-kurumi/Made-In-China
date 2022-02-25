@@ -87,9 +87,7 @@ void EnemyGunner::Update(float elapsedTime)
     // 無敵時間更新
     UpdateInvincibleTimer(elapsedTime);
 
-    // 弾丸更新処理
-    EnemyBulletManager::Instance().Update(elapsedTime);
-
+  
     //オブジェクト行列更新
     UpdateTransform();
     // モデルアニメーション更新処理
@@ -219,7 +217,10 @@ bool EnemyGunner::CheckAttackRange()
 // 攻撃
 void EnemyGunner::MoveAttack(float cooldown)
 {
-    if (attackCooldown > 0.0f) return;
+    if (attackCooldown > 0.0f)
+    {       
+        return;
+    }
 
     // 攻撃する向きをプレイヤーの方向へ
     if (playerPos.x > position.x)direction = false;
@@ -236,6 +237,9 @@ void EnemyGunner::MoveAttack(float cooldown)
         float vx;
         (direction ? vx = -1 : vx = 1);
         angle.y = DirectX::XMConvertToRadians(90 * vx);
+
+        // 攻撃アニメーション再生
+        model->PlayAnimation(static_cast<int>(state), false);
 
         // プレイヤーの中心座標
         const Vec3& p = { playerPos.x,playerPos.y,0.0f };
@@ -400,13 +404,12 @@ void EnemyGunner::TransitionAttackState()
 {
     state = State::Attack; 
     moveSpeed = 0;
-    attackCooldown = 0.75f;
-    model->PlayAnimation(static_cast<int>(state), true);
+    attackCooldown = 0.75f;    
 }
 
 //攻撃ステート更新処理
 void EnemyGunner::UpdateAttackState(float elapsedTime)
-{
+{   
     // 死んでたら 吹っ飛びステートへ
     if (health <= 0) TransitionBlowState();
 
