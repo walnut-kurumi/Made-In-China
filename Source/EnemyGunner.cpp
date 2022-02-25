@@ -101,7 +101,7 @@ void EnemyGunner::Update(float elapsedTime)
 void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 {
     model->Begin(dc, *shader);    
-    model->Render(dc);
+    model->Render(dc,materialColor);
 
     // ’eŠÛ•`‰æˆ—
     EnemyBulletManager::Instance().Render(dc, shader);
@@ -179,7 +179,9 @@ bool EnemyGunner::Search()
     if (Collision::PointVsRect(playerPos, searchAreaPos, searchAreaScale))
     {
         if (playerPos.x > position.x)direction = false;
-        else if (playerPos.x < position.x) direction = true;
+        else if (playerPos.x < position.x) direction = true;        
+
+        materialColor = { 1.0f,0.5f,0.5f,1.0f };
 
         return true;
     }

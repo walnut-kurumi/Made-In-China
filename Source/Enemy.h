@@ -38,4 +38,7 @@ protected:
 
 	// デバッグ
 	std::unique_ptr<DebugRenderer> debugRenderer;
+
+	// マテリアルカラー
+	Vec4 materialColor = { 1,1,1,1 };
 };
