@@ -24,7 +24,6 @@ Player::Player(ID3D11Device* device) {
 
     model->LoadAnimation(idle, 0, static_cast<int>(AnimeState::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(AnimeState::Run));
-    //model->LoadAnimation(walk, 0, static_cast<int>(AnimeState::Walk));
     model->LoadAnimation(jump, 0, static_cast<int>(AnimeState::Jump));
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Attack));
 
@@ -35,7 +34,6 @@ Player::Player(ID3D11Device* device) {
 
     UpdateState[static_cast<int>(AnimeState::Idle)] = &Player::UpdateIdleState;
     UpdateState[static_cast<int>(AnimeState::Run)] = &Player::UpdateRunState;
-    UpdateState[static_cast<int>(AnimeState::Walk)] = &Player::UpdateWalkState;
     UpdateState[static_cast<int>(AnimeState::Jump)] = &Player::UpdateJumpState;
     UpdateState[static_cast<int>(AnimeState::Attack)] = &Player::UpdateAttackState;
 
@@ -61,7 +59,9 @@ void Player::Init() {
     };
     normal = { 0,0,0 };
     velocity = { 0,0,0 };
-    moveSpeed = 10;
+    maxMoveSpeed = 500;
+
+    jumpSpeed = 50.0f;
 
     moveVecX = 0.0f;
     moveVecZ = 0.0f;
@@ -73,6 +73,9 @@ void Player::Init() {
     slow = false;
 
     atkRadius = 4;
+    atkTimer = 0.0f;
+
+    health = 1;
 }
 
 void Player::Update(float elapsedTime) {
@@ -88,6 +91,8 @@ void Player::Update(float elapsedTime) {
 
     // スロー
     InputSlow();
+
+    atkTimer -= elapsedTime;
 
     //オブジェクト行列更新
     UpdateTransform();
@@ -152,7 +157,7 @@ Vec3 Player::GetMoveVec() const {
     // 入力情報を所得
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();
-    //float ay = gamePad.GetAxisLY();
+    float ay = gamePad.GetAxisLY();
 
     // カメラ方向とスティックの入力値によって進行方向を計算する
     const DirectX::XMFLOAT3& cameraRight = CameraManager::Instance().mainC.GetRight();
@@ -185,10 +190,14 @@ Vec3 Player::GetMoveVec() const {
     // スティックの垂直入力値をカメラ前方向に反映し、
     // 進行ベクトルを計算する
     Vec3 vec;
-    vec.z = /*cameraFrontZ * ay + */cameraRightZ * ax;
-    vec.x = /*cameraFrontX * ay + */cameraRightX * ax;
+    vec.z = cameraFrontZ * ay + cameraRightZ * ax;
+    vec.x = cameraFrontX * ay + cameraRightX * ax;
     // Y軸方向には移動しない
     vec.y = 0.0f;
+
+    vec.x = -ax;
+    vec.y = 0;
+    vec.z = 0;
 
     return vec;
 }
@@ -281,7 +290,7 @@ bool Player::InputAttack() {
     float ay = gamePad.GetAxisLY();
 
     // 武器を持っている　
-    if (weapon) {
+    if (weapon && atkTimer < 0.0f) {
         // 攻撃
         if (gamePad.GetButtonDown() & GamePad::BTN_X) {
             // 攻撃の場所
@@ -294,7 +303,9 @@ bool Player::InputAttack() {
             CollisionPanchiVsEnemies();
             CollisionPanchiVsProjectile();
 
-
+            // 攻撃のCT
+            if(!isGround) 
+                atkTimer = 0.75f;
             return true;
         }
     }
@@ -320,33 +331,10 @@ void Player::UpdateIdleState(float elapsedTime) {
 
 }
 
-// 移動ステートへ遷移
-void Player::TransitionWalkState() {
-    state = AnimeState::Run;
-    moveSpeed = 10;
-    model->PlayAnimation(static_cast<int>(state), true);
-}
-
-// 移動ステート更新処理
-void Player::UpdateWalkState(float elapsedTime) {
-    Key& key = Input::Instance().GetKey();
-    //  移動入力処理
-    if (!InputMove(elapsedTime)) TransitionIdleState();
-
-    // 攻撃入力処理
-    if (InputAttack()) TransitionAttackState();
-
-    // 走り入力処理
-    if (key.STATE(VK_SHIFT)) TransitionRunState();
-
-    // 回避入力処理
-    if (key.STATE(VK_SPACE)) TransitionJumpState();
-}
-
 //走るステート遷移
 void Player::TransitionRunState() {
     state = AnimeState::Run;
-    moveSpeed = 15;
+    moveSpeed = 50;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
@@ -402,8 +390,8 @@ void Player::UpdateAttackState(float elapsedTime) {
     // 一回目処理
     if (!first) {
         first = true;
-        // 左右どっちか
-        AttackMove(-ax, ay, 30);
+        // 地面いたら上に切れる　空中なら左右のみ
+        isGround ? AttackMove(-ax, ay, 30) : AttackMove(-ax, 0, 30);
     }
 
     // アニメーションが終わった最後の処理
@@ -415,6 +403,8 @@ void Player::UpdateAttackState(float elapsedTime) {
         gravFlag = true;
 
         AttackMove(0, 0, 30);
+
+        velocity = {0,0,0};
 
         atkPos = { 0,0,0 };
         atk = false;
@@ -434,7 +424,7 @@ void Player::CollisionPanchiVsEnemies() {
         // 衝突処理
         if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
 
-
+            enemy->ApplyDamage(1, 0);
 
         }
     }
