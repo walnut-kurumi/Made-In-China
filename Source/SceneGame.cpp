@@ -50,20 +50,26 @@ void SceneGame::Initialize()
     // エネミー初期化			
     for (int i = 0; i <4; i++)
     {
-
-        EnemyGunner* gunner = new EnemyGunner(device);
+        if (i == 3)
+        {
+            // ロード％ 100%
+            SetLoadPerf(122.0f);
+        }
+        else
+        {
+            // ロード％更新
+            AddLoadPerf(2.0f);
+        }
+               EnemyGunner* gunner = new EnemyGunner(device);
         gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
         EnemyManager::Instance().Register(gunner);
         EnemyManager::Instance().Init();
 
-        // ロード％更新
-        AddLoadPerf(2.0f);
+        
     }
 
     Input::Instance().GetMouse().SetMoveCursor(false);
 
-    // ロード％ 100%
-    SetLoadPerf(122.0f);
 }
 
 // 終了化
