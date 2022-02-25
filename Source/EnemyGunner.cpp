@@ -68,7 +68,7 @@ void EnemyGunner::Init()
 
     isDead = false;
 
-    direction = true;
+    direction = false;
 
     TransitionWalkState();
 }
