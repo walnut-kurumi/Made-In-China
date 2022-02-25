@@ -240,6 +240,9 @@
     <ClCompile Include="Source\ResourceManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\PerlinNoise.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framebuffer.h" />
@@ -407,6 +410,9 @@
       <Filter>Source\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\ResourceManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PerlinNoise.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

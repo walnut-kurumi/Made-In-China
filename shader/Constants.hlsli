@@ -5,7 +5,6 @@ cbuffer OBJECT_CONSTANT_BUFFER : register(b0)
     float4 materialColor;
     row_major float4x4 boneTransforms[MAX_BONES];
 };
-
 // cbuffer 定数バッファ
 cbuffer SCENE_CONSTANT_BUFFER : register(b1)
 {
@@ -25,6 +24,7 @@ cbuffer GRASS_CONTANT : register(b2)
     float grassCurve;
     float3 dummy;
 }
+row_major float4x4 data : register(b3);
 
 cbuffer DESTRUCTION_CONSTANT_BUFFER : register(b9)
 {

@@ -16,9 +16,11 @@
 
 #include"EffectManager.h"
 
+
 // 初期化
 void SceneGame::Initialize()
 {
+    HRESULT hr{ S_OK };
     // ロード％初期化    
     AddLoadPerf(0.0f);
 
@@ -70,6 +72,20 @@ void SceneGame::Initialize()
 
     Input::Instance().GetMouse().SetMoveCursor(false);
 
+    // CAMERA_SHAKE
+    // TODO:02 Create a constant buffer object.
+    D3D11_BUFFER_DESC buffer_desc{};
+    buffer_desc.ByteWidth = sizeof(DirectX::XMFLOAT4X4);
+    buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+    buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    buffer_desc.CPUAccessFlags = 0;
+    buffer_desc.MiscFlags = 0;
+    buffer_desc.StructureByteStride = 0;
+    hr = device->CreateBuffer(&buffer_desc, nullptr, &constant_buffer);
+    _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
+
+    // ロード％ 100%
+    SetLoadPerf(122.0f);
 }
 
 // 終了化
@@ -152,6 +168,21 @@ void SceneGame::Render(float elapsedTime)
     ID3D11DeviceContext* dc = gfx.GetDeviceContext();    
     CameraManager& cameraMgr = CameraManager::Instance();
 
+    DirectX::XMFLOAT4X4 data{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+
+    // TODO:13 Calculate the amount of camera shake that feels natural using purlin noise.
+    seed += elapsedTime;
+    const float shake = 2.0f * static_cast<float>(pn.noise(seed * seed_shifting_factor, seed * seed_shifting_factor, 0)) - 1.0f;
+
+    // TODO:10 Calculate the transformation matrix considering the amount of camera shake.
+    XMStoreFloat4x4(&data,
+        XMMatrixTranslation(shake * max_sway / 1280, shake * max_sway / 720, 0) *
+        XMMatrixRotationRollPitchYaw(0, 0, XMConvertToRadians(shake * max_skew))
+    );
+
+    // TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.
+    dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
+    dc->VSSetConstantBuffers(3, 1, &constant_buffer);
  
     // モデル描画
     {
@@ -179,6 +210,18 @@ void SceneGame::Render(float elapsedTime)
 
 
 #ifdef USE_IMGUI   
+
+
+    ImGui::Begin("ImGUI");
+
+    // CAMERA_SHAKE
+    // TODO:07 Adjust the maximum amount of rotation(max_skew) and movement(max_sway) of the camera.
+    ImGui::SliderFloat("max_sway [pixel]", &max_sway, 0.0f, 64.0f);
+    ImGui::SliderFloat("max_skew [degree]", &max_skew, 0.0f, 10.0f);
+    // TODO:12 Defines the amount of seed shifting factor for perlin noise.
+    ImGui::SliderFloat("seed_shifting_factor", &seed_shifting_factor, 0.0f, 10.0f);
+
+    ImGui::End();
 
    /* ImGui::SetNextWindowPos(ImVec2(0, 10), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(30, 30), ImGuiCond_FirstUseEver);    
