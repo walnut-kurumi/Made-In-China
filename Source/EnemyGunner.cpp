@@ -181,7 +181,7 @@ bool EnemyGunner::Search()
         if (playerPos.x > position.x)direction = false;
         else if (playerPos.x < position.x) direction = true;        
 
-        materialColor = { 1.0f,0.5f,0.5f,1.0f };
+        materialColor = { 1.0f,0.25f,0.25f,1.0f };
 
         return true;
     }

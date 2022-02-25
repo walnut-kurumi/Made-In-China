@@ -5,7 +5,7 @@ EnemyBulletStraight::EnemyBulletStraight(ID3D11Device* device, EnemyBulletManage
 	model = new Model(device,"Data/Models/Bullet/bullet.fbx",true,0);
 
 	// 表示サイズを調整
-	scale.x = scale.y = scale.z = 0.05f;	
+	scale.x = scale.y = scale.z = 1.05f;	
 }
 
 EnemyBulletStraight::~EnemyBulletStraight()
