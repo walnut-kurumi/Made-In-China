@@ -112,9 +112,9 @@ void Player::Render(ID3D11DeviceContext* dc) {
     centerPosition.y += height;
 
     //// 必要なったら追加
-    debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
-    if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, 1, Vec4(1, 1, 0, 1));
-    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    //debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
+    //if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, 1, Vec4(1, 1, 0, 1));
+    //debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 void Player::DrawDebugGUI() {
@@ -259,7 +259,10 @@ void Player::InputJump() {
 
 void Player::InputSlow() {
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButton() & GamePad::BTN_RIGHT_SHOULDER) {
+    Key& key = Input::Instance().GetKey();
+    if (gamePad.GetButton() & GamePad::BTN_RIGHT_SHOULDER
+         ||
+        key.STATE(VK_SHIFT)) {
         slow = true;
         return;
     }
@@ -327,7 +330,7 @@ void Player::UpdateIdleState(float elapsedTime) {
 
     Key& key = Input::Instance().GetKey();
     // 回避入力処理
-    if (key.STATE(VK_SPACE)) TransitionJumpState();
+    //if (key.STATE(VK_SPACE)) TransitionJumpState();
 
 }
 
@@ -351,7 +354,7 @@ void Player::UpdateRunState(float elapsedTime) {
     //if (!key.STATE(VK_SHIFT)) TransitionWalkState();
 
     // 回避入力処理
-    if (key.STATE(VK_SPACE)) TransitionJumpState();
+    //if (key.STATE(VK_SPACE)) TransitionJumpState();
 }
 
 //回避ステート遷移
