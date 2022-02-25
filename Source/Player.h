@@ -11,7 +11,6 @@ private:
 	{
 		Idle,	//　待機
 		Run,	//　走り
-		Walk,	//　歩き
 		Attack, // 攻撃
 		Jump,	//　ジャンプ開始
 		Fall,	//　落下
@@ -67,10 +66,6 @@ protected:
 	void TransitionIdleState();
 	void UpdateIdleState(float elapsedTime);
 
-	// 移動ステート
-	void TransitionWalkState();
-	void UpdateWalkState(float elapsedTime);
-
 	// 走るステート
 	void TransitionRunState();
 	void UpdateRunState(float elapsedTime);
@@ -98,11 +93,13 @@ private:
 	bool atk = false;
 	float atkRadius;
 
+	float atkTimer;
 
-	float moveSpeed = 20.0f;
+
+	float moveSpeed;
 	float turnSpeed = DirectX::XMConvertToRadians(3600);
 
-	float jumpSpeed = 20.0f;
+	float jumpSpeed;
 	int jumpCount = 0;
 	int jumpLimit = 1;
 

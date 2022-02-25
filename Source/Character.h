@@ -122,7 +122,7 @@ protected:
 
 
 	Vec3 velocity = { 0,0,0 };
-	float velocityMax = -20.0f;
+	float downMax = -60.0f;
 
 	bool isGround = false;
 	float height = 4.0f;
@@ -131,9 +131,9 @@ protected:
 	int health = 5;
 	int maxHealth = 5;
 	float invincibleTimer = 0.0f;
-	float friction = 0.4f;
+	float friction = 0.8f;
 	float acceleration = 1.0f;
-	float maxMoveSpeed = 80.0f;
+	float maxMoveSpeed = 160.0f;
 	float moveVecX = 0.0f;
 	float moveVecY = 0.0f;
 	float moveVecZ = 0.0f;
