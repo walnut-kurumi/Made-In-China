@@ -31,6 +31,7 @@ private:
 
 private:
 	float angle = 0.0f;
+	float w = 0.0f;
 	Scene* nextScene = nullptr;
 	
 	Sprite* loadSprite{};

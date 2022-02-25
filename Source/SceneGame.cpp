@@ -19,8 +19,8 @@
 // 初期化
 void SceneGame::Initialize()
 {
-    // ロード％初期化
-    LoadPerf = 0.0f;
+    // ロード％初期化    
+    AddLoadPerf(0.0f);
 
     ID3D11Device* device = Graphics::Ins().GetDevice();    
 
@@ -28,7 +28,7 @@ void SceneGame::Initialize()
     StageManager::Instance().Init();    
 
     // ロード％更新
-    LoadPerf += 3.0f;
+    AddLoadPerf(24.0f);    
 
     StageMain* stageMain = new StageMain(device);
     StageManager::Instance().Register(stageMain);
@@ -36,13 +36,13 @@ void SceneGame::Initialize()
     StageManager::Instance().Register(skybox);
 
     // ロード％更新
-    LoadPerf += 3.0f;
+    AddLoadPerf(24.0f);
 
     player = new Player(device);
     player->Init(); 
 
     // ロード％更新
-    LoadPerf += 3.0f;
+    AddLoadPerf(24.0f);
 
     // エネミー座標設定
     EnemyPositionSetting();
@@ -57,13 +57,13 @@ void SceneGame::Initialize()
         EnemyManager::Instance().Init();
 
         // ロード％更新
-        LoadPerf += 2.0f;
+        AddLoadPerf(2.0f);
     }
 
     Input::Instance().GetMouse().SetMoveCursor(false);
 
     // ロード％ 100%
-    LoadPerf = 24.4f;
+    SetLoadPerf(122.0f);
 }
 
 // 終了化
