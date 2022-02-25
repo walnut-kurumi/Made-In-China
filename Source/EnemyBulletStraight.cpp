@@ -43,7 +43,7 @@ void EnemyBulletStraight::Render(ID3D11DeviceContext* dc, Shader* shader)
 	//// •K—v‚È‚Á‚½‚ç’Ç‰Á
 	debugRenderer.get()->DrawSphere(position, radius, Vec4(1, 0.5f, 0, 1));
 
-	debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+	//debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 // ”­Ëˆ—

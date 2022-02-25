@@ -31,7 +31,7 @@ public:
 protected:
 	float lengthSq = 0;
 
-	Player* player=nullptr;
+	Player* player = nullptr;
 
 	// デバッグ
 	std::unique_ptr<DebugRenderer> debugRenderer;

@@ -37,7 +37,7 @@ void StageMain::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
     // •K—v‚È‚Á‚½‚ç’Ç‰Á
     debugRenderer.get()->DrawSphere(position, 25, Vec4(1,0,1,1));
 
-    debugRenderer.get()->Render(deviceContext, CameraManager::Instance().GetViewProjection());
+    //debugRenderer.get()->Render(deviceContext, CameraManager::Instance().GetViewProjection());
 }
 
 bool StageMain::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
