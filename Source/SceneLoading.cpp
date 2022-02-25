@@ -15,6 +15,8 @@ void SceneLoading::Initialize()
 	ID3D11Device* device = Graphics::Ins().GetDevice();
 	// スプライト初期化	
 	loadSprite = new Sprite(device, L"./Data/Sprites//loading.png");
+	Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
+	LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");
 	
 	// スレッド開始
 	std::thread thread(LoadingThread, this);
@@ -50,6 +52,9 @@ void SceneLoading::Render(float elapsedTime)
 	// 2D描画
 	{
 		loadSprite->render(dc, 0, 0, 256, 256,1.0f,1.0f,1.0f,1.0f,angle);
+
+		Bar->render(dc, 600, 650, 620, 25, 1.0f,1.0f,1.0f,1.0f,0);
+		LoadBar->render(dc, 605, 652, 5.0f * LoadPerf, 21, 1.0f,1.0f,1.0f,1.0f,0);
 	}
 }
 

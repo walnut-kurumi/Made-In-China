@@ -23,4 +23,6 @@ public:
 
 private:
 	bool ready = false;	
+protected:
+	float LoadPerf = 0.0f;
 };

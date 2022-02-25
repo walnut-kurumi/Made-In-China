@@ -9,7 +9,7 @@ StageMain::StageMain(ID3D11Device* device)
 {
 
 
-    model = new Model(device, ".\\Data\\Models\\Stage\\stage_1.fbx",true,0);
+    model = new Model(device, ".\\Data\\Models\\Stage\\stage.fbx",true,0);
     scale.x = scale.y = scale.z = 0.05f;
    
     angle.y = DirectX::XMConvertToRadians(-90);

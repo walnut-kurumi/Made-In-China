@@ -4,6 +4,7 @@
 #include "Character.h"
 #include "DebugRenderer.h"
 #include "EnemyBulletManager.h"
+#include "Player.h"
 
 // エネミー
 class Enemy : public Character
@@ -25,17 +26,16 @@ public:
 	void SetLengthSq(float sq) { lengthSq = sq; }
 	float GetLengthSq()const { return lengthSq; }
 
-	void SetPlayerPos(Vec2 player) { playerPos = player; };
-	void SetPlayerATKDirection(Vec2 pAtkD) { playerAttackDirection = pAtkD; };
-
+	void SetPlayer(Player* p) { player = p; }
+	
 protected:
 	float lengthSq = 0;
 
-	// プレイヤーの座標
-	Vec2 playerPos = {};
-	// プレイヤーの攻撃方向
-	Vec2 playerAttackDirection = {};
+	Player* player=nullptr;
 
 	// デバッグ
 	std::unique_ptr<DebugRenderer> debugRenderer;
+
+	// マテリアルカラー
+	Vec4 materialColor = { 1,1,1,1 };
 };

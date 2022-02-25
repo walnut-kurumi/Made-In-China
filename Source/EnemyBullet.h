@@ -2,6 +2,9 @@
 
 #include "Graphics/Shader.h"
 #include "Graphics/Vec.h"
+#include <memory>
+#include <vector>
+#include "DebugRenderer.h"
 
 // 前方宣言
 class EnemyBulletManager;
@@ -40,13 +43,19 @@ protected:
 	void UpdateTransform();
 
 protected:
+
+	// デバッグ
+	std::unique_ptr<DebugRenderer> debugRenderer;
+
 	Vec3	position = { 0,0,0 };
 	Vec3	direction = { 0,0,1 };
 	Vec3	scale = { 1,1,1 };
 	DirectX::XMFLOAT4X4 transform = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 	EnemyBulletManager* manager = nullptr;
 
-	float radius = 0.5f;
+	float radius = 1.5f;
+	float speed = 50.0f;
+	float bulletSpeed = 0.0f;
 
 	// パリィした弾かどうか -> 弾き返してたら敵に当たるようになる
 	bool reflectionFlag = false;

@@ -19,29 +19,51 @@
 // 初期化
 void SceneGame::Initialize()
 {
+    // ロード％初期化
+    LoadPerf = 0.0f;
+
     ID3D11Device* device = Graphics::Ins().GetDevice();    
 
     StageManager::Create();
-    StageManager::Instance().Init();
+    StageManager::Instance().Init();    
+
+    // ロード％更新
+    LoadPerf += 3.0f;
 
     StageMain* stageMain = new StageMain(device);
     StageManager::Instance().Register(stageMain);
     StageSkybox* skybox = new StageSkybox(device);
     StageManager::Instance().Register(skybox);
 
+    // ロード％更新
+    LoadPerf += 3.0f;
+
     player = new Player(device);
     player->Init(); 
 
+    // ロード％更新
+    LoadPerf += 3.0f;
+
+    // エネミー座標設定
+    EnemyPositionSetting();
+
     // エネミー初期化			
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i <4; i++)
     {
+
         EnemyGunner* gunner = new EnemyGunner(device);
-        gunner->SetPosition(DirectX::XMFLOAT3(i * 25.0f - 35.0f, 0, 0));        
+        gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
         EnemyManager::Instance().Register(gunner);
         EnemyManager::Instance().Init();
+
+        // ロード％更新
+        LoadPerf += 2.0f;
     }
 
     Input::Instance().GetMouse().SetMoveCursor(false);
+
+    // ロード％ 100%
+    LoadPerf = 24.4f;
 }
 
 // 終了化
@@ -102,14 +124,14 @@ void SceneGame::Update(float elapsedTime)
 
     // エネミー
     {
-        // プレイヤー座標取得
-        EnemyManager::Instance().SetPlayerPos(Vec2(player->GetCenterPosition().x, player->GetCenterPosition().y));
-        // プレイヤー攻撃方向取得
-        EnemyManager::Instance().SetPlayerAttackDirection(Vec2(player->GetMoveVec().x, player->GetMoveVec().y));
+        EnemyManager::Instance().SetPlayer(player);
         // ソート
         EnemyManager::Instance().SortLengthSq(player->GetPosition());
         // エネミー更新処理
         EnemyManager::Instance().Update(elapsedTime);
+        // 弾丸更新処理
+        EnemyBulletManager::Instance().Update(elapsedTime);
+
     }
     
     //エフェクト更新処理
@@ -168,4 +190,19 @@ void SceneGame::Render(float elapsedTime)
 
 void SceneGame::Reset()
 {
+}
+
+// エネミー座標設定
+void SceneGame::EnemyPositionSetting()
+{
+
+    enemyPos[0] = {-75,0};
+    enemyPos[1] = {-105,0};
+    enemyPos[2] = {-140,0};
+    enemyPos[3] = {-180,0};
+    enemyPos[4] = {-15,35};
+    enemyPos[5] = {-100,35};
+    enemyPos[6] = {-190,38};
+    enemyPos[7] = {-190,62};
+    enemyPos[8] = {-10,62};    
 }
