@@ -179,7 +179,7 @@ void EnemyGunner::UpdateSearchArea()
     if (!direction)
     {        
         searchAreaPos = { position.x - 10, position.y - 2.0f };        
-        searchAreaScale = { 35, height + 2.0f };
+        searchAreaScale = { 45, height + 2.0f };
     }
     else
     {        
