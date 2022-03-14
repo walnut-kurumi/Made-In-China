@@ -8,6 +8,9 @@
 #include "EnemyManager.h"
 #include "EnemyBulletManager.h"
 
+#include "SBManager.h"
+#include "SBNormal.h"
+
 #include "HitManager.h"
 
 Player::Player(ID3D11Device* device) {
@@ -72,7 +75,7 @@ void Player::Init() {
     slowSpeed = 0.35f;
     slow = false;
 
-    atkRadius = 4;
+    atkRadius = 2;
     atkTimer = 0.0f;
 
     health = 1;
@@ -92,6 +95,10 @@ void Player::Update(float elapsedTime) {
     // スロー
     InputSlow();
 
+    // シフトブレイク
+    InputSB();
+    CollisionSBVsEnemies();
+
     atkTimer -= elapsedTime;
 
     //オブジェクト行列更新
@@ -107,6 +114,9 @@ void Player::Render(ID3D11DeviceContext* dc) {
     model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
     //model->Begin(dc, Shaders::Ins()->GetRampShader());
     model->Render(dc);
+
+    // 弾丸描画処理
+    SBManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
 
     centerPosition = position;
     centerPosition.y += height;
@@ -271,16 +281,45 @@ void Player::InputSlow() {
 
 void Player::InputSB() {
     GamePad& gamePad = Input::Instance().GetGamePad();
+    ID3D11Device* device = Graphics::Ins().GetDevice();
     // 武器を持っている場合
-    if (weapon) {
+    if (weapon)
+    {
         if (gamePad.GetButtonDown() & GamePad::BTN_Y) {
             // 武器を投げる
             weapon = false;
+
+            // 発射
+            SBNormal* sb = new SBNormal(device, &SBManager::Instance());
+            // 向き、　発射地点
+            sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisRX(),gamePad.GetAxisRY(),0)), position);
+
         }
     }
     // 武器を持っていない
-    else {
-        // 投げた武器の場所にワープ
+    else
+    {
+        if (gamePad.GetButtonDown() & GamePad::BTN_Y) {
+            // SB探索
+            SBManager& sbManager = SBManager::Instance();
+            int enemyBCount = sbManager.GetProjectileCount();
+            for (int i = 0; i < enemyBCount; ++i) {
+                SB* sb = sbManager.GetProjectile(i);
+
+                // 投げた武器の場所にワープ
+                position = sb->GetPosition();
+                sb->Destroy();
+            }
+
+
+            //***********
+            // 壁との判定を作って、壁抜け対策をする
+            // 敵との判定を取り、敵と衝突or近いと敵を倒しながらワープ
+            //***********
+
+            // 武器を手持ちに
+            weapon = true;
+        }
     }
 
 
@@ -444,6 +483,36 @@ void Player::CollisionPanchiVsProjectile() {
             enemy->SetReflectionFlag(true);
             enemy->SetDirection(-enemy->GetDirection());
 
+        }
+    }
+
+}
+
+void Player::CollisionSBVsEnemies() {
+    // 敵探索
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    int enemyCount = enemyManager.GetEnemyCount();
+    for (int i = 0; i < enemyCount; ++i) {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+
+        // SB探索
+        SBManager& sbManager = SBManager::Instance();
+        int enemyBCount = sbManager.GetProjectileCount();
+        for (int i = 0; i < enemyBCount; ++i) {
+            SB* sb = sbManager.GetProjectile(i);
+
+            // 衝突処理
+            if (Collision::SphereVsSphere(enemy->GetPosition(), sb->GetPosition(), enemy->GetRadius(), atkRadius)) {
+
+                enemy->ApplyDamage(1, 0);
+
+                // 自分を敵の位置へ
+                position = sb->GetPosition();
+                // 武器を壊す
+                sb->Destroy();
+                // 武器を手持ちに
+                weapon = true;
+            }
         }
     }
 

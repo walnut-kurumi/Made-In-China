@@ -31,36 +31,36 @@ void CameraManager::Update(float elapsedTime){
 	Key& key = Input::Instance().GetKey();
 	Mouse& mouse = Input::Instance().GetMouse();
 
-	//カメラ回転
-	{
-		float ax = gamePad.GetAxisRX();
-		float ay = gamePad.GetAxisRY();
-
-		//FPSモード
-		if (Input::Instance().GetKey().ALT()) {
-			ax = mouse.GetMovePositionX();
-			ay = -mouse.GetMovePositionY();
-		}
-
-
-		//カメラの回転速度
-		float speed = rollSpeed * elapsedTime;
-
-		//スティックの入力値に合わせてX軸とY軸を回転
-		angle.x += ay * speed;
-		angle.y += ax * speed;
-
-		//X軸にカメラ回転を制限
-		if (angle.x > maxAngle) angle.x = maxAngle;
-		if (angle.x < minAngle) angle.x = minAngle;
-
-		if (angle.y < -DirectX::XM_PI) {
-			angle.y += DirectX::XM_2PI;
-		}
-		if (angle.y > DirectX::XM_PI) {
-			angle.y -= DirectX::XM_2PI;
-		}
-	}
+	////カメラ回転
+	//{
+	//	float ax = gamePad.GetAxisRX();
+	//	float ay = gamePad.GetAxisRY();
+	//
+	//	//FPSモード
+	//	if (Input::Instance().GetKey().ALT()) {
+	//		ax = mouse.GetMovePositionX();
+	//		ay = -mouse.GetMovePositionY();
+	//	}
+	//
+	//
+	//	//カメラの回転速度
+	//	float speed = rollSpeed * elapsedTime;
+	//
+	//	//スティックの入力値に合わせてX軸とY軸を回転
+	//	angle.x += ay * speed;
+	//	angle.y += ax * speed;
+	//
+	//	//X軸にカメラ回転を制限
+	//	if (angle.x > maxAngle) angle.x = maxAngle;
+	//	if (angle.x < minAngle) angle.x = minAngle;
+	//
+	//	if (angle.y < -DirectX::XM_PI) {
+	//		angle.y += DirectX::XM_2PI;
+	//	}
+	//	if (angle.y > DirectX::XM_PI) {
+	//		angle.y -= DirectX::XM_2PI;
+	//	}
+	//}
 
 	// カメラの位置の等を決定する処理
 	{

@@ -243,6 +243,15 @@
     <ClCompile Include="Source\PerlinNoise.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SBManager.cpp">
+      <Filter>Source\Character\Player\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SB.cpp">
+      <Filter>Source\Character\Player\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SBNormal.cpp">
+      <Filter>Source\Character\Player\Bullet</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framebuffer.h" />
@@ -415,6 +424,15 @@
     <ClInclude Include="Source\PerlinNoise.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\SBManager.h">
+      <Filter>Source\Character\Player\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SB.h">
+      <Filter>Source\Character\Player\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SBNormal.h">
+      <Filter>Source\Character\Player\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\Constants.hlsli">
@@ -505,6 +523,9 @@
     </Filter>
     <Filter Include="Source\Stages">
       <UniqueIdentifier>{3ed1787a-0a1d-47c5-872a-3e99ea613dd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Character\Player\Bullet">
+      <UniqueIdentifier>{c0322eb6-3b81-47b3-a5dd-a74394cf20ff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

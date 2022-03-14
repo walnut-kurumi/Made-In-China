@@ -235,6 +235,9 @@
     <ClCompile Include="Source\PerlinNoise.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
+    <ClCompile Include="Source\SB.cpp" />
+    <ClCompile Include="Source\SBManager.cpp" />
+    <ClCompile Include="Source\SBNormal.cpp" />
     <ClCompile Include="Source\SceneGame.cpp" />
     <ClCompile Include="Source\SceneLoading.cpp" />
     <ClCompile Include="Source\SceneManager.cpp" />
@@ -297,6 +300,9 @@
     <ClInclude Include="Source\PerlinNoise.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\ResourceManager.h" />
+    <ClInclude Include="Source\SB.h" />
+    <ClInclude Include="Source\SBManager.h" />
+    <ClInclude Include="Source\SBNormal.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SceneGame.h" />
     <ClInclude Include="Source\SceneLoading.h" />

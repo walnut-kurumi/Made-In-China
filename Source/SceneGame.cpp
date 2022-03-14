@@ -137,6 +137,8 @@ void SceneGame::Update(float elapsedTime)
 
 
     player->Update(elapsedTime);
+    // シフトブレイク更新処理
+    SBManager::Instance().Update(elapsedTime);
 
     CameraManager& cameraMgr = CameraManager::Instance();
     cameraMgr.Update(elapsedTime);

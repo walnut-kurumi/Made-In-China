@@ -2,6 +2,7 @@
 
 #include "Character.h"
 #include "DebugRenderer.h"
+#include "SBManager.h"
 
 class Player : public Character
 {
@@ -37,6 +38,7 @@ public:
 
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
+	void CollisionSBVsEnemies();
 
 private:
 
