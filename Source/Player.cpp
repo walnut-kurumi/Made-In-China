@@ -21,9 +21,7 @@ Player::Player(ID3D11Device* device) {
     const char* jump = "Data/Models/Player/Animations/Jump.fbx";
     const char* attack = "Data/Models/Player/Animations/Attack.fbx";
 
-    //model = new Model(device, "Data/Models/Player/Jummo/Jummo.fbx", true, 0);
     model = new Model(device, "Data/Models/Player/Player.fbx", true, 0);
-
 
     model->LoadAnimation(idle, 0, static_cast<int>(AnimeState::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(AnimeState::Run));
@@ -80,7 +78,7 @@ void Player::Init() {
 
     health = 1;
 }
-
+#include <Xinput.h>
 void Player::Update(float elapsedTime) {
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
@@ -107,6 +105,17 @@ void Player::Update(float elapsedTime) {
     model->UpdateAnimation(elapsedTime);
     //モデル行列更新
     model->UpdateTransform(transform);
+
+
+
+    // 振動試し
+    Key& key = Input::Instance().GetKey();
+    XINPUT_VIBRATION vib{};
+    vib.wLeftMotorSpeed = 32000;
+    vib.wRightMotorSpeed = 16000;
+    if (key.STATE('l')) {
+        XInputSetState(0, &vib);
+    }
 }
 
 
@@ -133,18 +142,12 @@ void Player::DrawDebugGUI() {
     ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
     //ImGui::PushStyleColor(ImGuiCond_FirstUseEver, ImVec4(0.0f, 0.7f, 0.2f, 1.0f));
 
-    if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None))
-    {
+    if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None)) {
         // トランスフォーム
-        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-
-
-
+        if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::SliderFloat("Position X", &position.x, -2000, 2000);
             ImGui::SliderFloat("Position Y", &position.y, -2000, 2000);
             ImGui::SliderFloat("Position Z", &position.z, -2000, 2000);
-
 
             ImGui::SliderFloat("SpeedMax", &maxMoveSpeed, 0, 100);
             ImGui::SliderFloat("Speed", &moveSpeed, 0, 20);
@@ -154,10 +157,7 @@ void Player::DrawDebugGUI() {
         }
 
         ImGui::SliderFloat("Angle X", &angle.y, DirectX::XMConvertToRadians(-180), DirectX::XMConvertToRadians(180));
-
         ImGui::RadioButton("death", deathFlag);
-
-
     }
     ImGui::End();
 #endif
@@ -178,8 +178,7 @@ Vec3 Player::GetMoveVec() const {
     float cameraRightX = cameraRight.x;
     float cameraRightZ = cameraRight.z;
     float cameraRightLength = sqrtf(cameraRightX * cameraRightX + cameraRightZ * cameraRightZ);
-    if (cameraRightLength > 0.0f)
-    {
+    if (cameraRightLength > 0.0f) {
         // 単位ベクトル化
         cameraRightX /= cameraRightLength;
         cameraRightZ /= cameraRightLength;
@@ -189,8 +188,7 @@ Vec3 Player::GetMoveVec() const {
     float cameraFrontX = cameraFront.x;
     float cameraFrontZ = cameraFront.z;
     float cameraFrontLength = sqrtf(cameraFrontX * cameraFrontX + cameraFrontZ * cameraFrontZ);
-    if (cameraFrontLength > 0.0f)
-    {
+    if (cameraFrontLength > 0.0f) {
         // 単位ベクトル化
         cameraFrontX /= cameraFrontLength;
         cameraFrontZ /= cameraFrontLength;
@@ -226,39 +224,13 @@ bool Player::InputMove(float elapsedTime) {
 
     // 進行ベクトルがゼロベクトルでない場合は入力された
     return moveVec.x || moveVec.y || moveVec.z;
-
-    //// 入力情報を所得
-    //GamePad& gamePad = Input::Instance().GetGamePad();
-    //float ax = gamePad.GetAxisLX();
-    //float ay = gamePad.GetAxisLY();
-    //
-    //// 右
-    //Vec3 cameraRight = VecMath::Normalize(CameraManager::Instance().mainC.GetRight());
-    //// 前
-    //Vec3 cameraFront = VecMath::Normalize(VecMath::Cross(cameraRight, normal));
-    //// 上記の前と右を合体！
-    //Vec3 translate = cameraRight * ax + cameraFront * ay;
-    //
-    //// 移動前を保存
-    //posMae = position;
-    //position += translate * moveSpeed * elapsedTime;
-    //posAto = position;
-    //
-    //Vec3 moveVec = posAto - posMae;
-    //
-    ////移動ベクトル
-    //DirectX::XMFLOAT3 moveVec = GetMoveVec();
-    //Move(moveVec.x, moveVec.z, moveSpeed);
-    //Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
-    //
-    //return moveVec.x || moveVec.y || moveVec.z;;
 }
 
 // ジャンプ入力処理
 void Player::InputJump() {
     Key& key = Input::Instance().GetKey();
     GamePad& gamePad = Input::Instance().GetGamePad();
-    if (gamePad.GetButtonDown() & GamePad::BTN_A
+    if (gamePad.GetButtonDown() & GamePad::BTN_A 
         || key.STATE(VK_SPACE)) {
         jumpCount++;
         if (jumpCount <= jumpLimit) {
@@ -270,9 +242,7 @@ void Player::InputJump() {
 void Player::InputSlow() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     Key& key = Input::Instance().GetKey();
-    if (gamePad.GetButton() & GamePad::BTN_RIGHT_SHOULDER
-         ||
-        key.STATE(VK_SHIFT)) {
+    if (gamePad.GetButton() & GamePad::BTN_RIGHT_SHOULDER || key.STATE(VK_SHIFT)) {
         slow = true;
         return;
     }
@@ -283,22 +253,18 @@ void Player::InputSB() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     ID3D11Device* device = Graphics::Ins().GetDevice();
     // 武器を持っている場合
-    if (weapon)
-    {
+    if (weapon) {
         if (gamePad.GetButtonDown() & GamePad::BTN_Y) {
             // 武器を投げる
             weapon = false;
-
             // 発射
             SBNormal* sb = new SBNormal(device, &SBManager::Instance());
             // 向き、　発射地点
-            sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisRX(),gamePad.GetAxisRY(),0)), position);
-
+            sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisRX(),gamePad.GetAxisRY(),0)), position + waistPos);
         }
     }
     // 武器を持っていない
-    else
-    {
+    else {
         if (gamePad.GetButtonDown() & GamePad::BTN_Y) {
             // SB探索
             SBManager& sbManager = SBManager::Instance();
@@ -310,8 +276,6 @@ void Player::InputSB() {
                 position = sb->GetPosition();
                 sb->Destroy();
             }
-
-
             //***********
             // 壁との判定を作って、壁抜け対策をする
             // 敵との判定を取り、敵と衝突or近いと敵を倒しながらワープ
@@ -321,8 +285,6 @@ void Player::InputSB() {
             weapon = true;
         }
     }
-
-
 }
 
 bool Player::InputAttack() {
@@ -370,7 +332,6 @@ void Player::UpdateIdleState(float elapsedTime) {
     Key& key = Input::Instance().GetKey();
     // 回避入力処理
     //if (key.STATE(VK_SPACE)) TransitionJumpState();
-
 }
 
 //走るステート遷移
@@ -465,9 +426,7 @@ void Player::CollisionPanchiVsEnemies() {
         Enemy* enemy = enemyManager.GetEnemy(i);
         // 衝突処理
         if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
-
             enemy->ApplyDamage(1, 0);
-
         }
     }
 }
@@ -479,13 +438,10 @@ void Player::CollisionPanchiVsProjectile() {
         EnemyBullet* enemy = enemyBManager.GetProjectile(i);
         // 衝突処理
         if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
-
             enemy->SetReflectionFlag(true);
             enemy->SetDirection(-enemy->GetDirection());
-
         }
     }
-
 }
 
 void Player::CollisionSBVsEnemies() {
@@ -515,5 +471,4 @@ void Player::CollisionSBVsEnemies() {
             }
         }
     }
-
 }
