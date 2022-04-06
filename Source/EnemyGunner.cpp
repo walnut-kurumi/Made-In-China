@@ -91,7 +91,9 @@ void EnemyGunner::Update(float elapsedTime)
     // 無敵時間更新
     UpdateInvincibleTimer(elapsedTime);
 
-  
+    // 索敵エリア更新
+    UpdateSearchArea();
+
     //オブジェクト行列更新
     UpdateTransform();
     // モデルアニメーション更新処理
@@ -198,9 +200,7 @@ void EnemyGunner::UpdateCenterPosition()
 
 // プレイヤーを索敵
 bool EnemyGunner::Search()
-{
-    // 索敵エリア更新
-    UpdateSearchArea();    
+{      
     //searchArea（短形） と playerPos（点）で当たり判定    
     //当たっていたら索敵範囲内なのでtrue
     if (Collision::PointVsRect(Vec2(player->GetCenterPosition().x, player->GetCenterPosition().y), searchAreaPos, searchAreaScale))
@@ -409,7 +409,7 @@ void EnemyGunner::WalkTimerUpdate(float elapsedTime)
 void EnemyGunner::TransitionRunState()
 {
     state = State::Run;
-    moveSpeed = 15;
+    moveSpeed = 100;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 

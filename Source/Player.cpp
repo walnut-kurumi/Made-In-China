@@ -59,7 +59,7 @@ void Player::Init() {
         0,0,0,1
     };
     normal = { 0,0,0 };
-    velocity = { 0,0,0 };
+    velocity = { 0,0,0 };    
     maxMoveSpeed = 500;
 
     jumpSpeed = 50.0f;
@@ -337,7 +337,7 @@ void Player::UpdateIdleState(float elapsedTime) {
 //走るステート遷移
 void Player::TransitionRunState() {
     state = AnimeState::Run;
-    moveSpeed = 50;
+    moveSpeed = 200;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
