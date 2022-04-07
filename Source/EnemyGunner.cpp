@@ -91,7 +91,9 @@ void EnemyGunner::Update(float elapsedTime)
     // 無敵時間更新
     UpdateInvincibleTimer(elapsedTime);
 
-  
+    // 索敵エリア更新
+    UpdateSearchArea();
+
     //オブジェクト行列更新
     UpdateTransform();
     // モデルアニメーション更新処理
@@ -115,7 +117,7 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
     debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
     debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
     
-    //debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 
@@ -198,9 +200,7 @@ void EnemyGunner::UpdateCenterPosition()
 
 // プレイヤーを索敵
 bool EnemyGunner::Search()
-{
-    // 索敵エリア更新
-    UpdateSearchArea();    
+{      
     //searchArea（短形） と playerPos（点）で当たり判定    
     //当たっていたら索敵範囲内なのでtrue
     if (Collision::PointVsRect(Vec2(player->GetCenterPosition().x, player->GetCenterPosition().y), searchAreaPos, searchAreaScale))
@@ -409,7 +409,7 @@ void EnemyGunner::WalkTimerUpdate(float elapsedTime)
 void EnemyGunner::TransitionRunState()
 {
     state = State::Run;
-    moveSpeed = 15;
+    moveSpeed = 100;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
