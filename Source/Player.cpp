@@ -112,7 +112,7 @@ void Player::Update(float elapsedTime) {
     Key& key = Input::Instance().GetKey();
     XINPUT_VIBRATION vib{};
     vib.wLeftMotorSpeed = 32000;
-    vib.wRightMotorSpeed = 16000;
+    vib.wRightMotorSpeed = 32000;
     if (key.STATE('l')) {
         XInputSetState(0, &vib);
     }
@@ -242,7 +242,7 @@ void Player::InputJump() {
 void Player::InputSlow() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     Key& key = Input::Instance().GetKey();
-    if (gamePad.GetButton() & GamePad::BTN_RIGHT_SHOULDER || key.STATE(VK_SHIFT)) {
+    if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER || key.STATE(VK_SHIFT)) {
         slow = true;
         return;
     }
@@ -253,19 +253,18 @@ void Player::InputSB() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     ID3D11Device* device = Graphics::Ins().GetDevice();
     // 武器を持っている場合
-    if (weapon) {
-        if (gamePad.GetButtonDown() & GamePad::BTN_Y) {
+    if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_TRIGGER) {
+        if (weapon && 
+            (gamePad.GetAxisRX() != 0 && gamePad.GetAxisRY() != 0)) {
             // 武器を投げる
             weapon = false;
             // 発射
             SBNormal* sb = new SBNormal(device, &SBManager::Instance());
             // 向き、　発射地点
-            sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisRX(),gamePad.GetAxisRY(),0)), position + waistPos);
+            sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisRX(), gamePad.GetAxisRY(), 0)), position + waistPos);
         }
-    }
-    // 武器を持っていない
-    else {
-        if (gamePad.GetButtonDown() & GamePad::BTN_Y) {
+        // 武器を持っていない
+        else {
             // SB探索
             SBManager& sbManager = SBManager::Instance();
             int enemyBCount = sbManager.GetProjectileCount();
