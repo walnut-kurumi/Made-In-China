@@ -1,8 +1,8 @@
 #include "SBNormal.h"
 #include "Camera/CameraManager.h"
 
-SBNormal::SBNormal(ID3D11Device* device, SBManager* manager) :SB(manager)
-{
+SBNormal::SBNormal(ID3D11Device* device, SBManager* manager) 
+	: SB(manager) {
 	model = new Model(device, "Data/Models/Bullet/bullet.fbx", true, 0);
 	// 表示サイズを調整
 	scale.x = scale.y = scale.z = 1.0f;
@@ -10,17 +10,14 @@ SBNormal::SBNormal(ID3D11Device* device, SBManager* manager) :SB(manager)
 	debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
-SBNormal::~SBNormal()
-{
+SBNormal::~SBNormal() {
 	delete model;
 }
 // 更新処理
-void SBNormal::Update(float elapsedTime)
-{
+void SBNormal::Update(float elapsedTime) {
 	// 寿命処理
 	lifeTimer -= elapsedTime;
-	if (lifeTimer <= 0.0f)
-	{
+	if (lifeTimer <= 0.0f) {
 		// 自分を削除
 		Destroy();
 	}
@@ -35,8 +32,7 @@ void SBNormal::Update(float elapsedTime)
 	model->UpdateTransform(transform);
 }
 // 描画処理
-void SBNormal::Render(ID3D11DeviceContext* dc, Shader* shader)
-{
+void SBNormal::Render(ID3D11DeviceContext* dc, Shader* shader) {
 	model->Begin(dc, *shader);
 	model->Render(dc);
 
@@ -47,8 +43,7 @@ void SBNormal::Render(ID3D11DeviceContext* dc, Shader* shader)
 }
 
 // 発射処理
-void SBNormal::Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position)
-{
+void SBNormal::Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position) {
 	this->direction = direction;
 	this->position = position;
 }

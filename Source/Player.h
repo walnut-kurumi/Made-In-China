@@ -39,6 +39,7 @@ public:
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
 	void CollisionSBVsEnemies();
+	void CollisionSBVsStage();
 
 private:
 
@@ -56,6 +57,7 @@ private:
 
 	// 通常攻撃&パリィ
 	bool InputAttack();
+
 	
 	// 死亡した時に呼ばれる
 	void OnDead() override { isDead = true; }

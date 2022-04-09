@@ -96,6 +96,7 @@ void Player::Update(float elapsedTime) {
     // シフトブレイク
     InputSB();
     CollisionSBVsEnemies();
+    CollisionSBVsStage();
 
     atkTimer -= elapsedTime;
 
@@ -264,11 +265,11 @@ void Player::InputSB() {
             sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisRX(), gamePad.GetAxisRY(), 0)), position + waistPos);
         }
         // 武器を持っていない
-        else {
+        else if(!weapon) {
             // SB探索
             SBManager& sbManager = SBManager::Instance();
-            int enemyBCount = sbManager.GetProjectileCount();
-            for (int i = 0; i < enemyBCount; ++i) {
+            int sbCount = sbManager.GetProjectileCount();
+            for (int i = 0; i < sbCount; ++i) {
                 SB* sb = sbManager.GetProjectile(i);
 
                 // 投げた武器の場所にワープ
@@ -468,6 +469,39 @@ void Player::CollisionSBVsEnemies() {
                 // 武器を手持ちに
                 weapon = true;
             }
+        }
+    }
+}
+
+void Player::CollisionSBVsStage() {
+    // SB探索
+    SBManager& sbManager = SBManager::Instance();
+    int sbCount = sbManager.GetProjectileCount();
+    for (int i = 0; i < sbCount; ++i) {
+        // SB情報
+        SB* sb = sbManager.GetProjectile(i);
+        Vec3 pos = sb->GetPosition();
+        Vec3 dir = sb->GetDirection();
+        float speed = sb->GetSpeed();
+
+        //************************
+        // 順番によってはすり抜けあり
+        //************************
+        HitResult hit;
+        // ステージとの判定
+        if (StageManager::Instance().RayCast(pos, pos + VecMath::Normalize(dir) * speed, hit)) {
+
+            // 地面に接地している
+            position.x = hit.position.x;
+            position.y = hit.position.y;
+            position.z = hit.position.z;  
+
+            // 投げた武器の場所にワープ
+            position = sb->GetPosition();
+            sb->Destroy();
+
+            // 武器を手に持つ
+            weapon = true;
         }
     }
 }

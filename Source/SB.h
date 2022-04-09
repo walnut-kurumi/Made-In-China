@@ -30,11 +30,8 @@ public:
 	const Vec3& GetScale() const { return scale; }
 	// 半径取得
 	float GetRadius() const { return radius; }
-	// パリィフラグ設定
-	void SetReflectionFlag(bool r) { reflectionFlag = r; }
-	// パリィフラグ取得
-	bool GetReflectionFlag() const { return reflectionFlag; }
-
+	// スピード取得
+	float GetSpeed() const { return bulletSpeed; }
 	// 破棄
 	void Destroy();
 
@@ -56,7 +53,4 @@ protected:
 	float radius = 1.5f;
 	float speed = 50.0f;
 	float bulletSpeed = 0.0f;
-
-	// パリィした弾かどうか -> 弾き返してたら敵に当たるようになる
-	bool reflectionFlag = false;
 };
