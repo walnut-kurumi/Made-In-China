@@ -252,6 +252,12 @@
     <ClCompile Include="Source\SBNormal.cpp">
       <Filter>Source\Character\Player\Bullet</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SceneClear.cpp">
+      <Filter>Source\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneOver.cpp">
+      <Filter>Source\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framebuffer.h" />
@@ -432,6 +438,12 @@
     </ClInclude>
     <ClInclude Include="Source\SBNormal.h">
       <Filter>Source\Character\Player\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneClear.h">
+      <Filter>Source\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneOver.h">
+      <Filter>Source\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

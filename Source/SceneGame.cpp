@@ -118,14 +118,14 @@ void SceneGame::Update(float elapsedTime)
         | GamePad::BTN_LEFT
         | GamePad::BTN_LEFT_SHOULDER
         | GamePad::BTN_LEFT_THUMB
-        | GamePad::BTN_LEFT_TRIGGER
+        //| GamePad::BTN_LEFT_TRIGGER
         | GamePad::BTN_RIGHT
         | GamePad::BTN_RIGHT_SHOULDER
         | GamePad::BTN_RIGHT_THUMB
-        | GamePad::BTN_RIGHT_TRIGGER
+        //| GamePad::BTN_RIGHT_TRIGGER
         | GamePad::BTN_START
         | GamePad::BTN_UP
-        | GamePad::BTN_X
+        //| GamePad::BTN_X
         | GamePad::BTN_Y;
 
     DirectX::XMFLOAT3 screenPosition;
