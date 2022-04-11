@@ -30,7 +30,7 @@ void SceneGame::Initialize()
     StageManager::Instance().Init();    
 
     // ロード％更新
-    AddLoadPercent(24.0f);    
+    AddLoadPercent(1.0f);    
 
     StageMain* stageMain = new StageMain(device);
     StageManager::Instance().Register(stageMain);
@@ -38,37 +38,41 @@ void SceneGame::Initialize()
     StageManager::Instance().Register(skybox);
 
     // ロード％更新
-    AddLoadPercent(24.0f);
+    AddLoadPercent(2.0f);
 
     player = new Player(device);
     player->Init(); 
 
     // ロード％更新
-    AddLoadPercent(24.0f);
+    AddLoadPercent(3.0f);
 
     // エネミー座標設定
     EnemyPositionSetting();
 
     // エネミー初期化			
-    for (int i = 0; i <4; i++)
-    {
-        if (i == 3)
-        {
-            // ロード％ 100%
-            SetLoadPercent(122.0f);
-        }
-        else
+    int ENEMY_MAX = 4;
+    for (int i = 0; i <ENEMY_MAX; i++)
+    {        
+        if (ENEMY_MAX / 2 == i)
         {
             // ロード％更新
-            AddLoadPercent(2.0f);
+            AddLoadPercent(4.0f);
         }
-               EnemyGunner* gunner = new EnemyGunner(device);
+        if (ENEMY_MAX == i)
+        {
+            // ロード％更新
+            AddLoadPercent(5.0f);
+            AddLoadPercent(6.0f);
+        }
+
+        EnemyGunner* gunner = new EnemyGunner(device);
         gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
         EnemyManager::Instance().Register(gunner);
         EnemyManager::Instance().Init();
-
         
     }
+    // ロード％更新
+    AddLoadPercent(7.0f);
 
     // マウスカーソル動かすか
     Input::Instance().GetMouse().SetMoveCursor(true);
@@ -86,7 +90,7 @@ void SceneGame::Initialize()
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
     // ロード％ 100%
-    SetLoadPercent(122.0f);
+    SetLoadPercent(10.0f);
 }
 
 // 終了化

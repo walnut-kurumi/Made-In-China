@@ -431,9 +431,13 @@ void Player::CollisionPanchiVsEnemies() {
         Enemy* enemy = enemyManager.GetEnemy(i);
         // 衝突処理
         if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
-            enemy->ApplyDamage(1, 0);
-            // ヒットストップ
-            if(!slow)hitstop = true;
+            
+            if (enemy->GetHealth() > 0)
+            {
+                enemy->ApplyDamage(1, 0);
+                // ヒットストップ
+                if (!slow)hitstop = true;
+            }
         }
     }
 }
@@ -467,9 +471,12 @@ void Player::CollisionSBVsEnemies() {
             // 衝突処理
             if (Collision::SphereVsSphere(enemy->GetPosition(), sb->GetPosition(), enemy->GetRadius(), atkRadius)) {
 
-                enemy->ApplyDamage(1, 0);
-                // ヒットストップ
-                if(!slow)hitstop = true;
+                if (enemy->GetHealth() > 0)
+                {
+                    enemy->ApplyDamage(1, 0);
+                    // ヒットストップ
+                    if (!slow)hitstop = true;
+                }
 
                 // 自分を敵の位置へ
                 position = sb->GetPosition();

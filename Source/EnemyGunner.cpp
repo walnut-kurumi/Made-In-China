@@ -136,8 +136,11 @@ void EnemyGunner::CollisionProjectileVsEnemies()
             if (enemyB->GetReflectionFlag())
             {
                 // ƒ_ƒ[ƒW—^‚¦‚é
-                ApplyDamage(1, 0.0f);
-                if(player->GetSlowFlag() == false)player->SetHitstop(true);
+                if (health > 0)
+                {
+                    ApplyDamage(1, 0.0f);
+                    if (player->GetSlowFlag() == false)player->SetHitstop(true);
+                }
 
                 enemyBManager.Remove(enemyB);
             }
