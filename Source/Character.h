@@ -42,8 +42,6 @@ public:
 	//	Å‘åŒ’Nó‘Ô‚ğæ“¾
 	int GetMaxHealth() const { return maxHealth; }
 
-	DirectX::XMFLOAT4X4 GetRota() const { return rotaStans; }
-
 	// ÕŒ‚‚ğ—^‚¦‚é
 	void AddImpulse(const Vec3& impulse);
 
@@ -110,11 +108,6 @@ protected:
 
 
 	Vec3 dir{};
-
-
-	Vec4 quaternion{};
-	Vec4 quaternionStans{};
-	DirectX::XMFLOAT4X4 rotaStans{};
 
 	float gravity = -3.5f;
 

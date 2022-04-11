@@ -3,8 +3,7 @@
 #include "StageManager.h"
 #include "Camera/CameraManager.h"
 
-void Character::UpdateTransform()
-{
+void Character::UpdateTransform() {
     // スケール行列を作成
     DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
 
@@ -16,11 +15,6 @@ void Character::UpdateTransform()
     DirectX::XMMATRIX Z = DirectX::XMMatrixRotationZ(angle.z);
     DirectX::XMMATRIX R = Y * X * Z;
 
-
-    DirectX::XMMATRIX Q = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&quaternion));
-    DirectX::XMMATRIX QS = DirectX::XMMatrixRotationQuaternion(DirectX::XMLoadFloat4(&quaternionStans));
-
-    DirectX::XMStoreFloat4x4(&rotaStans, QS);
     // 位置行列を作成
     DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(position.x, position.y, position.z);
     // 3つの行列を組み合わせ、ワールド行列を作成

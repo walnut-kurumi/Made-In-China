@@ -108,7 +108,6 @@ void Player::Update(float elapsedTime) {
     model->UpdateTransform(transform);
 
 
-
     // 振動試し
     Key& key = Input::Instance().GetKey();
     XINPUT_VIBRATION vib{};
@@ -116,6 +115,67 @@ void Player::Update(float elapsedTime) {
     vib.wRightMotorSpeed = 32000;
     if (key.STATE('l')) {
         XInputSetState(0, &vib);
+    }
+
+    // タイマー試し
+    //// 押してる間
+    //if (key.STATE('k') && !slowCT) {
+    //    // 時間があれば
+    //    if (slowTimer >= 0) {
+    //        // 起動してタイマー減らす
+    //        slowTimer -= elapsedTime;
+    //    }
+    //    else {
+    //        slowTimer = max(slowTimer, 0);
+    //        // ゼロになればCT発動
+    //        slowCT = true;
+    //    }
+    //}
+    //// 放している間
+    //if (!key.STATE('k')) {
+    //    // まだCT空けてなければ
+    //    if (slowCTTimer > 0 && slowCT) {
+    //        slowCTTimer -= elapsedTime;
+    //    }
+    //    // CT終わったら時間を増やしていく
+    //    else if (slowCT) {
+    //        slowCTTimer = CTMax;
+    //        slowCT = false;
+    //    }
+    //    else {
+    //        slowTimer += elapsedTime;
+    //        slowTimer = min(slowTimer, slowMax);
+    //    }
+    //}
+
+    // 押してる間
+    if (key.STATE('k') && !slowCT) {
+        // 時間があれば
+        if (slowTimer >= 0) {
+            // 起動してタイマー減らす
+            slowTimer -= elapsedTime;
+        }
+        else {
+            slowTimer = max(slowTimer, 0);
+            // ゼロになればCT発動
+            slowCT = true;
+        }
+    }
+    // 放している間
+    if (!key.STATE('k')) {
+        // まだCT空けてなければ
+        if (slowCTTimer > 0 && slowCT) {
+            slowCTTimer -= elapsedTime;
+        }
+        // CT終わったら時間を増やしていく
+        else if (slowCT) {
+            slowCTTimer = CTMax;
+            slowCT = false;
+        }
+        else {
+            slowTimer += elapsedTime;
+            slowTimer = min(slowTimer, slowMax);
+        }
     }
 }
 
@@ -443,6 +503,7 @@ void Player::CollisionPanchiVsProjectile() {
     }
 }
 
+// 敵とSB
 void Player::CollisionSBVsEnemies() {
     // 敵探索
     EnemyManager& enemyManager = EnemyManager::Instance();

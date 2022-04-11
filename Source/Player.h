@@ -16,7 +16,7 @@ private:
 		Jump,	//　ジャンプ開始
 		Fall,	//　落下
 		Land,	//　着地
-		End,	//　お　わ　り　💛
+		End,	//　お　わ　り　💛 ふぁっ〇ゅ～～～！！
 	};
 
 public:
@@ -33,6 +33,8 @@ public:
 	Vec3 GetMoveVec() const;
 
 	bool GetDead() { return isDead; }
+
+	float GetSlowTimer() const { return slowTimer; }
 
 	float GetPlaybackSpeed() { return slow ? slowSpeed : playbackSpeed; }
 
@@ -99,7 +101,6 @@ private:
 
 	float atkTimer;
 
-
 	float moveSpeed;
 	float turnSpeed = DirectX::XMConvertToRadians(3600);
 
@@ -114,6 +115,13 @@ private:
 	float playbackSpeed = 1.0f;
 	float slowSpeed;
 	bool slow;
+	// スローモーションの時間
+	const float slowMax = 10.0f;
+	float slowTimer = slowMax;
+	const float CTMax = 2.5f;
+	float slowCTTimer = CTMax;
+	bool slowCT = false;
+
 
 	// SB用
 	bool weapon = true;		// 武器を持っているか否か
