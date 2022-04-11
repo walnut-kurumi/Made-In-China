@@ -112,8 +112,8 @@ private:
 
 	// スローモーション用
 	float playbackSpeed = 1.0f;
-	float slowSpeed = 0.25f;
-	bool slow = false;
+	float slowSpeed;
+	bool slow;
 
 	// SB用
 	bool weapon = true;		// 武器を持っているか否か

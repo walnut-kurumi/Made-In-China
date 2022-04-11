@@ -27,12 +27,9 @@ void Character::UpdateTransform()
     DirectX::XMMATRIX W = S * R * T;
     // 計算したワールド行列を取り出す
     DirectX::XMStoreFloat4x4(&transform, W);
-
-    //DirectX::XMVector3Transform()
 }
 
-void Character::Move(float vx, float vz, float speed)
-{
+void Character::Move(float vx, float vz, float speed) {
     // 移動方向ベクトル設定
     moveVecX = vx;
     moveVecZ = vz;
@@ -41,8 +38,7 @@ void Character::Move(float vx, float vz, float speed)
     maxMoveSpeed = speed;
 }
 
-void Character::AttackMove(float vx, float vy, float speed)
-{
+void Character::AttackMove(float vx, float vy, float speed) {
     // 移動方向ベクトル設定
     moveVecX = vx;
     moveVecY = vy;
@@ -52,8 +48,7 @@ void Character::AttackMove(float vx, float vy, float speed)
 }
 
 
-void Character::Turn(float elapsedTime, float vx, float vz, float speed)
-{
+void Character::Turn(float elapsedTime, float vx, float vz, float speed) {
     speed *= elapsedTime;
 
     // 進行ベクトルがゼロベクトルの場合は処理する必要なし
@@ -93,8 +88,7 @@ void Character::Jump(float speed) {
     velocity.y = speed;
 }
 
-void Character::UpdateSpeed(float elapsedTime)
-{
+void Character::UpdateSpeed(float elapsedTime) {
     // 経過フレーム
     float elapsedFrame = 60.0f * elapsedTime;
 
@@ -105,8 +99,7 @@ void Character::UpdateSpeed(float elapsedTime)
     UpdateMove(elapsedTime);
 }
 
-bool Character::ApplyDamage(int damage, float invincibleTime)
-{
+bool Character::ApplyDamage(int damage, float invincibleTime) {
     // ダメージが0の場合は健康状態を変更する必要がない
     if (damage <= 0) return false;
 
@@ -125,13 +118,11 @@ bool Character::ApplyDamage(int damage, float invincibleTime)
 }
 
 //  無敵時間更新処理
-void Character::UpdateInvincibleTimer(float elapsedTime)
-{
+void Character::UpdateInvincibleTimer(float elapsedTime) {
     if (invincibleTimer > 0.0f) invincibleTimer -= elapsedTime;
 }
 
-void Character::UpdateVerticalVelocitiy(float elapsedFrame)
-{
+void Character::UpdateVerticalVelocitiy(float elapsedFrame) {
     // 移動処理
     if(moveVecY) velocity.y = moveVecY * elapsedFrame* maxMoveSpeed;
     if(gravFlag) velocity.y += gravity * 1.75 * elapsedFrame;
@@ -141,8 +132,7 @@ void Character::UpdateVerticalVelocitiy(float elapsedFrame)
         velocity.y = downMax;
 }
 
-void Character::UpdateVerticalMove(float elapsedTime)
-{
+void Character::UpdateVerticalMove(float elapsedTime) {
     // 垂直方向の移動量
     float my = velocity.y * elapsedTime;
 
@@ -161,10 +151,6 @@ void Character::UpdateVerticalMove(float elapsedTime)
         // レイキャストによる地面判定
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit)) {
-            // 法線ベクトルを取得
-            //normal.x = hit.normal.x;
-            //normal.y = hit.normal.y;
-            //normal.z = hit.normal.z;
 
             // 地面に接地している
             position.x = hit.position.x;
@@ -212,8 +198,7 @@ void Character::UpdateVerticalMove(float elapsedTime)
 }
 
 // 衝撃を与える
-void Character::AddImpulse(const Vec3& impulse)
-{
+void Character::AddImpulse(const Vec3& impulse) {
     // 速力に力を加える
     velocity.x += impulse.x;
     velocity.y += impulse.y;
@@ -223,8 +208,7 @@ void Character::AddImpulse(const Vec3& impulse)
 #include <math.h>
 
 // 水平速力更新処理
-void Character::UpdateHorizontalVelocity(float elapsedFrame)
-{
+void Character::UpdateHorizontalVelocity(float elapsedFrame) {
     moveVecX = min(moveVecX, maxMoveSpeed);
     moveVecZ = min(moveVecZ, maxMoveSpeed);
 
@@ -295,13 +279,10 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame)
 }
 
 // 水平移動更新処理
-void Character::UpdateHorizontalMove(float elapsedTime)
-{
+void Character::UpdateHorizontalMove(float elapsedTime) {
     /*  移動処理
      position.x += velocity.x * elapsedTime;
      position.z += velocity.z * elapsedTime;*/
-
-     // スライムは落ちる
 
      // 水平速力計算
     float velocityLengthXZ = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
@@ -354,14 +335,12 @@ void Character::UpdateHorizontalMove(float elapsedTime)
     }
 }
 
-void Character::UpdateVelocity(float elapsedFrame)
-{
+void Character::UpdateVelocity(float elapsedFrame) {
     UpdateVerticalVelocitiy(elapsedFrame);
     UpdateHorizontalVelocity(elapsedFrame);
 }
 
-void Character::UpdateMove(float elapsedTime)
-{
+void Character::UpdateMove(float elapsedTime) {
     UpdateVerticalMove(elapsedTime);
     UpdateHorizontalMove(elapsedTime);
 }

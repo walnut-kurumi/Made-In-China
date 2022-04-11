@@ -60,7 +60,7 @@ void Player::Init() {
     };
     normal = { 0,0,0 };
     velocity = { 0,0,0 };    
-    maxMoveSpeed = 500;
+    maxMoveSpeed = 10;
 
     jumpSpeed = 50.0f;
 
@@ -150,7 +150,6 @@ void Player::DrawDebugGUI() {
             ImGui::SliderFloat("Position Y", &position.y, -2000, 2000);
             ImGui::SliderFloat("Position Z", &position.z, -2000, 2000);
 
-            ImGui::SliderFloat("SpeedMax", &maxMoveSpeed, 0, 100);
             ImGui::SliderFloat("Speed", &moveSpeed, 0, 20);
 
             int a = static_cast<int>(state);
@@ -337,7 +336,7 @@ void Player::UpdateIdleState(float elapsedTime) {
 //走るステート遷移
 void Player::TransitionRunState() {
     state = AnimeState::Run;
-    moveSpeed = 200;
+    moveSpeed = 20;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 

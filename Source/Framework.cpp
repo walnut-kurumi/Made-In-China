@@ -86,7 +86,7 @@ void Framework::render(float elapsedTime){
 	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 #endif
 
-	UINT syncInterval = 0;
+	UINT syncInterval = 1;
 	//裏の画面を持ってくる
 	gfx.GetSwapChain()->Present(syncInterval, 0);
 }
@@ -104,7 +104,7 @@ void Framework::calculateFrameStats() {
 		float fps = static_cast<float>(frames);
 		std::wostringstream outs;
 		outs.precision(6);
-		outs <<L"IcY SparK LemoN";
+		outs <<L"IcY SparK LemoN" << fps;
 		SetWindowTextW(hwnd, outs.str().c_str());
 
 		frames = 0;
