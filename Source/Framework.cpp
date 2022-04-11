@@ -12,7 +12,7 @@ Framework::Framework(HWND hwnd)
 	, input(hwnd)
 	, gfx(hwnd){
 
-	ShowCursor(FALSE);
+	//ShowCursor(FALSE);
 }
 
 bool Framework::initialize() {

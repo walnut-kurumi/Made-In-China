@@ -79,5 +79,5 @@ private:
 	int				screenHeight = 0;
 	HWND			hWnd{};
 
-	bool moveCursor = false;
+	bool moveCursor = true;
 };

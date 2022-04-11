@@ -34,7 +34,7 @@ void SceneLoading::Update(float elapsedTime)
 {
 	constexpr float speed = 180;
 	angle += speed * elapsedTime;
-	w = 5.0f * nextScene->LoadPerf;
+	w = 5.0f * nextScene->LoadPercent;
 	// 次のシーンの準備が完了したらシーンを切り替える
 	if (nextScene->Ready())
 	{
