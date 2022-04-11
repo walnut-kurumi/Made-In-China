@@ -116,13 +116,13 @@ protected:
 	Vec4 quaternionStans{};
 	DirectX::XMFLOAT4X4 rotaStans{};
 
-	float gravity = -1.0f;
+	float gravity = -3.5f;
 
 	bool gravFlag = true;
 
 
 	Vec3 velocity = { 0,0,0 };
-	float downMax = -60.0f;
+	float downMax = -175.0f;
 
 	bool isGround = false;
 	float height = 4.0f;

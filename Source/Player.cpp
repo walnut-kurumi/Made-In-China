@@ -62,7 +62,7 @@ void Player::Init() {
     velocity = { 0,0,0 };    
     maxMoveSpeed = 10;
 
-    jumpSpeed = 50.0f;
+    jumpSpeed = 105.0f;
 
     moveVecX = 0.0f;
     moveVecZ = 0.0f;
