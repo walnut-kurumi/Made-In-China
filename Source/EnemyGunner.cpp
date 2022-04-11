@@ -291,7 +291,7 @@ void EnemyGunner::MoveAttack(float cooldown)
 void EnemyGunner::MoveBlow()
 {    
     // プレイヤーの攻撃方向へ吹き飛ばす
-    const float blowPower = 0.15f;
+    const float blowPower = 5000.0f;
     
     // プレイヤーの中心座標
     const Vec3& p = { player->GetCenterPosition() };
@@ -308,10 +308,11 @@ void EnemyGunner::MoveBlow()
     vx /= lengthXY;
     vy /= lengthXY;
    
-    const Vec3& blowDirection = { ep.x * blowPower , ep.y * blowPower,0.0f };    
+    const Vec3& blowDirection = { blowPower , 2.0f,0.0f };
    
     // 吹っ飛ばす
-    AddImpulse(blowDirection);
+    //AddImpulse(blowDirection);
+    AttackMove(vx, vy, moveSpeed);
  
 }
 
@@ -474,8 +475,7 @@ void EnemyGunner::TransitionBlowState()
     model->PlayAnimation(static_cast<int>(state), false);
 
     // 止まる
-    moveSpeed = 0;
-    Move(0.0f, 0.0f, moveSpeed);
+    moveSpeed = 40;    
 }
 
 //吹っ飛びステート更新処理
@@ -488,7 +488,7 @@ void EnemyGunner::UpdateBlowState(float elapsedTime)
     if (blowTimer > 0.0f)blowTimer -= elapsedTime;    
 
     // 吹っ飛ばしたら死亡ステートへ               
-    if (blowTimer < 0.0f)TransitionDeathState();    
+    else TransitionDeathState();    
 }
 
 
