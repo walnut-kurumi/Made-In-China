@@ -22,13 +22,13 @@ public:
 	void SetReady() { ready = true; }
 
 	// ロード％セット
-	void AddLoadPerf(float l) { LoadPerf += l; }
-	void SetLoadPerf(float l) { LoadPerf = l; }
-	float GetLoadPerf() { return LoadPerf; }
+	void AddLoadPercent(float l) { LoadPercent += l; }
+	void SetLoadPercent(float l) { LoadPercent = l; }
+	float GetLoadPercent() { return LoadPercent; }
 
 private:
 	bool ready = false;	
 
 public:
-	float LoadPerf = 0.0f;
+	float LoadPercent = 0.0f;
 };

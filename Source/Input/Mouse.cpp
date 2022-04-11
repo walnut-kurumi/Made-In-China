@@ -18,7 +18,7 @@ Mouse::Mouse(HWND hWnd)
 
 	::SetCursorPos(screenWidth / 2, screenHeight / 2);
 
-	moveCursor = false;
+	moveCursor = true;
 }
 
 // XV

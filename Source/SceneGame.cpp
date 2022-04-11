@@ -22,7 +22,7 @@ void SceneGame::Initialize()
 {
     HRESULT hr{ S_OK };
     // ロード％初期化    
-    AddLoadPerf(0.0f);
+    AddLoadPercent(0.0f);
 
     ID3D11Device* device = Graphics::Ins().GetDevice();    
 
@@ -30,7 +30,7 @@ void SceneGame::Initialize()
     StageManager::Instance().Init();    
 
     // ロード％更新
-    AddLoadPerf(24.0f);    
+    AddLoadPercent(24.0f);    
 
     StageMain* stageMain = new StageMain(device);
     StageManager::Instance().Register(stageMain);
@@ -38,13 +38,13 @@ void SceneGame::Initialize()
     StageManager::Instance().Register(skybox);
 
     // ロード％更新
-    AddLoadPerf(24.0f);
+    AddLoadPercent(24.0f);
 
     player = new Player(device);
     player->Init(); 
 
     // ロード％更新
-    AddLoadPerf(24.0f);
+    AddLoadPercent(24.0f);
 
     // エネミー座標設定
     EnemyPositionSetting();
@@ -55,12 +55,12 @@ void SceneGame::Initialize()
         if (i == 3)
         {
             // ロード％ 100%
-            SetLoadPerf(122.0f);
+            SetLoadPercent(122.0f);
         }
         else
         {
             // ロード％更新
-            AddLoadPerf(2.0f);
+            AddLoadPercent(2.0f);
         }
                EnemyGunner* gunner = new EnemyGunner(device);
         gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
@@ -70,7 +70,8 @@ void SceneGame::Initialize()
         
     }
 
-    Input::Instance().GetMouse().SetMoveCursor(false);
+    // マウスカーソル動かすか
+    Input::Instance().GetMouse().SetMoveCursor(true);
 
     // CAMERA_SHAKE
     // TODO:02 Create a constant buffer object.
@@ -85,7 +86,7 @@ void SceneGame::Initialize()
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
     // ロード％ 100%
-    SetLoadPerf(122.0f);
+    SetLoadPercent(122.0f);
 }
 
 // 終了化
@@ -160,6 +161,13 @@ void SceneGame::Update(float elapsedTime)
     
     //エフェクト更新処理
     EffectManager::Instance().Update(elapsedTime);
+
+    // TODO
+    // 現在のステージのエネミーの数が０の場合 次のステージへ
+    if (EnemyManager::Instance().GetEnemyCount() <= 0)
+    {
+        // 次のステージへ移る処理
+    }
 }
 
 // 描画処理
