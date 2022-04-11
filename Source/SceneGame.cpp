@@ -107,6 +107,10 @@ void SceneGame::Update(float elapsedTime)
     // スローモーション
     elapsedTime = elapsedTime * player->GetPlaybackSpeed();
 
+    CameraManager& cameraMgr = CameraManager::Instance();
+    // カメラシェイク
+    cameraMgr.SetShakeFlag(player->GetHitstop());
+
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
     //マウス左クリック
@@ -144,11 +148,12 @@ void SceneGame::Update(float elapsedTime)
     // シフトブレイク更新処理
     SBManager::Instance().Update(elapsedTime);
 
-    CameraManager& cameraMgr = CameraManager::Instance();
     cameraMgr.Update(elapsedTime);
 
     Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
     CameraManager::Instance().SetTarget(target);
+
+
 
     // エネミー
     {

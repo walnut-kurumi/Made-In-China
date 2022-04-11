@@ -38,6 +38,7 @@ public:
 	bool GetSlowFlag() { return slow; }
 
 	void SetHitstop(bool hit) { hitstop = hit; }
+	bool GetHitstop() { return hitstop; }
 	float GetHitStopSpeed() { return hitstop ? hitstopSpeed : playbackSpeed; }
 
 	void CollisionPanchiVsEnemies();

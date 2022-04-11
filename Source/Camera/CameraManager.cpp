@@ -23,6 +23,9 @@ void CameraManager::Init() {
 	// シーン定数
 	HRESULT hr = this->cbScene.initialize(gfx.GetDevice(), gfx.GetDeviceContext());
 	_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
+
+	srand((unsigned)time(NULL));
+
 }
 
 void CameraManager::Update(float elapsedTime){
@@ -80,6 +83,17 @@ void CameraManager::Update(float elapsedTime){
 
 		// オブジェクトに当たったらカメラを近づける
 		CameraRay();
+
+		// カメラシェイク用乱数
+		camShake.x = rand() % 7 - 3.5f;
+		camShake.y = rand() % 7 - 3.5f;
+		camShake.z = rand() % 7 - 3.5f;
+
+		// カメラシェイク
+		if (shake)
+		{
+			target += camShake;
+		}
 
 		//カメラの視点と注視点を設定
 		mainC.SetLookAt(position, target, UP);
