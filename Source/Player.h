@@ -117,11 +117,11 @@ private:
 
 	// スローモーション用
 	float playbackSpeed = 1.0f;
-	float slowSpeed;
+	float slowSpeed = 0.0f;
 	bool slow;
 
 	// ヒットストップ用
-	float hitstopSpeed;
+	float hitstopSpeed = 0.0f;
 	bool hitstop; // 攻撃当たったらtrue
 
 	// SB用

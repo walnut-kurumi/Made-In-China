@@ -50,7 +50,7 @@ void SceneGame::Initialize()
     EnemyPositionSetting();
 
     // エネミー初期化			
-    int ENEMY_MAX = 4;
+    int ENEMY_MAX = 9;
     for (int i = 0; i <ENEMY_MAX; i++)
     {        
         if (ENEMY_MAX / 2 == i)
@@ -106,6 +106,7 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+    //TODO: 敵の数増えるとelapsedTime　おかしくなる
     // ヒットストップ
     elapsedTime = elapsedTime * player->GetHitStopSpeed();
     // スローモーション
@@ -180,6 +181,7 @@ void SceneGame::Update(float elapsedTime)
     {
         // 次のステージへ移る処理
     }
+    et = elapsedTime;
 }
 
 // 描画処理
@@ -242,6 +244,8 @@ void SceneGame::Render(float elapsedTime)
     ImGui::SliderFloat("max_skew [degree]", &max_skew, 0.0f, 10.0f);
     // TODO:12 Defines the amount of seed shifting factor for perlin noise.
     ImGui::SliderFloat("seed_shifting_factor", &seed_shifting_factor, 0.0f, 10.0f);
+
+    ImGui::SliderFloat("elapsedTime", &et, 0.0f, 1.0f);
 
     ImGui::End();
 

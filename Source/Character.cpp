@@ -213,8 +213,8 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame) {
     moveVecZ = min(moveVecZ, maxMoveSpeed);
 
 
-    velocity.x = moveVecX * elapsedFrame * maxMoveSpeed;
-    velocity.z = moveVecZ * elapsedFrame * maxMoveSpeed;
+    Character::velocity.x = moveVecX * elapsedFrame * maxMoveSpeed;
+    Character::velocity.z = moveVecZ * elapsedFrame * maxMoveSpeed;
 
     //// â∫ÇËç‚Ç≈ÉKÉ^ÉKÉ^ÇµÇ»Ç¢ÇÃÇ™ï`Ç¢ÇƒÇ†ÇÈ
     //

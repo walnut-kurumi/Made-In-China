@@ -58,4 +58,5 @@ private:
 	float seed = 0;
 	float seed_shifting_factor = 3.00f;
 
+	float et = 0;
 };
