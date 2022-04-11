@@ -121,7 +121,7 @@ private:
 	Vec2 searchAreaScale = {};
 
 	// UŒ‚”ÍˆÍ
-	float attackRange = 20.0f;
+	float attackRange = 40.0f;
 	// UŒ‚CD
 	float attackCooldown = 0;
 

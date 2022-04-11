@@ -54,7 +54,7 @@ protected:
 	EnemyBulletManager* manager = nullptr;
 
 	float radius = 1.5f;
-	float speed = 80.0f;
+	float speed = 120.0f;
 	float bulletSpeed = 0.0f;
 
 	// ƒpƒŠƒB‚µ‚½’e‚©‚Ç‚¤‚© -> ’e‚«•Ô‚µ‚Ä‚½‚ç“G‚É“–‚½‚é‚æ‚¤‚É‚È‚é

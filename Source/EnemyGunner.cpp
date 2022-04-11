@@ -279,7 +279,7 @@ void EnemyGunner::MoveAttack(float cooldown)
         // ƒvƒŒƒCƒ„[‚ÉŒü‚©‚Á‚Ä
         Vec3 pe = { p - e };
         VecMath::Normalize(pe);
-        pe *= 0.5f;
+        pe *= 0.1f;
 
         // ”­ŽË
         EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
@@ -409,7 +409,7 @@ void EnemyGunner::WalkTimerUpdate(float elapsedTime)
 void EnemyGunner::TransitionRunState()
 {
     state = State::Run;
-    moveSpeed = 100;
+    moveSpeed = 50;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 

@@ -336,7 +336,7 @@ void Player::UpdateIdleState(float elapsedTime) {
 //走るステート遷移
 void Player::TransitionRunState() {
     state = AnimeState::Run;
-    moveSpeed = 20;
+    moveSpeed = 50;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
