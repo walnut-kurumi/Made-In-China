@@ -156,7 +156,6 @@ void SceneGame::Update(float elapsedTime)
     // シフトブレイク更新処理
     SBManager::Instance().Update(slowElapsedTime);
 
-    CameraManager& cameraMgr = CameraManager::Instance();
     cameraMgr.Update(slowElapsedTime);
 
 
