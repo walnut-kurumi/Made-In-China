@@ -30,7 +30,7 @@ void SceneGame::Initialize()
     StageManager::Instance().Init();    
 
     // ロード％更新
-    AddLoadPercent(24.0f);    
+    AddLoadPercent(1.0f);    
 
     StageMain* stageMain = new StageMain(device);
     StageManager::Instance().Register(stageMain);
@@ -38,37 +38,41 @@ void SceneGame::Initialize()
     StageManager::Instance().Register(skybox);
 
     // ロード％更新
-    AddLoadPercent(24.0f);
+    AddLoadPercent(2.0f);
 
     player = new Player(device);
     player->Init(); 
 
     // ロード％更新
-    AddLoadPercent(24.0f);
+    AddLoadPercent(3.0f);
 
     // エネミー座標設定
     EnemyPositionSetting();
 
     // エネミー初期化			
-    for (int i = 0; i <4; i++)
-    {
-        if (i == 3)
-        {
-            // ロード％ 100%
-            SetLoadPercent(122.0f);
-        }
-        else
+    int ENEMY_MAX = 9;
+    for (int i = 0; i <ENEMY_MAX; i++)
+    {        
+        if (ENEMY_MAX / 2 == i)
         {
             // ロード％更新
-            AddLoadPercent(2.0f);
+            AddLoadPercent(4.0f);
         }
-               EnemyGunner* gunner = new EnemyGunner(device);
+        if (ENEMY_MAX == i)
+        {
+            // ロード％更新
+            AddLoadPercent(5.0f);
+            AddLoadPercent(6.0f);
+        }
+
+        EnemyGunner* gunner = new EnemyGunner(device);
         gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
         EnemyManager::Instance().Register(gunner);
         EnemyManager::Instance().Init();
-
         
     }
+    // ロード％更新
+    AddLoadPercent(7.0f);
 
     // マウスカーソル動かすか
     Input::Instance().GetMouse().SetMoveCursor(true);
@@ -86,10 +90,9 @@ void SceneGame::Initialize()
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
     // ロード％ 100%
-    SetLoadPercent(122.0f);
-
     Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
     LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");
+    SetLoadPercent(10.0f);
 }
 
 // 終了化
@@ -106,6 +109,15 @@ void SceneGame::Finalize()
 void SceneGame::Update(float elapsedTime)
 {
     float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
+    //TODO: 敵の数増えるとelapsedTime　おかしくなる
+    // ヒットストップ
+    slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
+    // スローモーション
+    slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
+
+    CameraManager& cameraMgr = CameraManager::Instance();
+    // カメラシェイク
+    cameraMgr.SetShakeFlag(player->GetHitstop());
 
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
@@ -147,8 +159,12 @@ void SceneGame::Update(float elapsedTime)
     CameraManager& cameraMgr = CameraManager::Instance();
     cameraMgr.Update(slowElapsedTime);
 
+
+
     Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
     CameraManager::Instance().SetTarget(target);
+
+
 
     // エネミー
     {
@@ -174,6 +190,7 @@ void SceneGame::Update(float elapsedTime)
 
     // スロー時間表示
     w = player->GetSlowTimer() / slowMaxTime;
+    et = elapsedTime;
 }
 
 // 描画処理
@@ -238,6 +255,8 @@ void SceneGame::Render(float elapsedTime)
     ImGui::SliderFloat("max_skew [degree]", &max_skew, 0.0f, 10.0f);
     // TODO:12 Defines the amount of seed shifting factor for perlin noise.
     ImGui::SliderFloat("seed_shifting_factor", &seed_shifting_factor, 0.0f, 10.0f);
+
+    ImGui::SliderFloat("elapsedTime", &et, 0.0f, 1.0f);
 
     ImGui::End();
 

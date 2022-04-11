@@ -136,7 +136,12 @@ void EnemyGunner::CollisionProjectileVsEnemies()
             if (enemyB->GetReflectionFlag())
             {
                 // ダメージ与える
-                ApplyDamage(1, 0.0f);
+                if (health > 0)
+                {
+                    ApplyDamage(1, 0.0f);
+                    /*if (player->GetSlowFlag() == false)*/
+                    player->SetHitstop(true);
+                }
 
                 enemyBManager.Remove(enemyB);
             }
@@ -155,7 +160,7 @@ void EnemyGunner::CollisionProjectileVsPlayer()
         // 衝突処理
         if (Collision::SphereVsSphere(enemyB->GetPosition(), player->GetCenterPosition(), enemyB->GetRadius(), player->GetRadius()))
         {
-            // 反射してたら
+            // 反射してなかったら
             if (!enemyB->GetReflectionFlag())
             {
                 // ダメージ与える

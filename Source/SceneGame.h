@@ -61,7 +61,7 @@ private:
 	float seed = 0;
 	float seed_shifting_factor = 3.00f;
 
-
 	float slowMaxTime = 10.0f;
 	float w = 0.0f;
+	float et = 0;
 };

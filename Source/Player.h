@@ -37,6 +37,11 @@ public:
 	float GetSlowTimer() const { return slowTimer; }
 
 	float GetPlaybackSpeed() { return slow ? slowSpeed : playbackSpeed; }
+	bool GetSlowFlag() { return slow; }
+
+	void SetHitstop(bool hit) { hitstop = hit; }
+	bool GetHitstop() { return hitstop; }
+	float GetHitStopSpeed() { return hitstop ? hitstopSpeed : playbackSpeed; }
 
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
@@ -113,7 +118,7 @@ private:
 
 	// スローモーション用
 	float playbackSpeed = 1.0f;
-	float slowSpeed;
+	float slowSpeed = 0.0f;
 	bool slow;
 	// スローモーションの時間
 	const float slowMax = 10.0f;
@@ -122,6 +127,10 @@ private:
 	float slowCTTimer = CTMax;
 	bool slowCT = false;
 
+
+	// ヒットストップ用
+	float hitstopSpeed = 0.0f;
+	bool hitstop; // 攻撃当たったらtrue
 
 	// SB用
 	bool weapon = true;		// 武器を持っているか否か

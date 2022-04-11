@@ -41,11 +41,16 @@ public:
 	Vec3 GetPos() { return position; }
 	Vec3 GetTarget() { return target; }
 
+	void  SetShakeFlag(bool s) { shake = s; }
+
 private:
 	Vec3 target = { 0,0,0 };
 	Vec3 angle = { 0,0,0 };
 	Vec3 position = { 0,0,0 };
 	DirectX::XMFLOAT4X4 viewProjection;
+
+	Vec3 camShake = { 0,0,0 };
+	bool shake = false;
 
 	float rollSpeed = 1.0f;
 	float range = 150.0f; // Œ³65.0f
