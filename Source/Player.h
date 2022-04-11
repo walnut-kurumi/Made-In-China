@@ -35,6 +35,10 @@ public:
 	bool GetDead() { return isDead; }
 
 	float GetPlaybackSpeed() { return slow ? slowSpeed : playbackSpeed; }
+	bool GetSlowFlag() { return slow; }
+
+	void SetHitstop(bool hit) { hitstop = hit; }
+	float GetHitStopSpeed() { return hitstop ? hitstopSpeed : playbackSpeed; }
 
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
@@ -114,6 +118,10 @@ private:
 	float playbackSpeed = 1.0f;
 	float slowSpeed;
 	bool slow;
+
+	// ヒットストップ用
+	float hitstopSpeed;
+	bool hitstop; // 攻撃当たったらtrue
 
 	// SB用
 	bool weapon = true;		// 武器を持っているか否か

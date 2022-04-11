@@ -73,6 +73,9 @@ void Player::Init() {
     slowSpeed = 0.35f;
     slow = false;
 
+    hitstopSpeed = 0.6f;
+    hitstop = false;
+
     atkRadius = 2;
     atkTimer = 0.0f;
 
@@ -310,7 +313,7 @@ bool Player::InputAttack() {
             if(!isGround) 
                 atkTimer = 0.75f;
             return true;
-        }
+        }        
     }
     return false;
 }
@@ -395,7 +398,7 @@ void Player::UpdateAttackState(float elapsedTime) {
         // 地面いたら上に切れる　空中なら左右のみ
         isGround ? AttackMove(-ax, ay, 30) : AttackMove(-ax, 0, 30);
     }
-
+    
     // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
         // 終わったらアイドル状態へ
@@ -410,6 +413,9 @@ void Player::UpdateAttackState(float elapsedTime) {
 
         atkPos = { 0,0,0 };
         atk = false;
+       
+        // ヒットストップおわり
+        hitstop = false;
     }
 }
 
@@ -426,6 +432,8 @@ void Player::CollisionPanchiVsEnemies() {
         // 衝突処理
         if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
             enemy->ApplyDamage(1, 0);
+            // ヒットストップ
+            if(!slow)hitstop = true;
         }
     }
 }
@@ -460,6 +468,8 @@ void Player::CollisionSBVsEnemies() {
             if (Collision::SphereVsSphere(enemy->GetPosition(), sb->GetPosition(), enemy->GetRadius(), atkRadius)) {
 
                 enemy->ApplyDamage(1, 0);
+                // ヒットストップ
+                if(!slow)hitstop = true;
 
                 // 自分を敵の位置へ
                 position = sb->GetPosition();

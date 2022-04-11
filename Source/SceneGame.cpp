@@ -102,6 +102,9 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
+    // ヒットストップ
+    elapsedTime = elapsedTime * player->GetHitStopSpeed();
+    // スローモーション
     elapsedTime = elapsedTime * player->GetPlaybackSpeed();
 
     GamePad& gamePad = Input::Instance().GetGamePad();
