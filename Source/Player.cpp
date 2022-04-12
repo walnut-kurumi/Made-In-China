@@ -152,7 +152,8 @@ void Player::Update(float elapsedTime) {
     //}
 
     // 押してる間
-    if (key.STATE('k') && !slowCT) {
+    if (key.STATE('k') && slowCT != 1) {
+        slowCT = 0;
         // 時間があれば スキル起動してタイマー減らす
         if (slowTimer >= 0) {
             slowTimer -= elapsedTime;
@@ -160,22 +161,17 @@ void Player::Update(float elapsedTime) {
         // 時間がないとき クールタイム発動
         else {
             slowTimer = max(slowTimer, 0);
-            slowCT = true;
+            slowCT = 1;
         }
     }
     // 放している間
-    if (!key.STATE('k') && !slowCT) {
-        // 時間があれば タイマー復活
-        if (slowTimer < slowMax) {
-            slowTimer += elapsedTime;
-        }
-        else {
-            slowTimer = min(slowTimer, slowMax);
-        }
+    if (!key.STATE('k') && slowCT == 0) {
+        slowCT = 1;
     }
 
+
     // クールタイム中 CTタイマー減らす
-    if (slowCT) {
+    if (slowCT == 1) {
         // クールタイム時間経過
         if (slowCTTimer >= 0) {
             slowCTTimer -= elapsedTime;
@@ -183,9 +179,21 @@ void Player::Update(float elapsedTime) {
         // クールタイム終了
         else {
             slowCTTimer = CTMax;
-            slowCT = false;
+            slowCT = 2;
         }
     }
+    else if (slowCT == 2) {
+        // 時間があれば タイマー復活
+        if (slowTimer < slowMax) {
+            slowTimer += elapsedTime;
+        }
+        else {
+            slowTimer = min(slowTimer, slowMax);
+            slowCT = 0;
+        }
+    }
+
+
 }
 
 
