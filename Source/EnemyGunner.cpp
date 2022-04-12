@@ -380,6 +380,9 @@ void EnemyGunner::TransitionWalkState()
 // 移動ステート更新処理
 void EnemyGunner::UpdateWalkState(float elapsedTime)
 {   
+    // 歩き回らないときは待機ステートへ
+    if (!walk) TransitionIdleState();
+
     // 死んでたら 吹っ飛びステートへ
     if (health <= 0) TransitionBlowState();
 

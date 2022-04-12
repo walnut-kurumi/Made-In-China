@@ -70,7 +70,8 @@ void SceneGame::Initialize()
         }
 
         EnemyGunner* gunner = new EnemyGunner(device);
-        gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
+        gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));        
+        gunner->SetWalkFlag(false); //•à‚«‰ñ‚é‚©‚Ç‚¤‚©
         EnemyManager::Instance().Register(gunner);
         EnemyManager::Instance().Init();        
     }
