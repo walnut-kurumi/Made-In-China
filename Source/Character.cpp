@@ -119,7 +119,7 @@ void Character::UpdateInvincibleTimer(float elapsedTime) {
 void Character::UpdateVerticalVelocitiy(float elapsedFrame) {
     // ˆÚ“®ˆ—
     if(moveVecY) velocity.y = moveVecY * elapsedFrame* maxMoveSpeed;
-    if(gravFlag) velocity.y += gravity * 1.75 * elapsedFrame;
+    if(gravFlag) velocity.y += gravity * 1.75f * elapsedFrame;
 
     // Å‘å’lˆ—
     if (velocity.y < downMax)

@@ -35,6 +35,9 @@ public:
 	// 弾丸とプレイヤーの衝突判定
 	void CollisionProjectileVsPlayer();
 
+
+	void SetWalkFlag(bool b) { walk = b; }
+
 private:	
 	// 徘徊  ←左true　false右→
 	void MoveWalk(bool direction );
@@ -130,4 +133,7 @@ private:
 
 	// 移動する向き
 	bool direction = false;
+
+	// 歩き回るかどうか
+	bool walk = false;
 };
