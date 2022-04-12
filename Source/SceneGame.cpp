@@ -20,31 +20,36 @@
 // 初期化
 void SceneGame::Initialize()
 {
-    HRESULT hr{ S_OK };
     // ロード％初期化    
-    AddLoadPercent(0.0f);
+    SetLoadPercent(0.0f);
 
-    ID3D11Device* device = Graphics::Ins().GetDevice();    
+    HRESULT hr{ S_OK };
 
-    StageManager::Create();
-    StageManager::Instance().Init();    
+    ID3D11Device* device = Graphics::Ins().GetDevice();
+
+    // ステージ
+    {
+        StageManager::Create();
+        StageManager::Instance().Init();
+
+        // ロード％更新
+        AddLoadPercent(1.0f);
+
+        StageMain* stageMain = new StageMain(device);
+        StageManager::Instance().Register(stageMain);
+        StageSkybox* skybox = new StageSkybox(device);
+        StageManager::Instance().Register(skybox);
+    }
 
     // ロード％更新
-    AddLoadPercent(1.0f);    
+    AddLoadPercent(1.0f);
 
-    StageMain* stageMain = new StageMain(device);
-    StageManager::Instance().Register(stageMain);
-    StageSkybox* skybox = new StageSkybox(device);
-    StageManager::Instance().Register(skybox);
-
-    // ロード％更新
-    AddLoadPercent(2.0f);
-
+    // プレイヤー
     player = new Player(device);
     player->Init(); 
 
     // ロード％更新
-    AddLoadPercent(3.0f);
+    AddLoadPercent(1.0f);
 
     // エネミー座標設定
     EnemyPositionSetting();
@@ -56,25 +61,24 @@ void SceneGame::Initialize()
         if (ENEMY_MAX / 2 == i)
         {
             // ロード％更新
-            AddLoadPercent(4.0f);
+            AddLoadPercent(1.0f);
         }
         if (ENEMY_MAX == i)
         {
             // ロード％更新
-            AddLoadPercent(5.0f);
-            AddLoadPercent(6.0f);
+            AddLoadPercent(2.0f);            
         }
 
         EnemyGunner* gunner = new EnemyGunner(device);
         gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
         EnemyManager::Instance().Register(gunner);
-        EnemyManager::Instance().Init();
-        
+        EnemyManager::Instance().Init();        
     }
-    // ロード％更新
-    AddLoadPercent(7.0f);
 
-    // マウスカーソル動かすか
+    // ロード％更新
+    AddLoadPercent(1.0f);
+
+    // マウスカーソル動かすかどうか
     Input::Instance().GetMouse().SetMoveCursor(true);
 
     // CAMERA_SHAKE
@@ -100,7 +104,7 @@ void SceneGame::Finalize()
 {
     // エネミー終了処理	
     EnemyManager::Instance().Clear();
-
+    // ステージ終了処理
     StageManager::Instance().Clear();
     StageManager::Destory();    
 }
@@ -116,7 +120,7 @@ void SceneGame::Update(float elapsedTime)
     slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
 
     CameraManager& cameraMgr = CameraManager::Instance();
-    // カメラシェイク
+    // カメラシェイク（簡素）
     cameraMgr.SetShakeFlag(player->GetHitstop());
 
     GamePad& gamePad = Input::Instance().GetGamePad();
