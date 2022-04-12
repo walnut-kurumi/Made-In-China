@@ -165,7 +165,13 @@ void Player::Update(float elapsedTime) {
     }
     // 放している間
     if (!key.STATE('k') && !slowCT) {
-        slowCT = true;
+        // 時間があれば タイマー復活
+        if (slowTimer < slowMax) {
+            slowTimer += elapsedTime;
+        }
+        else {
+            slowTimer = min(slowTimer, slowMax);
+        }
     }
 
     // クールタイム中 CTタイマー減らす
