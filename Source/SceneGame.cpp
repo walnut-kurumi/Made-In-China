@@ -280,6 +280,13 @@ void SceneGame::Render(float elapsedTime)
 
 void SceneGame::Reset()
 {
+    EnemyManager::Instance().SetIsDead(false);
+    for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
+    {
+        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
+    }
+
+    player->SetPosition({ 0,0,0 });
 }
 
 // エネミー座標設定

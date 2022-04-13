@@ -38,6 +38,7 @@ public:
 
 	// Œ’Nó‘Ô‚ğæ“¾
 	int GetHealth() const { return health; }
+	void SetHealth(int hp) { health = hp; }
 
 	//	Å‘åŒ’Nó‘Ô‚ğæ“¾
 	int GetMaxHealth() const { return maxHealth; }
@@ -86,6 +87,9 @@ protected:
 
 	// €–S‚µ‚½‚ÉŒÄ‚Î‚ê‚é
 	virtual void OnDead() {}	
+	
+	// €Ò‘h¶
+	virtual void Resurrection() {}
 
 protected:
 	Model* model{};

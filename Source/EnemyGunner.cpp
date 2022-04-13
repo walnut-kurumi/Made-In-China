@@ -75,10 +75,10 @@ void EnemyGunner::Init()
 
 void EnemyGunner::Update(float elapsedTime)
 {
+    if (isDead)return;
 
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
  
-
     // ’†SÀ•WXV
     UpdateCenterPosition();
 
@@ -104,20 +104,23 @@ void EnemyGunner::Update(float elapsedTime)
 
 void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 {
-    model->Begin(dc, *shader);    
-    model->Render(dc,materialColor);
+    if (isDead == false)
+    {
+        model->Begin(dc, *shader);
+        model->Render(dc, materialColor);
 
-    // ’eŠÛ•`‰æˆ—
-    EnemyBulletManager::Instance().Render(dc, shader);  
+        // ’eŠÛ•`‰æˆ—
+        EnemyBulletManager::Instance().Render(dc, shader);
 
-    //// •K—v‚È‚Á‚½‚ç’Ç‰Á
-    debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
-    
-    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+        //// •K—v‚È‚Á‚½‚ç’Ç‰Á
+        debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
+        debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+        debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+        debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+        debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+
+        debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    }
 }
 
 

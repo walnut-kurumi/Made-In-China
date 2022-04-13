@@ -54,10 +54,7 @@ private:
 	// 射撃攻撃
 	void MoveAttack(float cooldown);
 	// 吹っ飛び プレイヤー攻撃の方向に吹っ飛ぶ
-	void MoveBlow();
-	
-	// 死亡した時に呼ばれる
-	void OnDead() override { isDead = true; }
+	void MoveBlow();		
 
 protected:
 
@@ -105,9 +102,7 @@ private:
 	float moveSpeed = 5.0f;
 	float turnSpeed = DirectX::XMConvertToRadians(720);
 			
-	SkinnedMesh* skinned;
-
-	bool isDead = false;
+	SkinnedMesh* skinned;	
 
 	// 待機用タイマー
 	float idleTimer = 0;

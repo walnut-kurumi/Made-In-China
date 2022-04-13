@@ -28,7 +28,15 @@ public:
 
 	void SetPlayer(Player* p) { player = p; }
 	
+	// Ž€–S‚µ‚½Žž‚ÉŒÄ‚Î‚ê‚é
+	void OnDead() override { isDead = true; }
+
+	void Resurrection() override { isDead = false; SetHealth(1); }
+	
+
 protected:
+	bool isDead = false;
+
 	float lengthSq = 0;
 
 	Player* player = nullptr;

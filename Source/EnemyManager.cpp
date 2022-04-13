@@ -98,8 +98,22 @@ void EnemyManager::SetPlayer(Player* p)
 {
 	for (Enemy* enemy : enemies)
 	{
-		enemy->SetPlayer(p);
+		enemy->SetPlayer(p);		
 	}
+}
+
+void EnemyManager::SetIsDead(bool b)
+{
+	for (Enemy* enemy : enemies)
+	{
+		if (b)enemy->OnDead();
+		else enemy->Resurrection();
+	}
+}
+
+void EnemyManager::SetPosition(int i, DirectX::XMFLOAT3 enemyPos)
+{	
+	enemies[i]->SetPosition(enemyPos);
 }
 
 
@@ -108,7 +122,7 @@ void EnemyManager::CollisionEnemyVsEnemies()
 {
 	size_t enemyCount = enemies.size();
 	for (int i = 0; i < enemyCount; ++i)
-	{
+	{		
 		Enemy* enemyA = enemies.at(i);
 		for (int j = i + 1; j < enemyCount; ++j)
 		{

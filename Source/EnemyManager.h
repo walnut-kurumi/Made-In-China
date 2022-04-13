@@ -49,6 +49,10 @@ public:
 
 	void SetPlayer(Player* p);	
 
+	void SetIsDead(bool b);
+
+	void SetPosition(int i, DirectX::XMFLOAT3 enemyPos);
+
 private:
 	// エネミー同士の衝突処理
 	void CollisionEnemyVsEnemies();
