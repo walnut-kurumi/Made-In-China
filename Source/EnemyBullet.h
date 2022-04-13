@@ -38,7 +38,8 @@ public:
 	// 破棄
 	void Destroy();
 
-	// 弾がステージに当たったら消す レイキャスト？
+	// 弾がステージに当たったら消す
+	void CollisionVsStage();
 
 protected:
 	// 行列更新処理

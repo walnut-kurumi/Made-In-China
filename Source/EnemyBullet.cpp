@@ -1,6 +1,7 @@
 #include "EnemyBullet.h"
 #include "EnemyBulletManager.h"
 #include "Graphics/Graphics.h"
+#include "StageManager.h"
 
 EnemyBullet::EnemyBullet(EnemyBulletManager* manager) :manager(manager)
 {
@@ -11,6 +12,22 @@ EnemyBullet::EnemyBullet(EnemyBulletManager* manager) :manager(manager)
 void EnemyBullet::Destroy()
 {
 	manager->Remove(this);
+}
+
+void EnemyBullet::CollisionVsStage()
+{
+
+	// レイの開始位置と終点位置
+	DirectX::XMFLOAT3 start = { position.x , position.y, position.z };
+	DirectX::XMFLOAT3 end = { position.x + direction.x, position.y + direction.y, position.z + direction.z };
+
+	// レイキャストによる壁判定
+	HitResult hit;	
+
+	if (StageManager::Instance().RayCast(start, end, hit)) 
+	{
+		Destroy();
+	}
 }
 
 // 行列更新処理

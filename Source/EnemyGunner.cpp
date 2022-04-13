@@ -294,29 +294,19 @@ void EnemyGunner::MoveAttack(float cooldown)
 
 // 吹っ飛ぶ
 void EnemyGunner::MoveBlow()
-{    
-    // プレイヤーの攻撃方向へ吹き飛ばす
-    const float blowPower = 5000.0f;
-    
+{                
     // プレイヤーの中心座標
     const Vec3& p = { player->GetCenterPosition() };
     // エネミーの中心座標
     const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
-
-
-    Vec3 ep = { e - p };
-    VecMath::Normalize(ep);
-
+        
     float vx = e.x - p.x;
     float vy = e.y - p.y;
     float lengthXY = sqrtf(vx * vx + vy * vy);
     vx /= lengthXY;
     vy /= lengthXY;
-   
-    const Vec3& blowDirection = { blowPower , 2.0f,0.0f };
-   
-    // 吹っ飛ばす
-    //AddImpulse(blowDirection);
+          
+    // 吹っ飛ばす    
     AttackMove(vx, vy, moveSpeed);
  
 }

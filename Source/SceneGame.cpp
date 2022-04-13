@@ -55,7 +55,7 @@ void SceneGame::Initialize()
     EnemyPositionSetting();
 
     // エネミー初期化			
-    int ENEMY_MAX = 9;
+    int ENEMY_MAX = 4;
     for (int i = 0; i <ENEMY_MAX; i++)
     {        
         if (ENEMY_MAX / 2 == i)

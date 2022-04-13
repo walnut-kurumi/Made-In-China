@@ -33,6 +33,8 @@ void EnemyBulletStraight::Update(float elapsedTime)
 	UpdateTransform();
 	// モデル行列更新
 	model->UpdateTransform(transform);
+
+	CollisionVsStage();
 }
 // 描画処理
 void EnemyBulletStraight::Render(ID3D11DeviceContext* dc, Shader* shader)
