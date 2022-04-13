@@ -16,7 +16,7 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
     const char* death = "Data/Models/Enemy/Animations/Death.fbx";
 
-    model = new Model(device, "Data/Models/Player/Jummo.fbx", true, 0);
+    model = new Model(device, "Data/Models/Player/Jummo.fbx");
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(State::Run));
