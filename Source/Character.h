@@ -110,7 +110,7 @@ protected:
 
 	Vec3 dir{};
 
-	float gravity = -3.5f;
+	float gravity = -3.0f;
 
 	bool gravFlag = true;
 

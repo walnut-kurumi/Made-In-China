@@ -147,10 +147,7 @@ void SceneGame::Update(float elapsedTime)
         // カメラ
         {
             CameraManager& cameraMgr = CameraManager::Instance();
-
-            // カメラシェイク（簡素）
-            cameraMgr.SetShakeFlag(player->GetHitstop());
-
+            
             cameraMgr.Update(slowElapsedTime);
 
             Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
@@ -174,8 +171,8 @@ void SceneGame::Update(float elapsedTime)
         EffectManager::Instance().Update(slowElapsedTime);
 
 
-        // TODO 現在のステージのエネミーの数が０の場合 次のステージへ
-        if (EnemyManager::Instance().GetEnemyCount() <= 0)
+        // TODO 現在のステージの死んでるエネミーの数が０の場合 次のステージへ
+        if (EnemyManager::Instance().GetDeadEnemyCount() <= 0)
         {
             // 次のステージへ移る処理
         }

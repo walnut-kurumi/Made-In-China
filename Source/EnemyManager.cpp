@@ -116,6 +116,17 @@ void EnemyManager::SetPosition(int i, DirectX::XMFLOAT3 enemyPos)
 	enemies[i]->SetPosition(enemyPos);
 }
 
+// 死んでるエネミーの数
+int EnemyManager::GetDeadEnemyCount()
+{	
+	int dec = 0;
+	for (Enemy* enemy : enemies)
+	{
+		if (enemy->GetHealth() <= 0)dec++;
+	}
+	return dec;
+}
+
 
 // エネミー同士の衝突処理
 void EnemyManager::CollisionEnemyVsEnemies()

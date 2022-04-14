@@ -84,11 +84,12 @@ void CameraManager::Update(float elapsedTime){
 		// オブジェクトに当たったらカメラを近づける
 		CameraRay();
 
-		// カメラシェイク用乱数
-		camShake.x = rand() % 7 - 3.5f;
-		camShake.y = rand() % 7 - 3.5f;
-		camShake.z = rand() % 7 - 3.5f;
+		// カメラシェイク用乱数		
+		camShake.x = rand() % 2 - 1.0f;
+		camShake.y = rand() % 2 - 1.0f;
+		camShake.z = rand() % 2 - 1.0f;
 
+		
 		// カメラシェイク
 		if (shake)
 		{
