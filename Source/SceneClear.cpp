@@ -66,7 +66,7 @@ void SceneClear::Update(float elapsedTime)
 
     if (start && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
     {
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+        SceneManager::Instance().ChangeScene(new SceneTitle);
     }
     else if (end && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
     {
