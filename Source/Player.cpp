@@ -225,9 +225,9 @@ void Player::DrawDebugGUI() {
     if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None)) {
         // トランスフォーム
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::SliderFloat("Position X", &position.x, -2000, 2000);
-            ImGui::SliderFloat("Position Y", &position.y, -2000, 2000);
-            ImGui::SliderFloat("Position Z", &position.z, -2000, 2000);
+            ImGui::SliderFloat("Position X", &position.x, -300, 300);
+            ImGui::SliderFloat("Position Y", &position.y, -200, 200);
+            ImGui::SliderFloat("Position Z", &position.z, -300, 300);
 
             ImGui::SliderFloat("Speed", &moveSpeed, 0, 20);
 
