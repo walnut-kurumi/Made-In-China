@@ -23,7 +23,8 @@ public:
 	static const GamePadButton BTN_LEFT_TRIGGER		= (1 << 14); // ‰œ
 	static const GamePadButton BTN_RIGHT_TRIGGER	= (1 << 15); // ‰œ
 	static const GamePadButton BTN_W				= (1 << 16);
-	static const GamePadButton BTN_S				= (1 << 17);	
+	static const GamePadButton BTN_S				= (1 << 17);
+	static const GamePadButton BTN_Z                = (1 << 18);
 
 public:
 	GamePad() {}

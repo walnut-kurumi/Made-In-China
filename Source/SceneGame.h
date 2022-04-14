@@ -37,6 +37,9 @@ public:
 	// 敵の座標セット
 	void EnemyPositionSetting();
 
+	//メニュー
+	void menu();
+
 private:	
 	Player* player{};
 
@@ -65,4 +68,6 @@ private:
 	float slowMaxTime = 10.0f;
 	float w = 0.0f;
 	float et = 0;
+
+	bool menuflag = false;
 };
