@@ -41,6 +41,7 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
 
 EnemyGunner::~EnemyGunner()
 {
+    delete model;
 }
 
 void EnemyGunner::Init()
