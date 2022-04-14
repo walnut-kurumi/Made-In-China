@@ -124,9 +124,13 @@ void EnemyManager::CollisionEnemyVsEnemies()
 	for (int i = 0; i < enemyCount; ++i)
 	{		
 		Enemy* enemyA = enemies.at(i);
+		if (enemyA->GetHealth() <= 0)break;
+
 		for (int j = i + 1; j < enemyCount; ++j)
-		{
+		{			
 			Enemy* enemyB = enemies.at(j);
+
+
 			DirectX::XMFLOAT3 outPosition;
 			if (Collision::IntersectSphereVsSphere(
 				enemyA->GetPosition(),
