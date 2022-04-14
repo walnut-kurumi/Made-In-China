@@ -615,6 +615,12 @@ void Player::CollisionSBVsEnemies() {
                 Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
                 dir *= backDir;
                 position = enemy->GetPosition() + dir;
+                
+                /// **********************************
+                /// ++++++++++++++++++++++++++++++++++
+                ///          回転を反映させる
+                /// ++++++++++++++++++++++++++++++++++
+                /// **********************************
 
                 // 武器を壊す
                 sb->Destroy();
@@ -636,9 +642,6 @@ void Player::CollisionSBVsStage() {
         Vec3 dir = sb->GetDirection();
         float speed = sb->GetSpeed();
 
-        //************************
-        // 順番によってはすり抜けあり
-        //************************
         HitResult hit;
         // ステージとの判定
         if (StageManager::Instance().RayCast(pos, pos + VecMath::Normalize(dir) * speed, hit)) {
