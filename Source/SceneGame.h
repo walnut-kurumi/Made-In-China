@@ -34,6 +34,7 @@ public:
 	// ゲームリセット
 	void Reset();
 
+	// 敵の座標セット
 	void EnemyPositionSetting();
 
 private:	

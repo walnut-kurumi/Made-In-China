@@ -125,7 +125,8 @@ private:
 	float slowTimer = slowMax;
 	const float CTMax = 2.5f;
 	float slowCTTimer = CTMax;
-	bool slowCT = false;
+	// クールタイム　0:無し 1:CT明け直後 2:CT中
+	int slowCT = 0;
 
 
 	// ヒットストップ用

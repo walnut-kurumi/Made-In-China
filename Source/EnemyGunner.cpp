@@ -16,7 +16,7 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
     const char* death = "Data/Models/Enemy/Animations/Death.fbx";
 
-    model = new Model(device, "Data/Models/Player/Jummo.fbx", true, 0);
+    model = new Model(device, "Data/Models/Player/Jummo.fbx");
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(State::Run));
@@ -62,6 +62,8 @@ void EnemyGunner::Init()
     moveVecZ = 0.0f;
     health = 1;
 
+    materialColor = { 1,1,1,1 };
+
     centerPosition = position;
     centerPosition.y += 1.0f;
     radius = 2.5;
@@ -75,15 +77,17 @@ void EnemyGunner::Init()
 
 void EnemyGunner::Update(float elapsedTime)
 {
+    if (isDead)return;
 
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
  
-
     // 中心座標更新
     UpdateCenterPosition();
 
     // 反射した弾丸との衝突判定
     CollisionProjectileVsEnemies();
+    // 発射した弾丸とプレイヤーの衝突判定
+    CollisionProjectileVsPlayer();
 
     // 速度更新
     UpdateSpeed(elapsedTime);
@@ -104,20 +108,23 @@ void EnemyGunner::Update(float elapsedTime)
 
 void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 {
-    model->Begin(dc, *shader);    
-    model->Render(dc,materialColor);
+    if (isDead == false)
+    {
+        model->Begin(dc, *shader);
+        model->Render(dc, materialColor);
 
-    // 弾丸描画処理
-    EnemyBulletManager::Instance().Render(dc, shader);  
+        // 弾丸描画処理
+        EnemyBulletManager::Instance().Render(dc, shader);
 
-    //// 必要なったら追加
-    debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
-    debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y,6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
-    
-    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+        //// 必要なったら追加
+        debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
+        debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+        debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+        debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+        debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
+
+        debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    }
 }
 
 
@@ -149,7 +156,7 @@ void EnemyGunner::CollisionProjectileVsEnemies()
     }
 }
 
-// プレイヤーとの衝突判定
+// プレイヤーと弾の衝突判定
 void EnemyGunner::CollisionProjectileVsPlayer()
 {
     EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();
@@ -294,29 +301,19 @@ void EnemyGunner::MoveAttack(float cooldown)
 
 // 吹っ飛ぶ
 void EnemyGunner::MoveBlow()
-{    
-    // プレイヤーの攻撃方向へ吹き飛ばす
-    const float blowPower = 5000.0f;
-    
+{                
     // プレイヤーの中心座標
     const Vec3& p = { player->GetCenterPosition() };
     // エネミーの中心座標
     const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
-
-
-    Vec3 ep = { e - p };
-    VecMath::Normalize(ep);
-
+        
     float vx = e.x - p.x;
     float vy = e.y - p.y;
     float lengthXY = sqrtf(vx * vx + vy * vy);
     vx /= lengthXY;
     vy /= lengthXY;
-   
-    const Vec3& blowDirection = { blowPower , 2.0f,0.0f };
-   
-    // 吹っ飛ばす
-    //AddImpulse(blowDirection);
+          
+    // 吹っ飛ばす    
     AttackMove(vx, vy, moveSpeed);
  
 }

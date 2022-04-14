@@ -38,6 +38,7 @@ public:
 
 	// 健康状態を取得
 	int GetHealth() const { return health; }
+	void SetHealth(int hp) { health = hp; }
 
 	//	最大健康状態を取得
 	int GetMaxHealth() const { return maxHealth; }
@@ -49,10 +50,7 @@ public:
 	bool ApplyDamage(int damage, float invincibleTime);
 
 	float GetRadius() const { return radius; }
-
-	// 読み込んだモデルセット
-	void SetModel(Model* md) { model = md; }
-
+	
 
 private:
 	// 垂直速力更新処理
@@ -86,6 +84,9 @@ protected:
 
 	// 死亡した時に呼ばれる
 	virtual void OnDead() {}	
+	
+	// 死者蘇生
+	virtual void Resurrection() {}
 
 protected:
 	Model* model{};
