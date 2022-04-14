@@ -152,7 +152,7 @@ void Player::Update(float elapsedTime) {
     //}
 
     // 押してる間
-    if (key.STATE('k') && slowCT != 1) {
+    if (key.STATE('k')) {
         slowCT = 0;
         // 時間があれば スキル起動してタイマー減らす
         if (slowTimer >= 0) {
@@ -165,8 +165,9 @@ void Player::Update(float elapsedTime) {
         }
     }
     // 放している間
-    if (!key.STATE('k') && slowCT == 0) {
+    if (!key.STATE('k') && slowTimer < slowMax && slowCT == 0) {
         slowCT = 1;
+        slowCTTimer = CTMax;
     }
 
 
@@ -225,9 +226,9 @@ void Player::DrawDebugGUI() {
     if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None)) {
         // トランスフォーム
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::SliderFloat("Position X", &position.x, -2000, 2000);
-            ImGui::SliderFloat("Position Y", &position.y, -2000, 2000);
-            ImGui::SliderFloat("Position Z", &position.z, -2000, 2000);
+            ImGui::SliderFloat("Position X", &position.x, -300, 300);
+            ImGui::SliderFloat("Position Y", &position.y, -200, 200);
+            ImGui::SliderFloat("Position Z", &position.z, -300, 300);
 
             ImGui::SliderFloat("Speed", &moveSpeed, 0, 20);
 

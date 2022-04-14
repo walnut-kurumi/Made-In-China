@@ -133,4 +133,7 @@ private:
 
 	// 歩き回るかどうか
 	bool walk = false;
+
+	// タゲ切るタイマー	
+	float targetTimer = 0.0f;
 };
