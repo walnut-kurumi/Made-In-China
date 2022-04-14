@@ -31,6 +31,7 @@ Player::Player(ID3D11Device* device) {
 
     position = { 0.0f, 0.0f, 0.0f };
     waistPos = { 0,3,0 };
+    headPos = { 0,6,0 };
 
     scale = { 0.05f, 0.05f, 0.05f };
 
@@ -51,8 +52,6 @@ Player::~Player() {
 
 void Player::Init() {
     SetPosition({ 0, 1, 0 });
-    posMae = position;
-    posAto = position;
     angle = { 0,0,0 };
     transform = {
         1,0,0,0,
@@ -80,6 +79,8 @@ void Player::Init() {
 
     atkRadius = 2;
     atkTimer = 0.0f;
+
+    backDir = 5.0f;
 
     health = 1;
 }
@@ -341,7 +342,7 @@ void Player::InputSB() {
     // 武器を持っている場合
     if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_TRIGGER || (key.TRG('z'))) {
         if (weapon && 
-            (gamePad.GetAxisRX() != 0 && gamePad.GetAxisRY() != 0)) {
+            (gamePad.GetAxisRX() != 0 || gamePad.GetAxisRY() != 0)) {
             // 武器を投げる
             weapon = false;
             // 発射
@@ -609,11 +610,12 @@ void Player::CollisionSBVsEnemies() {
                 }
                 // フィニッシャー発動
                 finish = true;
-                // 自分を敵の背後へ
-                //******************************************************
-                // 仮で敵の位置へ
-                //******************************************************
-                position = enemy->GetPosition();
+                // 自分を敵の近くへ
+                // 自機と敵の位置から左右判定　のちそこから一定距離にワープ　そして殺す
+                Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
+                dir *= backDir;
+                position = enemy->GetPosition() + dir;
+
                 // 武器を壊す
                 sb->Destroy();
                 // 武器を手持ちに

@@ -106,6 +106,7 @@ private:
 	// 攻撃判定用
 	Vec3 atkPos{};
 	Vec3 waistPos{};
+	Vec3 headPos{};
 	bool atk = false;
 	float atkRadius;
 
@@ -138,6 +139,7 @@ private:
 	// SB用
 	bool weapon = true;		// 武器を持っているか否か
 	bool finish = false;	// 敵に対するフィニッシャー
+	float backDir;			// 敵の後ろ一定距離
 
 	bool isDead = false;
 };

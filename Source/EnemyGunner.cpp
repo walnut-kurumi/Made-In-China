@@ -46,8 +46,6 @@ EnemyGunner::~EnemyGunner()
 
 void EnemyGunner::Init()
 {   
-    posMae = position;
-    posAto = position;
     angle = { 0,0,0 };
     transform = {
         1,0,0,0,

@@ -91,8 +91,6 @@ protected:
 	Vec3 position = { 0,0,0 };
 	Vec3 saveposition = { 0,0,0 };
 	Vec3 centerPosition = { 0,0,0 };
-	Vec3 posMae = {};
-	Vec3 posAto = {};
 	Vec3 angle = { 0,0,0 };
 	Vec3 scale = { 1,1,1 };
 	DirectX::XMFLOAT4X4 transform = {
