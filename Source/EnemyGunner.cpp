@@ -62,7 +62,7 @@ void EnemyGunner::Init()
     moveVecZ = 0.0f;
     health = 1;
 
-    materialColor = { 0,0,0,0 };
+    materialColor = { 1,1,1,1 };
 
     centerPosition = position;
     centerPosition.y += 1.0f;
@@ -86,6 +86,8 @@ void EnemyGunner::Update(float elapsedTime)
 
     // 反射した弾丸との衝突判定
     CollisionProjectileVsEnemies();
+    // 発射した弾丸とプレイヤーの衝突判定
+    CollisionProjectileVsPlayer();
 
     // 速度更新
     UpdateSpeed(elapsedTime);
@@ -154,7 +156,7 @@ void EnemyGunner::CollisionProjectileVsEnemies()
     }
 }
 
-// プレイヤーとの衝突判定
+// プレイヤーと弾の衝突判定
 void EnemyGunner::CollisionProjectileVsPlayer()
 {
     EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();

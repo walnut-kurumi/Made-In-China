@@ -50,10 +50,7 @@ public:
 	bool ApplyDamage(int damage, float invincibleTime);
 
 	float GetRadius() const { return radius; }
-
-	// 読み込んだモデルセット
-	void SetModel(Model* md) { model = md; }
-
+	
 
 private:
 	// 垂直速力更新処理
