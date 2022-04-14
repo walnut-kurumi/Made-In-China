@@ -69,6 +69,8 @@ void Player::Init() {
     moveVecZ = 0.0f;
     health = 40;
 
+    height = 8.0f;
+
     isDead = false;
 
     slowSpeed = 0.35f;
@@ -211,10 +213,15 @@ void Player::Render(ID3D11DeviceContext* dc) {
     centerPosition = position;
     centerPosition.y += height;
 
-    //// 必要なったら追加
-    //debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
-    //if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, 1, Vec4(1, 1, 0, 1));
-    //debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    // height
+    Vec3 heightPos = position;
+    heightPos.y += height;
+    debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
+
+    // 必要なったら追加
+    debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
+    if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, 1, Vec4(1, 1, 0, 1));
+    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 void Player::DrawDebugGUI() {
@@ -238,6 +245,7 @@ void Player::DrawDebugGUI() {
 
         ImGui::SliderFloat("Angle X", &angle.y, DirectX::XMConvertToRadians(-180), DirectX::XMConvertToRadians(180));
         ImGui::RadioButton("death", deathFlag);
+        ImGui::SliderFloat("Height", &height, 0, 10.0f);
     }
     ImGui::End();
 #endif

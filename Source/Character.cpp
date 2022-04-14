@@ -164,16 +164,40 @@ void Character::UpdateVerticalMove(float elapsedTime) {
             isGround = true;
             velocity.y = 0.0f;
         }
+        else{
+            // 空中に浮いてる
+            position.y += my;
+            isGround = false;
+        }
+    }   
+    // 上昇中
+    else if (my > 0.0f) {
+
+        // レイの開始位置は頭
+        DirectX::XMFLOAT3 start = { position.x, position.y + height, position.z };
+        // レイの終点位置は移動後の位置
+        DirectX::XMFLOAT3 end = { position.x, position.y + height + my, position.z };
+
+        // レイキャストによる天井判定
+        HitResult hit;
+        if (StageManager::Instance().RayCast(start, end, hit)) {
+
+            // 天井に接している
+            position.x = hit.position.x;
+            position.y = hit.position.y - height;
+            position.z = hit.position.z;
+
+            // 回転
+            angle.y += hit.rotation.y;
+
+            velocity.y = 0.0f;
+            isGround = false;
+        }
         else {
             // 空中に浮いてる
             position.y += my;
             isGround = false;
         }
-    }
-    // 上昇中
-    else if (my > 0.0f) {
-        position.y += my;
-        isGround = false;
     }
 
 
@@ -188,6 +212,7 @@ void Character::UpdateVerticalMove(float elapsedTime) {
         //angle.x = Mathf::Lerp(angle.x, ax, 0.2f);
         //angle.z = Mathf::Lerp(angle.z, az, 0.2f);
     }
+
 
 }
 
