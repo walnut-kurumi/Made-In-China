@@ -77,7 +77,7 @@ void SceneGame::Initialize()
         gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));        
         gunner->SetWalkFlag(false); //歩き回るかどうか
         EnemyManager::Instance().Register(gunner);
-        EnemyManager::Instance().Init();        
+        EnemyManager::Instance().Init();
     }
 
     // ロード％更新

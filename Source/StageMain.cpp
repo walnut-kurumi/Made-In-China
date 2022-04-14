@@ -7,7 +7,7 @@
 
 StageMain::StageMain(ID3D11Device* device)
 {
-
+    back = new Sprite(device, L"./Data/Sprites/kariAsset.jpg");
 
     model = new Model(device, ".\\Data\\Models\\Stage\\stage.fbx",true,0);
     scale.x = scale.y = scale.z = 0.05f;
@@ -31,6 +31,9 @@ void StageMain::Update(float elapsedTime)
 
 void StageMain::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
 {         
+
+    back->render(deviceContext, 0, 0, 3840, 2160, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+
     model->Begin(deviceContext, Shaders::Ins()->GetRampShader());
     model->Render(deviceContext);  
 
