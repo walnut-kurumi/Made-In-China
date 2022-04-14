@@ -118,56 +118,40 @@ void SceneGame::Update(float elapsedTime)
     // ヒットストップ
     slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
     // スローモーション
-    slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
+    slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();   
 
-    CameraManager& cameraMgr = CameraManager::Instance();
-    // カメラシェイク（簡素）
-    cameraMgr.SetShakeFlag(player->GetHitstop());
 
     GamePad& gamePad = Input::Instance().GetGamePad();
-    Mouse& mouse = Input::Instance().GetMouse();
-    //マウス左クリック
-    const mouseButton mouseClick =
-        Mouse::BTN_LEFT;
-
-    // なにかボタンを押したらゲームシーン切り替え
-    const GamePadButton anyButton =
-        /*GamePad::BTN_A
-        | */GamePad::BTN_B
-        | GamePad::BTN_BACK
-        | GamePad::BTN_DOWN
-        | GamePad::BTN_LEFT
-        | GamePad::BTN_LEFT_SHOULDER
-        | GamePad::BTN_LEFT_THUMB
-        //| GamePad::BTN_LEFT_TRIGGER
-        | GamePad::BTN_RIGHT
-        | GamePad::BTN_RIGHT_SHOULDER
-        | GamePad::BTN_RIGHT_THUMB
-        //| GamePad::BTN_RIGHT_TRIGGER
-        | GamePad::BTN_START
-        | GamePad::BTN_UP
-        //| GamePad::BTN_X
-        | GamePad::BTN_Y;
+    Mouse& mouse = Input::Instance().GetMouse();   
 
     DirectX::XMFLOAT3 screenPosition;
     screenPosition.x = static_cast<float>(mouse.GetPositionX());
     screenPosition.y = static_cast<float>(mouse.GetPositionY());
 
+
+    // ステージ
     StageManager::Instance().Update(slowElapsedTime);
 
 
+    // プレイヤー
+    {
+        player->Update(slowElapsedTime);
+        // シフトブレイク更新処理
+        SBManager::Instance().Update(slowElapsedTime);
+    }
 
-    player->Update(slowElapsedTime);
-    // シフトブレイク更新処理
-    SBManager::Instance().Update(slowElapsedTime);
+    // カメラ
+    {
+        CameraManager& cameraMgr = CameraManager::Instance();
+        
+        // カメラシェイク（簡素）
+        cameraMgr.SetShakeFlag(player->GetHitstop());
 
-    cameraMgr.Update(slowElapsedTime);
+        cameraMgr.Update(slowElapsedTime);
 
-
-
-    Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
-    CameraManager::Instance().SetTarget(target);
-
+        Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
+        CameraManager::Instance().SetTarget(target);
+    }
 
 
     // エネミー
@@ -185,16 +169,24 @@ void SceneGame::Update(float elapsedTime)
     //エフェクト更新処理
     EffectManager::Instance().Update(slowElapsedTime);
 
-    // TODO
-    // 現在のステージのエネミーの数が０の場合 次のステージへ
+
+    // TODO 現在のステージのエネミーの数が０の場合 次のステージへ
     if (EnemyManager::Instance().GetEnemyCount() <= 0)
     {
         // 次のステージへ移る処理
     }
 
+
     // スロー時間表示
     w = player->GetSlowTimer() / slowMaxTime;
     et = elapsedTime;
+
+
+    // リセット
+    if (player->GetHealth() <= 0 ||  gamePad.GetButtonDown() & GamePad::BTN_Y)
+    {
+        Reset();
+    }
 }
 
 // 描画処理
@@ -278,15 +270,19 @@ void SceneGame::Render(float elapsedTime)
     
 }
 
+// playerが死んだとき 等のリセット用
 void SceneGame::Reset()
 {
-    EnemyManager::Instance().SetIsDead(false);
+    // 敵蘇生 ポジションリセット
+    EnemyManager::Instance().Init();
     for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
     {
         EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
     }
 
-    player->SetPosition({ 0,0,0 });
+    // プレイヤー蘇生 ポジションリセット
+    player->Init();
+
 }
 
 // エネミー座標設定

@@ -62,6 +62,8 @@ void EnemyGunner::Init()
     moveVecZ = 0.0f;
     health = 1;
 
+    materialColor = { 0,0,0,0 };
+
     centerPosition = position;
     centerPosition.y += 1.0f;
     radius = 2.5;
