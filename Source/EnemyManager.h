@@ -53,6 +53,9 @@ public:
 
 	void SetPosition(int i, DirectX::XMFLOAT3 enemyPos);
 
+	// 死んでるエネミーの数
+	int GetDeadEnemyCount();
+
 private:
 	// エネミー同士の衝突処理
 	void CollisionEnemyVsEnemies();

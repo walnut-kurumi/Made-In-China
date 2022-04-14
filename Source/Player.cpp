@@ -64,7 +64,7 @@ void Player::Init() {
     velocity = { 0,0,0 };    
     maxMoveSpeed = 10;
 
-    jumpSpeed = 105.0f;
+    jumpSpeed = 115.0f;
 
     moveVecX = 0.0f;
     moveVecZ = 0.0f;
@@ -91,10 +91,7 @@ void Player::Update(float elapsedTime) {
 
     // 無敵時間更新
     UpdateInvincibleTimer(elapsedTime);
-
-    // ジャンプ入力処理
-    InputJump();
-
+   
     // スロー
     InputSlow();
 
@@ -309,16 +306,19 @@ bool Player::InputMove(float elapsedTime) {
 }
 
 // ジャンプ入力処理
-void Player::InputJump() {
+bool Player::InputJump() {
     Key& key = Input::Instance().GetKey();
     GamePad& gamePad = Input::Instance().GetGamePad();
+
     if (gamePad.GetButtonDown() & GamePad::BTN_A 
        /* || key.STATE(VK_SPACE)*/) {
         jumpCount++;
         if (jumpCount <= jumpLimit) {
             Jump(jumpSpeed);
+            return true;
         }
     }
+    return false;
 }
 
 void Player::InputSlow() {
@@ -405,10 +405,10 @@ void Player::UpdateIdleState(float elapsedTime) {
     if (InputMove(elapsedTime)) TransitionRunState();
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
-
     // フィニッシャーへの移行
     if (finish) TransitionFinisherState();
-
+    // ジャンプ入力処理
+    if (InputJump()) TransitionJumpState();
     Key& key = Input::Instance().GetKey();
     // 回避入力処理
     //if (key.STATE(VK_SPACE)) TransitionJumpState();
@@ -429,15 +429,14 @@ void Player::UpdateRunState(float elapsedTime) {
 
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
-
     // フィニッシャーへの移行
     if (finish) TransitionFinisherState();
+    // ジャンプ入力処理
+    if (InputJump()) TransitionJumpState();
 
     // 歩き入力処理
     //if (!key.STATE(VK_SHIFT)) TransitionWalkState();
 
-    // 回避入力処理
-    //if (key.STATE(VK_SPACE)) TransitionJumpState();
 }
 
 //ジャンプステート遷移
@@ -448,9 +447,12 @@ void Player::TransitionJumpState() {
 
 //ジャンプステート更新処理
 void Player::UpdateJumpState(float elapsedTime) {
-    // アニメーションが終わるまでジャンプ行動
-    if (!model->IsPlayAnimatimon()) {
-        // 終わったらアイドル状態へ
+
+    // 攻撃入力処理
+    if (InputAttack()) TransitionAttackState();
+
+    // 地面についたらアイドル状態へ
+    if (isGround) {        
         TransitionIdleState();
     }
     // フィニッシャーへの移行
@@ -502,6 +504,10 @@ void Player::UpdateAttackState(float elapsedTime) {
        
         // ヒットストップおわり
         hitstop = false;
+
+        // カメラシェイク（簡素）おわり
+        CameraManager& cameraMgr = CameraManager::Instance();
+        cameraMgr.SetShakeFlag(false);
     }
 }
 
@@ -543,6 +549,10 @@ void Player::CollisionPanchiVsEnemies() {
                 enemy->ApplyDamage(1, 0);
                 // ヒットストップ
                 if (!slow)hitstop = true;
+
+                // カメラシェイク（簡素）
+                CameraManager& cameraMgr = CameraManager::Instance();
+                cameraMgr.SetShakeFlag(true);
             }
         }
     }
@@ -557,6 +567,11 @@ void Player::CollisionPanchiVsProjectile() {
         if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
             enemy->SetReflectionFlag(true);
             enemy->SetDirection(-enemy->GetDirection());
+            // ヒットストップ
+            if (!slow)hitstop = true;
+            // カメラシェイク（簡素）
+            CameraManager& cameraMgr = CameraManager::Instance();
+            cameraMgr.SetShakeFlag(true);
         }
     }
 }
