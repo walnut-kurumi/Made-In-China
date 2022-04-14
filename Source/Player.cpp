@@ -406,9 +406,7 @@ void Player::UpdateIdleState(float elapsedTime) {
     //  移動入力処理
     if (InputMove(elapsedTime)) TransitionRunState();
     // 攻撃入力処理
-    if (InputAttack()) TransitionAttackState();
-
-    Key& key = Input::Instance().GetKey();
+    if (InputAttack()) TransitionAttackState();    
     // ジャンプ入力処理
     if (InputJump()) TransitionJumpState();
 }
@@ -429,24 +427,28 @@ void Player::UpdateRunState(float elapsedTime) {
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
 
+    // ジャンプ入力処理
+    if (InputJump()) TransitionJumpState();
+
     // 歩き入力処理
     //if (!key.STATE(VK_SHIFT)) TransitionWalkState();
 
-    // 回避入力処理
-    //if (key.STATE(VK_SPACE)) TransitionJumpState();
 }
 
-//回避ステート遷移
+//ジャンプステート遷移
 void Player::TransitionJumpState() {
     state = AnimeState::Jump;
     model->PlayAnimation(static_cast<int>(state), false);
 }
 
-//回避ステート更新処理
+//ジャンプステート更新処理
 void Player::UpdateJumpState(float elapsedTime) {
-    // アニメーションが終わるまで回避行動
-    if (!model->IsPlayAnimatimon()) {
-        // 終わったらアイドル状態へ
+
+    // 攻撃入力処理
+    if (InputAttack()) TransitionAttackState();
+
+    // 地面についたらアイドル状態へ
+    if (isGround) {        
         TransitionIdleState();
     }
 }

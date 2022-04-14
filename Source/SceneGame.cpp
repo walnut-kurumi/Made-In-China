@@ -173,15 +173,7 @@ void SceneGame::Update(float elapsedTime)
 
         //エフェクト更新処理
         EffectManager::Instance().Update(slowElapsedTime);
-
-
-        // TODO 現在のステージの死んでるエネミーの数が０の場合 次のステージへ
-        if (EnemyManager::Instance().GetDeadEnemyCount() <= 0)
-        {
-            // 次のステージへ移る処理
-            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
-        }
-
+      
 
         // スロー時間表示
         w = player->GetSlowTimer() / slowMaxTime;
@@ -204,6 +196,15 @@ void SceneGame::Update(float elapsedTime)
     {
         // デバッグ用で消してる
         //Reset();
+    }
+
+
+
+    // TODO 現在のステージの死んでるエネミーの数が０の場合 次のステージへ
+    if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
+    {
+        // 次のステージへ移る処理
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
     }
 }
 
