@@ -195,6 +195,55 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbxFilename, bool tri
 	createComObjects(device, fbxFilename);
 }
 
+SkinnedMesh::SkinnedMesh(const char* animationFilename, float samplingRate, int index) {
+	std::filesystem::path cerealFilename(animationFilename);
+	cerealFilename.replace_extension("cereal");
+	if (std::filesystem::exists(cerealFilename.c_str())) {
+		std::ifstream ifs(cerealFilename.c_str(), std::ios::binary);
+		cereal::BinaryInputArchive deserialization(ifs);
+		deserialization(sceneView, meshes, materials, animationClips);
+	}
+	else {
+		// マネージャー生成
+		FbxManager* fbxManager = FbxManager::Create();
+
+		// IOSettingを生成
+		FbxIOSettings* ioSettings = FbxIOSettings::Create(fbxManager, IOSROOT);
+
+		//fbxScene生成
+		FbxScene* fbxScene = FbxScene::Create(fbxManager, "");
+
+		// インポーター生成
+		FbxImporter* fbxImporter = FbxImporter::Create(fbxManager, "");
+		bool importStatus = false;
+		importStatus = fbxImporter->Initialize(animationFilename, -1, fbxManager->GetIOSettings());
+		_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
+
+		// FbxSceneオブジェクトにFBXファイル内の情報を流し込む
+		importStatus = fbxImporter->Import(fbxScene);
+		_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
+
+		// シーンを流し込んだらImporterは解放
+		fbxImporter->Destroy();
+
+
+		//再帰で全ノードを取得
+		traverse(fbxScene->GetRootNode());
+
+		//アニメーションを抽出
+		fetchAnimations(fbxScene, samplingRate, index);
+
+
+
+		// マネージャ解放:関連するすべてのオブジェクトが解放される
+		fbxManager->Destroy();
+		//シリアル作成
+		std::ofstream ofs(cerealFilename.c_str(), std::ios::binary);
+		cereal::BinaryOutputArchive serialization(ofs);
+		serialization(sceneView, meshes, materials, animationClips);
+	}
+}
+
 void SkinnedMesh::traverse(FbxNode* fbxNode) {
 	Scene::Node& node = sceneView.nodes.emplace_back();
 	{

@@ -1,8 +1,7 @@
 #include "Graphics/Graphics.h"
 #include "ResourceManager.h"
 // モデルリソース読み込み
-std::shared_ptr<SkinnedMesh> ResourceManager::LoadModelResource(const char* filename, bool triangulate, BOOL frontCounterClockwise)
-{
+std::shared_ptr<SkinnedMesh> ResourceManager::LoadModelResource(const char* filename, bool triangulate, BOOL frontCounterClockwise) {
 	// モデルを検索
 	ModelMap::iterator it = models.find(filename);
 	if (it != models.end())	{
@@ -24,4 +23,23 @@ std::shared_ptr<SkinnedMesh> ResourceManager::LoadModelResource(const char* file
 	// マップに登録
 	models[filename] = model;
 	return model;
+}
+
+std::shared_ptr<SkinnedMesh> ResourceManager::LoadAnimationResource(const char* filename, float samplingRate, int index) {
+	// モデルを検索
+	AnimeMap::iterator it = animes.find(filename);
+	if (it != animes.end()) {
+		// リンク（寿命）が切れていないか確認
+		if (!it->second.expired()) {
+			// 読み込み済みのモデルリソースを返す
+			return it->second.lock();
+		}
+	}
+	// 新規モデルリソース作成＆読み込み
+	auto model = std::make_shared<SkinnedMesh>(filename, samplingRate, index);
+
+	// マップに登録
+	animes[filename] = model;
+	return model;
+
 }
