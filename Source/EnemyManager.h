@@ -20,7 +20,7 @@ private:
 
 private:
 	EnemyManager() {}
-	~EnemyManager() { delete model; }
+	~EnemyManager() {}
 public:
 	// 唯一のインスタンス取得
 	static EnemyManager& Instance()
@@ -59,7 +59,5 @@ private:
 	void CollisionEnemyVsEnemies();
 	// 複数のエネミーを管理するため、ポインタをvectorで管理する
 	std::vector<Enemy*> enemies;
-	std::vector<Enemy*> removes;	
-
-	Model* model = nullptr;
+	std::vector<Enemy*> removes;		
 };

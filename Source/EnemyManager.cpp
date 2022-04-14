@@ -74,7 +74,13 @@ void EnemyManager::Clear()
 	for (Enemy* enemy : enemies)
 	{
 		delete enemy;
-	}
+	}	
+	
+	enemies.erase(enemies.begin(), enemies.end());
+	enemies.shrink_to_fit();
+	
+	removes.erase(removes.begin(), removes.end());
+	removes.shrink_to_fit();
 }
 
 // ƒ\[ƒg

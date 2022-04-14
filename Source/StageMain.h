@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Stage.h"
+#include "Graphics/Sprite.h"
 #include "DebugRenderer.h"
 
 class StageMain : public Stage
@@ -17,4 +18,5 @@ public:
 
 private:
 	std::unique_ptr<DebugRenderer> debugRenderer;		
+	Sprite* back{};
 };
