@@ -73,7 +73,7 @@ void SceneGame::Initialize()
             AddLoadPercent(2.0f);            
         }
 
-        EnemyGunner* gunner = new EnemyGunner(device);
+         EnemyGunner* gunner = new EnemyGunner(device);
         gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));        
         gunner->SetWalkFlag(false); //歩き回るかどうか
         EnemyManager::Instance().Register(gunner);
@@ -112,6 +112,10 @@ void SceneGame::Finalize()
     // ステージ終了処理
     StageManager::Instance().Clear();
     StageManager::Destory();    
+
+    // カメラシェイク（簡素）
+    CameraManager& cameraMgr = CameraManager::Instance();
+    cameraMgr.SetShakeFlag(false);
 }
 
 // 更新処理
