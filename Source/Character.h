@@ -83,10 +83,7 @@ protected:
 	virtual void OnDamaged() {}
 
 	// €–S‚µ‚½‚ÉŒÄ‚Î‚ê‚é
-	virtual void OnDead() {}	
-	
-	// €Ò‘h¶
-	virtual void Resurrection() {}
+	virtual void OnDead() {}		
 
 protected:
 	Model* model{};

@@ -30,10 +30,7 @@ public:
 	
 	// Ž€–S‚µ‚½Žž‚ÉŒÄ‚Î‚ê‚é
 	void OnDead() override { isDead = true; }
-
-	void Resurrection() override { isDead = false; SetHealth(1); }
 	
-
 protected:
 	bool isDead = false;
 

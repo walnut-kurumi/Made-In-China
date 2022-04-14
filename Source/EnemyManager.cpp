@@ -102,14 +102,6 @@ void EnemyManager::SetPlayer(Player* p)
 	}
 }
 
-void EnemyManager::SetIsDead(bool b)
-{
-	for (Enemy* enemy : enemies)
-	{
-		if (b)enemy->OnDead();
-		else enemy->Resurrection();
-	}
-}
 
 void EnemyManager::SetPosition(int i, DirectX::XMFLOAT3 enemyPos)
 {	

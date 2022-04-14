@@ -49,8 +49,6 @@ public:
 
 	void SetPlayer(Player* p);	
 
-	void SetIsDead(bool b);
-
 	void SetPosition(int i, DirectX::XMFLOAT3 enemyPos);
 
 	// 死んでるエネミーの数

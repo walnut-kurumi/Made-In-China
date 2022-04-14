@@ -62,7 +62,7 @@ void Player::Init() {
     velocity = { 0,0,0 };    
     maxMoveSpeed = 10;
 
-    jumpSpeed = 115.0f;
+    jumpSpeed = 110.0f;
 
     moveVecX = 0.0f;
     moveVecZ = 0.0f;
@@ -308,9 +308,12 @@ bool Player::InputJump() {
     Key& key = Input::Instance().GetKey();
     GamePad& gamePad = Input::Instance().GetGamePad();
 
-    if (gamePad.GetButtonDown() & GamePad::BTN_A 
-       /* || key.STATE(VK_SPACE)*/) {
+    if (gamePad.GetButtonDown() & GamePad::BTN_A /* || key.STATE(VK_SPACE)*/) {
         jumpCount++;
+
+        // 空中のときは一回だけ
+        if (!isGround)jumpCount++;
+        
         if (jumpCount <= jumpLimit) {
             Jump(jumpSpeed);
             return true;
@@ -438,14 +441,20 @@ void Player::UpdateRunState(float elapsedTime) {
 //ジャンプステート遷移
 void Player::TransitionJumpState() {
     state = AnimeState::Jump;
+    moveSpeed = 45;
     model->PlayAnimation(static_cast<int>(state), false);
 }
 
 //ジャンプステート更新処理
 void Player::UpdateJumpState(float elapsedTime) {
 
+    InputMove(elapsedTime);
+
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
+
+    // ジャンプ入力処理
+    if (InputJump()) TransitionJumpState();
 
     // 地面についたらアイドル状態へ
     if (isGround) {        

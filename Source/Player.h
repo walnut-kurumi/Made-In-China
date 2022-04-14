@@ -111,7 +111,7 @@ private:
 
 	float jumpSpeed;
 	int jumpCount = 0;
-	int jumpLimit = 2;
+	int jumpLimit = 3;
 
 	std::unique_ptr<DebugRenderer> debugRenderer;
 	SkinnedMesh* skinned;
