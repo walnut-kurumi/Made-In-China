@@ -10,13 +10,14 @@ private:
 
 	enum class AnimeState
 	{
-		Idle,	//　待機
-		Run,	//　走り
-		Attack, // 攻撃
-		Jump,	//　ジャンプ開始
-		Fall,	//　落下
-		Land,	//　着地
-		End,	//　お　わ　り　💛 ふぁっ〇ゅ～～～！！
+		Idle,	 //　待機
+		Run,	 //　走り
+		Attack,  // 攻撃
+		Jump,	 //　ジャンプ開始
+		Finisher,// フィニッシャー
+		Fall,	 //　落下
+		Land,	 //　着地
+		End,	 //　お　わ　り　💛 ふぁっ〇ゅ～～～！！
 	};
 
 public:
@@ -89,6 +90,10 @@ protected:
 	void TransitionAttackState();
 	void UpdateAttackState(float elapsedTime);
 
+	// フィニッシャーステート
+	void TransitionFinisherState();
+	void UpdateFinisherState(float elapsedTime);
+
 
 private:
 	template<class Type, typename Return, typename ...Args>
@@ -127,14 +132,12 @@ private:
 	float slowCTTimer = CTMax;
 	// クールタイム　0:無し 1:CT明け直後 2:CT中
 	int slowCT = 0;
-
-
 	// ヒットストップ用
 	float hitstopSpeed = 0.0f;
 	bool hitstop; // 攻撃当たったらtrue
-
 	// SB用
 	bool weapon = true;		// 武器を持っているか否か
+	bool finish = false;	// 敵に対するフィニッシャー
 
 	bool isDead = false;
 };

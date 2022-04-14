@@ -27,6 +27,7 @@ Player::Player(ID3D11Device* device) {
     model->LoadAnimation(run, 0, static_cast<int>(AnimeState::Run));
     model->LoadAnimation(jump, 0, static_cast<int>(AnimeState::Jump));
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Attack));
+    model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Finisher));
 
     position = { 0.0f, 0.0f, 0.0f };
     waistPos = { 0,3,0 };
@@ -37,6 +38,7 @@ Player::Player(ID3D11Device* device) {
     UpdateState[static_cast<int>(AnimeState::Run)] = &Player::UpdateRunState;
     UpdateState[static_cast<int>(AnimeState::Jump)] = &Player::UpdateJumpState;
     UpdateState[static_cast<int>(AnimeState::Attack)] = &Player::UpdateAttackState;
+    UpdateState[static_cast<int>(AnimeState::Finisher)] = &Player::UpdateFinisherState;
 
     TransitionIdleState();
 
@@ -335,8 +337,9 @@ void Player::InputSlow() {
 void Player::InputSB() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     ID3D11Device* device = Graphics::Ins().GetDevice();
+    Key& key = Input::Instance().GetKey();
     // 武器を持っている場合
-    if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_TRIGGER) {
+    if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_TRIGGER || (key.TRG('z'))) {
         if (weapon && 
             (gamePad.GetAxisRX() != 0 && gamePad.GetAxisRY() != 0)) {
             // 武器を投げる
@@ -358,11 +361,6 @@ void Player::InputSB() {
                 position = sb->GetPosition();
                 sb->Destroy();
             }
-            //***********
-            // 壁との判定を作って、壁抜け対策をする
-            // 敵との判定を取り、敵と衝突or近いと敵を倒しながらワープ
-            //***********
-
             // 武器を手持ちに
             weapon = true;
         }
@@ -409,9 +407,14 @@ void Player::UpdateIdleState(float elapsedTime) {
     //  移動入力処理
     if (InputMove(elapsedTime)) TransitionRunState();
     // 攻撃入力処理
-    if (InputAttack()) TransitionAttackState();    
+    if (InputAttack()) TransitionAttackState();
+    // フィニッシャーへの移行
+    if (finish) TransitionFinisherState();
     // ジャンプ入力処理
     if (InputJump()) TransitionJumpState();
+    Key& key = Input::Instance().GetKey();
+    // 回避入力処理
+    //if (key.STATE(VK_SPACE)) TransitionJumpState();
 }
 
 //走るステート遷移
@@ -429,7 +432,8 @@ void Player::UpdateRunState(float elapsedTime) {
 
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
-
+    // フィニッシャーへの移行
+    if (finish) TransitionFinisherState();
     // ジャンプ入力処理
     if (InputJump()) TransitionJumpState();
 
@@ -460,6 +464,8 @@ void Player::UpdateJumpState(float elapsedTime) {
     if (isGround) {        
         TransitionIdleState();
     }
+    // フィニッシャーへの移行
+    if (finish) TransitionFinisherState();
 }
 
 void Player::TransitionAttackState() {
@@ -486,6 +492,9 @@ void Player::UpdateAttackState(float elapsedTime) {
         // 地面いたら上に切れる　空中なら左右のみ
         isGround ? AttackMove(-ax, ay, 30) : AttackMove(-ax, 0, 30);
     }
+
+    // フィニッシャーへの移行
+    if (finish) TransitionFinisherState();
     
     // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
@@ -508,6 +517,26 @@ void Player::UpdateAttackState(float elapsedTime) {
         // カメラシェイク（簡素）おわり
         CameraManager& cameraMgr = CameraManager::Instance();
         cameraMgr.SetShakeFlag(false);
+    }
+}
+
+void Player::TransitionFinisherState() {
+    // 遷移
+    state = AnimeState::Finisher;
+
+    model->PlayAnimation(static_cast<int>(state), false);
+}
+
+void Player::UpdateFinisherState(float elapsedTime) {
+
+    // アニメーションが終わった最後の処理
+    if (!model->IsPlayAnimatimon()) {
+        // 終わったらアイドル状態へ
+        TransitionIdleState();
+        // ヒットストップおわり
+        hitstop = false;
+        // フィニッシャー終わり
+        finish = false;
     }
 }
 
@@ -573,15 +602,18 @@ void Player::CollisionSBVsEnemies() {
             // 衝突処理
             if (Collision::SphereVsSphere(enemy->GetPosition(), sb->GetPosition(), enemy->GetRadius(), atkRadius)) {
 
-                if (enemy->GetHealth() > 0)
-                {
+                if (enemy->GetHealth() > 0) {
                     enemy->ApplyDamage(1, 0);
                     // ヒットストップ
-                    if (!slow)hitstop = true;
+                    if (!slow) hitstop = true;
                 }
-
-                // 自分を敵の位置へ
-                position = sb->GetPosition();
+                // フィニッシャー発動
+                finish = true;
+                // 自分を敵の背後へ
+                //******************************************************
+                // 仮で敵の位置へ
+                //******************************************************
+                position = enemy->GetPosition();
                 // 武器を壊す
                 sb->Destroy();
                 // 武器を手持ちに
