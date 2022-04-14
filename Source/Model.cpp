@@ -36,7 +36,9 @@ void Model::Render(ID3D11DeviceContext* dc, const Vec4 materialColor)  // , cons
 
 void Model::LoadAnimation(const char* fbxFilename, float samplingRate, int index)
 {
-	skinnedMesh.get()->LoadAnimation(fbxFilename, samplingRate, index);
+	//skinnedMesh.get()->LoadAnimation(fbxFilename, samplingRate, index);
+	skin.emplace(index,  ResourceManager::Instance().LoadAnimationResource(fbxFilename, samplingRate, index));
+	skinnedMesh.get()->animationClips.emplace(index, skin[index].get()->GetAnimes(index));
 }
 
 bool Model::IsPlayAnimatimon()
