@@ -25,7 +25,7 @@ std::shared_ptr<SkinnedMesh> ResourceManager::LoadModelResource(const char* file
 	return model;
 }
 
-std::shared_ptr<SkinnedMesh> ResourceManager::LoadAnimationResource(const char* filename, float samplingRate, int index) {
+std::shared_ptr<SkinnedMesh::Animation> ResourceManager::LoadAnimationResource(const char* filename, float samplingRate, int index) {
 	// モデルを検索
 	AnimeMap::iterator it = animes.find(filename);
 	if (it != animes.end()) {
@@ -37,9 +37,9 @@ std::shared_ptr<SkinnedMesh> ResourceManager::LoadAnimationResource(const char* 
 	}
 	// 新規モデルリソース作成＆読み込み
 	auto model = std::make_shared<SkinnedMesh>(filename, samplingRate, index);
-
+	auto anime = std::make_shared<SkinnedMesh::Animation>(model->GetAnimes(index));
 	// マップに登録
-	animes[filename] = model;
-	return model;
+	animes[filename] = anime;
+	return anime;
 
 }
