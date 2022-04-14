@@ -194,6 +194,8 @@ void Player::Update(float elapsedTime) {
     }
 
 
+    // Ž€‚ñ‚¾‚ç
+    if (health <= 0)isDead = true;
 }
 
 

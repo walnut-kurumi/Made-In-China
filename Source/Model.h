@@ -46,6 +46,7 @@ public:
 
 private:
 	std::shared_ptr<SkinnedMesh> skinnedMesh;
+	std::unordered_map<int, std::shared_ptr<SkinnedMesh>> skin;
 	DirectX::XMFLOAT4X4 transform = {
 		1, 0, 0, 0,
 		0, 1, 0, 0,

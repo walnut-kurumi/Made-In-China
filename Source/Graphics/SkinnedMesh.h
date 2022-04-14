@@ -309,6 +309,7 @@ private:
 
 public:
 	SkinnedMesh(ID3D11Device* device, const char* fbxFilename, bool triangulate = false, float samplingRate = 0);
+	SkinnedMesh(const char* animationFilename, float samplingRate, int index);
 	virtual ~SkinnedMesh() = default;
 
 	void traverse(FbxNode* fbxNode);
@@ -324,6 +325,7 @@ public:
 	void blendAnimations(const Animation::Keyframe* keyframes[2], float factor, Animation::Keyframe& keyframe);
 
 	const std::vector<Mesh>& GetMeshs() const { return meshes; }
+	const Animation& GetAnimes(int index) const { return animationClips.at(index); }
 
 protected:
 	Scene sceneView;
