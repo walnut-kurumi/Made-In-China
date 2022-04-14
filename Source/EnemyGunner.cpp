@@ -203,8 +203,8 @@ void EnemyGunner::UpdateSearchArea()
     // 止まっているときは両方みれる
     if (!walk)
     {
-        searchAreaPos = { position.x - 35, position.y - 2.0f };
-        searchAreaScale = { 45, height + 2.0f };
+        searchAreaPos = { position.x - 25, position.y - 2.0f };
+        searchAreaScale = { 50, height + 2.0f };
     }
 }
 
@@ -325,7 +325,7 @@ void EnemyGunner::MoveBlow()
  
 }
 
-//射線が通っているか
+//射線が通っていないか
 bool EnemyGunner::AttackRayCheck()
 {
     // プレイヤーの中心座標
@@ -440,6 +440,9 @@ void EnemyGunner::TransitionRunState()
     state = State::Run;
     moveSpeed = 50;
     model->PlayAnimation(static_cast<int>(state), true);
+
+    // ターゲット切れるまで
+    targetTimer = 4.0f;
 }
 
 //走るステート更新処理
@@ -448,11 +451,23 @@ void EnemyGunner::UpdateRunState(float elapsedTime)
     // 死んでたら 吹っ飛びステートへ
     if (health <= 0) TransitionBlowState();
 
-    // 射程距離内なら攻撃ステートへ
+    // 射程距離内かつ射線が通っているなら攻撃ステートへ
     if (CheckAttackRange() && !AttackRayCheck())
     {
         TransitionAttackState();
     }
+
+    // 射線通ってないときだけtargetTimer回す
+    if (AttackRayCheck())
+    {
+        targetTimer -= elapsedTime;
+    }
+    // targetTiemrが０になったときターゲットを切る
+    if (targetTimer <= 0)
+    {
+        TransitionIdleState();
+    }
+
     // 射程距離入るまでプレイヤーに向かって走り続ける
     MoveRun(direction);
 }
@@ -482,7 +497,7 @@ void EnemyGunner::UpdateAttackState(float elapsedTime)
     // 射程距離外 もしくは、射線が通っていないなら走るステートへ
     if (!CheckAttackRange() || AttackRayCheck())
     {
-        TransitionRunState();
+        TransitionRunState();       
     }
 }
 
