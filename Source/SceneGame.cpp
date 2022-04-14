@@ -113,73 +113,88 @@ void SceneGame::Finalize()
 // 更新処理
 void SceneGame::Update(float elapsedTime)
 {
-    float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
-    //TODO: 敵の数増えるとelapsedTime　おかしくなる
-    // ヒットストップ
-    slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
-    // スローモーション
-    slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();   
-
-
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();   
 
-    DirectX::XMFLOAT3 screenPosition;
-    screenPosition.x = static_cast<float>(mouse.GetPositionX());
-    screenPosition.y = static_cast<float>(mouse.GetPositionY());
-
-
-    // ステージ
-    StageManager::Instance().Update(slowElapsedTime);
-
-
-    // プレイヤー
+    if (menuflag == false)
     {
-        player->Update(slowElapsedTime);
-        // シフトブレイク更新処理
-        SBManager::Instance().Update(slowElapsedTime);
-    }
 
-    // カメラ
+        float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
+        //TODO: 敵の数増えるとelapsedTime　おかしくなる
+        // ヒットストップ
+        slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
+        // スローモーション
+        slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
+
+
+
+        DirectX::XMFLOAT3 screenPosition;
+        screenPosition.x = static_cast<float>(mouse.GetPositionX());
+        screenPosition.y = static_cast<float>(mouse.GetPositionY());
+
+
+        // ステージ
+        StageManager::Instance().Update(slowElapsedTime);
+
+
+        // プレイヤー
+        {
+            player->Update(slowElapsedTime);
+            // シフトブレイク更新処理
+            SBManager::Instance().Update(slowElapsedTime);
+        }
+
+        // カメラ
+        {
+            CameraManager& cameraMgr = CameraManager::Instance();
+
+            // カメラシェイク（簡素）
+            cameraMgr.SetShakeFlag(player->GetHitstop());
+
+            cameraMgr.Update(slowElapsedTime);
+
+            Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
+            CameraManager::Instance().SetTarget(target);
+        }
+
+
+        // エネミー
+        {
+            EnemyManager::Instance().SetPlayer(player);
+            // ソート
+            EnemyManager::Instance().SortLengthSq(player->GetPosition());
+            // エネミー更新処理
+            EnemyManager::Instance().Update(slowElapsedTime);
+            // 弾丸更新処理
+            EnemyBulletManager::Instance().Update(slowElapsedTime);
+
+        }
+
+        //エフェクト更新処理
+        EffectManager::Instance().Update(slowElapsedTime);
+
+
+        // TODO 現在のステージのエネミーの数が０の場合 次のステージへ
+        if (EnemyManager::Instance().GetEnemyCount() <= 0)
+        {
+            // 次のステージへ移る処理
+        }
+
+
+        // スロー時間表示
+        w = player->GetSlowTimer() / slowMaxTime;
+        et = elapsedTime;
+    }
+    //ポーズメニュー
+    if (gamePad.GetButtonDown() & GamePad::BTN_START)
     {
-        CameraManager& cameraMgr = CameraManager::Instance();
-        
-        // カメラシェイク（簡素）
-        cameraMgr.SetShakeFlag(player->GetHitstop());
-
-        cameraMgr.Update(slowElapsedTime);
-
-        Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
-        CameraManager::Instance().SetTarget(target);
+        if (!menuflag) menuflag = true;
+        else menuflag = false;
     }
-
-
-    // エネミー
+    if (menuflag == true)
     {
-        EnemyManager::Instance().SetPlayer(player);
-        // ソート
-        EnemyManager::Instance().SortLengthSq(player->GetPosition());
-        // エネミー更新処理
-        EnemyManager::Instance().Update(slowElapsedTime);
-        // 弾丸更新処理
-        EnemyBulletManager::Instance().Update(slowElapsedTime);
-
+        menu();
     }
-
-    //エフェクト更新処理
-    EffectManager::Instance().Update(slowElapsedTime);
-
-
-    // TODO 現在のステージのエネミーの数が０の場合 次のステージへ
-    if (EnemyManager::Instance().GetEnemyCount() <= 0)
-    {
-        // 次のステージへ移る処理
-    }
-
-
-    // スロー時間表示
-    w = player->GetSlowTimer() / slowMaxTime;
-    et = elapsedTime;
 
 
     // リセット
@@ -299,4 +314,10 @@ void SceneGame::EnemyPositionSetting()
     enemyPos[6] = {-190,38};
     enemyPos[7] = {-190,62};
     enemyPos[8] = {-10,62};    
+}
+
+//メニュー
+void SceneGame::menu()
+{
+
 }
