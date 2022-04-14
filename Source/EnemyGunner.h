@@ -35,8 +35,8 @@ public:
 	// 弾丸とプレイヤーの衝突判定
 	void CollisionProjectileVsPlayer();
 
-
-	void SetWalkFlag(bool b) { walk = b; }
+	// 徘徊するかどうか
+	void SetWalkFlag(bool b) { walk = b; }	
 
 private:	
 	// 徘徊  ←左true　false右→
@@ -55,6 +55,8 @@ private:
 	void MoveAttack(float cooldown);
 	// 吹っ飛び プレイヤー攻撃の方向に吹っ飛ぶ
 	void MoveBlow();		
+	// 射線がステージにぶつかってないか
+	bool AttackRayCheck();
 
 protected:
 
@@ -126,7 +128,7 @@ private:
 	// 吹っ飛ばす時間
 	float blowTimer = 0;	
 
-	// 移動する向き
+	// 移動する向き ←左true　false右→
 	bool direction = false;
 
 	// 歩き回るかどうか

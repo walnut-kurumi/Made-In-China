@@ -200,6 +200,12 @@ void EnemyGunner::UpdateSearchArea()
         searchAreaPos = { position.x - 35, position.y - 2.0f };        
         searchAreaScale = { 45, height + 2.0f };
     }    
+    // 止まっているときは両方みれる
+    if (!walk)
+    {
+        searchAreaPos = { position.x - 35, position.y - 2.0f };
+        searchAreaScale = { 45, height + 2.0f };
+    }
 }
 
 // 中心座標
@@ -296,6 +302,7 @@ void EnemyGunner::MoveAttack(float cooldown)
         // 発射
         EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
         bullet->Launch(pe, e);        
+            
     }
 }
 
@@ -316,6 +323,22 @@ void EnemyGunner::MoveBlow()
     // 吹っ飛ばす    
     AttackMove(vx, vy, moveSpeed);
  
+}
+
+//射線が通っているか
+bool EnemyGunner::AttackRayCheck()
+{
+    // プレイヤーの中心座標
+    const Vec3& p = { player->GetCenterPosition() };
+    // エネミーの中心座標
+    const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
+  
+
+    // プレイヤー方向へレイキャスト
+    HitResult hit;
+
+    return StageManager::Instance().RayCast(e, p, hit);
+   
 }
 
 
@@ -426,7 +449,7 @@ void EnemyGunner::UpdateRunState(float elapsedTime)
     if (health <= 0) TransitionBlowState();
 
     // 射程距離内なら攻撃ステートへ
-    if (CheckAttackRange())
+    if (CheckAttackRange() && !AttackRayCheck())
     {
         TransitionAttackState();
     }
@@ -456,8 +479,8 @@ void EnemyGunner::UpdateAttackState(float elapsedTime)
     // 攻撃クールダウン更新
     AttackCooldownUpdate(elapsedTime);
 
-    // 射程距離外なら走るステートへ
-    if (!CheckAttackRange())
+    // 射程距離外 もしくは、射線が通っていないなら走るステートへ
+    if (!CheckAttackRange() || AttackRayCheck())
     {
         TransitionRunState();
     }

@@ -55,7 +55,7 @@ void SceneGame::Initialize()
     EnemyPositionSetting();
 
     // エネミー初期化			
-    int ENEMY_MAX = 4;
+    int ENEMY_MAX = 9;
     for (int i = 0; i <ENEMY_MAX; i++)
     {        
         if (ENEMY_MAX / 2 == i)
@@ -185,7 +185,8 @@ void SceneGame::Update(float elapsedTime)
     // リセット
     if (player->GetHealth() <= 0 ||  gamePad.GetButtonDown() & GamePad::BTN_Y)
     {
-        Reset();
+        // デバッグ用で消してる
+        //Reset();
     }
 }
 
