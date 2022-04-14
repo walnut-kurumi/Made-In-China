@@ -8,6 +8,10 @@
 #include "EnemyManager.h"
 #include "EnemyGunner.h"
 
+#include"SceneLoading.h"
+#include"SceneClear.h"
+#include"SceneOver.h"
+
 #include "StageManager.h"
 #include "StageSkybox.h"
 #include "StageMain.h"
@@ -175,6 +179,7 @@ void SceneGame::Update(float elapsedTime)
         if (EnemyManager::Instance().GetDeadEnemyCount() <= 0)
         {
             // 次のステージへ移る処理
+            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
         }
 
 
