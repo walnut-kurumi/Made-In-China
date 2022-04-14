@@ -152,7 +152,7 @@ void Player::Update(float elapsedTime) {
     //}
 
     // 押してる間
-    if (key.STATE('k') && slowCT != 1) {
+    if (key.STATE('k')) {
         slowCT = 0;
         // 時間があれば スキル起動してタイマー減らす
         if (slowTimer >= 0) {
@@ -165,8 +165,9 @@ void Player::Update(float elapsedTime) {
         }
     }
     // 放している間
-    if (!key.STATE('k') && slowCT == 0) {
+    if (!key.STATE('k') && slowTimer < slowMax && slowCT == 0) {
         slowCT = 1;
+        slowCTTimer = CTMax;
     }
 
 
