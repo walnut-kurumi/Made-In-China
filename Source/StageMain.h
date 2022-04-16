@@ -4,6 +4,7 @@
 #include "Graphics/Sprite.h"
 #include "DebugRenderer.h"
 #include "../Source/Graphics/ConstantBuffer.h"
+#include "Graphics/Vec.h"
 #include"Player.h"
 
 class StageMain : public Stage
@@ -21,8 +22,8 @@ public:
 	void PlayerData(Player* p) { player = p; }
 
 private:
-
 	ConstantBuffer<Scroll> Scroll;
+	Vec2 bgpos{};
 
 	std::unique_ptr<DebugRenderer> debugRenderer;		
 	Sprite* back{};
