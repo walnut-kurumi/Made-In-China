@@ -31,6 +31,14 @@ void SceneGame::Initialize()
 
     ID3D11Device* device = Graphics::Ins().GetDevice();
 
+
+    // プレイヤー
+    player = new Player(device);
+    player->Init(); 
+
+    // ロード％更新
+    AddLoadPercent(1.0f);
+
     // ステージ
     {
         StageManager::Create();
@@ -40,18 +48,11 @@ void SceneGame::Initialize()
         AddLoadPercent(1.0f);
 
         StageMain* stageMain = new StageMain(device);
+        stageMain->PlayerData(player);
         StageManager::Instance().Register(stageMain);
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);
     }
-
-    // ロード％更新
-    AddLoadPercent(1.0f);
-
-    // プレイヤー
-    player = new Player(device);
-    player->Init(); 
-
     // ロード％更新
     AddLoadPercent(1.0f);
 

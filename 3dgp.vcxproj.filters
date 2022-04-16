@@ -91,6 +91,12 @@
     <FxCompile Include="shader\StaticMeshVs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="shader\UVScroll_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\UVScroll_vs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Framebuffer.cpp" />
@@ -484,6 +490,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\StaticMesh.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="shader\UVScroll.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

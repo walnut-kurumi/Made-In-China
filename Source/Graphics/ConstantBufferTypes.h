@@ -32,3 +32,9 @@ struct Outline
     DirectX::XMFLOAT4 normalE;
     DirectX::XMFLOAT4 depthE;
 };
+
+struct Scroll
+{
+    DirectX::XMFLOAT2 scroll_direction;
+    DirectX::XMFLOAT2 scroll_dummy;
+};

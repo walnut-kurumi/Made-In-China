@@ -31,8 +31,9 @@ void StageMain::Update(float elapsedTime)
 
 void StageMain::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
 {         
-
-    back->render(deviceContext, 0, 0, 3840, 2160, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+    //Scroll.data.scroll_direction;
+    //deviceContext->UpdateSubresource(
+    back->render(deviceContext, -200, -600, 1800, 1500, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
     model->Begin(deviceContext, Shaders::Ins()->GetRampShader());
     model->Render(deviceContext);  

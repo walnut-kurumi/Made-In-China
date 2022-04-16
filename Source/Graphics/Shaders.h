@@ -22,6 +22,8 @@ private:
 	Shader fullscreenQuadShader;	
 	Shader blurShader;	
 	Shader luminanceShader;	
+
+	Shader uvscrollShader;
 	
 public:
 	static Shaders* Ins() {
@@ -42,4 +44,6 @@ public:
 	Shader GetFullscreenQuadShader() { return fullscreenQuadShader; }
 	Shader GetBlurShader() { return blurShader; }
 	Shader GetLuminanceShader() { return luminanceShader; }	
+
+	Shader GetUvScrollShader() { return uvscrollShader; }
 };
