@@ -96,7 +96,7 @@ void Player::Update(float elapsedTime) {
     UpdateInvincibleTimer(elapsedTime);
    
     // スロー
-    InputSlow();
+    InputSlow(elapsedTime);
 
     // シフトブレイク
     InputSB();
@@ -121,81 +121,6 @@ void Player::Update(float elapsedTime) {
     if (key.STATE('l')) {
         XInputSetState(0, &vib);
     }
-
-    // タイマー試し
-    //// 押してる間
-    //if (key.STATE('k') && !slowCT) {
-    //    // 時間があれば
-    //    if (slowTimer >= 0) {
-    //        // 起動してタイマー減らす
-    //        slowTimer -= elapsedTime;
-    //    }
-    //    else {
-    //        slowTimer = max(slowTimer, 0);
-    //        // ゼロになればCT発動
-    //        slowCT = true;
-    //    }
-    //}
-    //// 放している間
-    //if (!key.STATE('k')) {
-    //    // まだCT空けてなければ
-    //    if (slowCTTimer > 0 && slowCT) {
-    //        slowCTTimer -= elapsedTime;
-    //    }
-    //    // CT終わったら時間を増やしていく
-    //    else if (slowCT) {
-    //        slowCTTimer = CTMax;
-    //        slowCT = false;
-    //    }
-    //    else {
-    //        slowTimer += elapsedTime;
-    //        slowTimer = min(slowTimer, slowMax);
-    //    }
-    //}
-
-    // 押してる間
-    if (key.STATE('k')) {
-        slowCT = 0;
-        // 時間があれば スキル起動してタイマー減らす
-        if (slowTimer >= 0) {
-            slowTimer -= elapsedTime;
-        }
-        // 時間がないとき クールタイム発動
-        else {
-            slowTimer = max(slowTimer, 0);
-            slowCT = 1;
-        }
-    }
-    // 放している間
-    if (!key.STATE('k') && slowTimer < slowMax && slowCT == 0) {
-        slowCT = 1;
-        slowCTTimer = CTMax;
-    }
-
-
-    // クールタイム中 CTタイマー減らす
-    if (slowCT == 1) {
-        // クールタイム時間経過
-        if (slowCTTimer >= 0) {
-            slowCTTimer -= elapsedTime;
-        }
-        // クールタイム終了
-        else {
-            slowCTTimer = CTMax;
-            slowCT = 2;
-        }
-    }
-    else if (slowCT == 2) {
-        // 時間があれば タイマー復活
-        if (slowTimer < slowMax) {
-            slowTimer += elapsedTime;
-        }
-        else {
-            slowTimer = min(slowTimer, slowMax);
-            slowCT = 0;
-        }
-    }
-
 
     // 死んだら
     if (health <= 0)isDead = true;
@@ -333,14 +258,59 @@ bool Player::InputJump() {
     return false;
 }
 
-void Player::InputSlow() {
+void Player::InputSlow(float elapsedTime) {
     GamePad& gamePad = Input::Instance().GetGamePad();
     Key& key = Input::Instance().GetKey();
+    // 押してる間
     if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER || key.STATE(VK_SHIFT)) {
-        slow = true;
-        return;
+        slowCT = 0;
+        // 時間があれば スキル起動してタイマー減らす
+        if (slowTimer >= 0) {
+            slowTimer -= elapsedTime / slowSpeed;   // スロー時間から通常時間へ変換
+            slow = true;
+        }
+        // 時間がないとき クールタイム発動
+        else {
+            slowTimer = max(slowTimer, 0);
+            slowCT = 1;
+            slow = false;
+        }
     }
-    slow = false;
+    // 放している間
+    if ((!(gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER) || !key.STATE(VK_SHIFT)) && slowTimer < slowMax && slowCT == 0) {
+        slowCT = 1;
+        slowCTTimer = CTMax;
+        slow = false;
+    }
+    // クールタイム中 CTタイマー減らす
+    if (slowCT == 1) {
+        slow = false;
+        // クールタイム時間経過
+        if (slowCTTimer >= 0) {
+            slowCTTimer -= elapsedTime;
+        }
+        // クールタイム終了
+        else {
+            slowCTTimer = CTMax;
+            slowCT = 2;
+        }
+    }
+    else if (slowCT == 2) {
+        slow = false;
+        // 時間があれば タイマー復活
+        if (slowTimer < slowMax) {
+            slowTimer += elapsedTime;
+        }
+        else {
+            slowTimer = min(slowTimer, slowMax);
+            slowCT = 0;
+        }
+    }
+    //if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER || key.STATE(VK_SHIFT)) {
+    //    slow = true;
+    //    return;
+    //}
+    //slow = false;
 }
 
 void Player::InputSB() {
@@ -422,8 +392,6 @@ void Player::UpdateIdleState(float elapsedTime) {
     // ジャンプ入力処理
     if (InputJump()) TransitionJumpState();
     Key& key = Input::Instance().GetKey();
-    // 回避入力処理
-    //if (key.STATE(VK_SPACE)) TransitionJumpState();
 }
 
 //走るステート遷移
@@ -435,20 +403,14 @@ void Player::TransitionRunState() {
 
 //走るステート更新処理
 void Player::UpdateRunState(float elapsedTime) {
-    Key& key = Input::Instance().GetKey();
     //  移動入力処理
     if (!InputMove(elapsedTime)) TransitionIdleState();
-
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
     // フィニッシャーへの移行
     if (finish) TransitionFinisherState();
     // ジャンプ入力処理
     if (InputJump()) TransitionJumpState();
-
-    // 歩き入力処理
-    //if (!key.STATE(VK_SHIFT)) TransitionWalkState();
-
 }
 
 //ジャンプステート遷移
@@ -460,19 +422,14 @@ void Player::TransitionJumpState() {
 
 //ジャンプステート更新処理
 void Player::UpdateJumpState(float elapsedTime) {
-
+    //  移動入力処理
     InputMove(elapsedTime);
-
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
-
     // ジャンプ入力処理
     if (InputJump()) TransitionJumpState();
-
     // 地面についたらアイドル状態へ
-    if (isGround) {        
-        TransitionIdleState();
-    }
+    if (isGround) TransitionIdleState();
     // フィニッシャーへの移行
     if (finish) TransitionFinisherState();
 }
@@ -537,7 +494,6 @@ void Player::TransitionFinisherState() {
 }
 
 void Player::UpdateFinisherState(float elapsedTime) {
-
     // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
         // 終わったらアイドル状態へ
@@ -560,10 +516,8 @@ void Player::CollisionPanchiVsEnemies() {
     for (int i = 0; i < enemyCount; ++i) {
         Enemy* enemy = enemyManager.GetEnemy(i);
         // 衝突処理
-        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
-            
-            if (enemy->GetHealth() > 0)
-            {
+        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {        
+            if (enemy->GetHealth() > 0) {
                 enemy->ApplyDamage(1, 0);
                 // ヒットストップ
                 if (!slow)hitstop = true;
@@ -653,16 +607,13 @@ void Player::CollisionSBVsStage() {
         HitResult hit;
         // ステージとの判定
         if (StageManager::Instance().RayCast(pos, pos + VecMath::Normalize(dir) * speed, hit)) {
-
             // 地面に接地している
             position.x = hit.position.x;
             position.y = hit.position.y;
             position.z = hit.position.z;  
-
             // 投げた武器の場所にワープ
             position = sb->GetPosition();
             sb->Destroy();
-
             // 武器を手に持つ
             weapon = true;
         }

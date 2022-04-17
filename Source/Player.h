@@ -58,14 +58,13 @@ private:
 	bool InputJump();
 
 	// スローモーション入力処理
-	void InputSlow();
+	void InputSlow(float elapsedTime);
 
 	// SB入力処理
 	void InputSB();
 
 	// 通常攻撃&パリィ
 	bool InputAttack();
-
 	
 	// 死亡した時に呼ばれる
 	void OnDead() override { isDead = true; }
@@ -115,12 +114,14 @@ private:
 	float moveSpeed;
 	float turnSpeed = DirectX::XMConvertToRadians(3600);
 
-	float jumpSpeed;
-	int jumpCount = 0;
-	int jumpLimit = 3;
 
 	std::unique_ptr<DebugRenderer> debugRenderer;
 	SkinnedMesh* skinned;
+
+	// ジャンプ関連
+	float jumpSpeed;
+	int jumpCount = 0;
+	int jumpLimit = 3;
 
 	// スローモーション用
 	float playbackSpeed = 1.0f;
@@ -140,6 +141,8 @@ private:
 	bool weapon = true;		// 武器を持っているか否か
 	bool finish = false;	// 敵に対するフィニッシャー
 	float backDir;			// 敵の後ろ一定距離
-
+	// 死亡
 	bool isDead = false;
+    // 体の向き
+	bool direction = false;
 };

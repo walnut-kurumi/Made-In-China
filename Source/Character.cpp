@@ -305,17 +305,18 @@ void Character::UpdateHorizontalMove(float elapsedTime) {
 
      // 水平速力計算
     float velocityLengthXZ = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-    //float velocityLengthXZ = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
-
 
     if (velocityLengthXZ > 0.0f) {
         // 水平移動値
-        float mx = velocity.x * elapsedTime;// * speedP;
-        float mz = velocity.z * elapsedTime;// * speedP;
+        float mx = velocity.x * elapsedTime;
+        float mz = velocity.z * elapsedTime;
 
         // レイの開始位置と終点位置
         DirectX::XMFLOAT3 start = { position.x , position.y + stepOffset, position.z };
         DirectX::XMFLOAT3 end = { position.x + mx, position.y + stepOffset, position.z + mz };
+        // レイの開始位置と終点位置(頭)
+        DirectX::XMFLOAT3 start2 = { position.x , position.y + stepOffset + height, position.z };
+        DirectX::XMFLOAT3 end2 = { position.x + mx, position.y + stepOffset + height, position.z + mz };
 
         // レイキャストによる壁判定
         HitResult hit;
@@ -323,6 +324,34 @@ void Character::UpdateHorizontalMove(float elapsedTime) {
             // 壁までのベクトル
             DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start);
             DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end);
+            DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
+
+            // 壁の法線
+            DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+
+            // 入射ベクトルを法線に射影                          // ベクトルの否定する
+            DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
+
+            // 補正位置の計算                   // v1 ベクトル乗数 v2 ベクター乗算   3 番目のベクトルに追加された最初の 2 つのベクトルの積を計算
+            DirectX::XMVECTOR CollectPosition = DirectX::XMVectorMultiplyAdd(Normal, Dot, End); // 戻り値 ベクトルの積和を返す    戻り値　＝　v1 * v2 + v3
+            DirectX::XMFLOAT3 collectPosition;
+            DirectX::XMStoreFloat3(&collectPosition, CollectPosition);
+
+            HitResult hit2; // 補正位置が壁に埋まっているかどうか
+            if (!StageManager::Instance().RayCast(hit.position, collectPosition, hit2)) {
+                position.x = collectPosition.x;
+                position.z = collectPosition.z;
+            }
+            else {
+                position.x = hit2.position.x;
+                position.z = hit2.position.z;
+            }
+
+        }
+        else if (StageManager::Instance().RayCast(start2, end2, hit)) {
+            // 壁までのベクトル
+            DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start2);
+            DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end2);
             DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
 
             // 壁の法線
