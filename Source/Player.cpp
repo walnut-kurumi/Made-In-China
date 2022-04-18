@@ -256,7 +256,7 @@ bool Player::InputJump() {
     Key& key = Input::Instance().GetKey();
     GamePad& gamePad = Input::Instance().GetGamePad();
 
-    if (gamePad.GetButtonDown() & GamePad::BTN_A /* || key.STATE(VK_SPACE)*/) {
+    if (gamePad.GetButtonDown() & GamePad::BTN_A) {
         jumpCount++;
 
         // 空中のときは一回だけ
@@ -272,7 +272,6 @@ bool Player::InputJump() {
 
 void Player::InputSlow(float elapsedTime) {
     GamePad& gamePad = Input::Instance().GetGamePad();
-    Key& key = Input::Instance().GetKey();
     // 押してる間
     if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER) {
         slowCT = 0;
@@ -464,12 +463,12 @@ void Player::TransitionIdleState() {
 void Player::UpdateIdleState(float elapsedTime) {
     //  移動入力処理
     if (InputMove(elapsedTime)) TransitionRunState();
+    // ジャンプ入力処理
+    if (InputJump()) TransitionJumpState();
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
     // フィニッシャーへの移行
     if (finish) TransitionFinisherState();
-    // ジャンプ入力処理
-    if (InputJump()) TransitionJumpState();
     Key& key = Input::Instance().GetKey();
 }
 
@@ -601,7 +600,7 @@ void Player::CollisionPanchiVsEnemies() {
 
                 // カメラシェイク（簡素）
                 CameraManager& cameraMgr = CameraManager::Instance();
-                if (cameraMgr.GetShakeFlag() == false) {
+                if (!cameraMgr.GetShakeFlag()) {
                     cameraMgr.SetShakeFlag(true);
                 }
             }
@@ -622,7 +621,7 @@ void Player::CollisionPanchiVsProjectile() {
             if (!slow)hitstop = true;
             // カメラシェイク（簡素）
             CameraManager& cameraMgr = CameraManager::Instance();
-            if (cameraMgr.GetShakeFlag() == false)cameraMgr.SetShakeFlag(true);
+            if (!cameraMgr.GetShakeFlag())cameraMgr.SetShakeFlag(true);
         }
     }
 }
