@@ -333,5 +333,5 @@ void SceneGame::EnemyPositionSetting()
 //ƒƒjƒ…[
 void SceneGame::menu()
 {
-
+    
 }
