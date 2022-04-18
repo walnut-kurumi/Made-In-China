@@ -9,6 +9,7 @@
 
 EnemyGunner::EnemyGunner(ID3D11Device* device)
 {
+
     const char* idle = "Data/Models/Enemy/Animations/Idle.fbx";
     const char* run = "Data/Models/Enemy/Animations/Running.fbx";
     const char* walk = "Data/Models/Enemy/Animations/Walking.fbx";
@@ -41,7 +42,8 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
 
 EnemyGunner::~EnemyGunner()
 {
-    delete model;
+    delete model;    
+    isAttack = false;
 }
 
 void EnemyGunner::Init()
@@ -72,6 +74,8 @@ void EnemyGunner::Init()
     isDead = false;
 
     direction = false;
+
+    isAttack = false;
 
     TransitionWalkState();
 }
@@ -119,11 +123,14 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
         // 弾丸描画処理
         EnemyBulletManager::Instance().Render(dc, shader);
 
+
+#ifdef _DEBUG
         // height
         Vec3 heightPos = position;
-        heightPos.y += height;
+        heightPos.y += height;        
+
+        // DEBUG        
         debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
-        //// 必要なったら追加
         debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
@@ -131,6 +138,7 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y + searchAreaScale.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
 
         debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+#endif
     }
 }
 
@@ -273,8 +281,11 @@ void EnemyGunner::MoveAttack(float cooldown)
 {
     if (attackCooldown > 0.0f)
     {       
+        isAttack = true;
         return;
     }
+    // 攻撃ふらぐ
+    isAttack = true;
 
     // 攻撃する向きをプレイヤーの方向へ
     if (player->GetCenterPosition().x > position.x)direction = false;
@@ -310,6 +321,7 @@ void EnemyGunner::MoveAttack(float cooldown)
         EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
         bullet->Launch(pe, e);        
             
+        isAttack = false;
     }
 }
 
@@ -485,14 +497,17 @@ void EnemyGunner::TransitionAttackState()
 {
     state = State::Attack; 
     moveSpeed = 0;
-    attackCooldown = 0.75f;    
+    attackCooldown = 0.75f;        
 }
 
 //攻撃ステート更新処理
 void EnemyGunner::UpdateAttackState(float elapsedTime)
 {   
     // 死んでたら 吹っ飛びステートへ
-    if (health <= 0) TransitionBlowState();
+    if (health <= 0) {
+        isAttack = false;        
+        TransitionBlowState();
+    }
 
     // 止まる
     Move(0.0f, 0.0f, moveSpeed);
@@ -504,6 +519,7 @@ void EnemyGunner::UpdateAttackState(float elapsedTime)
     // 射程距離外 もしくは、射線が通っていないなら走るステートへ
     if (!CheckAttackRange() || AttackRayCheck())
     {
+        isAttack = false;        
         TransitionRunState();       
     }
 }

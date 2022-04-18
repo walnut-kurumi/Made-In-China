@@ -63,7 +63,7 @@ void Player::Init() {
     // ”»’è—p ‘Ì‚ÌˆÊ’u
     waistPos = { 0,3,0 };
     headPos = { 0,6,0 };
-    atkPos = { 0,0,0 };    // UŒ‚‚ÌˆÊ’u‚ÍUŒ‚Žž‚ÉÝ’è
+    atkPos = { -999,-999,-999 };    // UŒ‚‚ÌˆÊ’u‚ÍUŒ‚Žž‚ÉÝ’è
     // UŒ‚
     atkRadius = 4;
     atkTimer = 0.0f;
@@ -154,6 +154,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     centerPosition = position;
     centerPosition.y += height / 2.0f;
 
+#ifdef _DEBUG
     // height
     Vec3 heightPos = position;
     heightPos.y += height;
@@ -164,6 +165,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
     if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, atkRadius, Vec4(1, 1, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+#endif
 }
 
 void Player::DrawDebugGUI() {

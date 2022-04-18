@@ -2,6 +2,7 @@
 
 #include "Model.h"
 #include "Enemy.h"
+#include "Graphics/Sprite.h"
 
 // Gunner
 class EnemyGunner : public Enemy
@@ -36,7 +37,7 @@ public:
 	void CollisionProjectileVsPlayer();
 
 	// 徘徊するかどうか
-	void SetWalkFlag(bool b) { walk = b; }	
+	void SetWalkFlag(bool b) { walk = b; }		
 
 private:	
 	// 徘徊  ←左true　false右→
@@ -103,8 +104,6 @@ private:
 private:
 	float moveSpeed = 5.0f;
 	float turnSpeed = DirectX::XMConvertToRadians(720);
-			
-	SkinnedMesh* skinned;	
 
 	// 待機用タイマー
 	float idleTimer = 0;
@@ -124,6 +123,7 @@ private:
 	float attackRange = 40.0f;
 	// 攻撃CD
 	float attackCooldown = 0;
+	
 
 	// 吹っ飛ばす時間
 	float blowTimer = 0;	

@@ -27,6 +27,7 @@ StageMain::StageMain(ID3D11Device* device)
 StageMain::~StageMain()
 {
     delete model;
+    delete back;
 }
 
 void StageMain::Update(float elapsedTime)
