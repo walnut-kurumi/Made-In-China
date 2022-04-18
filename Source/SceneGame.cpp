@@ -105,6 +105,10 @@ void SceneGame::Initialize()
     // ロード％ 100%
     Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
     LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");
+
+    start = true;
+    end = false;
+
     SetLoadPercent(10.0f);
 }
 
@@ -333,5 +337,60 @@ void SceneGame::EnemyPositionSetting()
 //メニュー
 void SceneGame::menu()
 {
-    
+    Mouse& mouse = Input::Instance().GetMouse();
+    DirectX::XMFLOAT3 screenPosition;
+    screenPosition.x = static_cast<float>(mouse.GetPositionX());
+    screenPosition.y = static_cast<float>(mouse.GetPositionY());
+    mousepos.x = screenPosition.x;
+    mousepos.y = screenPosition.y;
+
+    //マウス左クリックでマップ選択
+    const mouseButton mouseClick =
+        Mouse::BTN_LEFT;
+
+
+    if (start && (mouse.GetButtonDown() & mouseClick))
+    {
+       // SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+    }
+    else if (end && (mouse.GetButtonDown() & mouseClick))
+    {
+        DestroyWindow(GetActiveWindow());
+    }
+
+    const GamePadButton updown =
+        GamePad::BTN_UP
+        | GamePad::BTN_DOWN
+        | GamePad::BTN_W
+        | GamePad::BTN_S;
+
+    if (screenPosition.x >= startpos.x && screenPosition.x < startpos.x + startsize.x)
+    {
+        if (screenPosition.y >= startpos.y && screenPosition.y <= startpos.y + startsize.y)
+        {
+            start = true;
+            end = false;
+        }
+        if (screenPosition.y >= endpos.y && screenPosition.y <= endpos.y + endsize.y)
+        {
+            start = false;
+            end = true;
+        }
+    }
+}
+
+
+void SceneGame::SceneSelect()
+{
+
+    if (start)
+    {
+        startAlpha = 1.0f;
+        endAlpha = 0.4f;
+    }
+    if (end)
+    {
+        startAlpha = 0.4f;
+        endAlpha = 1.0f;
+    }
 }

@@ -12,6 +12,9 @@ StageMain::StageMain(ID3D11Device* device)
     model = new Model(device, ".\\Data\\Models\\Stage\\stage.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
 
+    //position.x = -50;
+    //position.y = -20;
+
     angle.y = DirectX::XMConvertToRadians(-90);
 
     bgpos = { -200, -600 };
