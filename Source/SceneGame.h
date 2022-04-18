@@ -79,6 +79,9 @@ private:
 	float startAlpha = 1.0f;
 	float endAlpha = 1.0f;
 
+	Sprite* gameStart{};
+	Sprite* gameEnd{};
+
 	DirectX::XMFLOAT2 startsize = { 320,180 };
 	DirectX::XMFLOAT2 endsize = { 320,180 };
 

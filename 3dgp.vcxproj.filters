@@ -264,6 +264,9 @@
     <ClCompile Include="Source\SceneOver.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Source\StageCollision.cpp">
+      <Filter>Source\Stages</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framebuffer.h" />
@@ -450,6 +453,9 @@
     </ClInclude>
     <ClInclude Include="Source\SceneOver.h">
       <Filter>Source\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageCollision.h">
+      <Filter>Source\Stages</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
