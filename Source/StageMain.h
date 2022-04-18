@@ -25,7 +25,7 @@ private:
 	ConstantBuffer<Scroll> Scroll;
 	Vec2 bgpos{};
 
-	std::unique_ptr<DebugRenderer> debugRenderer;		
+	std::unique_ptr<DebugRenderer> debugRenderer;
 	Sprite* back{};
 	Player* player = nullptr;
 };
