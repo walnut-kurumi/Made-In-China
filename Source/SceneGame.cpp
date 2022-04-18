@@ -75,8 +75,11 @@ void SceneGame::Initialize()
         }
 
          EnemyGunner* gunner = new EnemyGunner(device);
-        gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));        
-        gunner->SetWalkFlag(false); //ï‡Ç´âÒÇÈÇ©Ç«Ç§Ç©
+         gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
+
+        if (i > 4)gunner->SetWalkFlag(true); //ï‡Ç´âÒÇÈÇ©Ç«Ç§Ç©
+        else gunner->SetWalkFlag(false);
+
         EnemyManager::Instance().Register(gunner);
         EnemyManager::Instance().Init();
     }
@@ -313,15 +316,15 @@ void SceneGame::Reset()
 void SceneGame::EnemyPositionSetting()
 {
 
-    enemyPos[0] = {-75,0};
-    enemyPos[1] = {-105,0};
-    enemyPos[2] = {-140,0};
-    enemyPos[3] = {-180,0};
-    enemyPos[4] = {-15,35};
-    enemyPos[5] = {-100,35};
-    enemyPos[6] = {-190,38};
-    enemyPos[7] = {-190,62};
-    enemyPos[8] = {-10,62};    
+    enemyPos[0] = {-75,0.5f};
+    enemyPos[1] = {-105,0.5f};
+    enemyPos[2] = {-140,0.5f};
+    enemyPos[3] = {-180,0.5f};
+    enemyPos[4] = {-15,35.5f};
+    enemyPos[5] = {-100,35.5f};
+    enemyPos[6] = {-190,38.5f};
+    enemyPos[7] = {-190,62.5f};
+    enemyPos[8] = {-10,62.5f};    
 }
 
 //ÉÅÉjÉÖÅ[
