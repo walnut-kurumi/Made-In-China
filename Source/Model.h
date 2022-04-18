@@ -53,8 +53,7 @@ private:
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	};
-	SkinnedMesh::Animation* animation{};
-	SkinnedMesh::Animation::Keyframe* keyframe{};
+	std::shared_ptr<SkinnedMesh::Animation::Keyframe> keyframe{};
 
 	int animationIndex = -1;
 	bool animationLoopFlag = false;
