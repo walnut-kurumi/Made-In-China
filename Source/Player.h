@@ -106,10 +106,12 @@ private:
 	Vec3 atkPos{};
 	Vec3 waistPos{};
 	Vec3 headPos{};
+
+	// 攻撃関連
 	bool atk = false;
 	float atkRadius;
-
 	float atkTimer;
+	float atkImpulse = 0.0f;
 
 	float moveSpeed;
 	float turnSpeed = DirectX::XMConvertToRadians(3600);

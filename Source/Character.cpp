@@ -32,16 +32,6 @@ void Character::Move(float vx, float vz, float speed) {
     maxMoveSpeed = speed;
 }
 
-void Character::AttackMove(float vx, float vy, float speed) {
-    // 移動方向ベクトル設定
-    moveVecX = vx;
-    moveVecY = vy;
-
-    // 最大速度設定
-    maxMoveSpeed = speed;
-}
-
-
 void Character::Turn(float elapsedTime, float vx, float vz, float speed) {
     speed *= elapsedTime;
 
@@ -228,73 +218,61 @@ void Character::AddImpulse(const Vec3& impulse) {
 
 // 水平速力更新処理
 void Character::UpdateHorizontalVelocity(float elapsedFrame) {
-    moveVecX = min(moveVecX, maxMoveSpeed);
-    moveVecZ = min(moveVecZ, maxMoveSpeed);
-
-
-    Character::velocity.x = moveVecX * elapsedFrame * maxMoveSpeed;
-    Character::velocity.z = moveVecZ * elapsedFrame * maxMoveSpeed;
-
-    //// 下り坂でガタガタしないのが描いてある
+    //moveVecX = min(moveVecX, maxMoveSpeed);
+    //moveVecZ = min(moveVecZ, maxMoveSpeed);
     //
-    //////// XZ平面の速力を減速する
-    //float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-    //if (length > 0.0f) {
-    //    // 摩擦力
-    //    float friction = this->friction * elapsedFrame;
     //
-    //    // 空中にいるときは摩擦力を減らす
-    //    if (!isGround) friction -= airControl;
-    //
-    //    // 摩擦による横方向の速度処理
-    //    if (length > friction) {
-    //        float vx = velocity.x / length;
-    //        float vz = velocity.z / length;
-    //
-    //        velocity.x -= vx * friction;
-    //        velocity.z -= vz * friction;
-    //    }
-    //    // 横方向の速力が摩擦力以下になったので速力を無効化
-    //    else {
-    //        velocity.x = 0.0f;
-    //        velocity.z = 0.0f;
-    //    }
-    //}
-    //
-    //// XZ平面の速力を加速する
-    //if (length <= maxMoveSpeed) {
-    //    // 移動ベクトルがゼロベクトルでないなら加速する
-    //    float moveVecLength = sqrtf(moveVecX * moveVecX + moveVecZ * moveVecZ);
-    //    if (moveVecLength > 0.0f) {
-    //        // 加速力
-    //        float acceleration = this->acceleration * elapsedFrame;
-    //
-    //        // 空中にいるときは加速力を減らす
-    //        //if (!isGround) acceleration -= airControl;
-    //
-    //        // 移動ベクトルによる加速処理
-    //        velocity.x += acceleration * moveVecX;
-    //        velocity.z += acceleration * moveVecZ;
-    //
-    //        //  下り坂でガタガタしないようにする
-    //        if (isGround && slopeRate > 0.0f) {
-    //            velocity.y -= length * slopeRate * elapsedFrame;
-    //        }
-    //
-    //        // 最大速度制限
-    //        float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
-    //        if (length > maxMoveSpeed) {
-    //            float vx = velocity.x / length;
-    //            float vz = velocity.z / length;
-    //
-    //            velocity.x = vx * maxMoveSpeed;
-    //            velocity.z = vz * maxMoveSpeed;
-    //        }
-    //    }
-    //}
-    ////移動ベクトルをリセット
-    //moveVecX *= 0.5f;
-    //moveVecZ *= 0.5f;
+    //Character::velocity.x += moveVecX * elapsedFrame;
+    //Character::velocity.z += moveVecZ * elapsedFrame;
+    
+    ////// XZ平面の速力を減速する
+    float length = sqrtf(velocity.x * velocity.x);
+    if (length > 0.0f) {
+        // 摩擦力
+        float friction = this->friction * elapsedFrame;
+    
+        // 空中にいるときは摩擦力を減らす
+        if (!isGround) friction -= airControl;
+    
+        // 摩擦による横方向の速度処理
+        if (length > friction) {
+            float vx = velocity.x / length;
+            velocity.x -= vx * friction;
+        }
+        // 横方向の速力が摩擦力以下になったので速力を無効化
+        else {
+            velocity.x = 0.0f;
+            velocity.z = 0.0f;
+        }
+    }
+    
+    // XZ平面の速力を加速する
+    if (length <= maxMoveSpeed) {
+        // 移動ベクトルがゼロベクトルでないなら加速する
+        float moveVecLength = sqrtf(moveVecX * moveVecX);
+        if (moveVecLength > 0.0f) {
+            // 加速力
+            float acceleration = this->acceleration * elapsedFrame;
+    
+            // 移動ベクトルによる加速処理
+            velocity.x += acceleration * moveVecX;
+    
+            //  下り坂でガタガタしないようにする
+            if (isGround && slopeRate > 0.0f) {
+                velocity.y -= length * slopeRate * elapsedFrame;
+            }
+    
+            // 最大速度制限
+            float length = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+            if (length > maxMoveSpeed) {
+                float vx = velocity.x / length;
+                velocity.x = vx * maxMoveSpeed;
+            }
+        }
+    }
+    //移動ベクトルをリセット
+    moveVecX *= 0.0f;
+    moveVecZ *= 0.0f;
 }
 
 // 水平移動更新処理
