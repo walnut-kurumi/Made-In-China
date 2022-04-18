@@ -104,7 +104,7 @@ void Framework::calculateFrameStats() {
 		float fps = static_cast<float>(frames);
 		std::wostringstream outs;
 		outs.precision(6);
-		outs <<L"IcY SparK LemoN" << fps;
+		outs <<L"katana(kari)" << fps;
 		SetWindowTextW(hwnd, outs.str().c_str());
 
 		frames = 0;

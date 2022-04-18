@@ -65,7 +65,7 @@ void Player::Init() {
     headPos = { 0,6,0 };
     atkPos = { 0,0,0 };    // 攻撃の位置は攻撃時に設定
     // 攻撃
-    atkRadius = 2;
+    atkRadius = 4;
     atkTimer = 0.0f;
     atkImpulse = 15.0f;
 
@@ -75,7 +75,7 @@ void Player::Init() {
 
     // スローモーション関連
     playbackSpeed = 1.0f;
-    slowSpeed = 0.35f;
+    slowSpeed = 0.5f;
 
     // ヒットストップ
     hitstopSpeed = 0.6f;
@@ -107,6 +107,8 @@ void Player::Update(float elapsedTime) {
     InputSB();
     CollisionSBVsEnemies();
     CollisionSBVsStage();
+    CollisionPanchiVsEnemies();
+    // CollisionPanchiVsProjectile();
 
     atkTimer -= elapsedTime;
 
@@ -121,12 +123,21 @@ void Player::Update(float elapsedTime) {
     // 振動試し
     Key& key = Input::Instance().GetKey();
     XINPUT_VIBRATION vib{};
-    vib.wLeftMotorSpeed = 32000;
-    vib.wRightMotorSpeed = 32000;
-    if (key.STATE('l')) {
-        XInputSetState(0, &vib);
+    XINPUT_VIBRATION vib2{};
+    {
+        vib.wLeftMotorSpeed = MAX_SPEED;
+        vib.wRightMotorSpeed = MIN_SPEED;
+        vib2.wLeftMotorSpeed = 0;
+        vib2.wRightMotorSpeed = 0;
     }
-
+        XInputSetState(0, &vib);
+    if (vibration && vibTimer >= 0.0f) {
+        if(slow) vibTimer -= elapsedTime / slowSpeed;
+        else vibTimer -= elapsedTime;
+    }
+    else {
+        XInputSetState(0, &vib2);
+    }
     // 死んだら
     if (health <= 0)isDead = true;
 }
@@ -149,8 +160,9 @@ void Player::Render(ID3D11DeviceContext* dc) {
     debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
 
     // 必要なったら追加
+    debugRenderer.get()->DrawSphere(centerPosition, 1, Vec4(0.5f, 0.5f, 0, 1));
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
-    if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, 1, Vec4(1, 1, 0, 1));
+    if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, atkRadius, Vec4(1, 1, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
@@ -176,6 +188,12 @@ void Player::DrawDebugGUI() {
         ImGui::SliderFloat("Angle X", &angle.y, DirectX::XMConvertToRadians(-180), DirectX::XMConvertToRadians(180));
         ImGui::RadioButton("death", deathFlag);
         ImGui::SliderFloat("Height", &height, 0, 10.0f);
+
+        Mouse& mouse = Input::Instance().GetMouse();
+        float mpx = static_cast<float>(mouse.GetPositionX());
+        float mpy = static_cast<float>(mouse.GetPositionY());        
+        ImGui::SliderFloat("MousePosX", &mpx, -300, 300);
+        ImGui::SliderFloat("MousePosY", &mpy, -200, 200);
     }
     ImGui::End();
 #endif
@@ -321,8 +339,10 @@ void Player::InputSB() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     ID3D11Device* device = Graphics::Ins().GetDevice();
     Key& key = Input::Instance().GetKey();
-    // 武器を持っている場合
-    if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_TRIGGER || (key.TRG('z'))) {
+    Mouse& mouse = Input::Instance().GetMouse();
+
+    // 武器を持っている場合 pad
+    if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_TRIGGER) {
         if (weapon && 
             (gamePad.GetAxisRX() != 0 || gamePad.GetAxisRY() != 0)) {
             // 武器を投げる
@@ -343,6 +363,51 @@ void Player::InputSB() {
                 // 投げた武器の場所にワープ
                 position = sb->GetPosition();
                 sb->Destroy();
+                // フィニッシャー発動
+                finish = true;
+            }
+            // 武器を手持ちに
+            weapon = true;
+        }
+    }
+
+    // 武器を持っている場合 mouse
+    if (mouse.GetButtonDown() & Mouse::BTN_RIGHT) {
+        if (weapon) {
+            // 武器を投げる
+            weapon = false;
+            // 発射
+            SBNormal* sb = new SBNormal(device, &SBManager::Instance());
+
+            // マウスカーソル座標を取得            
+            Vec3 cursor;
+            cursor.x = static_cast<float>(mouse.GetPositionX());
+            cursor.y = static_cast<float>(mouse.GetPositionY());
+            cursor.z = 0.0f;
+            // player pos
+            Vec3 playerScreenPos;
+            playerScreenPos = { Graphics::Ins().GetScreenWidth() * 0.5f, Graphics::Ins().GetScreenHeight() * 0.5f + 3.0f, 0.0f };
+
+            // 向き
+            Vec3 atkPos = playerScreenPos - cursor;
+            atkPos = VecMath::Normalize(atkPos);            
+
+            // 発射地点
+            sb->Launch(atkPos, position + waistPos);
+        }
+        // 武器を持っていない
+        else if (!weapon) {
+            // SB探索
+            SBManager& sbManager = SBManager::Instance();
+            int sbCount = sbManager.GetProjectileCount();
+            for (int i = 0; i < sbCount; ++i) {
+                SB* sb = sbManager.GetProjectile(i);
+
+                // 投げた武器の場所にワープ
+                position = sb->GetPosition();
+                sb->Destroy();
+                // フィニッシャー発動
+                finish = true;
             }
             // 武器を手持ちに
             weapon = true;
@@ -355,6 +420,7 @@ bool Player::InputAttack() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();
     float ay = gamePad.GetAxisLY();
+    Mouse& mouse = Input::Instance().GetMouse();
 
     // 武器を持っている　
     if (weapon && atkTimer < 0.0f) {
@@ -364,17 +430,40 @@ bool Player::InputAttack() {
             Vec3 front = VecMath::Normalize({ transform._31,transform._32,transform._33 });
             if (ax && ay)atkPos = { -ax, ay, 0 };
             else atkPos = { front.x,0,0 };
-            atkPos = VecMath::Normalize(atkPos) * 5;
+            atkPos = VecMath::Normalize(atkPos) * 3;
             atk = true;
 
-            CollisionPanchiVsEnemies();
+            //CollisionPanchiVsEnemies();
             CollisionPanchiVsProjectile();
 
             // 攻撃のCT
             if(!isGround) 
-                atkTimer = 0.75f;
+                atkTimer = 0.50f;
             return true;
-        }        
+        }
+        else if (mouse.GetButtonDown() & Mouse::BTN_LEFT) {
+            
+            // マウスカーソル座標を取得            
+            Vec3 cursor;                    
+            cursor.x = static_cast<float>(mouse.GetPositionX());
+            cursor.y = static_cast<float>(mouse.GetPositionY());
+            cursor.z = 0.0f;
+            
+            Vec3 playerScreenPos;
+            playerScreenPos = { Graphics::Ins().GetScreenWidth() * 0.5f, Graphics::Ins().GetScreenHeight() * 0.5f + 3.0f, 0.0f };
+            
+            atkPos = playerScreenPos - cursor;
+            atkPos = VecMath::Normalize(atkPos) * 5;
+            atk = true;
+
+            //CollisionPanchiVsEnemies();
+            CollisionPanchiVsProjectile();
+
+            // 攻撃のCT
+            if (!isGround)
+                atkTimer = 0.50f;
+            return true;
+        }
     }
     return false;
 }
@@ -452,7 +541,9 @@ void Player::UpdateAttackState(float elapsedTime) {
 
     static bool first = false;
     if (!first) {
-        AddImpulse(atkPos * atkImpulse);
+        Vec3 atkMove = atkPos * atkImpulse;
+        if (atkMove.y > 0) atkMove.y = 0;
+        AddImpulse(atkMove);
         first = true;
     }
 
@@ -473,7 +564,7 @@ void Player::UpdateAttackState(float elapsedTime) {
         first = false;
 
         // 攻撃位置リセット
-        atkPos = { 0,0,0 };
+        atkPos = { -999,-999,-999 };
         atk = false;
        
         // ヒットストップおわり
@@ -528,6 +619,8 @@ void Player::CollisionPanchiVsEnemies() {
                 CameraManager& cameraMgr = CameraManager::Instance();
                 if (!cameraMgr.GetShakeFlag()) {
                     cameraMgr.SetShakeFlag(true);
+                    vibration = true;
+                    vibTimer = 0.4f;
                 }
             }
         }
@@ -547,7 +640,11 @@ void Player::CollisionPanchiVsProjectile() {
             if (!slow)hitstop = true;
             // カメラシェイク（簡素）
             CameraManager& cameraMgr = CameraManager::Instance();
-            if (!cameraMgr.GetShakeFlag())cameraMgr.SetShakeFlag(true);
+            if (!cameraMgr.GetShakeFlag()) {
+                cameraMgr.SetShakeFlag(true);
+                vibration = true;
+                vibTimer = 0.4f;
+            }
         }
     }
 }
@@ -570,28 +667,40 @@ void Player::CollisionSBVsEnemies() {
             if (Collision::SphereVsSphere(enemy->GetPosition(), sb->GetPosition(), enemy->GetRadius(), atkRadius)) {
 
                 if (enemy->GetHealth() > 0) {
+
                     enemy->ApplyDamage(1, 0);
+
                     // ヒットストップ
                     if (!slow) hitstop = true;
-                }
-                // フィニッシャー発動
-                finish = true;
-                // 自分を敵の近くへ
-                // 自機と敵の位置から左右判定　のちそこから一定距離にワープ　そして殺す
-                Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
-                dir *= backDir;
-                position = enemy->GetPosition() + dir;
-                
-                /// **********************************
-                /// ++++++++++++++++++++++++++++++++++
-                ///          回転を反映させる
-                /// ++++++++++++++++++++++++++++++++++
-                /// **********************************
 
-                // 武器を壊す
-                sb->Destroy();
-                // 武器を手持ちに
-                weapon = true;
+                    // カメラシェイク（簡素）
+                    CameraManager& cameraMgr = CameraManager::Instance();
+                    if (!cameraMgr.GetShakeFlag()) {
+                        cameraMgr.SetShakeFlag(true);
+                        vibration = true;
+                        vibTimer = 0.4f;
+                    }
+
+                    // フィニッシャー発動
+                    finish = true;
+
+                    // 自分を敵の近くへ
+                    // 自機と敵の位置から左右判定　のちそこから一定距離にワープ　そして殺す
+                    Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
+                    dir *= backDir;
+                    position = enemy->GetPosition() + dir;
+
+                    /// **********************************
+                    /// ++++++++++++++++++++++++++++++++++
+                    ///          回転を反映させる
+                    /// ++++++++++++++++++++++++++++++++++
+                    /// **********************************
+
+                    // 武器を壊す
+                    sb->Destroy();
+                    // 武器を手持ちに
+                    weapon = true;
+                }
             }
         }
     }
@@ -620,6 +729,8 @@ void Player::CollisionSBVsStage() {
             sb->Destroy();
             // 武器を手に持つ
             weapon = true;
+            // フィニッシャー発動
+            finish = true;
         }
     }
 }
