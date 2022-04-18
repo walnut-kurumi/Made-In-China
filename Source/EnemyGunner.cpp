@@ -319,8 +319,8 @@ void EnemyGunner::MoveBlow()
     vx /= lengthXY;
     vy /= lengthXY;
           
-    // 吹っ飛ばす    
-    AttackMove(vx, vy, moveSpeed);
+    // 吹っ飛ばす    100.0f = 衝撃の強さ
+    AddImpulse(Vec3(vx, vy, 0) * 100.0f);
  
 }
 
@@ -518,14 +518,14 @@ void EnemyGunner::TransitionBlowState()
 
     // 止まる
     moveSpeed = 40;    
+
+    // 吹っ飛ばす
+    MoveBlow();
 }
 
 //吹っ飛びステート更新処理
 void EnemyGunner::UpdateBlowState(float elapsedTime)
-{
-    // 吹っ飛ばす
-    MoveBlow();
-    
+{  
     // 吹き飛ばしタイマー更新
     if (blowTimer > 0.0f)blowTimer -= elapsedTime;    
 

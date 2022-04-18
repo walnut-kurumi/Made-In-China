@@ -81,6 +81,7 @@ void Player::Init() {
 
     atkRadius = 2;
     atkTimer = 0.0f;
+    atkImpulse = 15.0f;
 
     backDir = 5.0f;
 
@@ -416,7 +417,6 @@ void Player::UpdateRunState(float elapsedTime) {
 //ジャンプステート遷移
 void Player::TransitionJumpState() {
     state = AnimeState::Jump;
-    moveSpeed = 45;
     model->PlayAnimation(static_cast<int>(state), false);
 }
 
@@ -436,13 +436,9 @@ void Player::UpdateJumpState(float elapsedTime) {
 
 void Player::TransitionAttackState() {
     state = AnimeState::Attack;
-    // 移動を止める
-    velocity = { 0, 0, 0 };
-    Move(0, 0, 0);
-    // 重力を止める
-    gravFlag = false;
-
     model->PlayAnimation(static_cast<int>(state), false);
+    velocity.y = 0;
+    gravity = -0.3f;
 }
 
 void Player::UpdateAttackState(float elapsedTime) {
@@ -452,33 +448,36 @@ void Player::UpdateAttackState(float elapsedTime) {
     float ay = gamePad.GetAxisLY();
 
     static bool first = false;
-    // 一回目処理
     if (!first) {
+        AddImpulse(atkPos * atkImpulse);
         first = true;
-        // 地面いたら上に切れる　空中なら左右のみ
-        isGround ? AttackMove(-ax, ay, 30) : AttackMove(-ax, 0, 30);
     }
+
 
     // フィニッシャーへの移行
     if (finish) TransitionFinisherState();
+
+    if (Ground()) velocity.x = 0;
     
     // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
         // 終わったらアイドル状態へ
         TransitionIdleState();
-        first = false;
+
         // 重力を再びオン
         gravFlag = true;
 
-        AttackMove(0, 0, 30);
+        first = false;
 
-        velocity = {0,0,0};
-
+        // 攻撃位置リセット
         atkPos = { 0,0,0 };
         atk = false;
        
         // ヒットストップおわり
         hitstop = false;
+
+        // 重力戻す
+        gravity = -3.0f;
 
         // カメラシェイク（簡素）おわり
         CameraManager& cameraMgr = CameraManager::Instance();
