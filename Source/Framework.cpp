@@ -96,6 +96,8 @@ bool Framework::uninitialize(){
 	//エフェクトマネージャー終了化
 	EffectManager::Instance().Finalize();
 	releaseAllTextures();
+	SceneManager::Instance().Clear();
+	CameraManager::Instance().Destroy();
 	return true;
 }
 
