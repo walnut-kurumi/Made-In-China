@@ -77,7 +77,7 @@ void SceneGame::Initialize()
          EnemyGunner* gunner = new EnemyGunner(device);
          gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
 
-        if (i > 4)gunner->SetWalkFlag(true); //•à‚«‰ñ‚é‚©‚Ç‚¤‚©
+        if (i < 4)gunner->SetWalkFlag(true); //•à‚«‰ñ‚é‚©‚Ç‚¤‚©
         else gunner->SetWalkFlag(false);
 
         EnemyManager::Instance().Register(gunner);
@@ -280,6 +280,9 @@ void SceneGame::Render(float elapsedTime)
     ImGui::SliderFloat("seed_shifting_factor", &seed_shifting_factor, 0.0f, 10.0f);
 
     ImGui::SliderFloat("elapsedTime", &et, 0.0f, 1.0f);
+    
+    bool sh = cameraMgr.GetShakeFlag();
+    ImGui::Checkbox("shakeFlag", &sh);
 
     ImGui::End();
 

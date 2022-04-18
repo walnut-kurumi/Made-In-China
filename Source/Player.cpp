@@ -527,7 +527,9 @@ void Player::CollisionPanchiVsEnemies() {
 
                 // カメラシェイク（簡素）
                 CameraManager& cameraMgr = CameraManager::Instance();
-                cameraMgr.SetShakeFlag(true);
+                if (cameraMgr.GetShakeFlag() == false) {
+                    cameraMgr.SetShakeFlag(true);
+                }
             }
         }
     }
@@ -546,7 +548,7 @@ void Player::CollisionPanchiVsProjectile() {
             if (!slow)hitstop = true;
             // カメラシェイク（簡素）
             CameraManager& cameraMgr = CameraManager::Instance();
-            cameraMgr.SetShakeFlag(true);
+            if (cameraMgr.GetShakeFlag() == false)cameraMgr.SetShakeFlag(true);
         }
     }
 }

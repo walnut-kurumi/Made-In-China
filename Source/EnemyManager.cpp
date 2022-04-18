@@ -147,7 +147,7 @@ void EnemyManager::CollisionEnemyVsEnemies()
 				enemyB->GetPosition(),
 				enemyB->GetRadius(),
 				outPosition))
-			{				
+			{								
 				outPosition.z = 0;
 				enemyB->SetPosition(outPosition);
 			}			

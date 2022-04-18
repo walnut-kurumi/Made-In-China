@@ -30,6 +30,9 @@ void CameraManager::Init() {
 
 void CameraManager::Update(float elapsedTime){
 
+	// タイマー更新
+	UpdateTimer();
+
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	Key& key = Input::Instance().GetKey();
 	Mouse& mouse = Input::Instance().GetMouse();
@@ -91,9 +94,14 @@ void CameraManager::Update(float elapsedTime){
 
 		// カメラシェイク
 		if (shake)
-		{
-			target += camShake;
-		}
+		{			
+			if (timer % 2 == 0)target += camShake;			
+
+			// カメラシェイクタイマー更新
+			UpdateShakeTimer(elapsedTime);
+     	}
+	
+
 
 		//カメラの視点と注視点を設定
 		mainC.SetLookAt(position, target, UP);
@@ -129,4 +137,21 @@ bool CameraManager::CameraRay()
 		return true;
 	}
 	return false;
+}
+
+// カメラシェイクタイマー更新
+void CameraManager::UpdateShakeTimer(float elapsedTime)
+{
+	shakeTimer -= elapsedTime;
+
+	if (shakeTimer <= 0.0f) {
+		shake = false;
+	}
+}
+
+// タイマー更新
+void CameraManager::UpdateTimer()
+{
+	timer++;
+	if (timer >= 1000)timer = 0;
 }

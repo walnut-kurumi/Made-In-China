@@ -41,9 +41,13 @@ public:
 	Vec3 GetPos() { return position; }
 	Vec3 GetTarget() { return target; }
 
-	void  SetShakeFlag(bool s) { shake = s; }
+	void SetShakeFlag(bool s) { shake = s; shakeTimer = 0.2f; }
+	bool GetShakeFlag() { return shake; }
+	void UpdateShakeTimer(float elapsedTime);
 
+	void UpdateTimer();
 private:
+
 	Vec3 target = { 0,0,0 };
 	Vec3 angle = { 0,0,0 };
 	Vec3 position = { 0,0,0 };
@@ -51,6 +55,7 @@ private:
 
 	Vec3 camShake = { 0,0,0 };
 	bool shake = false;
+	float shakeTimer = 0.0f;
 
 	float rollSpeed = 1.0f;
 	float range = 150.0f; // Œ³65.0f
@@ -60,6 +65,7 @@ private:
 
 	ConstantBuffer<CbScene> cbScene;
 
+	int timer = 0;
 public:
 
 	Camera mainC{};
