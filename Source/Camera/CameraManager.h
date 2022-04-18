@@ -45,7 +45,9 @@ public:
 	bool GetShakeFlag() { return shake; }
 	void UpdateShakeTimer(float elapsedTime);
 
+	void UpdateTimer();
 private:
+
 	Vec3 target = { 0,0,0 };
 	Vec3 angle = { 0,0,0 };
 	Vec3 position = { 0,0,0 };
@@ -63,6 +65,7 @@ private:
 
 	ConstantBuffer<CbScene> cbScene;
 
+	int timer = 0;
 public:
 
 	Camera mainC{};

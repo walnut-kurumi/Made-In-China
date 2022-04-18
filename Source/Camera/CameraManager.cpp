@@ -30,6 +30,9 @@ void CameraManager::Init() {
 
 void CameraManager::Update(float elapsedTime){
 
+	// タイマー更新
+	UpdateTimer();
+
 	GamePad& gamePad = Input::Instance().GetGamePad();
 	Key& key = Input::Instance().GetKey();
 	Mouse& mouse = Input::Instance().GetMouse();
@@ -85,14 +88,14 @@ void CameraManager::Update(float elapsedTime){
 		CameraRay();
 
 		// カメラシェイク用乱数
-		camShake.x = rand() % 1 - 0.50f;
-		camShake.y = rand() % 1 - 0.50f;
-		camShake.z = rand() % 1 - 0.50f;
+		camShake.x = rand() % 2 - 1.0f;
+		camShake.y = rand() % 2 - 1.0f;
+		camShake.z = rand() % 2 - 1.0f;
 
 		// カメラシェイク
 		if (shake)
 		{			
-			target += camShake;			
+			if (timer % 2 == 0)target += camShake;			
 
 			// カメラシェイクタイマー更新
 			UpdateShakeTimer(elapsedTime);
@@ -144,4 +147,11 @@ void CameraManager::UpdateShakeTimer(float elapsedTime)
 	if (shakeTimer <= 0.0f) {
 		shake = false;
 	}
+}
+
+// タイマー更新
+void CameraManager::UpdateTimer()
+{
+	timer++;
+	if (timer >= 1000)timer = 0;
 }

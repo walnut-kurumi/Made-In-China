@@ -78,6 +78,8 @@ void EnemyGunner::Init()
 
 void EnemyGunner::Update(float elapsedTime)
 {
+    position.z = 0;
+
     if (isDead)return;
 
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
