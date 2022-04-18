@@ -313,6 +313,8 @@ void SceneGame::Render(float elapsedTime)
 // playerが死んだとき 等のリセット用
 void SceneGame::Reset()
 {
+    // たまなし
+    EnemyBulletManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
     EnemyManager::Instance().Init();
     for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
