@@ -46,8 +46,6 @@ public:
 private:	
 	Player* player{};
 
-	Model* model = nullptr;
-
 	Vec2 enemyPos[9] = {};
 
 	Sprite* Bar{};

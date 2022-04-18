@@ -30,7 +30,7 @@ void Model::Begin(ID3D11DeviceContext* dc, Shader shader, bool wireframe)
 
 void Model::Render(ID3D11DeviceContext* dc, const Vec4 materialColor)  // , const Animation::Keyframe* keyframe = nullptr);
 {
-	skinnedMesh.get()->render(dc, this->transform, materialColor, keyframe);
+	skinnedMesh.get()->render(dc, this->transform, materialColor, keyframe.get());
 	skinnedMesh.get()->End(dc);
 }
 
@@ -73,7 +73,7 @@ void Model::UpdateAnimation(float elapsedTime)
 	}
 
 	//Ä¶’†
-	if (!animationEndFlag) keyframe = &animation.sequence.at(frameIndex);
+	if (!animationEndFlag) keyframe = std::make_shared<SkinnedMesh::Animation::Keyframe>(animation.sequence.at(frameIndex));
 
 	// ÅIƒtƒŒ[ƒ€ˆ—
 	if (animationEndFlag) {

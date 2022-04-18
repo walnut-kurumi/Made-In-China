@@ -129,6 +129,7 @@ void SceneGame::Finalize()
     delete enemyattack;
     delete LoadBar;
     delete Bar;
+    delete player;
 }
 
 // XVˆ—
