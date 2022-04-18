@@ -15,6 +15,7 @@
 #include "StageManager.h"
 #include "StageSkybox.h"
 #include "StageMain.h"
+#include "StageCollision.h"
 
 #include "Framework.h"
 
@@ -50,6 +51,8 @@ void SceneGame::Initialize()
         StageMain* stageMain = new StageMain(device);
         stageMain->PlayerData(player);
         StageManager::Instance().Register(stageMain);
+        StageCollision* stageCollision = new StageCollision(device);
+        StageManager::Instance().Register(stageCollision);
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);
     }
@@ -105,6 +108,8 @@ void SceneGame::Initialize()
     // ロード％ 100%
     Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
     LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");
+    gameStart = new Sprite(device, L"./Data/Sprites/scene//start.png");
+    gameEnd = new Sprite(device, L"./Data/Sprites/scene//end.png");
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
 
     start = true;
@@ -121,6 +126,9 @@ void SceneGame::Finalize()
     // ステージ終了処理
     StageManager::Instance().Clear();
     StageManager::Destory();    
+
+    delete gameStart;
+    delete gameEnd;
 
     // カメラシェイク（簡素）
     CameraManager& cameraMgr = CameraManager::Instance();
@@ -206,6 +214,7 @@ void SceneGame::Update(float elapsedTime)
     if (menuflag == true)
     {
         menu();
+        SceneSelect();
     }
 
 
@@ -274,6 +283,11 @@ void SceneGame::Render(float elapsedTime)
     {
         Bar->render(dc, 600, 650, 620, 25, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 605, 652, 605 * w, 21, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        if (menuflag == true)
+        {
+            gameStart->render(dc, startpos.x, startpos.y, startsize.x, startsize.y, 1, 1, 1, startAlpha, 0);
+            gameEnd->render(dc, endpos.x, endpos.y, endsize.x, endsize.y, 1, 1, 1, endAlpha, 0);
+        }
         RenderEnemyAttack();
     }
 
@@ -314,6 +328,8 @@ void SceneGame::Render(float elapsedTime)
 // playerが死んだとき 等のリセット用
 void SceneGame::Reset()
 {
+    // たまなし
+    EnemyBulletManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
     EnemyManager::Instance().Init();
     for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
@@ -355,6 +371,8 @@ void SceneGame::menu()
     const mouseButton mouseClick =
         Mouse::BTN_LEFT;
 
+    GamePad& gamePad = Input::Instance().GetGamePad();
+
 
     if (start && (mouse.GetButtonDown() & mouseClick))
     {
@@ -364,12 +382,14 @@ void SceneGame::menu()
     {
         DestroyWindow(GetActiveWindow());
     }
-
-    const GamePadButton updown =
-        GamePad::BTN_UP
-        | GamePad::BTN_DOWN
+    
+    const GamePadButton up =
+        GamePad::BTN_UP;
+        /*| GamePad::BTN_DOWN
         | GamePad::BTN_W
-        | GamePad::BTN_S;
+        | GamePad::BTN_S;*/
+    const GamePadButton down =
+        GamePad::BTN_DOWN;
 
     if (screenPosition.x >= startpos.x && screenPosition.x < startpos.x + startsize.x)
     {
@@ -378,12 +398,24 @@ void SceneGame::menu()
             start = true;
             end = false;
         }
-        if (screenPosition.y >= endpos.y && screenPosition.y <= endpos.y + endsize.y)
+        else if (screenPosition.y >= endpos.y && screenPosition.y <= endpos.y + endsize.y)
         {
             start = false;
             end = true;
         }
     }
+
+    if (gamePad.GetButtonDown() & up)
+    {
+        start = true;
+        end = false;
+    }
+    else if (gamePad.GetButton() & down)
+    {
+        start = false;
+        end = true;
+    }
+
 }
 
 

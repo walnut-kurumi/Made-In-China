@@ -9,11 +9,12 @@ StageMain::StageMain(ID3D11Device* device)
 {
     back = new Sprite(device, L"./Data/Sprites/kariAsset.jpg");
 
-    model = new Model(device, ".\\Data\\Models\\Stage\\stage.fbx", true, 0);
+    model = new Model(device, ".\\Data\\Models\\Stage\\MDL_stage_ah.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
 
-    //position.x = -50;
-    //position.y = -20;
+    position.x = -140;
+    position.y = -20;
+    position.z = 5;
 
     angle.y = DirectX::XMConvertToRadians(-90);
 
@@ -53,6 +54,6 @@ void StageMain::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
 
 bool StageMain::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
-    //return false;
-    return Collision::RayVsModel(start, end, model->GetSkinnedMeshs(), transform, hit);
+    return false;
+    //return Collision::RayVsModel(start, end, model->GetSkinnedMeshs(), transform, hit);
 }

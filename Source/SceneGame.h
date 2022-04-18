@@ -43,6 +43,7 @@ public:
 	void SceneSelect();
 
 	void RenderEnemyAttack();
+
 private:	
 	Player* player{};
 
@@ -51,6 +52,7 @@ private:
 	Sprite* Bar{};
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
+
 
 	// CAMERA_SHAKE
 	// https://www.gdcvault.com/play/1023557/Math-for-Game-Programmers-Juicing
@@ -76,6 +78,9 @@ private:
 
 	float startAlpha = 1.0f;
 	float endAlpha = 1.0f;
+
+	Sprite* gameStart{};
+	Sprite* gameEnd{};
 
 	DirectX::XMFLOAT2 startsize = { 320,180 };
 	DirectX::XMFLOAT2 endsize = { 320,180 };
