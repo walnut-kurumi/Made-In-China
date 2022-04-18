@@ -30,9 +30,6 @@ Player::Player(ID3D11Device* device) {
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Finisher));
 
     position = { 0.0f, 0.0f, 0.0f };
-    waistPos = { 0,3,0 };
-    headPos = { 0,6,0 };
-
     scale = { 0.05f, 0.05f, 0.05f };
 
     UpdateState[static_cast<int>(AnimeState::Idle)] = &Player::UpdateIdleState;
@@ -63,25 +60,32 @@ void Player::Init() {
     velocity = { 0,0,0 };    
     maxMoveSpeed = 10;
 
+    // 判定用 体の位置
+    waistPos = { 0,3,0 };
+    headPos = { 0,6,0 };
+    atkPos = { 0,0,0 };    // 攻撃の位置は攻撃時に設定
+    // 攻撃
+    atkRadius = 2;
+    atkTimer = 0.0f;
+    atkImpulse = 15.0f;
+
+    // ジャンプ関連
     jumpSpeed = 110.0f;
+    jumpCount = 0;
+
+    // スローモーション関連
+    playbackSpeed = 1.0f;
+    slowSpeed = 0.35f;
+
+    // ヒットストップ
+    hitstopSpeed = 0.6f;
 
     moveVecX = 0.0f;
     moveVecZ = 0.0f;
-    health = 40;
 
     height = 8.0f;
 
     isDead = false;
-
-    slowSpeed = 0.35f;
-    slow = false;
-
-    hitstopSpeed = 0.6f;
-    hitstop = false;
-
-    atkRadius = 2;
-    atkTimer = 0.0f;
-    atkImpulse = 15.0f;
 
     backDir = 5.0f;
 
@@ -263,7 +267,7 @@ void Player::InputSlow(float elapsedTime) {
     GamePad& gamePad = Input::Instance().GetGamePad();
     Key& key = Input::Instance().GetKey();
     // 押してる間
-    if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER || key.STATE(VK_SHIFT)) {
+    if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER) {
         slowCT = 0;
         // 時間があれば スキル起動してタイマー減らす
         if (slowTimer >= 0) {
@@ -278,7 +282,7 @@ void Player::InputSlow(float elapsedTime) {
         }
     }
     // 放している間
-    if ((!(gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER) || !key.STATE(VK_SHIFT)) && slowTimer < slowMax && slowCT == 0) {
+    if (!(gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER) && slowTimer < slowMax && slowCT == 0) {
         slowCT = 1;
         slowCTTimer = CTMax;
         slow = false;

@@ -102,33 +102,32 @@ private:
 	AnimeState state = AnimeState::Idle;
 
 private:
-	// 攻撃判定用
+	std::unique_ptr<DebugRenderer> debugRenderer;
+	SkinnedMesh* skinned;
+
+	// 攻撃判定用 体の位置
 	Vec3 atkPos{};
 	Vec3 waistPos{};
 	Vec3 headPos{};
 
-	// 攻撃関連
-	bool atk = false;
-	float atkRadius;
-	float atkTimer;
-	float atkImpulse = 0.0f;
-
-	float moveSpeed;
+	float moveSpeed = 0.0f;
 	float turnSpeed = DirectX::XMConvertToRadians(3600);
 
-
-	std::unique_ptr<DebugRenderer> debugRenderer;
-	SkinnedMesh* skinned;
+	// 攻撃関連
+	bool atk = false;
+	float atkRadius = 0.0f;
+	float atkTimer = 0.0f;
+	float atkImpulse = 0.0f;
 
 	// ジャンプ関連
-	float jumpSpeed;
+	float jumpSpeed = 0.0f;
 	int jumpCount = 0;
-	int jumpLimit = 3;
+	const int jumpLimit = 3;
 
 	// スローモーション用
-	float playbackSpeed = 1.0f;
+	float playbackSpeed = 0.0f;
 	float slowSpeed = 0.0f;
-	bool slow;
+	bool slow = false;
 	// スローモーションの時間
 	const float slowMax = 10.0f;
 	float slowTimer = slowMax;
@@ -138,7 +137,7 @@ private:
 	int slowCT = 0;
 	// ヒットストップ用
 	float hitstopSpeed = 0.0f;
-	bool hitstop; // 攻撃当たったらtrue
+	bool hitstop = false; // 攻撃当たったらtrue
 	// SB用
 	bool weapon = true;		// 武器を持っているか否か
 	bool finish = false;	// 敵に対するフィニッシャー
