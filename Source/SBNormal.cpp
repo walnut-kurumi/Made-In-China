@@ -35,11 +35,12 @@ void SBNormal::Update(float elapsedTime) {
 void SBNormal::Render(ID3D11DeviceContext* dc, Shader* shader) {
 	model->Begin(dc, *shader);
 	model->Render(dc);
-
+#ifdef _DEBUG
 	//// •K—v‚È‚Á‚½‚ç’Ç‰Á
 	debugRenderer.get()->DrawSphere(position, radius, Vec4(1, 0.5f, 0, 1));
 
 	//debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+#endif
 }
 
 // ”­Ëˆ—
