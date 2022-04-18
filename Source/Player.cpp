@@ -456,12 +456,12 @@ bool Player::InputAttack() {
             atkPos = VecMath::Normalize(atkPos) * 5;
             atk = true;
 
-            CollisionPanchiVsEnemies();
+            //CollisionPanchiVsEnemies();
             CollisionPanchiVsProjectile();
 
             // 攻撃のCT
             if (!isGround)
-                atkTimer = 0.75f;
+                atkTimer = 0.50f;
             return true;
         }
     }
@@ -673,6 +673,14 @@ void Player::CollisionSBVsEnemies() {
                     // ヒットストップ
                     if (!slow) hitstop = true;
 
+                    // カメラシェイク（簡素）
+                    CameraManager& cameraMgr = CameraManager::Instance();
+                    if (!cameraMgr.GetShakeFlag()) {
+                        cameraMgr.SetShakeFlag(true);
+                        vibration = true;
+                        vibTimer = 0.4f;
+                    }
+
                     // フィニッシャー発動
                     finish = true;
 
@@ -681,7 +689,7 @@ void Player::CollisionSBVsEnemies() {
                     Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
                     dir *= backDir;
                     position = enemy->GetPosition() + dir;
-                    
+
                     /// **********************************
                     /// ++++++++++++++++++++++++++++++++++
                     ///          回転を反映させる
@@ -693,31 +701,6 @@ void Player::CollisionSBVsEnemies() {
                     // 武器を手持ちに
                     weapon = true;
                 }
-                // カメラシェイク（簡素）
-                CameraManager& cameraMgr = CameraManager::Instance();
-                if (!cameraMgr.GetShakeFlag()) {
-                    cameraMgr.SetShakeFlag(true);
-                    vibration = true;
-                    vibTimer = 0.4f;
-                }
-                // フィニッシャー発動
-                finish = true;
-                // 自分を敵の近くへ
-                // 自機と敵の位置から左右判定　のちそこから一定距離にワープ　そして殺す
-                Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
-                dir *= backDir;
-                position = enemy->GetPosition() + dir;
-                
-                /// **********************************
-                /// ++++++++++++++++++++++++++++++++++
-                ///          回転を反映させる
-                /// ++++++++++++++++++++++++++++++++++
-                /// **********************************
-
-                // 武器を壊す
-                sb->Destroy();
-                // 武器を手持ちに
-                weapon = true;
             }
         }
     }

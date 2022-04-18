@@ -9,7 +9,7 @@
 void SceneClear::Initialize()
 {
     ID3D11Device* device = Graphics::Ins().GetDevice();
-    clearSprite = new Sprite(device, L"./Data/Sprites//title.png");
+    clearSprite = new Sprite(device, L"./Data/Sprites//clear.png");
     cursorSprite = new Sprite(device, L"./Data/Sprites//cursor.png");
     gameStart = new Sprite(device, L"./Data/Sprites/scene//start.png");
     gameEnd = new Sprite(device, L"./Data/Sprites/scene//end.png");
@@ -106,7 +106,7 @@ void SceneClear::Render(float elapsedTime)
 
     // 2D•`‰æ
     {
-        //titleSprite->render(dc, 0, 0, gfx.GetScreenWidth(), gfx.GetScreenHeight());        
+        clearSprite->render(dc, 0, 0, gfx.GetScreenWidth(), gfx.GetScreenHeight());        
         gameStart->render(dc, startpos.x, startpos.y, startsize.x, startsize.y, 1, 1, 1, startAlpha, 0);
         gameEnd->render(dc, endpos.x, endpos.y, endsize.x, endsize.y, 1, 1, 1, endAlpha, 0);
         cursorSprite->render(dc, mousepos.x - 12, mousepos.y - 12, 23, 24, 1, 1, 1, 1, 0);
