@@ -105,6 +105,7 @@ void SceneGame::Initialize()
     // ロード％ 100%
     Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
     LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");
+    enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
 
     start = true;
     end = false;
@@ -124,6 +125,10 @@ void SceneGame::Finalize()
     // カメラシェイク（簡素）
     CameraManager& cameraMgr = CameraManager::Instance();
     cameraMgr.SetShakeFlag(false);
+
+    delete enemyattack;
+    delete LoadBar;
+    delete Bar;
 }
 
 // 更新処理
@@ -204,10 +209,10 @@ void SceneGame::Update(float elapsedTime)
 
 
     // リセット
-    if (player->GetHealth() <= 0 ||  gamePad.GetButtonDown() & GamePad::BTN_Y)
+    if (player->GetHealth() <= 0)// ||  gamePad.GetButtonDown() & GamePad::BTN_Y)
     {
         // デバッグ用で消してる
-        //Reset();
+        Reset();
     }
 
 
@@ -268,6 +273,7 @@ void SceneGame::Render(float elapsedTime)
     {
         Bar->render(dc, 600, 650, 620, 25, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 605, 652, 605 * w, 21, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        RenderEnemyAttack();
     }
 
 
@@ -393,4 +399,53 @@ void SceneGame::SceneSelect()
         startAlpha = 0.4f;
         endAlpha = 1.0f;
     }
+}
+
+
+// エネミー攻撃予兆描画
+void SceneGame::RenderEnemyAttack()
+{
+    
+    ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();
+
+    // ビューポート
+    D3D11_VIEWPORT viewport;
+    UINT numViewports = 1;
+    dc->RSGetViewports(&numViewports, &viewport);
+    // 変換行列
+    DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&CameraManager::Instance().GetView());
+    DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&CameraManager::Instance().GetProjection());
+    DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+    // 全ての敵の頭上にHPゲージを表示
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    int enemyCount = enemyManager.GetEnemyCount();
+    for (int i = 0; i < enemyCount; ++i)
+    {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+        DirectX::XMFLOAT3 worldPosition = enemy->GetCenterPosition();
+        worldPosition.y += enemy->GetHeight();
+        DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
+        // ワールド座標からスクリーン座標へ変換
+        DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
+            WorldPosition,
+            viewport.TopLeftX,
+            viewport.TopLeftY,
+            viewport.Width,
+            viewport.Height,
+            viewport.MinDepth,
+            viewport.MaxDepth,
+            Projection,
+            View,
+            World
+        );
+        // スクリーン座標
+        DirectX::XMFLOAT2 screenPosition;
+        DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);                
+
+        if (enemy->GetIsAttack() && enemy->GetHealth() > 0)
+        {
+            // 攻撃予兆描画
+            enemyattack->render(dc, screenPosition.x - 32, screenPosition.y - 64, 64, 64, 1, 1, 1, 1, 0);
+        }
+    }   
 }

@@ -31,7 +31,13 @@ public:
 	// €–S‚µ‚½‚ÉŒÄ‚Î‚ê‚é
 	void OnDead() override { isDead = true; }
 	
+	bool GetIsAttack() { return isAttack; }
+
 protected:
+	// UŒ‚—\’›
+	bool isAttack = false;
+
+
 	bool isDead = false;
 
 	float lengthSq = 0;
