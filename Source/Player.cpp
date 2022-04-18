@@ -137,7 +137,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     SBManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
 
     centerPosition = position;
-    centerPosition.y += height;
+    centerPosition.y += height / 2.0f;
 
     // height
     Vec3 heightPos = position;

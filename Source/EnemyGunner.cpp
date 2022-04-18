@@ -63,6 +63,8 @@ void EnemyGunner::Init()
 
     materialColor = { 1,1,1,1 };
 
+    height = 6.0f;
+
     centerPosition = position;
     centerPosition.y += 1.0f;
     radius = 2.5;
@@ -115,6 +117,10 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
         // 弾丸描画処理
         EnemyBulletManager::Instance().Render(dc, shader);
 
+        // height
+        Vec3 heightPos = position;
+        heightPos.y += height;
+        debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
         //// 必要なったら追加
         debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
@@ -212,7 +218,7 @@ void EnemyGunner::UpdateCenterPosition()
 {
     // 中心座標更新
     centerPosition = position;
-    centerPosition.y += height;
+    centerPosition.y += height/2.0f;
 }
 
 // プレイヤーを索敵
