@@ -208,18 +208,18 @@ void EnemyGunner::UpdateSearchArea()
     if (!direction)
     {        
         searchAreaPos = { position.x - 10, position.y - 2.0f };        
-        searchAreaScale = { 45, height + 2.0f };
+        searchAreaScale = { 45, height + 5.0f };
     }
     else
     {        
         searchAreaPos = { position.x - 35, position.y - 2.0f };        
-        searchAreaScale = { 45, height + 2.0f };
+        searchAreaScale = { 45, height + 5.0f };
     }    
     // Ž~‚Ü‚Á‚Ä‚¢‚é‚Æ‚«‚Í—¼•û‚Ý‚ê‚é
     if (!walk)
     {
         searchAreaPos = { position.x - 25, position.y - 2.0f };
-        searchAreaScale = { 50, height + 2.0f };
+        searchAreaScale = { 50, height + 5.0f };
     }
 }
 

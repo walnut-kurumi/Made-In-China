@@ -346,14 +346,14 @@ void SceneGame::EnemyPositionSetting()
 {
 
     enemyPos[0] = {-75,0.5f};
-    enemyPos[1] = {-105,0.5f};
-    enemyPos[2] = {-140,0.5f};
-    enemyPos[3] = {-180,0.5f};
-    enemyPos[4] = {-15,35.5f};
-    enemyPos[5] = {-100,35.5f};
-    enemyPos[6] = {-190,38.5f};
-    enemyPos[7] = {-190,62.5f};
-    enemyPos[8] = {-10,62.5f};    
+    enemyPos[1] = {-85,0.5f};
+    enemyPos[2] = {-105,0.5f};
+    enemyPos[3] = {-120,0.5f};
+    enemyPos[4] = {-40,20.5f};
+    enemyPos[5] = {4,42.5f};
+    enemyPos[6] = {-130,85.5f};
+    enemyPos[7] = {-65,55.5f};
+    enemyPos[8] = {20,70.5f};    
 }
 
 //ÉÅÉjÉÖÅ[
