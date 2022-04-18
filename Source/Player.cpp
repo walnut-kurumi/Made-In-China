@@ -65,7 +65,7 @@ void Player::Init() {
     headPos = { 0,6,0 };
     atkPos = { 0,0,0 };    // 攻撃の位置は攻撃時に設定
     // 攻撃
-    atkRadius = 2;
+    atkRadius = 4;
     atkTimer = 0.0f;
     atkImpulse = 15.0f;
 
@@ -75,7 +75,7 @@ void Player::Init() {
 
     // スローモーション関連
     playbackSpeed = 1.0f;
-    slowSpeed = 0.35f;
+    slowSpeed = 0.5f;
 
     // ヒットストップ
     hitstopSpeed = 0.6f;
@@ -107,6 +107,8 @@ void Player::Update(float elapsedTime) {
     InputSB();
     CollisionSBVsEnemies();
     CollisionSBVsStage();
+    CollisionPanchiVsEnemies();
+    // CollisionPanchiVsProjectile();
 
     atkTimer -= elapsedTime;
 
@@ -121,12 +123,21 @@ void Player::Update(float elapsedTime) {
     // 振動試し
     Key& key = Input::Instance().GetKey();
     XINPUT_VIBRATION vib{};
-    vib.wLeftMotorSpeed = 32000;
-    vib.wRightMotorSpeed = 32000;
-    if (key.STATE('l')) {
-        XInputSetState(0, &vib);
+    XINPUT_VIBRATION vib2{};
+    {
+        vib.wLeftMotorSpeed = MAX_SPEED;
+        vib.wRightMotorSpeed = MIN_SPEED;
+        vib2.wLeftMotorSpeed = 0;
+        vib2.wRightMotorSpeed = 0;
     }
-
+        XInputSetState(0, &vib);
+    if (vibration && vibTimer >= 0.0f) {
+        if(slow) vibTimer -= elapsedTime / slowSpeed;
+        else vibTimer -= elapsedTime;
+    }
+    else {
+        XInputSetState(0, &vib2);
+    }
     // 死んだら
     if (health <= 0)isDead = true;
 }
@@ -150,7 +161,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
 
     // 必要なったら追加
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
-    if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, 1, Vec4(1, 1, 0, 1));
+    if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, atkRadius, Vec4(1, 1, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
@@ -364,15 +375,15 @@ bool Player::InputAttack() {
             Vec3 front = VecMath::Normalize({ transform._31,transform._32,transform._33 });
             if (ax && ay)atkPos = { -ax, ay, 0 };
             else atkPos = { front.x,0,0 };
-            atkPos = VecMath::Normalize(atkPos) * 5;
+            atkPos = VecMath::Normalize(atkPos) * 3;
             atk = true;
 
-            CollisionPanchiVsEnemies();
+            //CollisionPanchiVsEnemies();
             CollisionPanchiVsProjectile();
 
             // 攻撃のCT
             if(!isGround) 
-                atkTimer = 0.75f;
+                atkTimer = 0.50f;
             return true;
         }        
     }
@@ -452,7 +463,9 @@ void Player::UpdateAttackState(float elapsedTime) {
 
     static bool first = false;
     if (!first) {
-        AddImpulse(atkPos * atkImpulse);
+        Vec3 atkMove = atkPos * atkImpulse;
+        if (atkMove.y > 0) atkMove.y = 0;
+        AddImpulse(atkMove);
         first = true;
     }
 
@@ -473,7 +486,7 @@ void Player::UpdateAttackState(float elapsedTime) {
         first = false;
 
         // 攻撃位置リセット
-        atkPos = { 0,0,0 };
+        atkPos = { -999,-999,-999 };
         atk = false;
        
         // ヒットストップおわり
@@ -528,6 +541,8 @@ void Player::CollisionPanchiVsEnemies() {
                 CameraManager& cameraMgr = CameraManager::Instance();
                 if (!cameraMgr.GetShakeFlag()) {
                     cameraMgr.SetShakeFlag(true);
+                    vibration = true;
+                    vibTimer = 0.4f;
                 }
             }
         }
@@ -547,7 +562,11 @@ void Player::CollisionPanchiVsProjectile() {
             if (!slow)hitstop = true;
             // カメラシェイク（簡素）
             CameraManager& cameraMgr = CameraManager::Instance();
-            if (!cameraMgr.GetShakeFlag())cameraMgr.SetShakeFlag(true);
+            if (!cameraMgr.GetShakeFlag()) {
+                cameraMgr.SetShakeFlag(true);
+                vibration = true;
+                vibTimer = 0.4f;
+            }
         }
     }
 }
@@ -573,6 +592,13 @@ void Player::CollisionSBVsEnemies() {
                     enemy->ApplyDamage(1, 0);
                     // ヒットストップ
                     if (!slow) hitstop = true;
+                }
+                // カメラシェイク（簡素）
+                CameraManager& cameraMgr = CameraManager::Instance();
+                if (!cameraMgr.GetShakeFlag()) {
+                    cameraMgr.SetShakeFlag(true);
+                    vibration = true;
+                    vibTimer = 0.4f;
                 }
                 // フィニッシャー発動
                 finish = true;
