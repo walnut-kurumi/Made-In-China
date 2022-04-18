@@ -103,8 +103,6 @@ private:
 private:
 	float moveSpeed = 5.0f;
 	float turnSpeed = DirectX::XMConvertToRadians(720);
-			
-	SkinnedMesh* skinned;	
 
 	// 待機用タイマー
 	float idleTimer = 0;

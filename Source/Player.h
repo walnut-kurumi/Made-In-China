@@ -103,7 +103,6 @@ private:
 
 private:
 	std::unique_ptr<DebugRenderer> debugRenderer;
-	SkinnedMesh* skinned;
 
 	// 攻撃判定用 体の位置
 	Vec3 atkPos{};

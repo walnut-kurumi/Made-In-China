@@ -52,8 +52,6 @@ private:
 	Sprite* Bar{};
 	Sprite* LoadBar{};
 
-	SkinnedMesh* sk[8];
-
 	// CAMERA_SHAKE
 	// https://www.gdcvault.com/play/1023557/Math-for-Game-Programmers-Juicing
 	// TODO:01 Define a constant buffer object.
