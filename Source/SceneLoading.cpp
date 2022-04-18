@@ -28,6 +28,9 @@ void SceneLoading::Initialize()
 
 void SceneLoading::Finalize()
 {
+	delete loadSprite;
+	delete Bar;
+	delete LoadBar;
 }
 
 void SceneLoading::Update(float elapsedTime)
