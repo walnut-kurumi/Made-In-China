@@ -22,24 +22,24 @@ StageMain::StageMain(ID3D11Device* device)
 
 StageMain::~StageMain()
 {
-    delete model;    
+    delete model;
 }
 
 void StageMain::Update(float elapsedTime)
 {
     bgpos = { player->GetPosition().x-20,player->GetPosition().y };
-    UpdateTransform();    
-    model->UpdateTransform(transform);   
+    UpdateTransform();
+    model->UpdateTransform(transform);
 }
 
 void StageMain::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
-{         
+{
     //Scroll.data.scroll_direction;
     //deviceContext->UpdateSubresource(
     back->render(deviceContext, bgpos.x, -150, 1500, 1150, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
     model->Begin(deviceContext, Shaders::Ins()->GetRampShader());
-    model->Render(deviceContext);  
+    model->Render(deviceContext);
 
     // •K—v‚È‚Á‚½‚ç’Ç‰Á
     debugRenderer.get()->DrawSphere(position, 25, Vec4(1,0,1,1));
