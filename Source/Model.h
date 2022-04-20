@@ -42,7 +42,6 @@ public:
 	//{
 	//	return model.get()->GetAnimation();
 	//}
-	const SkinnedMesh::Animation::Keyframe& GetKeyframe() { return *keyframe; }	
 
 private:
 	std::shared_ptr<SkinnedMesh> skinnedMesh;

@@ -36,7 +36,7 @@ std::shared_ptr<SkinnedMesh::Animation> ResourceManager::LoadAnimationResource(c
 		}
 	}
 	// 新規モデルリソース作成＆読み込み
-	auto model = std::make_shared<SkinnedMesh>(filename, samplingRate, index);
+	auto model = std::make_unique<SkinnedMesh>(filename, samplingRate, index);
 	auto anime = std::make_shared<SkinnedMesh::Animation>(model->GetAnimes(index));
 	// マップに登録
 	animes[filename] = anime;

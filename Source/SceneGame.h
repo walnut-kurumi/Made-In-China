@@ -5,8 +5,6 @@
 #include "Graphics/Graphics.h"
 #include "Graphics/Sprite.h"
 #include "Model.h"
-#include "Framebuffer.h"
-#include "FullscreenQuad.h"
 
 #include <directxmath.h>
 #include "PerlinNoise.h"

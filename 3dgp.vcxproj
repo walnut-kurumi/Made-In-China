@@ -211,9 +211,7 @@
     <ClCompile Include="Source\EnemyBulletStraight.cpp" />
     <ClCompile Include="Source\EnemyGunner.cpp" />
     <ClCompile Include="Source\EnemyManager.cpp" />
-    <ClCompile Include="Source\Framebuffer.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
-    <ClCompile Include="Source\FullscreenQuad.cpp" />
     <ClCompile Include="Source\Graphics\GeometricPrimitive.cpp" />
     <ClCompile Include="Source\Graphics\Graphics.cpp" />
     <ClCompile Include="Source\HitManager.cpp" />
@@ -274,8 +272,6 @@
     <ClInclude Include="Source\EnemyBulletManager.h" />
     <ClInclude Include="Source\EnemyBulletStraight.h" />
     <ClInclude Include="Source\EnemyManager.h" />
-    <ClInclude Include="Source\Framebuffer.h" />
-    <ClInclude Include="Source\FullscreenQuad.h" />
     <ClInclude Include="Source\Graphics\Blender.h" />
     <ClInclude Include="Source\Graphics\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\ConstantBufferTypes.h" />

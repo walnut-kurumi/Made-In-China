@@ -99,7 +99,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Framebuffer.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\HitManager.cpp" />
     <ClCompile Include="Source\Main.cpp" />
@@ -146,9 +145,6 @@
     </ClCompile>
     <ClCompile Include="Source\EnemyManager.cpp">
       <Filter>Source\Character\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\FullscreenQuad.cpp">
-      <Filter>Source\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Source\Input\GamePad.cpp">
       <Filter>Source\Input</Filter>
@@ -269,7 +265,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Framebuffer.h" />
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\HighResolutionTimer.h" />
     <ClInclude Include="Source\HitManager.h" />
@@ -327,9 +322,6 @@
     </ClInclude>
     <ClInclude Include="Source\EnemyManager.h">
       <Filter>Source\Character\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\FullscreenQuad.h">
-      <Filter>Source\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Input\GamePad.h">
       <Filter>Source\Input</Filter>

@@ -79,7 +79,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState>		depthStencilState;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState>			samplerState;
 	std::unique_ptr<Blender> blender;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState>          rampSamplerState;
 
 public:
 	void Init(ID3D11Device* device, BOOL frontCounterClockwise);

@@ -43,6 +43,7 @@ void SceneLoading::Update(float elapsedTime)
 	if (nextScene->Ready())
 	{
 		SceneManager::Instance().ChangeScene(nextScene);
+
 		nextScene = nullptr;
 	}
 }

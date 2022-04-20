@@ -13,6 +13,7 @@ Model::Model(ID3D11Device* device, const char* fbxFilename, bool triangulate, fl
 
 Model::~Model()
 {
+	anime.clear();
 }
 
 void Model::PlayAnimation(int index, bool loop)

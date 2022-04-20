@@ -329,15 +329,6 @@ void SkinnedMesh::render(ID3D11DeviceContext* deviceContext, const DirectX::XMFL
 
 			deviceContext->PSSetShaderResources(0, 1, material.shaderResourceViews[0].GetAddressOf());
 			deviceContext->PSSetShaderResources(1, 1, material.shaderResourceViews[1].GetAddressOf());
-
-			// Ramp定数バッファ
-			Ramp ramp{ {0.2f,0.2f,0.2f,1.0f},{0.8f,0.8f,0.8f,1.0f}, material.Ks };
-			DirectX::XMFLOAT4 temp = { 0.8f, 0.8f, 0.8f, 1.0f };
-			XMStoreFloat4(&ramp.kd, XMLoadFloat4(&materialColor) * XMLoadFloat4(&temp));			
-			deviceContext->UpdateSubresource(constantBuffer_Ramp.Get(), 0, 0, &ramp, 0, 0);
-			deviceContext->VSSetConstantBuffers(10, 1, constantBuffer_Ramp.GetAddressOf());
-			deviceContext->PSSetConstantBuffers(10, 1, constantBuffer_Ramp.GetAddressOf());			
-			deviceContext->PSSetSamplers(4, 1, rampSamplerState.GetAddressOf());
 												
 			deviceContext->DrawIndexed(subset.indexCount, subset.startIndexLocation, 0);
 		}
