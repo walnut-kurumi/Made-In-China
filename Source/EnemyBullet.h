@@ -54,7 +54,7 @@ protected:
 	Vec3	direction = { 0,0,1 };
 	Vec3	scale = { 1,1,1 };
 	DirectX::XMFLOAT4X4 transform = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
-	EnemyBulletManager* manager = nullptr;
+	std::unique_ptr<EnemyBulletManager> manager = nullptr;
 
 	float radius = 1.5f;
 	float speed = 120.0f;

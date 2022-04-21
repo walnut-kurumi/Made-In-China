@@ -43,7 +43,7 @@ public:
 	void RenderEnemyAttack();
 
 private:	
-	Player* player{};
+	std::unique_ptr<Player> player{};
 
 	Vec2 enemyPos[9] = {};
 

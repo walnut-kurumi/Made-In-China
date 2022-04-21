@@ -34,7 +34,7 @@ void SceneGame::Initialize()
 
 
     // プレイヤー
-    player = new Player(device);
+    player = std::make_unique<Player>(device);
     player->Init(); 
 
     // ロード％更新
@@ -49,7 +49,7 @@ void SceneGame::Initialize()
         AddLoadPercent(1.0f);
 
         StageMain* stageMain = new StageMain(device);
-        stageMain->PlayerData(player);
+        stageMain->PlayerData(player.get());
         StageManager::Instance().Register(stageMain);
         StageCollision* stageCollision = new StageCollision(device);
         StageManager::Instance().Register(stageCollision);
@@ -136,8 +136,7 @@ void SceneGame::Finalize()
 
     delete enemyattack;
     delete LoadBar;
-    delete Bar;
-    delete player;
+    delete Bar;    
 }
 
 // 更新処理
@@ -187,7 +186,7 @@ void SceneGame::Update(float elapsedTime)
 
         // エネミー
         {
-            EnemyManager::Instance().SetPlayer(player);
+            EnemyManager::Instance().SetPlayer(player.get());
             // ソート
             EnemyManager::Instance().SortLengthSq(player->GetPosition());
             // エネミー更新処理
