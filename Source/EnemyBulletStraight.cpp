@@ -3,7 +3,7 @@
 
 EnemyBulletStraight::EnemyBulletStraight(ID3D11Device* device, EnemyBulletManager* manager):EnemyBullet(manager)
 {	
-	model = new Model(device,"Data/Models/Bullet/bullet.fbx",true,0);
+	model = std::make_unique<Model>(device,"Data/Models/Bullet/bullet.fbx",true,0);
 	// 表示サイズを調整
 	scale.x = scale.y = scale.z = 1.0f;	
 
@@ -11,8 +11,7 @@ EnemyBulletStraight::EnemyBulletStraight(ID3D11Device* device, EnemyBulletManage
 }
 
 EnemyBulletStraight::~EnemyBulletStraight()
-{
-	delete model;
+{	
 }
 // 更新処理
 void EnemyBulletStraight::Update(float elapsedTime)

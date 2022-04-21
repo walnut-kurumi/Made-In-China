@@ -53,10 +53,10 @@ void EnemyBulletManager::Register(EnemyBullet* projectile)
 // íeä€ëSçÌèú
 void EnemyBulletManager::Clear()
 {
-	for (EnemyBullet* projectile : projectiles)
-	{
-		delete projectile;
-	}
+	//for (EnemyBullet* projectile : projectiles)
+	//{
+	//	delete projectile;
+	//}
 	projectiles.clear();
 }
 
