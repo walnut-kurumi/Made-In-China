@@ -329,6 +329,7 @@ void SceneGame::Reset()
 {
     // たまなし
     EnemyBulletManager::Instance().Clear();
+    SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
     EnemyManager::Instance().Init();
     for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
