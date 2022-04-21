@@ -106,6 +106,10 @@ void Player::Update(float elapsedTime) {
     InputSB();
 
 
+    // 旋回処理
+    // 移動方向へ向く
+    if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
+
     CollisionSBVsEnemies();
     CollisionSBVsStage();
     CollisionPanchiVsEnemies();
@@ -186,7 +190,6 @@ void Player::DrawDebugGUI() {
             ImGui::SliderInt("State", &a, 0, static_cast<int>(AnimeState::End));
         }
 
-        ImGui::SliderFloat("Angle X", &angle.y, DirectX::XMConvertToRadians(-180), DirectX::XMConvertToRadians(180));
         ImGui::RadioButton("death", deathFlag);
         ImGui::SliderFloat("Height", &height, 0, 10.0f);
 
@@ -257,9 +260,6 @@ bool Player::InputMove(float elapsedTime) {
 
     // 移動処理
     Move(moveVec.x, moveVec.z, moveSpeed);
-
-    // 旋回処理(エイムしてない時だけ)
-    Turn(elapsedTime, moveVec.x, moveVec.z, turnSpeed);
 
     // 進行ベクトルがゼロベクトルでない場合は入力された
     return moveVec.x || moveVec.y || moveVec.z;
@@ -363,6 +363,10 @@ void Player::InputSB() {
             for (int i = 0; i < sbCount; ++i) {
                 SB* sb = sbManager.GetProjectile(i);
 
+                // 向きを設定
+                direction = VecMath::sign(sb->GetPosition().x - position.x);
+                // 旋回処理
+                if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
                 // 投げた武器の場所にワープ
                 position = sb->GetPosition();
                 sb->Destroy();
@@ -406,6 +410,10 @@ void Player::InputSB() {
             for (int i = 0; i < sbCount; ++i) {
                 SB* sb = sbManager.GetProjectile(i);
 
+                // 向きを設定
+                direction = VecMath::sign(sb->GetPosition().x - position.x);
+                // 旋回処理
+                if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
                 // 投げた武器の場所にワープ
                 position = sb->GetPosition();
                 sb->Destroy();
@@ -701,6 +709,11 @@ void Player::CollisionSBVsEnemies() {
                     // フィニッシャー発動
                     finish = true;
 
+                    // 向きを設定
+                    direction = VecMath::sign(enemy->GetPosition().x - position.x);
+                    // 旋回処理
+                    if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
+
                     // 自分を敵の近くへ
                     // 自機と敵の位置から左右判定　のちそこから一定距離にワープ　そして殺す
                     Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
@@ -737,6 +750,11 @@ void Player::CollisionSBVsStage() {
         HitResult hit;
         // ステージとの判定
         if (StageManager::Instance().RayCast(pos, pos + VecMath::Normalize(dir) * speed, hit)) {
+            // 向きを設定
+            direction = VecMath::sign(hit.position.x - position.x);
+            // 旋回処理
+            if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
+
             // 地面に接地している
             position.x = hit.position.x;
             position.y = hit.position.y;

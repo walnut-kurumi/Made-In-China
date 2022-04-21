@@ -283,6 +283,9 @@ void Character::UpdateHorizontalMove(float elapsedTime) {
 
      // …•½‘¬—ÍŒvŽZ
     float velocityLengthXZ = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
+    
+    // ˆÚ“®‚µ‚½•ûŒü
+    direction = VecMath::sign(velocity.x);
 
     if (velocityLengthXZ > 0.0f) {
         // …•½ˆÚ“®’l

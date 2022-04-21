@@ -131,4 +131,7 @@ protected:
 	float radius = 0.5f;
 
 	bool deathFlag = false;
+
+	// -1‚ª¶ +1‚ª‰EŒü‚« 0‚ÍˆÚ“®‚È‚µ
+	int direction = 0;
 };

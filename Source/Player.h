@@ -150,6 +150,4 @@ private:
 	float backDir;			// 敵の後ろ一定距離
 	// 死亡
 	bool isDead = false;
-    // 体の向き
-	bool direction = false;
 };
