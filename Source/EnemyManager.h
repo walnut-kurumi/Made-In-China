@@ -49,7 +49,10 @@ public:
 
 	void SetPlayer(Player* p);	
 
-	void SetPosition(int i, DirectX::XMFLOAT3 enemyPos);
+	void SetPosition(int i, DirectX::XMFLOAT3 enemyPos,int gruop,bool walk);	
+
+	// グループ化 一人見つけると同じグループの敵も見つける
+	void GroupAttack();
 
 	// 死んでるエネミーの数
 	int GetDeadEnemyCount();

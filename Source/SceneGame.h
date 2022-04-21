@@ -40,7 +40,9 @@ public:
 private:	
 	std::unique_ptr<Player> player{};
 
-	Vec2 enemyPos[9] = {};
+
+	static const int ENEMY_MAX = 9;
+	Vec2 enemyPos[ENEMY_MAX] = {};
 
 	Sprite* Bar{};
 	Sprite* LoadBar{};

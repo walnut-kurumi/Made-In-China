@@ -76,6 +76,7 @@ void EnemyGunner::Init()
     direction = false;
 
     isAttack = false;
+    isSearch = false;
 
     TransitionWalkState();
 }
@@ -117,6 +118,21 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 {
     if (isDead == false)
     {
+        switch (groupNum)
+        {
+        case 0:
+            materialColor = { 0,1,0,1 };
+            break;
+        case 1:
+            materialColor = { 0,0,1,1 };
+            break;
+        case 2:
+            materialColor = { 0,1,1,1 };
+            break;
+
+        default:
+            break;
+        }
         model->Begin(dc, *shader);
         model->Render(dc, materialColor);
 
@@ -234,6 +250,9 @@ void EnemyGunner::UpdateCenterPosition()
 // プレイヤーを索敵
 bool EnemyGunner::Search()
 {      
+    // isSearch = true ならreturn true
+    if (isSearch)return true;
+
     //searchArea（短形） と playerPos（点）で当たり判定    
     //当たっていたら索敵範囲内なのでtrue
     if (Collision::PointVsRect(Vec2(player->GetCenterPosition().x, player->GetCenterPosition().y), searchAreaPos, searchAreaScale))
@@ -242,6 +261,8 @@ bool EnemyGunner::Search()
         else if (player->GetCenterPosition().x < position.x) direction = true;
 
         materialColor = { 1.0f,0.25f,0.25f,1.0f };
+
+        isSearch = true;
 
         return true;
     }
@@ -368,6 +389,7 @@ void EnemyGunner::TransitionIdleState()
     state = State::Idle;
     turnFlag = false;
     walkFlag = false;
+    isSearch = false;
     idleTimer = 5.0f;
     moveSpeed = 0;
     model->PlayAnimation(static_cast<int>(state), true);
@@ -411,6 +433,7 @@ void EnemyGunner::TransitionWalkState()
     state = State::Walk;
     turnFlag = false;
     walkFlag = true;
+    isSearch = false;
     walkTimer = 5.0f;
     moveSpeed = 5;
     model->PlayAnimation(static_cast<int>(state), true);
@@ -495,7 +518,7 @@ void EnemyGunner::UpdateRunState(float elapsedTime)
 //攻撃ステート遷移
 void EnemyGunner::TransitionAttackState()
 {
-    state = State::Attack; 
+    state = State::Attack;
     moveSpeed = 0;
     attackCooldown = 0.45f;        
 }

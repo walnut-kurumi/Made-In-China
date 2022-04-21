@@ -271,11 +271,21 @@ void SceneTutorial::Reset()
     EnemyBulletManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
     EnemyManager::Instance().Init();
+    int group = 0;
+    bool walk = false;
     for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
     {
-        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
-    }
+        //歩き回るかどうか
+        if (i < 4)walk = true;
+        else walk = false;
 
+        // グループ番号セット
+        if (i < 4)group = 0;
+        else if (i < 6)group = 1;
+        else if (i < 9)group = 2;
+
+        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0), group, walk);
+    }
     // プレイヤー蘇生 ポジションリセット
     player->Init();
 

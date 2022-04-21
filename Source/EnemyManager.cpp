@@ -43,6 +43,9 @@ void EnemyManager::Update(float elapsedTime)
 
 	// 敵同士の衝突処理
 	CollisionEnemyVsEnemies();
+
+	// グループ化
+	GroupAttack();
 }
 
 // 描画処理
@@ -109,9 +112,33 @@ void EnemyManager::SetPlayer(Player* p)
 }
 
 
-void EnemyManager::SetPosition(int i, DirectX::XMFLOAT3 enemyPos)
+void EnemyManager::SetPosition(int i, DirectX::XMFLOAT3 enemyPos, int gruop,bool walk)
 {	
 	enemies[i]->SetPosition(enemyPos);
+	enemies[i]->SetGroupNum(gruop);
+	enemies[i]->SetWalkFlag(walk);
+}
+
+// グループで攻撃してくる
+void EnemyManager::GroupAttack()
+{
+	for (Enemy* enemy : enemies)
+	{
+		//生きてる && 自機見つけている
+		if (enemy->GetHealth() > 0 && enemy->GetIsSearch())
+		{
+			for (Enemy* enemy2 : enemies)
+			{
+				// 同じグループなら
+				if (enemy->GetGroupNum() == enemy2->GetGroupNum())
+				{
+					// 見つける
+					enemy2->SetIsSearch(true);
+				}
+			}
+
+		}
+	}
 }
 
 // 死んでるエネミーの数
