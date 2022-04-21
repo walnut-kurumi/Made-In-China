@@ -57,7 +57,7 @@ void Player::Init() {
     };
     normal = { 0,0,0 };
     velocity = { 0,0,0 };    
-    maxMoveSpeed = 10;
+    moveSpeed = 50;
 
     // 判定用 体の位置
     waistPos = { 0,3,0 };
@@ -104,6 +104,8 @@ void Player::Update(float elapsedTime) {
 
     // シフトブレイク
     InputSB();
+
+
     CollisionSBVsEnemies();
     CollisionSBVsStage();
     CollisionPanchiVsEnemies();
@@ -180,8 +182,6 @@ void Player::DrawDebugGUI() {
             ImGui::SliderFloat("Position Y", &position.y, -200, 200);
             ImGui::SliderFloat("Position Z", &position.z, -300, 300);
 
-            ImGui::SliderFloat("Speed", &moveSpeed, 0, 20);
-
             int a = static_cast<int>(state);
             ImGui::SliderInt("State", &a, 0, static_cast<int>(AnimeState::End));
         }
@@ -189,6 +189,8 @@ void Player::DrawDebugGUI() {
         ImGui::SliderFloat("Angle X", &angle.y, DirectX::XMConvertToRadians(-180), DirectX::XMConvertToRadians(180));
         ImGui::RadioButton("death", deathFlag);
         ImGui::SliderFloat("Height", &height, 0, 10.0f);
+
+        ImGui::SliderFloat("maxMove", &moveSpeed, 0, 100.0f);
 
         Mouse& mouse = Input::Instance().GetMouse();
         float mpx = static_cast<float>(mouse.GetPositionX());
@@ -491,7 +493,6 @@ void Player::UpdateIdleState(float elapsedTime) {
 //走るステート遷移
 void Player::TransitionRunState() {
     state = AnimeState::Run;
-    moveSpeed = 50;
     model->PlayAnimation(static_cast<int>(state), true);
 }
 
