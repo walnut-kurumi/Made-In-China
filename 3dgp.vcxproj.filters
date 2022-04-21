@@ -263,6 +263,9 @@
     <ClCompile Include="Source\StageCollision.cpp">
       <Filter>Source\Stages</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Menu.cpp">
+      <Filter>Source\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -448,6 +451,9 @@
     </ClInclude>
     <ClInclude Include="Source\StageCollision.h">
       <Filter>Source\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Menu.h">
+      <Filter>Source\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

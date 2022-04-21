@@ -12,6 +12,8 @@
 #include"SceneClear.h"
 #include"SceneOver.h"
 
+#include "Menu.h"
+
 #include "StageManager.h"
 #include "StageSkybox.h"
 #include "StageMain.h"
@@ -105,16 +107,13 @@ void SceneGame::Initialize()
     hr = device->CreateBuffer(&buffer_desc, nullptr, &constant_buffer);
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
-    // ロード％ 100%
     Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
-    LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");
-    gameStart = new Sprite(device, L"./Data/Sprites/scene//start.png");
-    gameEnd = new Sprite(device, L"./Data/Sprites/scene//end.png");
+    LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");   
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
 
-    start = true;
-    end = false;
+    Menu::Instance().Initialize();
 
+    // ロード％ 100%
     SetLoadPercent(10.0f);
 }
 
@@ -127,8 +126,7 @@ void SceneGame::Finalize()
     StageManager::Instance().Clear();
     StageManager::Destory();    
 
-    delete gameStart;
-    delete gameEnd;
+    Menu::Instance().Finalize();
 
     // カメラシェイク（簡素）
     CameraManager& cameraMgr = CameraManager::Instance();
@@ -145,7 +143,7 @@ void SceneGame::Update(float elapsedTime)
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();   
 
-    if (menuflag == false)
+    if (Menu::Instance().GetMenuFlag() == false)
     {
 
         float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
@@ -203,19 +201,7 @@ void SceneGame::Update(float elapsedTime)
         // スロー時間表示
         w = player->GetSlowTimer() / player->GetSlowMax();
         et = elapsedTime;
-    }
-    //ポーズメニュー
-    if (gamePad.GetButtonDown() & GamePad::BTN_START)
-    {
-        if (!menuflag) menuflag = true;
-        else menuflag = false;
-    }
-    if (menuflag == true)
-    {
-        menu();
-        SceneSelect();
-    }
-
+    }   
 
     // リセット
     if (player->GetHealth() <= 0)// ||  gamePad.GetButtonDown() & GamePad::BTN_Y)
@@ -224,6 +210,9 @@ void SceneGame::Update(float elapsedTime)
         Reset();
     }
 
+
+    // Menu
+    Menu::Instance().Update(elapsedTime);
 
 
     // TODO 現在のステージの死んでるエネミーの数が０の場合 次のステージへ
@@ -282,11 +271,7 @@ void SceneGame::Render(float elapsedTime)
     {
         Bar->render(dc, 600, 650, 620, 25, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 605, 652, 605 * w, 21, 1.0f, 1.0f, 1.0f, 1.0f, 0);
-        if (menuflag == true)
-        {
-            gameStart->render(dc, startpos.x, startpos.y, startsize.x, startsize.y, 1, 1, 1, startAlpha, 0);
-            gameEnd->render(dc, endpos.x, endpos.y, endsize.x, endsize.y, 1, 1, 1, endAlpha, 0);
-        }
+        Menu::Instance().Render(elapsedTime);
         RenderEnemyAttack();
     }
 
@@ -354,83 +339,6 @@ void SceneGame::EnemyPositionSetting()
     enemyPos[6] = {-130,85.5f};
     enemyPos[7] = {-65,55.5f};
     enemyPos[8] = {20,70.5f};    
-}
-
-//メニュー
-void SceneGame::menu()
-{
-    Mouse& mouse = Input::Instance().GetMouse();
-    DirectX::XMFLOAT3 screenPosition;
-    screenPosition.x = static_cast<float>(mouse.GetPositionX());
-    screenPosition.y = static_cast<float>(mouse.GetPositionY());
-    mousepos.x = screenPosition.x;
-    mousepos.y = screenPosition.y;
-
-    //マウス左クリックでマップ選択
-    const mouseButton mouseClick =
-        Mouse::BTN_LEFT;
-
-    GamePad& gamePad = Input::Instance().GetGamePad();
-
-
-    if (start && (mouse.GetButtonDown() & mouseClick))
-    {
-       // SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-    }
-    else if (end && (mouse.GetButtonDown() & mouseClick))
-    {
-        DestroyWindow(GetActiveWindow());
-    }
-    
-    const GamePadButton up =
-        GamePad::BTN_UP;
-        /*| GamePad::BTN_DOWN
-        | GamePad::BTN_W
-        | GamePad::BTN_S;*/
-    const GamePadButton down =
-        GamePad::BTN_DOWN;
-
-    if (screenPosition.x >= startpos.x && screenPosition.x < startpos.x + startsize.x)
-    {
-        if (screenPosition.y >= startpos.y && screenPosition.y <= startpos.y + startsize.y)
-        {
-            start = true;
-            end = false;
-        }
-        else if (screenPosition.y >= endpos.y && screenPosition.y <= endpos.y + endsize.y)
-        {
-            start = false;
-            end = true;
-        }
-    }
-
-    if (gamePad.GetButtonDown() & up)
-    {
-        start = true;
-        end = false;
-    }
-    else if (gamePad.GetButton() & down)
-    {
-        start = false;
-        end = true;
-    }
-
-}
-
-
-void SceneGame::SceneSelect()
-{
-
-    if (start)
-    {
-        startAlpha = 1.0f;
-        endAlpha = 0.4f;
-    }
-    if (end)
-    {
-        startAlpha = 0.4f;
-        endAlpha = 1.0f;
-    }
 }
 
 

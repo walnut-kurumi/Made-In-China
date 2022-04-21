@@ -221,6 +221,7 @@
     <ClCompile Include="Source\Input\Mouse.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Mathf.cpp" />
+    <ClCompile Include="Source\Menu.cpp" />
     <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\Graphics\Shader.cpp" />
     <ClCompile Include="Source\Graphics\Shaders.cpp" />
@@ -287,6 +288,7 @@
     <ClInclude Include="Source\Graphics\Misc.h" />
     <ClInclude Include="Source\interval.h" />
     <ClInclude Include="Source\Mathf.h" />
+    <ClInclude Include="Source\Menu.h" />
     <ClInclude Include="Source\Model.h" />
     <ClInclude Include="Source\Graphics\Shader.h" />
     <ClInclude Include="Source\Graphics\Shaders.h" />
