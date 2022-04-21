@@ -221,6 +221,7 @@
     <ClCompile Include="Source\Input\Mouse.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Mathf.cpp" />
+    <ClCompile Include="Source\Menu.cpp" />
     <ClCompile Include="Source\Model.cpp" />
     <ClCompile Include="Source\Graphics\Shader.cpp" />
     <ClCompile Include="Source\Graphics\Shaders.cpp" />
@@ -242,6 +243,7 @@
     <ClCompile Include="Source\SceneManager.cpp" />
     <ClCompile Include="Source\SceneOver.cpp" />
     <ClCompile Include="Source\SceneTitle.cpp" />
+    <ClCompile Include="Source\SceneTutorial.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
     <ClCompile Include="Source\StageCollision.cpp" />
     <ClCompile Include="Source\StageMain.cpp" />
@@ -287,6 +289,7 @@
     <ClInclude Include="Source\Graphics\Misc.h" />
     <ClInclude Include="Source\interval.h" />
     <ClInclude Include="Source\Mathf.h" />
+    <ClInclude Include="Source\Menu.h" />
     <ClInclude Include="Source\Model.h" />
     <ClInclude Include="Source\Graphics\Shader.h" />
     <ClInclude Include="Source\Graphics\Shaders.h" />
@@ -309,6 +312,7 @@
     <ClInclude Include="Source\SceneManager.h" />
     <ClInclude Include="Source\SceneOver.h" />
     <ClInclude Include="Source\SceneTitle.h" />
+    <ClInclude Include="Source\SceneTutorial.h" />
     <ClInclude Include="Source\Stage.h" />
     <ClInclude Include="Source\StageCollision.h" />
     <ClInclude Include="Source\StageMain.h" />
