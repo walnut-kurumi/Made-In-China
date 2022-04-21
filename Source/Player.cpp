@@ -117,6 +117,8 @@ void Player::Update(float elapsedTime) {
 
     atkTimer -= elapsedTime;
 
+    Vibration(elapsedTime);
+
     //オブジェクト行列更新
     UpdateTransform();
     // モデルアニメーション更新処理
@@ -125,24 +127,7 @@ void Player::Update(float elapsedTime) {
     model->UpdateTransform(transform);
 
 
-    // 振動試し
-    Key& key = Input::Instance().GetKey();
-    XINPUT_VIBRATION vib{};
-    XINPUT_VIBRATION vib2{};
-    {
-        vib.wLeftMotorSpeed = MAX_SPEED;
-        vib.wRightMotorSpeed = MIN_SPEED;
-        vib2.wLeftMotorSpeed = 0;
-        vib2.wRightMotorSpeed = 0;
-    }
-        XInputSetState(0, &vib);
-    if (vibration && vibTimer >= 0.0f) {
-        if(slow) vibTimer -= elapsedTime / slowSpeed;
-        else vibTimer -= elapsedTime;
-    }
-    else {
-        XInputSetState(0, &vib2);
-    }
+
     // 死んだら
     if (health <= 0)isDead = true;
 }
@@ -620,6 +605,27 @@ void Player::UpdateFinisherState(float elapsedTime) {
         hitstop = false;
         // フィニッシャー終わり
         finish = false;
+    }
+}
+
+void Player::Vibration(float elapsedTime) {
+    // 振動試し
+    Key& key = Input::Instance().GetKey();
+    XINPUT_VIBRATION vib{};
+    XINPUT_VIBRATION vib2{};
+    {
+        vib.wLeftMotorSpeed = MAX_SPEED;
+        vib.wRightMotorSpeed = MIN_SPEED;
+        vib2.wLeftMotorSpeed = 0;
+        vib2.wRightMotorSpeed = 0;
+    }
+    XInputSetState(0, &vib);
+    if (vibration && vibTimer >= 0.0f) {
+        if (slow) vibTimer -= elapsedTime / slowSpeed;
+        else vibTimer -= elapsedTime;
+    }
+    else {
+        XInputSetState(0, &vib2);
     }
 }
 

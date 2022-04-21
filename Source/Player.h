@@ -70,6 +70,8 @@ private:
 	// 死亡した時に呼ばれる
 	void OnDead() override { isDead = true; }
 
+	void Vibration(float elapsedTime);
+
 protected:
 	void OnLanding() override;
 
