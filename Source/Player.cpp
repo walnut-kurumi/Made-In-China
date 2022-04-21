@@ -17,7 +17,6 @@ Player::Player(ID3D11Device* device) {
 
     const char* idle = "Data/Models/Player/Animations/Idle.fbx";
     const char* run = "Data/Models/Player/Animations/Run.fbx";
-    //const char* walk = "Data/Models/Player/Animations/Walking.fbx";
     const char* jump = "Data/Models/Player/Animations/Jump.fbx";
     const char* attack = "Data/Models/Player/Animations/Attack.fbx";
 
@@ -67,7 +66,7 @@ void Player::Init() {
     // UŒ‚
     atkRadius = 4;
     atkTimer = 0.0f;
-    atkImpulse = 15.0f;
+    atkPower = 20.0f;
 
     // ƒWƒƒƒ“ƒvŠÖ˜A
     jumpSpeed = 110.0f;
@@ -531,8 +530,8 @@ void Player::UpdateJumpState(float elapsedTime) {
 void Player::TransitionAttackState() {
     state = AnimeState::Attack;
     model->PlayAnimation(static_cast<int>(state), false);
-    velocity.y = 0;
-    gravity = -0.3f;
+    //ˆÚ“®—Í‚ğUŒ‚‚Éæ‚¹‚È‚¢
+    velocity = {0,0,0};
 }
 
 void Player::UpdateAttackState(float elapsedTime) {
@@ -543,8 +542,23 @@ void Player::UpdateAttackState(float elapsedTime) {
 
     static bool first = false;
     if (!first) {
-        Vec3 atkMove = atkPos * atkImpulse;
-        if (atkMove.y > 0) atkMove.y = 0;
+        // UŒ‚‚ÌŒü‚«w’è
+        Vec3 atkMove = atkPos * atkPower;
+        if (!Ground()) {
+            // ‹ó’†‚É‚¢‚é‚Æ‚«‚ÌUŒ‚‚Íã‚É”ò‚Î‚È‚¢
+            if (atkMove.y > 0) atkMove.y = 0;
+            // ‹ó’†UŒ‚‚Ìd—Í‚ÍŒy‚­‘Ø‹ó‚³‚¹‚é
+            gravity = -0.3f;
+        }
+        else {
+            // ’n–Ê‚©‚ç‹ó’†‚ÉŒü‚¯‚ÄUŒ‚‚µ‚Ä‚é‚Æ‚«
+            if (atkMove.y > 0) {
+                // –€C‚ğã‚ß‚é‚½‚ß‚É‹ó’†‚É‚·‚é
+                position.y += 0.01;
+                isGround = false;
+            }
+        }
+        // UŒ‚•ûŒü‚Ö‚Æ‚Î‚·
         AddImpulse(atkMove);
         first = true;
     }

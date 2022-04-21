@@ -202,7 +202,7 @@ void SceneGame::Update(float elapsedTime)
       
 
         // スロー時間表示
-        w = player->GetSlowTimer() / slowMaxTime;
+        w = player->GetSlowTimer() / player->GetSlowMax();
         et = elapsedTime;
     }
     //ポーズメニュー
