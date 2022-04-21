@@ -36,9 +36,7 @@ public:
 	// 弾丸とプレイヤーの衝突判定
 	void CollisionProjectileVsPlayer();
 
-	// 徘徊するかどうか
-	void SetWalkFlag(bool b) { walk = b; }		
-
+	
 private:	
 	// 徘徊  ←左true　false右→
 	void MoveWalk(bool direction );
@@ -131,9 +129,7 @@ private:
 	// 移動する向き ←左true　false右→
 	bool direction = false;
 
-	// 歩き回るかどうか
-	bool walk = false;
 
 	// タゲ切るタイマー	
-	float targetTimer = 0.0f;
+	float targetTimer = 0.0f;	
 };

@@ -64,8 +64,7 @@ void SceneGame::Initialize()
     // エネミー座標設定
     EnemyPositionSetting();
 
-    // エネミー初期化			
-    int ENEMY_MAX = 9;
+    // エネミー初期化			    
     for (int i = 0; i <ENEMY_MAX; i++)
     {        
         if (ENEMY_MAX / 2 == i)
@@ -82,8 +81,14 @@ void SceneGame::Initialize()
          EnemyGunner* gunner = new EnemyGunner(device);
          gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
 
-        if (i < 4)gunner->SetWalkFlag(true); //歩き回るかどうか
+        //歩き回るかどうか
+        if (i < 4)gunner->SetWalkFlag(true); 
         else gunner->SetWalkFlag(false);
+
+        // グループ番号セット
+        if (i < 4)gunner->SetGroupNum(0);
+        else if (i < 6)gunner->SetGroupNum(1);
+        else if (i < 9)gunner->SetGroupNum(2);
 
         EnemyManager::Instance().Register(gunner);
         EnemyManager::Instance().Init();
@@ -317,11 +322,22 @@ void SceneGame::Reset()
     SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
     EnemyManager::Instance().Init();
+    EnemyPositionSetting();
+    int group = 0;
+    bool walk = false;
     for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
-    {
-        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
-    }
+    {        
+        //歩き回るかどうか
+        if (i < 4)walk = true;
+        else walk = false;
 
+        // グループ番号セット
+        if (i < 4)group = 0;
+        else if (i < 6)group = 1;
+        else if (i < 9)group = 2;
+
+        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0),group,walk);
+    }
     // プレイヤー蘇生 ポジションリセット
     player->Init();
 
@@ -337,8 +353,8 @@ void SceneGame::EnemyPositionSetting()
     enemyPos[3] = {-120,0.5f};
     enemyPos[4] = {-40,20.5f};
     enemyPos[5] = {4,42.5f};
-    enemyPos[6] = {-130,85.5f};
-    enemyPos[7] = {-65,55.5f};
+    enemyPos[6] = {-65,55.5f};
+    enemyPos[7] = {-130,85.5f};
     enemyPos[8] = {20,70.5f};    
 }
 

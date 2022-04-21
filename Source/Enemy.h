@@ -31,17 +31,41 @@ public:
 	// 死亡した時に呼ばれる
 	void OnDead() override { isDead = true; }
 	
+	// 攻撃予兆を出すかどうか
 	bool GetIsAttack() { return isAttack; }
 
+	// グループ番号セット
+	void SetGroupNum(int g) { groupNum = g; }
+	// グループ番号ゲット
+	int GetGroupNum() { return groupNum; }
+
+	// プレイヤーを見つけているかのフラグゲット
+	void SetIsSearch(bool s) { isSearch = s; }
+	// プレイヤーを見つけているかのフラグゲット
+	bool GetIsSearch() { return isSearch; }
+
+	// 徘徊するかどうか
+	void SetWalkFlag(bool b) { walk = b; }
+
+
 protected:
-	// 攻撃予兆
+	// 自分が何番のグループか
+	int groupNum = 0;
+	// プレイヤーを見つけているか
+	bool isSearch = false;
+	// 歩き回るかどうか
+	bool walk = false;
+
+	// 攻撃予兆Flag
 	bool isAttack = false;
 
-
+	// 死んでるか
 	bool isDead = false;
+	
 
 	float lengthSq = 0;
 
+	// プレイヤー
 	Player* player = nullptr;
 
 	// デバッグ
