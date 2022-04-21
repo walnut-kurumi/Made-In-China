@@ -36,6 +36,7 @@ public:
 	bool GetDead() { return isDead; }
 
 	float GetSlowTimer() const { return slowTimer; }
+	float GetSlowMax() const { return slowMax; }
 
 	float GetPlaybackSpeed() { return slow ? slowSpeed : playbackSpeed; }
 	bool GetSlowFlag() { return slow; }
@@ -122,7 +123,7 @@ private:
 	bool atk = false;
 	float atkRadius = 0.0f;
 	float atkTimer = 0.0f;
-	float atkImpulse = 0.0f;
+	float atkPower = 0.0f;
 
 	// ジャンプ関連
 	float jumpSpeed = 0.0f;
@@ -134,9 +135,9 @@ private:
 	float slowSpeed = 0.0f;
 	bool slow = false;
 	// スローモーションの時間
-	const float slowMax = 10.0f;
+	const float slowMax = 5.0f;
 	float slowTimer = slowMax;
-	const float CTMax = 2.5f;
+	const float CTMax = 2.0f;
 	float slowCTTimer = CTMax;
 	// クールタイム　0:無し 1:CT明け直後 2:CT中
 	int slowCT = 0;

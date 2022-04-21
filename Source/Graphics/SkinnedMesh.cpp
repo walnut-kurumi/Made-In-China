@@ -223,6 +223,7 @@ SkinnedMesh::SkinnedMesh(const char* animationFilename, float samplingRate, int 
 		importStatus = fbxImporter->Import(fbxScene);
 		_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
 
+
 		// ƒV[ƒ“‚ð—¬‚µž‚ñ‚¾‚çImporter‚Í‰ð•ú
 		fbxImporter->Destroy();
 
