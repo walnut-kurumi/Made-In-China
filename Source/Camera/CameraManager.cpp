@@ -120,6 +120,7 @@ void CameraManager::SetBuffer(ID3D11DeviceContext* dc) {
 		DirectX::XMLoadFloat4x4(&mainC.GetView()) * DirectX::XMLoadFloat4x4(&mainC.GetProjection())
 	);
 	cbScene.data.viewProjection = viewProjection;
+	DirectX::XMStoreFloat4x4(&cbScene.data.inverseViewProjection, XMMatrixInverse(nullptr, DirectX::XMLoadFloat4x4(&viewProjection)));
 	cbScene.data.lightDirection = { 0.0f, -1.0f, -1.0f, 0.0f };
 	cbScene.data.cameraPosition = cameraPosition;
 	cbScene.applyChanges();

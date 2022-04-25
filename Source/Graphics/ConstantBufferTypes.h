@@ -2,8 +2,9 @@
 #include <DirectXMath.h>
 struct CbScene
 {
-	DirectX::XMFLOAT4X4	viewProjection;
-	DirectX::XMFLOAT4	lightDirection;
+    DirectX::XMFLOAT4X4	viewProjection;
+    DirectX::XMFLOAT4X4 inverseViewProjection;
+    DirectX::XMFLOAT4	lightDirection;
     DirectX::XMFLOAT4   cameraPosition;
 };
 

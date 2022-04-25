@@ -13,5 +13,5 @@ cbuffer BlurCb : register(b3)
 {    
     float gaussianSigma;
     float bloomIntensity;
-    float exposure;
+    //float exposure;
 };
