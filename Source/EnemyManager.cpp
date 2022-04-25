@@ -3,6 +3,7 @@
 #include "Graphics/Graphics.h"
 #include "Collision.h"
 #include <algorithm>
+#include "StageManager.h"
 
 
 // 初期化処理
@@ -176,6 +177,31 @@ void EnemyManager::CollisionEnemyVsEnemies()
 				outPosition))
 			{								
 				outPosition.z = 0;
+
+				// レイキャスト
+				{
+					float my = outPosition.y - enemyB->GetPosition().y;
+
+					// レイの開始位置は足元より少し上
+					DirectX::XMFLOAT3 start = { outPosition.x, outPosition.y + enemyB->GetStepOffset(), outPosition.z };
+					// レイの終点位置は移動後の位置
+					DirectX::XMFLOAT3 end = { outPosition.x, outPosition.y + my, outPosition.z };
+
+					// レイキャストによる地面判定
+					HitResult hit;
+					if (StageManager::Instance().RayCast(start, end, hit)) {
+
+						// 地面に接地している
+						outPosition.x = hit.position.x;
+						outPosition.y = hit.position.y;
+						outPosition.z = hit.position.z;
+					}
+					else {
+						// 空中に浮いてる
+						outPosition.y = enemyB->GetPosition().y;
+					}
+				}
+
 				enemyB->SetPosition(outPosition);
 			}			
 		}

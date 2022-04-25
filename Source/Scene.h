@@ -2,6 +2,8 @@
 
 #include <d3d11.h>
 #include <memory>
+#include "Graphics/Graphics.h"
+#include "Graphics/Sprite.h"
 
 // ÉVÅ[Éì
 class Scene

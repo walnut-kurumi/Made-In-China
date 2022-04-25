@@ -88,14 +88,14 @@ void CameraManager::Update(float elapsedTime){
 		CameraRay();
 
 		// カメラシェイク用乱数
-		camShake.x = rand() % 2 - 1.0f;
-		camShake.y = rand() % 2 - 1.0f;
-		camShake.z = rand() % 2 - 1.0f;
+		camShake.x = static_cast<float>(rand() % 2 )- 1.0f;
+		camShake.y = static_cast<float>(rand() % 2 )- 1.0f;
+		camShake.z = static_cast<float>(rand() % 2 )- 1.0f;
 
 		// カメラシェイク
 		if (shake)
 		{			
-			if (timer % 2 == 0)target += camShake;			
+			if (timer % 4 == 0)target += camShake;			
 
 			// カメラシェイクタイマー更新
 			UpdateShakeTimer(elapsedTime);

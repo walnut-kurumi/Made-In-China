@@ -2,8 +2,6 @@
 
 #include "Scene.h"
 #include "Player.h"
-#include "Graphics/Graphics.h"
-#include "Graphics/Sprite.h"
 #include "Model.h"
 
 #include <directxmath.h>

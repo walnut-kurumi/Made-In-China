@@ -51,6 +51,7 @@ public:
 
 	float GetRadius() const { return radius; }
 	
+	float GetStepOffset() const { return stepOffset; }
 
 private:
 	// ‚’¼‘¬—ÍXVˆ—
