@@ -59,7 +59,8 @@ void Player::Init() {
     normal = { 0,0,0 };
     velocity = { 0,0,0 };    
     moveSpeed = 50;
-
+    // 武器を持つ
+    weapon = true;
     // 判定用 体の位置
     waistPos = { 0,3,0 };
     headPos = { 0,6,0 };
@@ -361,8 +362,6 @@ void Player::InputSB() {
                 // フィニッシャー発動
                 finish = true;
             }
-            // 武器を手持ちに
-            weapon = true;
         }
     }
 
@@ -408,8 +407,6 @@ void Player::InputSB() {
                 // フィニッシャー発動
                 finish = true;
             }
-            // 武器を手持ちに
-            weapon = true;
         }
     }
 }
@@ -603,6 +600,8 @@ void Player::UpdateFinisherState(float elapsedTime) {
         hitstop = false;
         // フィニッシャー終わり
         finish = false;
+        // 武器を手に持つ
+        weapon = true;
     }
 }
 
@@ -732,8 +731,6 @@ void Player::CollisionSBVsEnemies() {
 
                     // 武器を壊す
                     sb->Destroy();
-                    // 武器を手持ちに
-                    weapon = true;
                 }
             }
         }
@@ -766,8 +763,6 @@ void Player::CollisionSBVsStage() {
             // 投げた武器の場所にワープ
             position = sb->GetPosition();
             sb->Destroy();
-            // 武器を手に持つ
-            weapon = true;
             // フィニッシャー発動
             finish = true;
         }
