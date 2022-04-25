@@ -31,6 +31,7 @@ Player::Player(ID3D11Device* device) {
     position = { 0.0f, 0.0f, 0.0f };
     scale = { 0.05f, 0.05f, 0.05f };
 
+
     UpdateState[static_cast<int>(AnimeState::Idle)] = &Player::UpdateIdleState;
     UpdateState[static_cast<int>(AnimeState::Run)] = &Player::UpdateRunState;
     UpdateState[static_cast<int>(AnimeState::Jump)] = &Player::UpdateJumpState;
