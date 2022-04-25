@@ -212,7 +212,7 @@ void SceneGame::Update(float elapsedTime)
     if (player->GetHealth() <= 0)// ||  gamePad.GetButtonDown() & GamePad::BTN_Y)
     {
         // デバッグ用で消してる
-        Reset();
+       // Reset();
     }
 
 

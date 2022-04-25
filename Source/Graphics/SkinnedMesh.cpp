@@ -284,8 +284,7 @@ void SkinnedMesh::render(ID3D11DeviceContext* deviceContext, const DirectX::XMFL
 			//                 "boneTransform"                                  "world"
 			//  {(Model ~ bone) * (bone ~ global) * (model ~ global)} ~ {(model ~ global) * (global ~ world)}
 			//                                         -1(‹ts—ñ)
-			//************************************************************************************************
-
+			//************************************************************************************************			
 			const Animation::Keyframe::Node& meshNode = keyframe->nodes.at(mesh.nodeIndex);
 			XMStoreFloat4x4(
 				&data.world, 
