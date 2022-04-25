@@ -14,22 +14,27 @@ void SB::Destroy() {
 // 行列更新処理
 void SB::UpdateTransform() {
 	DirectX::XMVECTOR Front, Up, Right;
-	// 前ベクトルを算出
+
+	//前ベクトル算出
 	Front = DirectX::XMLoadFloat3(&direction);
 	Front = DirectX::XMVector3Normalize(Front);
-	// 仮の上ベクトルを算出
+	//仮の上ベクトル算出
 	Up = DirectX::XMVectorSet(0.001f, 1, 0, 0);
 	Up = DirectX::XMVector3Normalize(Up);
-	// 右ベクトルを算出
+	//右ベクトル算出
 	Right = DirectX::XMVector3Cross(Up, Front);
-	// 上ベクトルを算出
+	Right = DirectX::XMVector3Normalize(Right);
+	//上ベクトル算出
 	Up = DirectX::XMVector3Cross(Front, Right);
-	// 計算結果を取り出し
-	DirectX::XMFLOAT3 right, up, front;
+
+
+	//計算結果取り出し
+	DirectX::XMFLOAT3 front, up, right;
 	DirectX::XMStoreFloat3(&right, Right);
 	DirectX::XMStoreFloat3(&up, Up);
 	DirectX::XMStoreFloat3(&front, Front);
-	// 算出した軸ベクトルから行列を作成
+
+	//算出したベクトルから行列作成
 	transform._11 = right.x * scale.x;
 	transform._12 = right.y * scale.x;
 	transform._13 = right.z * scale.x;

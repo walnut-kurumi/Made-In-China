@@ -42,6 +42,9 @@ public:
 	//{
 	//	return model.get()->GetAnimation();
 	//}
+	float GetCurrentAnimationSeconds() {
+		return animationSeconds;
+	}
 
 private:
 	std::shared_ptr<SkinnedMesh> skinnedMesh;

@@ -62,11 +62,11 @@ void Player::Init() {
     // 判定用 体の位置
     waistPos = { 0,3,0 };
     headPos = { 0,6,0 };
-    atkPos = { -999,-999,-999 };    // 攻撃の位置は攻撃時に設定
+    atkPos = { 0,0,0 };    // 攻撃の位置は攻撃時に設定
     // 攻撃
-    atkRadius = 4;
+    atkRadius = 2;
     atkTimer = 0.0f;
-    atkPower = 20.0f;
+    atkPower = 5.0f;
 
     // ジャンプ関連
     jumpSpeed = 110.0f;
@@ -75,6 +75,8 @@ void Player::Init() {
     // スローモーション関連
     playbackSpeed = 1.0f;
     slowSpeed = 0.5f;
+    slowTimer = slowMax;
+    slowCTTimer = CTMax;
 
     // ヒットストップ
     hitstopSpeed = 0.6f;
@@ -112,8 +114,8 @@ void Player::Update(float elapsedTime) {
 
     CollisionSBVsEnemies();
     CollisionSBVsStage();
-    CollisionPanchiVsEnemies();
-    // CollisionPanchiVsProjectile();
+    if (atk) CollisionPanchiVsEnemies();
+    if (atk) CollisionPanchiVsProjectile();
 
     atkTimer -= elapsedTime;
 
@@ -427,10 +429,6 @@ bool Player::InputAttack() {
             if (ax && ay)atkPos = { -ax, ay, 0 };
             else atkPos = { front.x,0,0 };
             atkPos = VecMath::Normalize(atkPos) * 3;
-            atk = true;
-
-            //CollisionPanchiVsEnemies();
-            CollisionPanchiVsProjectile();
 
             // 攻撃のCT
             if(!isGround) 
@@ -450,10 +448,6 @@ bool Player::InputAttack() {
             
             atkPos = playerScreenPos - cursor;
             atkPos = VecMath::Normalize(atkPos) * 5;
-            atk = true;
-
-            //CollisionPanchiVsEnemies();
-            CollisionPanchiVsProjectile();
 
             // 攻撃のCT
             if (!isGround)
@@ -540,9 +534,9 @@ void Player::UpdateAttackState(float elapsedTime) {
         Vec3 atkMove = atkPos * atkPower;
         if (!Ground()) {
             // 空中にいるときの攻撃は上に飛ばない
-            if (atkMove.y > 0) atkMove.y = 0;
+            atkMove.y = 0;
             // 空中攻撃の重力は軽く滞空させる
-            gravity = -0.3f;
+            gravity = -0.0f;
         }
         else {
             // 地面から空中に向けて攻撃してるとき
@@ -557,11 +551,14 @@ void Player::UpdateAttackState(float elapsedTime) {
         first = true;
     }
 
-
     // フィニッシャーへの移行
     if (finish) TransitionFinisherState();
 
     if (Ground()) velocity.x = 0;
+
+    // 任意のアニメーション再生区間でのみ衝突判定処理をする
+    float animationTime = model->GetCurrentAnimationSeconds();
+    atk = animationTime >= 0.01f && animationTime <= 0.20f;
     
     // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
@@ -574,7 +571,7 @@ void Player::UpdateAttackState(float elapsedTime) {
         first = false;
 
         // 攻撃位置リセット
-        atkPos = { -999,-999,-999 };
+        atkPos = { 0,0,0 };
         atk = false;
        
         // ヒットストップおわり
@@ -662,11 +659,11 @@ void Player::CollisionPanchiVsProjectile() {
     EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();
     int enemyBCount = enemyBManager.GetProjectileCount();
     for (int i = 0; i < enemyBCount; ++i) {
-        EnemyBullet* enemy = enemyBManager.GetProjectile(i);
+        EnemyBullet* enemyBullet = enemyBManager.GetProjectile(i);
         // 衝突処理
-        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {
-            enemy->SetReflectionFlag(true);
-            enemy->SetDirection(-enemy->GetDirection());
+        if (Collision::SphereVsSphere(enemyBullet->GetPosition(), atkPos + position + waistPos, enemyBullet->GetRadius(), atkRadius)) {
+            if(!enemyBullet->GetReflectionFlag()) enemyBullet->SetDirection(-enemyBullet->GetDirection());
+            enemyBullet->SetReflectionFlag(true);
             // ヒットストップ
             if (!slow)hitstop = true;
             // カメラシェイク（簡素）
