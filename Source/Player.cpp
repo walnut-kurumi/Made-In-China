@@ -606,24 +606,24 @@ void Player::UpdateFinisherState(float elapsedTime) {
 }
 
 void Player::Vibration(float elapsedTime) {
-    // U“®ŽŽ‚µ
-    Key& key = Input::Instance().GetKey();
-    XINPUT_VIBRATION vib{};
-    XINPUT_VIBRATION vib2{};
-    {
-        vib.wLeftMotorSpeed = MAX_SPEED;
-        vib.wRightMotorSpeed = MIN_SPEED;
-        vib2.wLeftMotorSpeed = 0;
-        vib2.wRightMotorSpeed = 0;
-    }
-    XInputSetState(0, &vib);
-    if (vibration && vibTimer >= 0.0f) {
-        if (slow) vibTimer -= elapsedTime / slowSpeed;
-        else vibTimer -= elapsedTime;
-    }
-    else {
-        XInputSetState(0, &vib2);
-    }
+    //// U“®ŽŽ‚µ
+    //Key& key = Input::Instance().GetKey();
+    //XINPUT_VIBRATION vib{};
+    //XINPUT_VIBRATION vib2{};
+    //{
+    //    vib.wLeftMotorSpeed = MAX_SPEED;
+    //    vib.wRightMotorSpeed = MIN_SPEED;
+    //    vib2.wLeftMotorSpeed = 0;
+    //    vib2.wRightMotorSpeed = 0;
+    //}
+    //XInputSetState(0, &vib);
+    //if (vibration && vibTimer >= 0.0f) {
+    //    if (slow) vibTimer -= elapsedTime / slowSpeed;
+    //    else vibTimer -= elapsedTime;
+    //}
+    //else {
+    //    XInputSetState(0, &vib2);
+    //}
 }
 
 void Player::OnLanding() {
@@ -722,12 +722,6 @@ void Player::CollisionSBVsEnemies() {
                     Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
                     dir *= backDir;
                     position = enemy->GetPosition() + dir;
-
-                    /// **********************************
-                    /// ++++++++++++++++++++++++++++++++++
-                    ///          ‰ñ“]‚ð”½‰f‚³‚¹‚é
-                    /// ++++++++++++++++++++++++++++++++++
-                    /// **********************************
 
                     // •Ší‚ð‰ó‚·
                     sb->Destroy();
