@@ -739,6 +739,9 @@ void SkinnedMesh::fetchAnimations(FbxScene* fbxScene,
 					node.scaling = to_xmfloat3(localTransform.GetS());
 					node.rotation = to_xmfloat4(localTransform.GetQ());
 					node.translation = to_xmfloat3(localTransform.GetT());
+					int hour, minute, second, frame, field, residual;
+					time.GetTime(hour, minute, second, frame, field, residual, FbxTime::eFrames1000);
+					keyframe.seconds = frame / 1000.0f;
 				}
 			}
 		}

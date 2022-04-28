@@ -311,6 +311,9 @@
     <ClCompile Include="Source\EnemyMelee.cpp">
       <Filter>Source\Character\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Fade.cpp">
+      <Filter>Source\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -520,6 +523,9 @@
     </ClInclude>
     <ClInclude Include="Source\Graphics\Rasterizer.h">
       <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Fade.h">
+      <Filter>Source\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -231,17 +231,18 @@ public:
 				DirectX::XMFLOAT4 rotation = { 0, 0, 0, 1 }; // Rotation quaternion
 				DirectX::XMFLOAT3 translation = { 0, 0, 0 }; // 親ノードの座標における位置（このノードの座標の原点）
 				// 上三つ合成→ 子~親    Local Transform 
-
 				template<class T>
 				void serialize(T& archive) {
 					archive(globalTransform, scaling, rotation, translation);
 				}
 			};
 			std::vector<Node> nodes;
+			// 時間
+			float seconds = 0.0f;
 
 			template<class T>
 			void serialize(T& archive) {
-				archive(nodes);
+				archive(nodes, seconds);
 			}
 		};
 		std::vector<Keyframe> sequence;

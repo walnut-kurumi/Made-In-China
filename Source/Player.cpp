@@ -15,10 +15,10 @@
 
 Player::Player(ID3D11Device* device) {
 
-    const char* idle = "Data/Models/Player/Animations/Idle3.fbx";
-    const char* run = "Data/Models/Player/Animations/Run3.fbx";
-    const char* jump = "Data/Models/Player/Animations/Jump3.fbx";
-    const char* attack = "Data/Models/Player/Animations/Attack3.fbx";
+    const char* idle = "Data/Models/Player/Animations/ver5/Idle.fbx";
+    const char* run = "Data/Models/Player/Animations/ver5/Run.fbx";
+    const char* jump = "Data/Models/Player/Animations/ver5/Jump.fbx";
+    const char* attack = "Data/Models/Player/Animations/ver5/Attack.fbx";
 
     model = new Model(device, "Data/Models/Player/T.fbx", true, 0);
 
@@ -93,6 +93,8 @@ void Player::Init() {
     backDir = 5.0f;
 
     health = 1;
+
+    isTp = false;
 }
 #include <Xinput.h>
 void Player::Update(float elapsedTime) {
@@ -631,6 +633,27 @@ void Player::Vibration(float elapsedTime) {
     //else {
     //    XInputSetState(0, &vib2);
     //}
+}
+
+// テレポート
+void Player::Teleport()
+{
+    // SB探索
+    SBManager& sbManager = SBManager::Instance();
+    int sbCount = sbManager.GetProjectileCount();
+    for (int i = 0; i < sbCount; ++i) {
+        SB* sb = sbManager.GetProjectile(i);
+
+        // 向きを設定
+        direction = VecMath::sign(sb->GetPosition().x - position.x);
+        // 旋回処理
+        if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
+        // 投げた武器の場所にワープ
+        Vec3 vec = sb->GetPosition() - position;
+        sb->Destroy();
+        // フィニッシャー発動
+        finish = true;
+    }
 }
 
 void Player::OnLanding() {
