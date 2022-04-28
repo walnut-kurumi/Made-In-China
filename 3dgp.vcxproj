@@ -286,8 +286,10 @@
     <ClInclude Include="Source\Graphics\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\ConstantBufferTypes.h" />
     <ClInclude Include="Source\Framework.h" />
+    <ClInclude Include="Source\Graphics\DepthStensiler.h" />
     <ClInclude Include="Source\Graphics\GeometricPrimitive.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
+    <ClInclude Include="Source\Graphics\Rasterizer.h" />
     <ClInclude Include="Source\HighResolutionTimer.h" />
     <ClInclude Include="Source\HitManager.h" />
     <ClInclude Include="Source\Input\GamePad.h" />

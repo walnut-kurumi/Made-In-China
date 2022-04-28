@@ -515,11 +515,14 @@
     <ClInclude Include="Source\EnemyMelee.h">
       <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Graphics\DepthStensiler.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Rasterizer.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader\Constants.hlsli">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="shader\debug.hlsli">
       <Filter>Shader</Filter>
     </None>
@@ -563,6 +566,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\noise.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="shader\Constants.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
