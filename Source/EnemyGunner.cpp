@@ -578,6 +578,8 @@ void EnemyGunner::UpdateBlowState(float elapsedTime)
 
     // 吹っ飛ばしたら死亡ステートへ               
     else TransitionDeathState();    
+
+    if(!model->IsPlayAnimatimon()) TransitionDeathState();    
 }
 
 

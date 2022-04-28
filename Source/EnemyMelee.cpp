@@ -142,8 +142,11 @@ void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
         heightPos.y += height;
 
         // DEBUG        
+        if(isAttack)debugRenderer.get()->DrawSphere(attackPos, attackRadius, Vec4(0.5f, 1, 0.5f, 1));
+
         debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
         debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
+
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
@@ -312,8 +315,17 @@ void EnemyMelee::MoveAttack(float cooldown)
         // 攻撃アニメーション再生
         model->PlayAnimation(static_cast<int>(state), false);
         
-        attackPos = centerPosition + Vec3{ 2,0,0 };
-        attackPos.x *= direction;
+        // プレイヤーの中心座標
+        const Vec3& p = { player->GetCenterPosition() };
+        // エネミーの中心座標
+        const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
+
+        // 発射する向き       
+        // プレイヤーに向かって
+        Vec3 pe = { p - e };
+        VecMath::Normalize(pe);
+        attackPos = centerPosition + pe;
+        pe *= 0.1f;
                
         isAttack = false;
     }
@@ -493,7 +505,7 @@ void EnemyMelee::TransitionAttackState()
 {
     state = State::Attack;
     moveSpeed = 0;
-    attackCooldown = 0.45f;
+    attackCooldown = 0.25f;
 }
 
 //攻撃ステート更新処理
