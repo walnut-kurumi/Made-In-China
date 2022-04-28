@@ -9,8 +9,7 @@ StageMain::StageMain(ID3D11Device* device)
 {
     back = new Sprite(device, L"./Data/Sprites/kariAsset.jpg");
 
-    //model = new Model(device, ".\\Data\\Models\\Stage\\MDL_stage_ah.fbx", true, 0);
-    model = new Model(device, "Data/Models/Player/T5.fbx", true, 0);
+    model = new Model(device, ".\\Data\\Models\\Stage\\MDL_stage_ah.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
 
     position.x = -140;

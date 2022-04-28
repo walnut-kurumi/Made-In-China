@@ -43,7 +43,7 @@ void EnemyManager::Update(float elapsedTime)
 	removes.clear();
 
 	// 敵同士の衝突処理
-	CollisionEnemyVsEnemies();
+	//CollisionEnemyVsEnemies();
 
 	// グループ化
 	GroupAttack();
@@ -178,7 +178,7 @@ void EnemyManager::CollisionEnemyVsEnemies()
 			{								
 				outPosition.z = 0;
 
-				// レイキャスト
+				// 下レイキャスト
 				{
 					float my = outPosition.y - enemyB->GetPosition().y;
 
@@ -200,6 +200,24 @@ void EnemyManager::CollisionEnemyVsEnemies()
 						// 空中に浮いてる
 						outPosition.y = enemyB->GetPosition().y;
 					}
+				}
+				// 横レイキャスト
+				{
+					float mx = outPosition.x - enemyB->GetPosition().x;
+
+					// レイの開始位置は足元より少し上
+					DirectX::XMFLOAT3 start = { outPosition.x, outPosition.y + enemyB->GetStepOffset(), outPosition.z };
+					// レイの終点位置は移動後の位置
+					DirectX::XMFLOAT3 end = { outPosition.x + mx, outPosition.y + enemyB->GetStepOffset(), outPosition.z };
+
+					// レイキャストによる地面判定
+					HitResult hit;
+					if (StageManager::Instance().RayCast(start, end, hit)) {
+
+						// 地面に接地している
+						outPosition.x = hit.position.x;						
+						outPosition.z = hit.position.z;
+					}					
 				}
 
 				enemyB->SetPosition(outPosition);
