@@ -111,6 +111,8 @@ void EnemyMelee::Update(float elapsedTime)
     model->UpdateAnimation(elapsedTime);
     //モデル行列更新
     model->UpdateTransform(transform);
+
+    FallIsDead();
 }
 
 void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)

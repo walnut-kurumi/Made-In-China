@@ -120,6 +120,9 @@ void SceneGame::Initialize()
 
     Menu::Instance().Initialize();
 
+    //デバッグ
+    //hitEffect = new Effect("Data/Effect/player_hit.efk");
+
     // ロード％ 100%
     SetLoadPercent(10.0f);
 }
@@ -141,7 +144,9 @@ void SceneGame::Finalize()
 
     delete enemyattack;
     delete LoadBar;
-    delete Bar;    
+    delete Bar;
+    //デバッグ
+   // delete hitEffect;
 }
 
 // 更新処理
@@ -221,6 +226,16 @@ void SceneGame::Update(float elapsedTime)
     // Menu
     Menu::Instance().Update(elapsedTime);
 
+    //エフェクトデバッグ
+   /* const mouseButton mouseClick =
+        Mouse::BTN_LEFT;
+    if(mouse.GetButtonDown() & mouseClick && a == false)
+        handle = hitEffect->Play(player->GetPosition()); a = true; ti = 0;
+
+    if (ti %= 300)
+        hitEffect->Stop(handle); a = false;
+
+    ti++;*/
 
     // TODO 現在のステージの死んでるエネミーの数が０の場合 次のステージへ
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())

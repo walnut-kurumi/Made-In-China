@@ -28,8 +28,7 @@ Effect::~Effect()
 	//”jŠüˆ—
 	if (effekseerEffect != nullptr)
 	{
-		effekseerEffect->Release();
-		effekseerEffect = nullptr;
+		effekseerEffect.Reset();
 	}
 }
 

@@ -7,8 +7,9 @@
 #include <directxmath.h>
 #include "PerlinNoise.h"
 #include"Graphics/Misc.h"
+#include"Effect.h"
 
-
+ 
 class SceneGame : public Scene
 {
 public:
@@ -46,6 +47,10 @@ private:
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
 
+	Effect* hitEffect = nullptr;
+	Effekseer::Handle handle = 0;
+	bool a = false;
+	int ti = 0;
 
 	// CAMERA_SHAKE
 	// https://www.gdcvault.com/play/1023557/Math-for-Game-Programmers-Juicing
