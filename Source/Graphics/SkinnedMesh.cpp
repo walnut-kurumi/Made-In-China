@@ -50,6 +50,7 @@ void SkinnedMesh::Init(ID3D11Device* device,BOOL frontCounterClockwise)
 			hr = device->CreateRasterizerState(&rasterizerDesc, solidRasterizerState.GetAddressOf());
 			_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 		}
+		rasterizer = std::make_unique<Rasterizer>(device);
 	}
 
 	// 深度ステンシルステート
@@ -60,6 +61,7 @@ void SkinnedMesh::Init(ID3D11Device* device,BOOL frontCounterClockwise)
 		}
 		hr = device->CreateDepthStencilState(&depthstencildesc, depthStencilState.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
+		depth = std::make_unique<DeppthSteciler>(device);
 	}
 
 	// サンプラー
@@ -102,7 +104,8 @@ void SkinnedMesh::Begin(ID3D11DeviceContext* dc, Shader shader, bool wire)
 	dc->IASetInputLayout(shader.GetInputLayout().Get());
 
 	// 深度テスト設定
-	dc->OMSetDepthStencilState(depthStencilState.Get(), 0);
+	//dc->OMSetDepthStencilState(depthStencilState.Get(), 0);
+	depth->setRasterMode(DeppthSteciler::DEPTH_STENCIL_STATE::ZT_ON_ZW_ON, dc);
 
 	// サンプラー設定
 	dc->PSSetSamplers(0, 1, samplerState.GetAddressOf());
@@ -112,7 +115,8 @@ void SkinnedMesh::Begin(ID3D11DeviceContext* dc, Shader shader, bool wire)
 
 	// ラスタライザ
 	// ワイヤーフレーム化ソリッド化
-	wire ? dc->RSSetState(wireRasterizerState.Get()) : dc->RSSetState(solidRasterizerState.Get());
+	wire ? rasterizer->setRasterMode(Rasterizer::RASTER_STATE::WIREFRAME, dc) : rasterizer->setRasterMode(Rasterizer::RASTER_STATE::CULL_NONE, dc);
+	//wire ? dc->RSSetState(wireRasterizerState.Get()) : dc->RSSetState(solidRasterizerState.Get());
 }
 
 void SkinnedMesh::End(ID3D11DeviceContext* dc)
