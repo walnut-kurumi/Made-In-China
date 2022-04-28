@@ -308,6 +308,9 @@
     <ClCompile Include="Source\fullscreen_quad.cpp">
       <Filter>Source\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EnemyMelee.cpp">
+      <Filter>Source\Character\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -508,6 +511,9 @@
     </ClInclude>
     <ClInclude Include="Source\fullscreen_quad.h">
       <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyMelee.h">
+      <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
