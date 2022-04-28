@@ -512,22 +512,17 @@
     <ClInclude Include="Source\fullscreen_quad.h">
       <Filter>Source\Graphics</Filter>
     </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="Source\Graphics\Rasterizer.h">
-      <Filter>Source\Graphics</Filter>
+    <ClInclude Include="Source\EnemyMelee.h">
+      <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graphics\DepthStensiler.h">
       <Filter>Source\Graphics</Filter>
-=======
-    <ClInclude Include="Source\EnemyMelee.h">
-      <Filter>Source\Character\Enemy</Filter>
->>>>>>> 0c54d53a602ccc4caaddf645fca1f4f4351f42e2
+    </ClInclude>
+    <ClInclude Include="Source\Graphics\Rasterizer.h">
+      <Filter>Source\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader\Constants.hlsli">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="shader\debug.hlsli">
       <Filter>Shader</Filter>
     </None>
@@ -571,6 +566,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\noise.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="shader\Constants.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
