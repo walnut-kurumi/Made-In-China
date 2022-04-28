@@ -30,9 +30,12 @@ public:
 	// 描画処理
 	void Render(float elapsedTime);
 
-	//メニュー
-	void FadeIn();
-	void FadeOut();
+	//フェード
+	void FadeIn(float speed);
+	void FadeOut(float speed);
+
+	// リセット
+	void ResetFade();
 
 	// フェードフラグ取得
 	bool GetFadeInFlag() { return fadeInFlag; }
@@ -44,6 +47,6 @@ private:
 
 	bool fadeInFlag = false;
 	bool fadeOutFlag = false;
-	float fadeAlha = 0.0f;
+	float fadeAlpha = 0.0f;
 };
 #pragma once
