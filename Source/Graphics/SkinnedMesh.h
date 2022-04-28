@@ -5,6 +5,8 @@
 #include "Shaders.h"
 
 #include "Blender.h"
+#include"Rasterizer.h"
+#include"DepthStensiler.h"
 
 //SERIALIZATION
 #include <cereal/archives/binary.hpp>
@@ -78,7 +80,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState>		wireRasterizerState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState>		depthStencilState;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState>			samplerState;
+	std::unique_ptr<Rasterizer> rasterizer;
 	std::unique_ptr<Blender> blender;
+	std::unique_ptr<DeppthSteciler> depth;
 
 public:
 	void Init(ID3D11Device* device, BOOL frontCounterClockwise);
