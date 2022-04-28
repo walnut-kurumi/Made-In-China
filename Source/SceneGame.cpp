@@ -7,6 +7,7 @@
 
 #include "EnemyManager.h"
 #include "EnemyGunner.h"
+#include "EnemyMelee.h"
 
 #include"SceneLoading.h"
 #include"SceneClear.h"
@@ -78,7 +79,8 @@ void SceneGame::Initialize()
             AddLoadPercent(2.0f);            
         }
 
-         EnemyGunner* gunner = new EnemyGunner(device);
+         //EnemyGunner* gunner = new EnemyGunner(device);
+         EnemyMelee* gunner = new EnemyMelee(device);
          gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
 
         //•à‚«‰ñ‚é‚©‚Ç‚¤‚©

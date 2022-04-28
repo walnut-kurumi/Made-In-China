@@ -1,13 +1,12 @@
-#include "EnemyGunner.h"
+#include "EnemyMelee.h"
 #include "Framework.h"
 #include "Graphics/Shaders.h"
 #include "StageManager.h"
 #include "Camera/CameraManager.h"
-#include "EnemyBulletStraight.h"
 
 #include "HitManager.h"
 
-EnemyGunner::EnemyGunner(ID3D11Device* device)
+EnemyMelee::EnemyMelee(ID3D11Device* device)
 {
 
     const char* idle = "Data/Models/Enemy/Animations/Idle.fbx";
@@ -26,28 +25,28 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     model->LoadAnimation(blow, 0, static_cast<int>(State::Blow));
     model->LoadAnimation(death, 0, static_cast<int>(State::Death));
 
-    UpdateState[static_cast<int>(State::Idle)] = &EnemyGunner::UpdateIdleState;
-    UpdateState[static_cast<int>(State::Run)] = &EnemyGunner::UpdateRunState;
-    UpdateState[static_cast<int>(State::Walk)] = &EnemyGunner::UpdateWalkState;
-    UpdateState[static_cast<int>(State::Attack)] = &EnemyGunner::UpdateAttackState;
-    UpdateState[static_cast<int>(State::Blow)] = &EnemyGunner::UpdateBlowState;
-    UpdateState[static_cast<int>(State::Death)] = &EnemyGunner::UpdateDeathState;
+    UpdateState[static_cast<int>(State::Idle)] = &EnemyMelee::UpdateIdleState;
+    UpdateState[static_cast<int>(State::Run)] = &EnemyMelee::UpdateRunState;
+    UpdateState[static_cast<int>(State::Walk)] = &EnemyMelee::UpdateWalkState;
+    UpdateState[static_cast<int>(State::Attack)] = &EnemyMelee::UpdateAttackState;
+    UpdateState[static_cast<int>(State::Blow)] = &EnemyMelee::UpdateBlowState;
+    UpdateState[static_cast<int>(State::Death)] = &EnemyMelee::UpdateDeathState;
 
-    position = { 0.0f, 0.0f, 0.0f };    
+    position = { 0.0f, 0.0f, 0.0f };
 
     scale = { 0.05f, 0.05f, 0.05f };
-       
+
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
-EnemyGunner::~EnemyGunner()
+EnemyMelee::~EnemyMelee()
 {
-    delete model;    
+    delete model;
     isAttack = false;
 }
 
-void EnemyGunner::Init()
-{   
+void EnemyMelee::Init()
+{
     angle = { 0,0,0 };
     transform = {
         1,0,0,0,
@@ -81,22 +80,22 @@ void EnemyGunner::Init()
     TransitionWalkState();
 }
 
-void EnemyGunner::Update(float elapsedTime)
+void EnemyMelee::Update(float elapsedTime)
 {
     position.z = 0;
 
     if (isDead)return;
 
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
- 
+
     // 中心座標更新
     UpdateCenterPosition();
 
     // 反射した弾丸との衝突判定
     CollisionProjectileVsEnemies();
-    // 発射した弾丸とプレイヤーの衝突判定
-    CollisionProjectileVsPlayer();
-
+    // 攻撃とプレイヤーの判定
+    if(isAttack)CollisionPanchiVsPlayer();
+    
     // 速度更新
     UpdateSpeed(elapsedTime);
 
@@ -114,7 +113,7 @@ void EnemyGunner::Update(float elapsedTime)
     model->UpdateTransform(transform);
 }
 
-void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
+void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     if (isDead == false)
     {
@@ -136,18 +135,18 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
         model->Begin(dc, *shader);
         model->Render(dc, materialColor);
 
-        // 弾丸描画処理
-        EnemyBulletManager::Instance().Render(dc, shader);
-
-
+      
 #ifdef _DEBUG
         // height
         Vec3 heightPos = position;
-        heightPos.y += height;        
+        heightPos.y += height;
 
         // DEBUG        
+        if(isAttack)debugRenderer.get()->DrawSphere(attackPos, attackRadius, Vec4(0.5f, 1, 0.5f, 1));
+
         debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
         debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
+
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
@@ -160,7 +159,7 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 
 
 // 反射した弾丸との衝突判定
-void EnemyGunner::CollisionProjectileVsEnemies()
+void EnemyMelee::CollisionProjectileVsEnemies()
 {
     EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();
     int enemyBCount = enemyBManager.GetProjectileCount();
@@ -187,50 +186,39 @@ void EnemyGunner::CollisionProjectileVsEnemies()
     }
 }
 
-// プレイヤーと弾の衝突判定
-void EnemyGunner::CollisionProjectileVsPlayer()
+// 攻撃とプレイヤーの判定
+void EnemyMelee::CollisionPanchiVsPlayer()
 {
-    EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();
-    int enemyBCount = enemyBManager.GetProjectileCount();
-    for (int i = 0; i < enemyBCount; ++i)
-    {
-        EnemyBullet* enemyB = enemyBManager.GetProjectile(i);
-        // 衝突処理
-        if (Collision::SphereVsSphere(enemyB->GetPosition(), player->GetCenterPosition(), enemyB->GetRadius(), player->GetRadius()))
-        {
-            // 反射してなかったら
-            if (!enemyB->GetReflectionFlag())
-            {
-                // ダメージ与える
-                player->ApplyDamage(1, 0.8f);                
-            }
-        }
+    // 衝突処理
+    if (Collision::SphereVsSphere(attackPos, player->GetCenterPosition(), attackRadius, player->GetRadius())) {
+        // ダメージ与える
+        player->ApplyDamage(1, 0.8f);
     }
 }
 
 // 徘徊  ←左true　false右→
-void EnemyGunner::MoveWalk(bool direction)
+void EnemyMelee::MoveWalk(bool direction)
 {
     // walk
     float vx;
     (direction ? vx = -1 : vx = 1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
-    Move(vx, 0.0f,moveSpeed);
+    Move(vx, 0.0f, moveSpeed);
 }
 
 // 索敵エリア更新
-void EnemyGunner::UpdateSearchArea()
-{    
+void EnemyMelee::UpdateSearchArea()
+{
     if (!direction)
-    {        
-        searchAreaPos = { position.x - 10, position.y - 2.0f };        
+    {
+        searchAreaPos = { position.x - 10, position.y - 2.0f };
         searchAreaScale = { 45, height + 5.0f };
     }
     else
-    {        
-        searchAreaPos = { position.x - 35, position.y - 2.0f };        
+    {
+        searchAreaPos = { position.x - 35, position.y - 2.0f };
         searchAreaScale = { 45, height + 5.0f };
-    }    
+    }
     // 止まっているときは両方みれる
     if (!walk)
     {
@@ -240,16 +228,16 @@ void EnemyGunner::UpdateSearchArea()
 }
 
 // 中心座標
-void EnemyGunner::UpdateCenterPosition()
+void EnemyMelee::UpdateCenterPosition()
 {
     // 中心座標更新
     centerPosition = position;
-    centerPosition.y += height/2.0f;
+    centerPosition.y += height / 2.0f;
 }
 
 // プレイヤーを索敵
-bool EnemyGunner::Search()
-{      
+bool EnemyMelee::Search()
+{
     // isSearch = true ならreturn true
     if (isSearch)return true;
 
@@ -271,7 +259,7 @@ bool EnemyGunner::Search()
 }
 
 // 射程距離まで走る
-void EnemyGunner::MoveRun(bool direction)
+void EnemyMelee::MoveRun(bool direction)
 {
     // 向きをプレイヤーの方向へ
     if (player->GetCenterPosition().x > position.x)direction = false;
@@ -285,23 +273,23 @@ void EnemyGunner::MoveRun(bool direction)
 }
 
 // 射程距離かどうか
-bool EnemyGunner::CheckAttackRange()
+bool EnemyMelee::CheckAttackRange()
 {
     // プレイヤーの座標とガンナーの座標でベクトル作成
     Vec3 distance = { player->GetCenterPosition() - position };
     //　ベクトルから距離取得    
-    float range =  VecMath::LengthVec3(distance);
+    float range = VecMath::LengthVec3(distance);
     // 射程距離より小さいならtrue
     if (attackRange >= range)return true;
     // 射程距離より大きいならfalse
-    else return false;    
+    else return false;
 }
 
 // 攻撃
-void EnemyGunner::MoveAttack(float cooldown)
+void EnemyMelee::MoveAttack(float cooldown)
 {
     if (attackCooldown > 0.0f)
-    {       
+    {
         isAttack = true;
         return;
     }
@@ -316,7 +304,7 @@ void EnemyGunner::MoveAttack(float cooldown)
     attackCooldown = cooldown;
 
     ID3D11Device* device = Graphics::Ins().GetDevice();
-        
+
     // 直進弾丸発射   
     {
         // 体の向き
@@ -326,7 +314,7 @@ void EnemyGunner::MoveAttack(float cooldown)
 
         // 攻撃アニメーション再生
         model->PlayAnimation(static_cast<int>(state), false);
-
+        
         // プレイヤーの中心座標
         const Vec3& p = { player->GetCenterPosition() };
         // エネミーの中心座標
@@ -336,55 +324,52 @@ void EnemyGunner::MoveAttack(float cooldown)
         // プレイヤーに向かって
         Vec3 pe = { p - e };
         VecMath::Normalize(pe);
+        attackPos = centerPosition + pe;
         pe *= 0.1f;
-
-        // 発射
-        EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
-        bullet->Launch(pe, e);        
-            
+               
         isAttack = false;
     }
 }
 
 // 吹っ飛ぶ
-void EnemyGunner::MoveBlow()
-{                
-    // プレイヤーの中心座標
-    const Vec3& p = { player->GetCenterPosition() };
-    // エネミーの中心座標
-    const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
-        
-    float vx = e.x - p.x;
-    float vy = e.y - p.y;
-    float lengthXY = sqrtf(vx * vx + vy * vy);
-    vx /= lengthXY;
-    vy /= lengthXY;
-          
-    // 吹っ飛ばす    100.0f = 衝撃の強さ
-    AddImpulse(Vec3(vx, vy, 0) * 100.0f);
- 
-}
-
-//射線が通っていないか
-bool EnemyGunner::AttackRayCheck()
+void EnemyMelee::MoveBlow()
 {
     // プレイヤーの中心座標
     const Vec3& p = { player->GetCenterPosition() };
     // エネミーの中心座標
     const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
-  
+
+    float vx = e.x - p.x;
+    float vy = e.y - p.y;
+    float lengthXY = sqrtf(vx * vx + vy * vy);
+    vx /= lengthXY;
+    vy /= lengthXY;
+
+    // 吹っ飛ばす    100.0f = 衝撃の強さ
+    AddImpulse(Vec3(vx, vy, 0) * 100.0f);
+
+}
+
+//射線が通っていないか
+bool EnemyMelee::AttackRayCheck()
+{
+    // プレイヤーの中心座標
+    const Vec3& p = { player->GetCenterPosition() };
+    // エネミーの中心座標
+    const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
+
 
     // プレイヤー方向へレイキャスト
     HitResult hit;
 
     return StageManager::Instance().RayCast(e, p, hit);
-   
+
 }
 
 
 
 // 待機ステート遷移
-void EnemyGunner::TransitionIdleState()
+void EnemyMelee::TransitionIdleState()
 {
     state = State::Idle;
     turnFlag = false;
@@ -396,8 +381,8 @@ void EnemyGunner::TransitionIdleState()
 }
 
 // 待機ステート更新処理
-void EnemyGunner::UpdateIdleState(float elapsedTime)
-{   
+void EnemyMelee::UpdateIdleState(float elapsedTime)
+{
     // 死んでたら 吹っ飛びステートへ
     if (health <= 0) TransitionBlowState();
 
@@ -420,15 +405,15 @@ void EnemyGunner::UpdateIdleState(float elapsedTime)
 }
 
 // ターンするまでのタイマー更新
-void EnemyGunner::IdleTimerUpdate(float elapsedTime)
+void EnemyMelee::IdleTimerUpdate(float elapsedTime)
 {
-    if (idleTimer > 0.0f)idleTimer-= elapsedTime;    
+    if (idleTimer > 0.0f)idleTimer -= elapsedTime;
     else walkFlag = true;
 }
 
 
 // 移動ステートへ遷移
-void EnemyGunner::TransitionWalkState()
+void EnemyMelee::TransitionWalkState()
 {
     state = State::Walk;
     turnFlag = false;
@@ -440,8 +425,8 @@ void EnemyGunner::TransitionWalkState()
 }
 
 // 移動ステート更新処理
-void EnemyGunner::UpdateWalkState(float elapsedTime)
-{   
+void EnemyMelee::UpdateWalkState(float elapsedTime)
+{
     // 歩き回らないときは待機ステートへ
     if (!walk) TransitionIdleState();
 
@@ -457,7 +442,7 @@ void EnemyGunner::UpdateWalkState(float elapsedTime)
 
     if (turnFlag)
     {
-        TransitionIdleState();        
+        TransitionIdleState();
     }
 
 
@@ -469,15 +454,15 @@ void EnemyGunner::UpdateWalkState(float elapsedTime)
 }
 
 // 止まるまでのタイマー更新処理
-void EnemyGunner::WalkTimerUpdate(float elapsedTime)
+void EnemyMelee::WalkTimerUpdate(float elapsedTime)
 {
-    if (walkTimer > 0.0f)walkTimer-= elapsedTime;
+    if (walkTimer > 0.0f)walkTimer -= elapsedTime;
     else turnFlag = true;
 }
 
 
 //走るステート遷移
-void EnemyGunner::TransitionRunState()
+void EnemyMelee::TransitionRunState()
 {
     state = State::Run;
     moveSpeed = 50;
@@ -488,8 +473,8 @@ void EnemyGunner::TransitionRunState()
 }
 
 //走るステート更新処理
-void EnemyGunner::UpdateRunState(float elapsedTime)
-{    
+void EnemyMelee::UpdateRunState(float elapsedTime)
+{
     // 死んでたら 吹っ飛びステートへ
     if (health <= 0) TransitionBlowState();
 
@@ -516,77 +501,75 @@ void EnemyGunner::UpdateRunState(float elapsedTime)
 
 
 //攻撃ステート遷移
-void EnemyGunner::TransitionAttackState()
+void EnemyMelee::TransitionAttackState()
 {
     state = State::Attack;
     moveSpeed = 0;
-    attackCooldown = 0.45f;        
+    attackCooldown = 0.25f;
 }
 
 //攻撃ステート更新処理
-void EnemyGunner::UpdateAttackState(float elapsedTime)
-{   
+void EnemyMelee::UpdateAttackState(float elapsedTime)
+{
     // 死んでたら 吹っ飛びステートへ
     if (health <= 0) {
-        isAttack = false;        
+        isAttack = false;
         TransitionBlowState();
     }
 
     // 止まる
     Move(0.0f, 0.0f, moveSpeed);
     // 攻撃      
-    MoveAttack(1.5f);    
+    MoveAttack(1.5f);
     // 攻撃クールダウン更新
     AttackCooldownUpdate(elapsedTime);
 
     // 射程距離外 もしくは、射線が通っていないなら走るステートへ
     if (!CheckAttackRange() || AttackRayCheck())
     {
-        isAttack = false;        
-        TransitionRunState();       
+        isAttack = false;
+        TransitionRunState();
     }
 }
 
 // 攻撃クールダウン更新
-void EnemyGunner::AttackCooldownUpdate(float elapsedTime)
+void EnemyMelee::AttackCooldownUpdate(float elapsedTime)
 {
     if (attackCooldown > 0.0f)attackCooldown -= elapsedTime;
 }
 
 
 //吹っ飛びステート遷移
-void EnemyGunner::TransitionBlowState()
+void EnemyMelee::TransitionBlowState()
 {
-    state = State::Blow;  
+    state = State::Blow;
 
     blowTimer = 0.3f;
 
     model->PlayAnimation(static_cast<int>(state), false);
 
     // 止まる
-    moveSpeed = 40;    
+    moveSpeed = 40;
 
     // 吹っ飛ばす
     MoveBlow();
 }
 
 //吹っ飛びステート更新処理
-void EnemyGunner::UpdateBlowState(float elapsedTime)
-{  
+void EnemyMelee::UpdateBlowState(float elapsedTime)
+{
     // 吹き飛ばしタイマー更新
-    if (blowTimer > 0.0f)blowTimer -= elapsedTime;    
+    if (blowTimer > 0.0f)blowTimer -= elapsedTime;
 
     // 吹っ飛ばしたら死亡ステートへ               
-    else TransitionDeathState();    
-
-    if(!model->IsPlayAnimatimon()) TransitionDeathState();    
+    else TransitionDeathState();
 }
 
 
 //死亡ステート遷移
-void EnemyGunner::TransitionDeathState()
+void EnemyMelee::TransitionDeathState()
 {
-    state = State::Death;    
+    state = State::Death;
     model->PlayAnimation(static_cast<int>(state), false);
 
     // 止まる
@@ -596,9 +579,9 @@ void EnemyGunner::TransitionDeathState()
 }
 
 //死亡ステート更新処理
-void EnemyGunner::UpdateDeathState(float elapsedTime)
-{    
-   // 死亡アニメーション終わったら消滅させる
+void EnemyMelee::UpdateDeathState(float elapsedTime)
+{
+    // 死亡アニメーション終わったら消滅させる
     OnDead();
     if (!model->IsPlayAnimatimon())
     {
