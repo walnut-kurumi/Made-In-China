@@ -17,6 +17,8 @@ private:
 		Finisher,// フィニッシャー
 		Fall,	 //　落下
 		Land,	 //　着地
+		SB,		 //　シフトブレイク
+		Throw,	 //　シフトブレイク投擲
 		End,	 //　お　わ　り　💛 ふぁっ〇ゅ～～～！！
 	};
 
@@ -62,7 +64,7 @@ private:
 	void InputSlow(float elapsedTime);
 
 	// SB入力処理
-	void InputSB();
+	bool InputSB();
 
 	// 通常攻撃&パリィ
 	bool InputAttack();
@@ -71,9 +73,6 @@ private:
 	void OnDead() override { isDead = true; }
 
 	void Vibration(float elapsedTime);
-
-	// テレポート
-	void Teleport();
 
 protected:
 	void OnLanding() override;
@@ -87,13 +86,21 @@ protected:
 	void TransitionRunState();
 	void UpdateRunState(float elapsedTime);
 
-	// ステップ回避ステート（横方向）
+	// ジャンプ
 	void TransitionJumpState();
 	void UpdateJumpState(float elapsedTime);
 
 	// 攻撃ステート
 	void TransitionAttackState();
 	void UpdateAttackState(float elapsedTime);
+
+	// SB投擲ステート
+	void TransitionSBThrowState();
+	void UpdateSBThrowState(float elapsedTime);
+
+	// SBステート
+	void TransitionSBState();
+	void UpdateSBState(float elapsedTime);
 
 	// フィニッシャーステート
 	void TransitionFinisherState();
@@ -151,9 +158,9 @@ private:
 	bool hitstop = false; // 攻撃当たったらtrue
 	// SB用
 	bool weapon = true;		// 武器を持っているか否か
-	bool finish = false;	// 敵に対するフィニッシャー
-	float backDir;			// 敵の後ろ一定距離
-	bool isTp = false;
+	bool sbhit = false;		// 敵に対するフィニッシャー
+	float spSpeed = 0;			// 敵の後ろ一定距離
+	Vec3 sbdir = { 0,0,0 };
 	// 死亡
 	bool isDead = false;
 };
