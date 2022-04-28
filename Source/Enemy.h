@@ -47,6 +47,8 @@ public:
 	// œpœj‚·‚é‚©‚Ç‚¤‚©
 	void SetWalkFlag(bool b) { walk = b; }
 
+	// µÁÀ×¼Ç
+	void FallIsDead();
 
 protected:
 	// ©•ª‚ª‰½”Ô‚ÌƒOƒ‹[ƒv‚©

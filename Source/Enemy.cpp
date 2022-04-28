@@ -8,3 +8,12 @@ void Enemy::Destroy()
 {
 	EnemyManager::Instance().Remove(this);
 }
+
+// µÁÀ×¼Ç
+void Enemy::FallIsDead()
+{
+	if (position.y < -100.0f)
+	{
+		isDead = true;
+	}
+}
