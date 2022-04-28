@@ -1,5 +1,4 @@
 #include <time.h>
-
 #include "Framework.h"
 
 const LONG SCREEN_WIDTH = 1280;
@@ -42,5 +41,6 @@ int WINAPI WinMain(_In_ HINSTANCE instance, _In_opt_  HINSTANCE prevInstance, _I
 
 	Framework framework(hwnd);
 	SetWindowLongPtrW(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(&framework));
+
 	return framework.run();
 }

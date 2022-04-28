@@ -38,14 +38,6 @@ void SkinnedMesh::Init(ID3D11Device* device,BOOL frontCounterClockwise)
 			D3D11_RASTERIZER_DESC rasterizerDesc{};
 			rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 			rasterizerDesc.CullMode = D3D11_CULL_NONE;
-		/*	if (frontCounterClockwise)
-			{
-				rasterizerDesc.CullMode = D3D11_CULL_FRONT;
-			}
-			else
-			{
-				rasterizerDesc.CullMode = D3D11_CULL_FRONT;
-			}*/
 			rasterizerDesc.FrontCounterClockwise = frontCounterClockwise;
 			rasterizerDesc.DepthBias = 0;
 			rasterizerDesc.DepthBiasClamp = 0;
@@ -813,14 +805,6 @@ void SkinnedMesh::createComObjects(ID3D11Device* device, const char* fbxFilename
 		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	}
 	hr = device->CreateBuffer(&bufferDesc, nullptr, constantBuffer.ReleaseAndGetAddressOf());
-	_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
-
-	{
-		bufferDesc.ByteWidth = sizeof(Ramp);
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	}
-	hr = device->CreateBuffer(&bufferDesc, nullptr, constantBuffer_Ramp.ReleaseAndGetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 }
 

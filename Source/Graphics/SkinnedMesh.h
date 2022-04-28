@@ -304,7 +304,6 @@ public:
 private:
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer_Ramp;
 
 public:
 	SkinnedMesh(ID3D11Device* device, const char* fbxFilename, bool triangulate = false, float samplingRate = 0);

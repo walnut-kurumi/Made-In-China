@@ -258,7 +258,7 @@ float VecMath::AngleBetweenVectors(Vec3 v1, Vec3 v2)
     return ang;
 }
 
-float VecMath::sign(float num)
+int VecMath::sign(float num)
 {
     return (num > 0) - (num < 0);
 }

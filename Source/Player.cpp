@@ -175,6 +175,13 @@ void Player::DrawDebugGUI() {
             ImGui::SliderFloat("Position Y", &position.y, -200, 200);
             ImGui::SliderFloat("Position Z", &position.z, -300, 300);
 
+
+            Vec3 p = CameraManager::Instance().GetPos();
+
+            ImGui::SliderFloat("Poion X", &p.x, -300, 300);
+            ImGui::SliderFloat("Poion Y", &p.y, -200, 200);
+            ImGui::SliderFloat("Poion Z", &p.z, -300, 300);
+
             int a = static_cast<int>(state);
             ImGui::SliderInt("State", &a, 0, static_cast<int>(AnimeState::End));
         }
@@ -540,7 +547,7 @@ void Player::UpdateAttackState(float elapsedTime) {
             // ’n–Ê‚©‚ç‹ó’†‚ÉŒü‚¯‚ÄUŒ‚‚µ‚Ä‚é‚Æ‚«
             if (atkMove.y > 0) {
                 // –€ŽC‚ðŽã‚ß‚é‚½‚ß‚É‹ó’†‚É‚·‚é
-                position.y += 0.01;
+                position.y += 0.01f;
                 isGround = false;
             }
         }

@@ -95,7 +95,7 @@ public:
     // ベクトル間の角度
     static float AngleBetweenVectors(Vec3 v1, Vec3 v2);
     // 符号を返す -:-1   0:0   +:1
-    static float sign(float num);
+    static int sign(float num);
 
     // ベクトルvに対してポリゴンが表裏どちらを向くかを求める
     // 戻り値    0:表    1:裏    -1:エラー
