@@ -72,6 +72,9 @@ private:
 
 	void Vibration(float elapsedTime);
 
+	// テレポート
+	void Teleport();
+
 protected:
 	void OnLanding() override;
 
@@ -150,6 +153,7 @@ private:
 	bool weapon = true;		// 武器を持っているか否か
 	bool finish = false;	// 敵に対するフィニッシャー
 	float backDir;			// 敵の後ろ一定距離
+	bool isTp = false;
 	// 死亡
 	bool isDead = false;
 };
