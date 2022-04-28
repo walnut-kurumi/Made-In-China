@@ -26,6 +26,7 @@ Player::Player(ID3D11Device* device) {
     model->LoadAnimation(run, 0, static_cast<int>(AnimeState::Run));
     model->LoadAnimation(jump, 0, static_cast<int>(AnimeState::Jump));
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Attack));
+    model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Throw));
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Finisher));
 
     position = { 0.0f, 0.0f, 0.0f };
@@ -36,6 +37,8 @@ Player::Player(ID3D11Device* device) {
     UpdateState[static_cast<int>(AnimeState::Run)] = &Player::UpdateRunState;
     UpdateState[static_cast<int>(AnimeState::Jump)] = &Player::UpdateJumpState;
     UpdateState[static_cast<int>(AnimeState::Attack)] = &Player::UpdateAttackState;
+    UpdateState[static_cast<int>(AnimeState::Throw)] = &Player::UpdateSBThrowState;
+    UpdateState[static_cast<int>(AnimeState::SB)] = &Player::UpdateSBState;
     UpdateState[static_cast<int>(AnimeState::Finisher)] = &Player::UpdateFinisherState;
 
     TransitionIdleState();
@@ -90,11 +93,12 @@ void Player::Init() {
 
     isDead = false;
 
-    backDir = 5.0f;
+    spSpeed = 2.0f;
 
     health = 1;
 
-    isTp = false;
+    sbhit = false;
+    sbdir = { 0,0,0 };
 }
 #include <Xinput.h>
 void Player::Update(float elapsedTime) {
@@ -108,13 +112,10 @@ void Player::Update(float elapsedTime) {
     // スロー
     InputSlow(elapsedTime);
 
-    // シフトブレイク
-    InputSB();
-
-
     // 旋回処理
     // 移動方向へ向く
     if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
+
 
     CollisionSBVsEnemies();
     CollisionSBVsStage();
@@ -336,7 +337,7 @@ void Player::InputSlow(float elapsedTime) {
     //slow = false;
 }
 
-void Player::InputSB() {
+bool Player::InputSB() {
     GamePad& gamePad = Input::Instance().GetGamePad();
     ID3D11Device* device = Graphics::Ins().GetDevice();
     Key& key = Input::Instance().GetKey();
@@ -360,18 +361,17 @@ void Player::InputSB() {
             int sbCount = sbManager.GetProjectileCount();
             for (int i = 0; i < sbCount; ++i) {
                 SB* sb = sbManager.GetProjectile(i);
-
                 // 向きを設定
                 direction = VecMath::sign(sb->GetPosition().x - position.x);
                 // 旋回処理
                 if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
-                // 投げた武器の場所にワープ
-                position = sb->GetPosition();
+                // ワープ先指定
+                sbdir = VecMath::Normalize(sb->GetPosition() - position);
+                sbhit = true;
                 sb->Destroy();
-                // フィニッシャー発動
-                finish = true;
             }
         }
+        return true;
     }
 
     // 武器を持っている場合 mouse
@@ -411,13 +411,15 @@ void Player::InputSB() {
                 // 旋回処理
                 if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
                 // 投げた武器の場所にワープ
-                position = sb->GetPosition();
+                // ワープ先指定
+                sbdir = VecMath::Normalize(sb->GetPosition() - position);
+                sbhit = true;
                 sb->Destroy();
-                // フィニッシャー発動
-                finish = true;
             }
         }
+        return true;
     }
+    return false;
 }
 
 bool Player::InputAttack() {
@@ -438,8 +440,7 @@ bool Player::InputAttack() {
             atkPos = VecMath::Normalize(atkPos) * 3;
 
             // 攻撃のCT
-            if(!isGround) 
-                atkTimer = 0.50f;
+            if(!isGround) atkTimer = 0.50f;
             return true;
         }
         else if (mouse.GetButtonDown() & Mouse::BTN_LEFT) {
@@ -457,8 +458,7 @@ bool Player::InputAttack() {
             atkPos = VecMath::Normalize(atkPos) * 5;
 
             // 攻撃のCT
-            if (!isGround)
-                atkTimer = 0.50f;
+            if (!isGround) atkTimer = 0.50f;
             return true;
         }
     }
@@ -470,7 +470,6 @@ void Player::TransitionIdleState() {
     state = AnimeState::Idle;
     model->PlayAnimation(static_cast<int>(state), true);
 }
-
 // 待機ステート更新処理
 void Player::UpdateIdleState(float elapsedTime) {
     //  移動入力処理
@@ -479,9 +478,8 @@ void Player::UpdateIdleState(float elapsedTime) {
     if (InputJump()) TransitionJumpState();
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
-    // フィニッシャーへの移行
-    if (finish) TransitionFinisherState();
-    Key& key = Input::Instance().GetKey();
+    // シフトブレイク
+    if (InputSB()) TransitionSBThrowState();
 }
 
 //走るステート遷移
@@ -489,17 +487,16 @@ void Player::TransitionRunState() {
     state = AnimeState::Run;
     model->PlayAnimation(static_cast<int>(state), true);
 }
-
 //走るステート更新処理
 void Player::UpdateRunState(float elapsedTime) {
     //  移動入力処理
     if (!InputMove(elapsedTime)) TransitionIdleState();
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
-    // フィニッシャーへの移行
-    if (finish) TransitionFinisherState();
     // ジャンプ入力処理
     if (InputJump()) TransitionJumpState();
+    // シフトブレイク
+    if (InputSB()) TransitionSBThrowState();
 }
 
 //ジャンプステート遷移
@@ -507,7 +504,6 @@ void Player::TransitionJumpState() {
     state = AnimeState::Jump;
     model->PlayAnimation(static_cast<int>(state), false);
 }
-
 //ジャンプステート更新処理
 void Player::UpdateJumpState(float elapsedTime) {
     //  移動入力処理
@@ -518,8 +514,8 @@ void Player::UpdateJumpState(float elapsedTime) {
     if (InputJump()) TransitionJumpState();
     // 地面についたらアイドル状態へ
     if (isGround) TransitionIdleState();
-    // フィニッシャーへの移行
-    if (finish) TransitionFinisherState();
+    // シフトブレイク
+    if (InputSB()) TransitionSBThrowState();
 }
 
 void Player::TransitionAttackState() {
@@ -528,13 +524,7 @@ void Player::TransitionAttackState() {
     //移動力を攻撃に乗せない
     velocity = {0,0,0};
 }
-
 void Player::UpdateAttackState(float elapsedTime) {
-    // 入力情報を所得
-    GamePad& gamePad = Input::Instance().GetGamePad();
-    float ax = gamePad.GetAxisLX();
-    float ay = gamePad.GetAxisLY();
-
     static bool first = false;
     if (!first) {
         // 攻撃の向き指定
@@ -558,9 +548,6 @@ void Player::UpdateAttackState(float elapsedTime) {
         first = true;
     }
 
-    // フィニッシャーへの移行
-    if (finish) TransitionFinisherState();
-
     if (Ground()) velocity.x = 0;
 
     // 任意のアニメーション再生区間でのみ衝突判定処理をする
@@ -575,8 +562,6 @@ void Player::UpdateAttackState(float elapsedTime) {
         // 重力を再びオン
         gravFlag = true;
 
-        first = false;
-
         // 攻撃位置リセット
         atkPos = { 0,0,0 };
         atk = false;
@@ -590,16 +575,55 @@ void Player::UpdateAttackState(float elapsedTime) {
         // カメラシェイク（簡素）おわり
         CameraManager& cameraMgr = CameraManager::Instance();
         cameraMgr.SetShakeFlag(false);
+        first = false;
     }
+}
+
+void Player::TransitionSBThrowState() {
+    // 遷移
+    state = AnimeState::Throw;
+
+    model->PlayAnimation(static_cast<int>(state), false);
+    // SB中重力なし
+    gravFlag = false;
+}
+void Player::UpdateSBThrowState(float elapsedTime) {
+    // SB発動したら次のステートへ
+    if (InputSB()) TransitionSBState();
+    // 何かに当たったら発動
+    if(sbhit) TransitionSBState();
+}
+
+void Player::TransitionSBState() {
+    // 遷移
+    state = AnimeState::SB;
+    sbhit = false;
+    // アニメーションは止める
+    //model->PlayAnimation(static_cast<int>(state), false);
+}
+void Player::UpdateSBState(float elapsedTime) {
+    position += sbdir * spSpeed;
+
+    // 敵に到達したらSB攻撃ステートへ
+    if (false) TransitionFinisherState();
+       
+
 }
 
 void Player::TransitionFinisherState() {
     // 遷移
     state = AnimeState::Finisher;
-
     model->PlayAnimation(static_cast<int>(state), false);
+    // ヒットストップ
+    if (!slow) hitstop = true;
+    // カメラシェイク（簡素）
+    CameraManager& cameraMgr = CameraManager::Instance();
+    if (!cameraMgr.GetShakeFlag()) {
+        cameraMgr.SetShakeFlag(true);
+        vibration = true;
+        vibTimer = 0.4f;
+    }
 }
-
 void Player::UpdateFinisherState(float elapsedTime) {
     // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
@@ -607,12 +631,13 @@ void Player::UpdateFinisherState(float elapsedTime) {
         TransitionIdleState();
         // ヒットストップおわり
         hitstop = false;
-        // フィニッシャー終わり
-        finish = false;
         // 武器を手に持つ
         weapon = true;
+        //重力復活
+        gravFlag = true;
     }
 }
+
 
 void Player::Vibration(float elapsedTime) {
     //// 振動試し
@@ -633,27 +658,6 @@ void Player::Vibration(float elapsedTime) {
     //else {
     //    XInputSetState(0, &vib2);
     //}
-}
-
-// テレポート
-void Player::Teleport()
-{
-    // SB探索
-    SBManager& sbManager = SBManager::Instance();
-    int sbCount = sbManager.GetProjectileCount();
-    for (int i = 0; i < sbCount; ++i) {
-        SB* sb = sbManager.GetProjectile(i);
-
-        // 向きを設定
-        direction = VecMath::sign(sb->GetPosition().x - position.x);
-        // 旋回処理
-        if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
-        // 投げた武器の場所にワープ
-        Vec3 vec = sb->GetPosition() - position;
-        sb->Destroy();
-        // フィニッシャー発動
-        finish = true;
-    }
 }
 
 void Player::OnLanding() {
@@ -726,32 +730,22 @@ void Player::CollisionSBVsEnemies() {
 
                 if (enemy->GetHealth() > 0) {
 
-                    enemy->ApplyDamage(1, 0);
-
-                    // ヒットストップ
-                    if (!slow) hitstop = true;
-
-                    // カメラシェイク（簡素）
-                    CameraManager& cameraMgr = CameraManager::Instance();
-                    if (!cameraMgr.GetShakeFlag()) {
-                        cameraMgr.SetShakeFlag(true);
-                        vibration = true;
-                        vibTimer = 0.4f;
-                    }
-
-                    // フィニッシャー発動
-                    finish = true;
 
                     // 向きを設定
                     direction = VecMath::sign(enemy->GetPosition().x - position.x);
                     // 旋回処理
                     if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
+                    // stageとSBヒット
+                    sbhit = true;
 
                     // 自分を敵の近くへ
                     // 自機と敵の位置から左右判定　のちそこから一定距離にワープ　そして殺す
-                    Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
-                    dir *= backDir;
-                    position = enemy->GetPosition() + dir;
+                    sbdir = VecMath::Normalize(VecMath::Subtract(enemy->GetPosition(), position));
+
+                    //Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
+                    //dir *= backDir;
+                    //position = enemy->GetPosition() + dir;
+                    //enemy->ApplyDamage(1, 0);
 
                     // 武器を壊す
                     sb->Destroy();
@@ -787,8 +781,8 @@ void Player::CollisionSBVsStage() {
             // 投げた武器の場所にワープ
             position = sb->GetPosition();
             sb->Destroy();
-            // フィニッシャー発動
-            finish = true;
+            // 敵とSBヒット
+            sbhit = true;
         }
     }
 }
