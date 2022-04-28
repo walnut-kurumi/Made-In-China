@@ -31,7 +31,7 @@ void Model::Begin(ID3D11DeviceContext* dc, Shader shader, bool wireframe)
 
 void Model::Render(ID3D11DeviceContext* dc, const Vec4 materialColor)  // , const Animation::Keyframe* keyframe = nullptr);
 {
-	skinnedMesh.get()->render(dc, this->transform, materialColor, keyframe.get());
+	skinnedMesh.get()->render(dc, this->transform, materialColor, &keyframe);
 	skinnedMesh.get()->End(dc);
 }
 
@@ -54,27 +54,38 @@ void Model::UpdateAnimation(float elapsedTime)
 	//再生中じゃないなら処理しない
 	if (!IsPlayAnimatimon()) return;
 
-	int frameIndex = 0;
-	SkinnedMesh::Animation& animation = skinnedMesh.get()->animationClips[animationIndex];
-	frameIndex = static_cast<int>(animationSeconds * animation.samplingRate);
+	// ブレンド率の計算
+	float blendRate = 1.0f;
+	if (animationBlendTime < animationBlendSeconds) {
+		animationBlendTime += elapsedTime;
+		if (animationBlendTime >= animationBlendSeconds) {
+			animationBlendTime = animationBlendSeconds;
+		}
+		blendRate = animationBlendTime / animationBlendSeconds;
+		blendRate *= blendRate;
+	}
 
+	// 指定のアニメーションデータを取得
+	SkinnedMesh::Animation& animation = skinnedMesh.get()->animationClips[animationIndex];
+	keyframe = animation.sequence.at(static_cast<int>(animationSeconds * animation.samplingRate));
+	// 時間経過
 	animationSeconds += elapsedTime;
 
 	//再生が終わったら
-	if (frameIndex > animation.sequence.size() - 1) {
+	if (animationSeconds > animation.secondsLength) {
 		//ループ再生なら戻す
 		if (animationLoopFlag) {
-			frameIndex = 0;
 			animationSeconds = 0.0f;
 		}
 		//再生を終了する
 		else {
 			animationEndFlag = true;
+			animationSeconds = animation.secondsLength;
 		}
 	}
 
-	//再生中
-	if (!animationEndFlag) keyframe = std::make_shared<SkinnedMesh::Animation::Keyframe>(animation.sequence.at(frameIndex));
+	// 指定のアニメーションデータを取得
+	/*if (!animationEndFlag)*/ 
 
 	// 最終フレーム処理
 	if (animationEndFlag) {

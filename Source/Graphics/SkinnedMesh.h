@@ -211,6 +211,7 @@ public:
 	{
 		std::string name;
 		float samplingRate = 0;
+		float secondsLength = 0;
 
 		struct Keyframe
 		{
@@ -243,7 +244,7 @@ public:
 
 		template<class T>
 		void serialize(T& archive) {
-			archive(name, samplingRate, sequence);
+			archive(name, samplingRate, secondsLength, sequence);
 		}
 	};
 

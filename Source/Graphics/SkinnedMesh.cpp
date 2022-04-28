@@ -738,6 +738,9 @@ void SkinnedMesh::fetchAnimations(FbxScene* fbxScene,
 				}
 			}
 		}
+
+		// アニメーションの長さを取得
+		animation.secondsLength =( animation.sequence.size() - 1) / animation.samplingRate;
 		animationClips.emplace(index, std::move(animation));
 	}
 	//削除～

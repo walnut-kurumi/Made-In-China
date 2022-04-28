@@ -55,10 +55,12 @@ private:
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	};
-	std::shared_ptr<SkinnedMesh::Animation::Keyframe> keyframe{};
+	SkinnedMesh::Animation::Keyframe keyframe{};
 
 	int animationIndex = -1;
 	bool animationLoopFlag = false;
 	bool animationEndFlag = false;
 	float animationSeconds = 0.0f;
+	float animationBlendTime = 0.0f;
+	float animationBlendSeconds = 0.0f;
 };
