@@ -51,6 +51,6 @@ protected:
 	SBManager* manager = nullptr;
 
 	float radius = 1.5f;
-	float speed = 70.0f;
+	float speed = 100.0f;
 	float bulletSpeed = 0.0f;
 };
