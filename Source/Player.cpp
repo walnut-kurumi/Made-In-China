@@ -93,12 +93,13 @@ void Player::Init() {
 
     isDead = false;
 
-    spSpeed = 2.0f;
-
-    health = 1;
-
+    sbSpeed = 3.0f;
+    sbSpace = 4.0f;
     sbhit = false;
     sbdir = { 0,0,0 };
+    sbPos = { 0,0,0 };
+
+    health = 1;
 }
 #include <Xinput.h>
 void Player::Update(float elapsedTime) {
@@ -142,7 +143,6 @@ void Player::Update(float elapsedTime) {
 
 void Player::Render(ID3D11DeviceContext* dc) {
     model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
-    //model->Begin(dc, Shaders::Ins()->GetRampShader());
     model->Render(dc);
 
     // 弾丸描画処理
@@ -160,6 +160,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     // 必要なったら追加
     debugRenderer.get()->DrawSphere(centerPosition, 1, Vec4(0.5f, 0.5f, 0, 1));
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
+    debugRenderer.get()->DrawSphere(sbPos, 1, Vec4(1, 1, 0, 1));
     if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, atkRadius, Vec4(1, 1, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 #endif
@@ -330,11 +331,6 @@ void Player::InputSlow(float elapsedTime) {
             slowCT = 0;
         }
     }
-    //if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER || key.STATE(VK_SHIFT)) {
-    //    slow = true;
-    //    return;
-    //}
-    //slow = false;
 }
 
 bool Player::InputSB() {
@@ -367,6 +363,7 @@ bool Player::InputSB() {
                 if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
                 // ワープ先指定
                 sbdir = VecMath::Normalize(sb->GetPosition() - position);
+                sbPos = sb->GetPosition();
                 sbhit = true;
                 sb->Destroy();
             }
@@ -413,6 +410,7 @@ bool Player::InputSB() {
                 // 投げた武器の場所にワープ
                 // ワープ先指定
                 sbdir = VecMath::Normalize(sb->GetPosition() - position);
+                sbPos = sb->GetPosition();
                 sbhit = true;
                 sb->Destroy();
             }
@@ -586,6 +584,7 @@ void Player::TransitionSBThrowState() {
     model->PlayAnimation(static_cast<int>(state), false);
     // SB中重力なし
     gravFlag = false;
+    velocity = { 0,0,0 };
 }
 void Player::UpdateSBThrowState(float elapsedTime) {
     // SB発動したら次のステートへ
@@ -598,16 +597,25 @@ void Player::TransitionSBState() {
     // 遷移
     state = AnimeState::SB;
     sbhit = false;
+    clock = true;
     // アニメーションは止める
     //model->PlayAnimation(static_cast<int>(state), false);
 }
 void Player::UpdateSBState(float elapsedTime) {
-    position += sbdir * spSpeed;
+    // 移動＋レイキャスト
+    if(Raycast(sbdir * sbSpeed)) {
+        sbPos = { 0,0,0 };
+        TransitionFinisherState();
+    }
+
+    //position += sbdir * sbSpeed;
 
     // 敵に到達したらSB攻撃ステートへ
-    if (false) TransitionFinisherState();
-       
-
+    if (VecMath::LengthVec3(sbPos - position) <= sbSpace) {
+        position = sbPos;
+        sbPos = { 0,0,0 };
+        TransitionFinisherState();
+    }
 }
 
 void Player::TransitionFinisherState() {
@@ -623,8 +631,17 @@ void Player::TransitionFinisherState() {
         vibration = true;
         vibTimer = 0.4f;
     }
+
+    // 攻撃の場所
+    Vec3 front = VecMath::Normalize({ transform._31,transform._32,transform._33 });
+    atkPos = { front.x,0,0 };
+    atkPos = VecMath::Normalize(atkPos) * 3;
 }
 void Player::UpdateFinisherState(float elapsedTime) {
+    // 任意のアニメーション再生区間でのみ衝突判定処理をする
+    float animationTime = model->GetCurrentAnimationSeconds();
+    atk = animationTime >= 0.01f && animationTime <= 0.20f;
+
     // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
         // 終わったらアイドル状態へ
@@ -635,6 +652,14 @@ void Player::UpdateFinisherState(float elapsedTime) {
         weapon = true;
         //重力復活
         gravFlag = true;
+        // 時間戻す
+        clock = false;
+        // 攻撃位置リセット
+        atkPos = { 0,0,0 };
+        atk = false;
+        // カメラシェイク（簡素）おわり
+        CameraManager& cameraMgr = CameraManager::Instance();
+        cameraMgr.SetShakeFlag(false);
     }
 }
 
@@ -658,6 +683,162 @@ void Player::Vibration(float elapsedTime) {
     //else {
     //    XInputSetState(0, &vib2);
     //}
+}
+
+bool Player::Raycast(Vec3 move) {
+
+    // 移動量
+    float my = move.y;
+    bool result = false;
+
+    // 落下中
+    if (my < 0.0f) {
+        // レイの開始位置は足元より少し上
+        DirectX::XMFLOAT3 start = { position.x, position.y + stepOffset, position.z };
+        // レイの終点位置は移動後の位置
+        DirectX::XMFLOAT3 end = { position.x, position.y + my, position.z };
+
+        // レイキャストによる地面判定
+        HitResult hit;
+        if (StageManager::Instance().RayCast(start, end, hit)) {
+
+            // 地面に接地している
+            position.x = hit.position.x;
+            position.y = hit.position.y;
+            position.z = hit.position.z;
+
+            // 回転
+            angle.y += hit.rotation.y;
+
+            //  傾斜率の計算
+            float normalLengthXZ = sqrtf(hit.normal.x * hit.normal.x + hit.normal.z * hit.normal.z);
+            slopeRate = 1.0f - (hit.normal.y / (normalLengthXZ + hit.normal.y));
+
+            // 着地した
+            if (!isGround) OnLanding();
+
+            isGround = true;
+            velocity.y = 0.0f;
+            result = true;
+        }
+        else {
+            // 空中に浮いてる
+            position += move;
+            isGround = false;
+        }
+    }
+    // 上昇中
+    else if (my > 0.0f) {
+
+        // レイの開始位置は頭
+        DirectX::XMFLOAT3 start = { position.x, position.y + height, position.z };
+        // レイの終点位置は移動後の位置
+        DirectX::XMFLOAT3 end = { position.x, position.y + height + my, position.z };
+
+        // レイキャストによる天井判定
+        HitResult hit;
+        if (StageManager::Instance().RayCast(start, end, hit)) {
+
+            // 天井に接している
+            position.x = hit.position.x;
+            position.y = hit.position.y - height;
+            position.z = hit.position.z;
+
+            // 回転
+            angle.y += hit.rotation.y;
+
+            velocity.y = 0.0f;
+            result = true;
+        }
+        else {
+            // 空中に浮いてる
+            position += move;
+        }
+    }
+    else {
+        position += move;
+    }
+
+
+
+    // 水平速力計算
+    float velocityLengthXZ = sqrtf(move.x * move.x + move.z * move.z);
+    // 移動した方向
+    direction = VecMath::sign(velocity.x);
+
+    if (velocityLengthXZ > 0.0f) {
+        // 水平移動値
+        float mx = move.x;
+
+        // レイの開始位置と終点位置
+        DirectX::XMFLOAT3 start = { position.x , position.y + stepOffset, position.z };
+        DirectX::XMFLOAT3 end = { position.x + mx, position.y + stepOffset, position.z };
+        // レイの開始位置と終点位置(頭)
+        DirectX::XMFLOAT3 start2 = { position.x , position.y + stepOffset + height, position.z };
+        DirectX::XMFLOAT3 end2 = { position.x + mx, position.y + stepOffset + height, position.z };
+
+        // レイキャストによる壁判定
+        HitResult hit;
+        if (StageManager::Instance().RayCast(start, end, hit)) {
+            // 壁までのベクトル
+            DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start);
+            DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end);
+            DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
+
+            // 壁の法線
+            DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+
+            // 入射ベクトルを法線に射影                          // ベクトルの否定する
+            DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
+
+            // 補正位置の計算                   // v1 ベクトル乗数 v2 ベクター乗算   3 番目のベクトルに追加された最初の 2 つのベクトルの積を計算
+            DirectX::XMVECTOR CollectPosition = DirectX::XMVectorMultiplyAdd(Normal, Dot, End); // 戻り値 ベクトルの積和を返す    戻り値　＝　v1 * v2 + v3
+            DirectX::XMFLOAT3 collectPosition;
+            DirectX::XMStoreFloat3(&collectPosition, CollectPosition);
+
+            HitResult hit2; // 補正位置が壁に埋まっているかどうか
+            if (!StageManager::Instance().RayCast(hit.position, collectPosition, hit2)) {
+                position.x = collectPosition.x;
+                position.z = collectPosition.z;
+            }
+            else {
+                position.x = hit2.position.x;
+                position.z = hit2.position.z;
+            }
+            result = true;
+        }
+        else if (StageManager::Instance().RayCast(start2, end2, hit)) {
+            // 壁までのベクトル
+            DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start2);
+            DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end2);
+            DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
+
+            // 壁の法線
+            DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+
+            // 入射ベクトルを法線に射影                          // ベクトルの否定する
+            DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
+
+            // 補正位置の計算                   // v1 ベクトル乗数 v2 ベクター乗算   3 番目のベクトルに追加された最初の 2 つのベクトルの積を計算
+            DirectX::XMVECTOR CollectPosition = DirectX::XMVectorMultiplyAdd(Normal, Dot, End); // 戻り値 ベクトルの積和を返す    戻り値　＝　v1 * v2 + v3
+            DirectX::XMFLOAT3 collectPosition;
+            DirectX::XMStoreFloat3(&collectPosition, CollectPosition);
+
+            HitResult hit2; // 補正位置が壁に埋まっているかどうか
+            if (!StageManager::Instance().RayCast(hit.position, collectPosition, hit2)) {
+                position.x = collectPosition.x;
+                position.z = collectPosition.z;
+            }
+            else {
+                position.x = hit2.position.x;
+                position.z = hit2.position.z;
+            }
+            result = true;
+        }
+    }
+
+
+    return result;
 }
 
 void Player::OnLanding() {
@@ -735,12 +916,16 @@ void Player::CollisionSBVsEnemies() {
                     direction = VecMath::sign(enemy->GetPosition().x - position.x);
                     // 旋回処理
                     if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
-                    // stageとSBヒット
+                    // 敵とSBヒット
                     sbhit = true;
 
                     // 自分を敵の近くへ
                     // 自機と敵の位置から左右判定　のちそこから一定距離にワープ　そして殺す
                     sbdir = VecMath::Normalize(VecMath::Subtract(enemy->GetPosition(), position));
+                    // 到達地点
+                    // 敵の、自分方面に一定距離
+                    sbPos = enemy->GetPosition();
+                    sbPos.x += -(VecMath::sign(enemy->GetPosition().x - position.x)) * sbSpace;
 
                     //Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
                     //dir *= backDir;
@@ -774,14 +959,15 @@ void Player::CollisionSBVsStage() {
             // 旋回処理
             if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
 
-            // 地面に接地している
-            position.x = hit.position.x;
-            position.y = hit.position.y;
-            position.z = hit.position.z;  
-            // 投げた武器の場所にワープ
-            position = sb->GetPosition();
+            // 自分を敵の近くへ
+            sbdir = VecMath::Normalize(VecMath::Subtract(hit.position, position));
+            // 到達地点
+            // 敵の、自分方面に一定距離
+            sbPos = hit.position;
+
+
             sb->Destroy();
-            // 敵とSBヒット
+            // stageとSBヒット
             sbhit = true;
         }
     }
