@@ -23,6 +23,7 @@
 #include "Framework.h"
 
 #include"EffectManager.h"
+#include"Graphics/Texture.h"
 
 
 // 初期化
@@ -34,7 +35,23 @@ void SceneGame::Initialize()
     HRESULT hr{ S_OK };
 
     ID3D11Device* device = Graphics::Ins().GetDevice();
+    Graphics& gfx = Graphics::Ins();
 
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> depth_stencil_buffer{};
+    D3D11_TEXTURE2D_DESC texture2dDesc{};
+    texture2dDesc.Width = gfx.GetScreenWidth();
+    texture2dDesc.Height = gfx.GetScreenHeight();
+    texture2dDesc.MipLevels = 1;
+    texture2dDesc.ArraySize = 1;
+    texture2dDesc.Format = DXGI_FORMAT_R32_TYPELESS; // DXGI_FORMAT_R24G8_TYPELESS DXGI_FORMAT_R32_TYPELESS
+    texture2dDesc.SampleDesc.Count = 1;
+    texture2dDesc.SampleDesc.Quality = 0;
+    texture2dDesc.Usage = D3D11_USAGE_DEFAULT;
+    texture2dDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    texture2dDesc.CPUAccessFlags = 0;
+    texture2dDesc.MiscFlags = 0;
+    hr = device->CreateTexture2D(&texture2dDesc, NULL, depth_stencil_buffer.GetAddressOf());
+    _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
     // プレイヤー
     player = std::make_unique<Player>(device);
@@ -92,10 +109,23 @@ void SceneGame::Initialize()
 
     Menu::Instance().Initialize();
 
+    // ロード％更新
+    AddLoadPercent(1.0f);
+
     Fade::Instance().Initialize();
 
     //デバッグ
     //hitEffect = new Effect("Data/Effect/player_hit.efk");
+    framebuffers[static_cast<size_t>(FRAMEBUFFER::SCENE_RESOLVED)] = std::make_unique<framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
+    framebuffers[static_cast<size_t>(FRAMEBUFFER::POST_PROCESSED)] = std::make_unique<framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight(), FB_FLAG::COLOR);
+
+    bitBlockTransfer = std::make_unique<fullscreen_quad>(device);
+    postEffectPs.initialize(device, "shader\\obj\\post_effect_ps.cso");
+    toonMapPs.initialize(device, "shader\\obj\\tone_map_ps.cso");
+
+    shaderResourceViews[static_cast<size_t>(TEXTURE::DISTORTION)].Attach(queryTexture(device, L".\\Data\\Sprites\\distortion texture.png", &texture2dDesc));
+
+    bloom_effect = std::make_unique<bloom>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
     // ロード％ 100%
     SetLoadPercent(10.0f);
@@ -358,7 +388,7 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
         if (ENEMY_MAX == i)
         {
             // ロード％更新
-            AddLoadPercent(2.0f);
+            AddLoadPercent(1.0f);
         }
 
         // 近接と遠隔を交互に

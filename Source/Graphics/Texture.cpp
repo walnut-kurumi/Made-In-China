@@ -139,3 +139,17 @@ HRESULT makeDummyTexture(ID3D11Device* device, ID3D11ShaderResourceView** shader
 	return hr;
 
 }
+
+ID3D11ShaderResourceView* queryTexture(ID3D11Device* device, const wchar_t* filename, D3D11_TEXTURE2D_DESC* texture2d_desc)
+{
+	ID3D11ShaderResourceView* shader_resource_view{ nullptr };
+	loadTextureFromFile(device, filename, &shader_resource_view, texture2d_desc);
+	return shader_resource_view;
+}
+
+ID3D11ShaderResourceView* queryDummyTexture(ID3D11Device* device, DWORD value/*0xAABBGGRR*/, UINT dimension)
+{
+	ID3D11ShaderResourceView* shader_resource_view{ nullptr };
+	makeDummyTexture(device, &shader_resource_view, value, dimension);
+	return shader_resource_view;
+}

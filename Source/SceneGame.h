@@ -61,10 +61,10 @@ private:
 	ConstantBuffer<MIST_CONSTANTS> mistConstant;
 	enum class FRAMEBUFFER { SCENE_MSAA, SCENE_RESOLVED, POST_PROCESSED };
 	std::unique_ptr<framebuffer> framebuffers[8];
-	std::unique_ptr<fullscreen_quad> bit_block_transfer;
+	std::unique_ptr<fullscreen_quad> bitBlockTransfer;
 
 	enum class TEXTURE { T0, WAVE, T2, T3, ENVIRONMENT, DISTORTION };
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_views[8];
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceViews[8];
 
 	PixelShader postEffectPs;
 	PixelShader toonMapPs;
