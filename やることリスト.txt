@@ -28,5 +28,3 @@ SBのクールタイム設定
 SBの発射向きをRスティックorLスティック調整
 
 ・修正
-リセット時に近接遠隔めちゃめちゃになるの修正
-Initializeで各EnemyにinitialPosition設定してリセットでそれを呼び出す
