@@ -19,12 +19,6 @@
     <FxCompile Include="shader\DestructionVs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="shader\FullscreenQuadPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\FullscreenQuadVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="shader\GeometricPrimitivePs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
@@ -125,6 +119,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\tone_map_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\FullscreenQuadPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\FullscreenQuadVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
@@ -535,9 +535,6 @@
     <None Include="shader\Destruction.hlsli">
       <Filter>Shader</Filter>
     </None>
-    <None Include="shader\FullscreenQuad.hlsli">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="shader\GeometricPrimitive.hlsli">
       <Filter>Shader</Filter>
     </None>
@@ -575,6 +572,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\Constants.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="shader\FullscreenQuad.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

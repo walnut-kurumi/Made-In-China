@@ -90,7 +90,11 @@ framebuffer::framebuffer(ID3D11Device* device, uint32_t width, uint32_t height, 
 	viewport.TopLeftY = 0.0f;
 
 	// UNIT.99
-	embedded_vertex_shader.initialize(device, "shader\\obj\\fullscreen_quad_vs.cso", nullptr, 0);
+	D3D11_INPUT_ELEMENT_DESC inputElementDesc[] = {
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+	embedded_vertex_shader.initialize(device, "shader\\obj\\fullscreen_quad_vs.cso", inputElementDesc, ARRAYSIZE(inputElementDesc));
 	embedded_pixel_shader.initialize(device, "shader\\obj\\resolve_depth_stencil_ps.cso");
 	/*create_vs_from_cso(device, "fullscreen_quad_vs.cso", embedded_vertex_shader.ReleaseAndGetAddressOf(), nullptr, nullptr, 0);
 	create_ps_from_cso(device, "resolve_depth_stencil_ps.cso", embedded_pixel_shader.ReleaseAndGetAddressOf());*/
