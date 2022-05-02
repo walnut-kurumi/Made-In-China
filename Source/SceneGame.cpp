@@ -195,6 +195,7 @@ void SceneGame::Update(float elapsedTime)
 
 
         // エネミー
+        if(!player->GetClock())
         {
             EnemyManager::Instance().SetPlayer(player.get());
             // ソート
