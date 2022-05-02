@@ -476,16 +476,8 @@ void SceneGame::Reset()
     SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
     EnemyManager::Instance().Init();    
-    int group = 0;
-    bool walk = false;
-    for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
-    {
-        //歩き回るかどうか
-        if (i < 4)walk = true;
-        else walk = false;
-          
-        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0), walk);
-    }
+    EnemyManager::Instance().EnemyReset();
+
     // プレイヤー蘇生 ポジションリセット
     player->Init();
     
@@ -512,32 +504,32 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
         if (i % 2 == 0)
         {
             EnemyGunner* gunner = new EnemyGunner(device);
-            gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
+            gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));            
+            gunner->PositionInitialize();
 
             //歩き回るかどうか
-            if (i < 4)gunner->SetWalkFlag(true);
-            else gunner->SetWalkFlag(false);
+            gunner->SetInitialWalk(enemyWalk[i]);
+            gunner->WalkFlagInitialize();
 
             // グループ番号セット
-            if (i < 4)gunner->SetGroupNum(0);
-            else if (i < 6)gunner->SetGroupNum(1);
-            else if (i < 9)gunner->SetGroupNum(2);
+            gunner->SetInitialGroupNum(enemyGroup[i]);
+            gunner->GroupNumInitialize();            
 
             EnemyManager::Instance().Register(gunner);
         }
         else
         {
             EnemyMelee* melee = new EnemyMelee(device);
-            melee->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
+            melee->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
+            melee->PositionInitialize();
 
             //歩き回るかどうか
-            if (i < 4)melee->SetWalkFlag(true);
-            else melee->SetWalkFlag(false);
+            melee->SetInitialWalk(enemyWalk[i]);
+            melee->WalkFlagInitialize();
 
             // グループ番号セット
-            if (i < 4)melee->SetGroupNum(0);
-            else if (i < 6)melee->SetGroupNum(1);
-            else if (i < 9)melee->SetGroupNum(2);
+            melee->SetInitialGroupNum(enemyGroup[i]);
+            melee->GroupNumInitialize();
 
             EnemyManager::Instance().Register(melee);
         }
@@ -559,6 +551,27 @@ void SceneGame::EnemyPositionSetting()
     enemyPos[6] = {-65,55.5f};
     enemyPos[7] = {-130,85.5f};
     enemyPos[8] = {20,70.5f};    
+
+
+    enemyGroup[0] =0;
+    enemyGroup[1] =0;
+    enemyGroup[2] =0;
+    enemyGroup[3] =0;  
+    enemyGroup[4] =1;
+    enemyGroup[5] =1;
+    enemyGroup[6] =2;
+    enemyGroup[7] =2;
+    enemyGroup[8] =2;
+
+    enemyWalk[0] = true;
+    enemyWalk[1] = true;
+    enemyWalk[2] = true;
+    enemyWalk[3] = true;
+    enemyWalk[4] = false;
+    enemyWalk[5] = false;
+    enemyWalk[6] = false;
+    enemyWalk[7] = false;
+    enemyWalk[8] = false;
 }
 
 
