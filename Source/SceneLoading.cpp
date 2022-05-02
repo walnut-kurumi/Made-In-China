@@ -14,6 +14,7 @@ void SceneLoading::Initialize()
 {
 	ID3D11Device* device = Graphics::Ins().GetDevice();
 	// スプライト初期化	
+	backSprite = new Sprite(device, L"./Data/Sprites/scene/black.png");
 	loadSprite = new Sprite(device, L"./Data/Sprites//loading.png");
 	Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
 	LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");
@@ -28,6 +29,7 @@ void SceneLoading::Initialize()
 
 void SceneLoading::Finalize()
 {
+	delete backSprite;
 	delete loadSprite;
 	delete Bar;
 	delete LoadBar;
@@ -56,6 +58,8 @@ void SceneLoading::Render(float elapsedTime)
 
 	// 2D描画
 	{
+		backSprite->render(dc, 0, 0, 1920, 1080,1.0f,1.0f,1.0f,1.0f,0);
+	
 		loadSprite->render(dc, 0, 0, 256, 256,1.0f,1.0f,1.0f,1.0f,angle);
 
 		Bar->render(dc, 600, 650, 620, 25, 1.0f,1.0f,1.0f,1.0f,0);			

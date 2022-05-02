@@ -7,7 +7,7 @@
 class Fade
 {
 private:
-	Fade() {};
+	Fade();
 	~Fade() {};
 
 public:
@@ -34,12 +34,17 @@ public:
 	void FadeIn(float speed);
 	void FadeOut(float speed);
 
-	// リセット
-	void ResetFade();
-
 	// フェードフラグ取得
 	bool GetFadeInFlag() { return fadeInFlag; }
+	void SetFadeInFlag(bool fade) { fadeInFlag = fade; }
 	bool GetFadeOutFlag() { return fadeOutFlag; }
+	void SetFadeOutFlag(bool fade) { fadeOutFlag = fade; }
+
+	// フェード終わったか
+	bool GetFadeInFinish() { return fadeInFinish; }	
+	bool GetFadeOutFinish() { return fadeOutFinish; }	
+	// フェード用アルファ設定
+	void SetFadeAlpha(float alpha) { fadeAlpha = alpha; }
 
 private:
 
@@ -47,6 +52,8 @@ private:
 
 	bool fadeInFlag = false;
 	bool fadeOutFlag = false;
+	bool fadeInFinish = false;
+	bool fadeOutFinish = false;
 	float fadeAlpha = 0.0f;
 };
 #pragma once
