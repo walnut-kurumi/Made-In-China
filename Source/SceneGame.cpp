@@ -83,35 +83,7 @@ void SceneGame::Initialize()
     EnemyPositionSetting();
 
     // エネミー初期化			    
-    for (int i = 0; i <ENEMY_MAX; i++)
-    {        
-        if (ENEMY_MAX / 2 == i)
-        {
-            // ロード％更新
-            AddLoadPercent(1.0f);
-        }
-        if (ENEMY_MAX == i)
-        {
-            // ロード％更新
-            AddLoadPercent(2.0f);            
-        }
-
-         //EnemyGunner* gunner = new EnemyGunner(device);
-         EnemyMelee* gunner = new EnemyMelee(device);
-         gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
-
-        //歩き回るかどうか
-        if (i < 4)gunner->SetWalkFlag(true); 
-        else gunner->SetWalkFlag(false);
-
-        // グループ番号セット
-        if (i < 4)gunner->SetGroupNum(0);
-        else if (i < 6)gunner->SetGroupNum(1);
-        else if (i < 9)gunner->SetGroupNum(2);
-
-        EnemyManager::Instance().Register(gunner);
-        EnemyManager::Instance().Init();
-    }
+    EnemyInitialize(device);
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -139,6 +111,8 @@ void SceneGame::Initialize()
 
     // ロード％更新
     AddLoadPercent(1.0f);
+
+    Fade::Instance().Initialize();
 
     //デバッグ
     //hitEffect = new Effect("Data/Effect/player_hit.efk");
@@ -183,7 +157,7 @@ void SceneGame::Finalize()
 void SceneGame::Update(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-    Mouse& mouse = Input::Instance().GetMouse();   
+    Mouse& mouse = Input::Instance().GetMouse();
 
     if (Menu::Instance().GetMenuFlag() == false)
     {
@@ -216,7 +190,7 @@ void SceneGame::Update(float elapsedTime)
         // カメラ
         {
             CameraManager& cameraMgr = CameraManager::Instance();
-            
+
             cameraMgr.Update(slowElapsedTime);
 
             Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
@@ -239,23 +213,37 @@ void SceneGame::Update(float elapsedTime)
 
         //エフェクト更新処理
         EffectManager::Instance().Update(slowElapsedTime);
-      
+
 
         // スロー時間表示
         w = player->GetSlowTimer() / player->GetSlowMax();
         et = elapsedTime;
-    }   
+    }
 
     // リセット
     if (player->GetHealth() <= 0)// ||  gamePad.GetButtonDown() & GamePad::BTN_Y)
     {
-        // デバッグ用で消してる
-       // Reset();
-    }
+        // フェードアウト
+        if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
 
+        // フェードアウトおわったら
+        if (Fade::Instance().GetFadeOutFinish())
+        {
+            // リセット
+            // デバッグ用で消してる
+            Reset();
+
+            // フェードイン
+            Fade::Instance().SetFadeInFlag(true);
+        }
+    }        
+    // フェードイン終わったら初期化
+    if (Fade::Instance().GetFadeInFinish())Fade::Instance().Initialize();
 
     // Menu
     Menu::Instance().Update(elapsedTime);
+    // Fade
+    Fade::Instance().Update(elapsedTime);
 
     //エフェクトデバッグ
    /* const mouseButton mouseClick =
@@ -322,10 +310,19 @@ void SceneGame::Render(float elapsedTime)
 
     // 2D描画
     {
+        // 攻撃予兆描画
+        RenderEnemyAttack();
+
+        // UI
         Bar->render(dc, 600, 650, 620, 25, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 605, 652, 605 * w, 21, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+
+        // メニュー
         Menu::Instance().Render(elapsedTime);
-        RenderEnemyAttack();
+
+        // フェード用
+        Fade::Instance().Render(elapsedTime);
+
     }
 
 
@@ -369,26 +366,75 @@ void SceneGame::Reset()
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
-    EnemyManager::Instance().Init();
-    EnemyPositionSetting();
+    EnemyManager::Instance().Init();    
     int group = 0;
     bool walk = false;
     for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
-    {        
+    {
         //歩き回るかどうか
         if (i < 4)walk = true;
         else walk = false;
-
-        // グループ番号セット
-        if (i < 4)group = 0;
-        else if (i < 6)group = 1;
-        else if (i < 9)group = 2;
-
-        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0),group,walk);
+          
+        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0), walk);
     }
     // プレイヤー蘇生 ポジションリセット
     player->Init();
+    
 
+}
+
+// 敵の初期化
+void SceneGame::EnemyInitialize(ID3D11Device* device)
+{
+    for (int i = 0; i < ENEMY_MAX; i++)
+    {
+        if (ENEMY_MAX / 2 == i)
+        {
+            // ロード％更新
+            AddLoadPercent(1.0f);
+        }
+        if (ENEMY_MAX == i)
+        {
+            // ロード％更新
+            AddLoadPercent(1.0f);
+        }
+
+        // 近接と遠隔を交互に
+        if (i % 2 == 0)
+        {
+            EnemyGunner* gunner = new EnemyGunner(device);
+            gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
+
+            //歩き回るかどうか
+            if (i < 4)gunner->SetWalkFlag(true);
+            else gunner->SetWalkFlag(false);
+
+            // グループ番号セット
+            if (i < 4)gunner->SetGroupNum(0);
+            else if (i < 6)gunner->SetGroupNum(1);
+            else if (i < 9)gunner->SetGroupNum(2);
+
+            EnemyManager::Instance().Register(gunner);
+        }
+        else
+        {
+            EnemyMelee* melee = new EnemyMelee(device);
+            melee->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
+
+            //歩き回るかどうか
+            if (i < 4)melee->SetWalkFlag(true);
+            else melee->SetWalkFlag(false);
+
+            // グループ番号セット
+            if (i < 4)melee->SetGroupNum(0);
+            else if (i < 6)melee->SetGroupNum(1);
+            else if (i < 9)melee->SetGroupNum(2);
+
+            EnemyManager::Instance().Register(melee);
+        }
+
+        EnemyManager::Instance().Init();
+    }
 }
 
 // エネミー座標設定

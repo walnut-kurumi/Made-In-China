@@ -36,9 +36,11 @@ public:
 	// ゲームリセット
 	void Reset();
 
+	// 敵の初期化
+	void EnemyInitialize(ID3D11Device* device);
 	// 敵の座標セット
 	void EnemyPositionSetting();
-
+	// 敵の攻撃予兆
 	void RenderEnemyAttack();
 
 private:	

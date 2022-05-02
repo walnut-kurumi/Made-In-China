@@ -34,6 +34,7 @@ private:
 	float w = 0.0f;
 	Scene* nextScene = nullptr;
 	
+	Sprite* backSprite{};
 	Sprite* loadSprite{};
 	Sprite* Bar{};
 	Sprite* LoadBar{};
