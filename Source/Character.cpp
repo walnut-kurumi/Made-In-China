@@ -181,12 +181,9 @@ void Character::UpdateVerticalMove(float elapsedTime) {
             angle.y += hit.rotation.y;
 
             velocity.y = 0.0f;
-            isGround = false;
         }
         else {
-            // ‹ó’†‚É•‚‚¢‚Ä‚é
             position.y += my;
-            isGround = false;
         }
     }
 

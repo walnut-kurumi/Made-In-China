@@ -46,6 +46,8 @@ public:
 	void SetHitstop(bool hit) { hitstop = hit; }
 	bool GetHitstop() { return hitstop; }
 	float GetHitStopSpeed() { return hitstop ? hitstopSpeed : playbackSpeed; }
+	
+	bool GetClock() { return clock; }
 
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
@@ -73,6 +75,8 @@ private:
 	void OnDead() override { isDead = true; }
 
 	void Vibration(float elapsedTime);
+
+	bool Raycast(Vec3 move);
 
 protected:
 	void OnLanding() override;
@@ -151,16 +155,18 @@ private:
 	float slowTimer = slowMax;
 	const float CTMax = 2.0f;
 	float slowCTTimer = CTMax;
-	// クールタイム　0:無し 1:CT明け直後 2:CT中
-	int slowCT = 0;
+	int slowCT = 0;	// クールタイム　0:無し 1:CT明け直後 2:CT中
 	// ヒットストップ用
 	float hitstopSpeed = 0.0f;
 	bool hitstop = false; // 攻撃当たったらtrue
 	// SB用
 	bool weapon = true;		// 武器を持っているか否か
 	bool sbhit = false;		// 敵に対するフィニッシャー
-	float spSpeed = 0;			// 敵の後ろ一定距離
-	Vec3 sbdir = { 0,0,0 };
+	float sbSpeed = 0;			// sb移動速度
+	float sbSpace = 0;			// 敵の後ろ一定距離
+	Vec3 sbdir = { 0,0,0 };	// 向き
+	Vec3 sbPos = { 0,0,0 };	// 位置
+	bool clock = false;	 // プレイヤー以外の時間
 	// 死亡
 	bool isDead = false;
 };
