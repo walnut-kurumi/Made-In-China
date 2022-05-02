@@ -126,6 +126,17 @@ void EnemyManager::SetPosition(int i, DirectX::XMFLOAT3 enemyPos, bool walk)
 	enemies[i]->SetWalkFlag(walk);
 }
 
+// エネミーすべてリセット
+void EnemyManager::EnemyReset()
+{
+	for (Enemy* enemy : enemies)
+	{
+		enemy->PositionInitialize();
+		enemy->GroupNumInitialize();
+		enemy->WalkFlagInitialize();
+	}
+}
+
 // グループで攻撃してくる
 void EnemyManager::GroupAttack()
 {

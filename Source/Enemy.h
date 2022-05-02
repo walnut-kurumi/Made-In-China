@@ -34,10 +34,20 @@ public:
 	// 攻撃予兆を出すかどうか
 	bool GetIsAttack() { return isAttack; }
 
+	// 初期座標セット
+	void SetInitialPos(Vec3 pos) { initialPos = pos; }
+	// 座標初期化
+	void PositionInitialize() { position = initialPos; }
+
 	// グループ番号セット
 	void SetGroupNum(int g) { groupNum = g; }
 	// グループ番号ゲット
 	int GetGroupNum() { return groupNum; }
+	// 初期化用
+	void SetInitialGroupNum(int g) { initialGroupNum = g; }
+	// 初期化
+	void GroupNumInitialize() { groupNum = initialGroupNum; }
+
 
 	// プレイヤーを見つけているかのフラグゲット
 	void SetIsSearch(bool s) { isSearch = s; }
@@ -46,6 +56,10 @@ public:
 
 	// 徘徊するかどうか
 	void SetWalkFlag(bool b) { walk = b; }
+	// 初期化用
+	void SetInitialWalk(bool b) { initialWalk = b; }
+	// 初期化
+	void WalkFlagInitialize() { walk = initialWalk; }
 
 	// ｵﾁﾀﾗｼﾇ
 	void FallIsDead();
@@ -53,10 +67,14 @@ public:
 protected:
 	// 自分が何番のグループか
 	int groupNum = 0;
+	int initialGroupNum = 0;	
+
 	// プレイヤーを見つけているか
 	bool isSearch = false;
 	// 歩き回るかどうか
 	bool walk = false;
+	bool initialWalk = false;
+
 
 	// 攻撃予兆Flag
 	bool isAttack = false;
@@ -64,6 +82,8 @@ protected:
 	// 死んでるか
 	bool isDead = false;
 	
+	// 初期座標
+	Vec3 initialPos = {};
 
 	float lengthSq = 0;
 
