@@ -3,6 +3,7 @@
 #include "Character.h"
 #include "DebugRenderer.h"
 #include "SBManager.h"
+#include "Cost.h"
 
 class Player : public Character
 {
@@ -37,8 +38,8 @@ public:
 
 	bool GetDead() { return isDead; }
 
-	float GetSlowTimer() const { return slowTimer; }
-	float GetSlowMax() const { return slowMax; }
+	float GetSlowTimer() { return cost.GetCost(); }
+	float GetSlowMax() { return cost.GetMaxCost(); }
 
 	float GetPlaybackSpeed() { return slow ? slowSpeed : playbackSpeed; }
 	bool GetSlowFlag() { return slow; }
@@ -152,12 +153,6 @@ private:
 	float playbackSpeed = 0.0f;
 	float slowSpeed = 0.0f;
 	bool slow = false;
-	// スローモーションの時間
-	const float slowMax = 5.0f;
-	float slowTimer = slowMax;
-	const float CTMax = 2.0f;
-	float slowCTTimer = CTMax;
-	int slowCT = 0;	// クールタイム　0:無し 1:CT明け直後 2:CT中
 	// ヒットストップ用
 	float hitstopSpeed = 0.0f;
 	bool hitstop = false; // 攻撃当たったらtrue
@@ -169,9 +164,13 @@ private:
 	Vec3 sbdir = { 0,0,0 };	// 向き
 	Vec3 sbPos = { 0,0,0 };	// 位置
 	bool clock = false;	 // プレイヤー以外の時間
+	const float sbCost = 2.0f;
 	// SB時間制限
 	float sbTimer = 0.0f;
 	const float sbMaxTime = 0.5f;
 	// 死亡
 	bool isDead = false;
+
+
+	Cost cost;
 };

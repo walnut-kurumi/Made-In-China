@@ -314,6 +314,9 @@
     <ClCompile Include="Source\Fade.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Cost.cpp">
+      <Filter>Source\Character\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -526,6 +529,9 @@
     </ClInclude>
     <ClInclude Include="Source\Fade.h">
       <Filter>Source\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Cost.h">
+      <Filter>Source\Character\Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

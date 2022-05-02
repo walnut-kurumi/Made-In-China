@@ -81,8 +81,6 @@ void Player::Init() {
     // スローモーション関連
     playbackSpeed = 1.0f;
     slowSpeed = 0.5f;
-    slowTimer = slowMax;
-    slowCTTimer = CTMax;
 
     // ヒットストップ
     hitstopSpeed = 0.6f;
@@ -102,6 +100,8 @@ void Player::Init() {
     sbTimer = 0.0f;
 
     health = 1;
+
+    cost.Reset();
 }
 #include <Xinput.h>
 void Player::Update(float elapsedTime) {
@@ -117,6 +117,9 @@ void Player::Update(float elapsedTime) {
 
     // SB時間制限
     SBManagement(elapsedTime);
+
+    // コスト更新処理
+    cost.Update(elapsedTime);
 
     // 旋回処理
     // 移動方向へ向く
@@ -165,7 +168,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     // 必要なったら追加
     debugRenderer.get()->DrawSphere(centerPosition, 1, Vec4(0.5f, 0.5f, 0, 1));
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
-    debugRenderer.get()->DrawSphere(sbPos, 1, Vec4(1, 1, 0, 1));
+    //debugRenderer.get()->DrawSphere(sbPos, 1, Vec4(1, 1, 0, 1));
     if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, atkRadius, Vec4(1, 1, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 #endif
@@ -291,50 +294,15 @@ bool Player::InputJump() {
 
 void Player::InputSlow(float elapsedTime) {
     GamePad& gamePad = Input::Instance().GetGamePad();
-    // 押してる間
-    if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER) {
-        slowCT = 0;
-        // 時間があれば スキル起動してタイマー減らす
-        if (slowTimer >= 0) {
-            slowTimer -= elapsedTime / slowSpeed;   // スロー時間から通常時間へ変換
-            slow = true;
-        }
-        // 時間がないとき クールタイム発動
-        else {
-            slowTimer = max(slowTimer, 0);
-            slowCT = 1;
-            slow = false;
-        }
+    // 押してる間 且 コストがある間
+    if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER
+        && cost.Approval(elapsedTime)) {
+        cost.Trg(true);
+        slow = true;
     }
-    // 放している間
-    if (!(gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER) && slowTimer < slowMax && slowCT == 0) {
-        slowCT = 1;
-        slowCTTimer = CTMax;
+    else {
+        cost.Trg(false);
         slow = false;
-    }
-    // クールタイム中 CTタイマー減らす
-    if (slowCT == 1) {
-        slow = false;
-        // クールタイム時間経過
-        if (slowCTTimer >= 0) {
-            slowCTTimer -= elapsedTime;
-        }
-        // クールタイム終了
-        else {
-            slowCTTimer = CTMax;
-            slowCT = 2;
-        }
-    }
-    else if (slowCT == 2) {
-        slow = false;
-        // 時間があれば タイマー復活
-        if (slowTimer < slowMax) {
-            slowTimer += elapsedTime;
-        }
-        else {
-            slowTimer = min(slowTimer, slowMax);
-            slowCT = 0;
-        }
     }
 }
 
@@ -346,14 +314,18 @@ bool Player::InputSB() {
 
     // 武器を持っている場合 pad
     if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_TRIGGER) {
-        if (weapon && 
-            (gamePad.GetAxisRX() != 0 || gamePad.GetAxisRY() != 0)) {
+        if (weapon
+            && (gamePad.GetAxisRX() != 0 || gamePad.GetAxisRY() != 0)
+            && cost.Approval(sbCost)) {
             // 武器を投げる
             weapon = false;
             // 発射
             SBNormal* sb = new SBNormal(device, &SBManager::Instance());
             // 向き、　発射地点
             sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisRX(), gamePad.GetAxisRY(), 0)), position + waistPos);
+            // コスト
+            cost.Consume(sbCost);
+            return true;
         }
         // 武器を持っていない
         else if(!weapon) {
@@ -371,14 +343,15 @@ bool Player::InputSB() {
                 sbPos = sb->GetPosition();
                 sbhit = true;
                 sb->Destroy();
+                return true;
             }
         }
-        return true;
     }
 
     // 武器を持っている場合 mouse
     if (mouse.GetButtonDown() & Mouse::BTN_RIGHT) {
-        if (weapon) {
+        if (weapon
+            && cost.Approval(sbCost)) {
             // 武器を投げる
             weapon = false;
             // 発射
@@ -399,6 +372,9 @@ bool Player::InputSB() {
 
             // 発射地点
             sb->Launch(atkPos, position + waistPos);
+            // コスト
+            cost.Consume(sbCost);
+            return true;
         }
         // 武器を持っていない
         else if (!weapon) {
@@ -418,9 +394,9 @@ bool Player::InputSB() {
                 sbPos = sb->GetPosition();
                 sbhit = true;
                 sb->Destroy();
+                return true;
             }
         }
-        return true;
     }
     return false;
 }
@@ -625,15 +601,6 @@ void Player::TransitionFinisherState() {
     // 遷移
     state = AnimeState::Finisher;
     model->PlayAnimation(static_cast<int>(state), false);
-    // ヒットストップ
-    if (!slow) hitstop = true;
-    // カメラシェイク（簡素）
-    CameraManager& cameraMgr = CameraManager::Instance();
-    if (!cameraMgr.GetShakeFlag()) {
-        cameraMgr.SetShakeFlag(true);
-        vibration = true;
-        vibTimer = 0.4f;
-    }
 
     // 攻撃の場所
     Vec3 front = VecMath::Normalize({ transform._31,transform._32,transform._33 });
@@ -733,15 +700,15 @@ bool Player::Raycast(Vec3 move) {
     // 上昇中
     else if (my > 0.0f) {
         // レイの開始位置は頭
-        DirectX::XMFLOAT3 start = { position.x, position.y + height, position.z };
+        DirectX::XMFLOAT3 start = { position.x, position.y + waistPos.y, position.z };
         // レイの終点位置は移動後の位置
-        DirectX::XMFLOAT3 end = { position.x, position.y + height + my, position.z };
+        DirectX::XMFLOAT3 end = { position.x, position.y + waistPos.y + my, position.z };
         // レイキャストによる天井判定
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit)) {
             // 天井に接している
             position.x = hit.position.x;
-            position.y = hit.position.y - height;
+            position.y = hit.position.y - waistPos.y;
             position.z = hit.position.z;
 
             result = true;
@@ -768,8 +735,8 @@ bool Player::Raycast(Vec3 move) {
         DirectX::XMFLOAT3 start = { position.x , position.y + stepOffset, position.z };
         DirectX::XMFLOAT3 end = { position.x + mx, position.y + stepOffset, position.z };
         // レイの開始位置と終点位置(頭)
-        DirectX::XMFLOAT3 start2 = { position.x , position.y + stepOffset + height, position.z };
-        DirectX::XMFLOAT3 end2 = { position.x + mx, position.y + stepOffset + height, position.z };
+        DirectX::XMFLOAT3 start2 = { position.x , position.y + stepOffset + waistPos.y, position.z };
+        DirectX::XMFLOAT3 end2 = { position.x + mx, position.y + stepOffset + waistPos.y, position.z };
 
         // レイキャストによる壁判定
         HitResult hit;
