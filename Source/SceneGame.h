@@ -6,8 +6,13 @@
 
 #include <directxmath.h>
 #include "PerlinNoise.h"
-#include"Graphics/Misc.h"
-#include"Effect.h"
+#include "Graphics/Misc.h"
+#include "Effect.h"
+#include "framebuffer.h"
+#include "fullscreen_quad.h"
+#include "Graphics/ConstantBuffer.h"
+#include "Graphics/Shader.h"
+#include "bloom.h"
 
  
 class SceneGame : public Scene
@@ -46,6 +51,21 @@ private:
 	Sprite* Bar{};
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
+
+	ConstantBuffer<POST_EFFECT_CONSTANTS> postEffectConstant;
+	ConstantBuffer<BLOOM_CONSTANTS> bloomConstant;
+	ConstantBuffer<MIST_CONSTANTS> mistConstant;
+	enum class FRAMEBUFFER { SCENE_MSAA, SCENE_RESOLVED, POST_PROCESSED };
+	std::unique_ptr<framebuffer> framebuffers[8];
+	std::unique_ptr<fullscreen_quad> bit_block_transfer;
+
+	enum class TEXTURE { T0, WAVE, T2, T3, ENVIRONMENT, DISTORTION };
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shader_resource_views[8];
+
+	PixelShader postEffectPs;
+	PixelShader toonMapPs;
+
+	std::unique_ptr<bloom> bloom_effect;
 
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;

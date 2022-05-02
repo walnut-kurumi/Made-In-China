@@ -40,7 +40,6 @@ struct Scroll
     DirectX::XMFLOAT2 scroll_dummy;
 };
 
-// UNIT.32
 struct POST_EFFECT_CONSTANTS
 {
     float brightness{ 0.0f };
