@@ -344,12 +344,7 @@ void SceneGame::Reset()
         //歩き回るかどうか
         if (i < 4)walk = true;
         else walk = false;
-
-        // グループ番号セット
-     /*   if (i < 4)group = 0;
-        else if (i < 6)group = 1;
-        else if (i < 9)group = 2;*/
-
+          
         EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0), walk);
     }
     // プレイヤー蘇生 ポジションリセット
