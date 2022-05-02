@@ -15,12 +15,12 @@
 
 Player::Player(ID3D11Device* device) {
 
-    const char* idle = "Data/Models/Player/Animations/ver9/Idle.fbx";
-    const char* run = "Data/Models/Player/Animations/ver9/Run.fbx";
-    const char* jump = "Data/Models/Player/Animations/ver9/Jump.fbx";
-    const char* attack = "Data/Models/Player/Animations/ver9/Attack.fbx";
+    const char* idle = "Data/Models/Player/Animations/ver11/Idle.fbx";
+    const char* run = "Data/Models/Player/Animations/ver11/Run.fbx";
+    const char* jump = "Data/Models/Player/Animations/ver11/Jump.fbx";
+    const char* attack = "Data/Models/Player/Animations/ver11/Attack.fbx";
 
-    model = new Model(device, "Data/Models/Player/T8.fbx", true, 0);
+    model = new Model(device, "Data/Models/Player/T11.fbx", true, 0);
 
     model->LoadAnimation(idle, 0, static_cast<int>(AnimeState::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(AnimeState::Run));
