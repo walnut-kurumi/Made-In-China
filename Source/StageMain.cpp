@@ -7,7 +7,7 @@
 
 StageMain::StageMain(ID3D11Device* device)
 {
-    back = new Sprite(device, L"./Data/Sprites/kariAsset.jpg");
+    back = new Sprite(device, L"./Data/Sprites/BackGround.png");
 
     model = new Model(device, ".\\Data\\Models\\Stage\\MDL_stage_ah.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
@@ -41,7 +41,7 @@ void StageMain::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
 {
     //Scroll.data.scroll_direction;
     //deviceContext->UpdateSubresource(
-    back->render(deviceContext, bgpos.x, -150, 1500, 1150, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+    back->render(deviceContext, bgpos.x, -150, 1500, 1150, 1.0f, 1.0f, 1.0f, 1.0f, 0);    
 
     model->Begin(deviceContext, Shaders::Ins()->GetRampShader());
     model->Render(deviceContext);
