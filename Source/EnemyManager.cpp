@@ -120,6 +120,12 @@ void EnemyManager::SetPosition(int i, DirectX::XMFLOAT3 enemyPos, int gruop,bool
 	enemies[i]->SetWalkFlag(walk);
 }
 
+void EnemyManager::SetPosition(int i, DirectX::XMFLOAT3 enemyPos, bool walk)
+{
+	enemies[i]->SetPosition(enemyPos);
+	enemies[i]->SetWalkFlag(walk);
+}
+
 // ƒOƒ‹[ƒv‚ÅUŒ‚‚µ‚Ä‚­‚é
 void EnemyManager::GroupAttack()
 {
