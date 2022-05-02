@@ -98,6 +98,7 @@ void Player::Init() {
     sbhit = false;
     sbdir = { 0,0,0 };
     sbPos = { 0,0,0 };
+    sbTimer = 0.0f;
 
     health = 1;
 }
@@ -112,6 +113,9 @@ void Player::Update(float elapsedTime) {
    
     // スロー
     InputSlow(elapsedTime);
+
+    // SB時間制限
+    SBManagement(elapsedTime);
 
     // 旋回処理
     // 移動方向へ向く
@@ -839,6 +843,36 @@ bool Player::Raycast(Vec3 move) {
 
 
     return result;
+}
+
+void Player::SBManagement(float elapsedTime) {
+
+    if (!weapon) {
+        sbTimer += elapsedTime;
+        if (sbTimer >= sbMaxTime) {
+            weapon = true;
+            sbTimer = 0.0f;
+            // SB探索
+            SBManager& sbManager = SBManager::Instance();
+            int sbCount = sbManager.GetProjectileCount();
+            for (int i = 0; i < sbCount; ++i) {
+                // SB情報
+                SB* sb = sbManager.GetProjectile(i);
+
+                // 向きを設定
+                direction = VecMath::sign(sb->GetPosition().x - position.x);
+                // 旋回処理
+                if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
+                // 投げた武器の場所にワープ
+                // ワープ先指定
+                sbdir = VecMath::Normalize(sb->GetPosition() - position);
+                sbPos = sb->GetPosition();
+                sbhit = true;
+                sb->Destroy();
+            }
+        }
+    }
+
 }
 
 void Player::OnLanding() {

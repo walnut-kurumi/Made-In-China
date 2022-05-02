@@ -78,6 +78,8 @@ private:
 
 	bool Raycast(Vec3 move);
 
+	void SBManagement(float elapsedTime);
+
 protected:
 	void OnLanding() override;
 
@@ -167,6 +169,9 @@ private:
 	Vec3 sbdir = { 0,0,0 };	// 向き
 	Vec3 sbPos = { 0,0,0 };	// 位置
 	bool clock = false;	 // プレイヤー以外の時間
+	// SB時間制限
+	float sbTimer = 0.0f;
+	const float sbMaxTime = 0.5f;
 	// 死亡
 	bool isDead = false;
 };
