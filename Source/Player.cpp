@@ -31,8 +31,6 @@ Player::Player(ID3D11Device* device) {
 
     position = { 0.0f, 0.0f, 0.0f };
     scale = { 0.05f, 0.05f, 0.05f };
-
-
     UpdateState[static_cast<int>(AnimeState::Idle)] = &Player::UpdateIdleState;
     UpdateState[static_cast<int>(AnimeState::Run)] = &Player::UpdateRunState;
     UpdateState[static_cast<int>(AnimeState::Jump)] = &Player::UpdateJumpState;
@@ -62,6 +60,9 @@ void Player::Init() {
     normal = { 0,0,0 };
     velocity = { 0,0,0 };    
     moveSpeed = 50;
+    // 向き
+    direction = -1;
+    angle.y = DirectX::XMConvertToRadians(90) * direction;
     // 武器を持つ
     weapon = true;
     // 判定用 体の位置
@@ -612,8 +613,6 @@ void Player::UpdateSBState(float elapsedTime) {
         TransitionFinisherState();
     }
 
-    //position += sbdir * sbSpeed;
-
     // 敵に到達したらSB攻撃ステートへ
     if (VecMath::LengthVec3(sbPos - position) <= sbSpace) {
         position = sbPos;
@@ -733,25 +732,18 @@ bool Player::Raycast(Vec3 move) {
     }
     // 上昇中
     else if (my > 0.0f) {
-
         // レイの開始位置は頭
         DirectX::XMFLOAT3 start = { position.x, position.y + height, position.z };
         // レイの終点位置は移動後の位置
         DirectX::XMFLOAT3 end = { position.x, position.y + height + my, position.z };
-
         // レイキャストによる天井判定
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit)) {
-
             // 天井に接している
             position.x = hit.position.x;
             position.y = hit.position.y - height;
             position.z = hit.position.z;
 
-            // 回転
-            angle.y += hit.rotation.y;
-
-            velocity.y = 0.0f;
             result = true;
         }
         else {
@@ -762,8 +754,6 @@ bool Player::Raycast(Vec3 move) {
     else {
         position += move;
     }
-
-
 
     // 水平速力計算
     float velocityLengthXZ = sqrtf(move.x * move.x + move.z * move.z);
@@ -840,13 +830,10 @@ bool Player::Raycast(Vec3 move) {
             result = true;
         }
     }
-
-
     return result;
 }
 
 void Player::SBManagement(float elapsedTime) {
-
     if (!weapon) {
         sbTimer += elapsedTime;
         if (sbTimer >= sbMaxTime) {
@@ -872,14 +859,13 @@ void Player::SBManagement(float elapsedTime) {
             }
         }
     }
-
 }
 
 void Player::OnLanding() {
     jumpCount = 0;
 }
 
-// 弾丸と敵の衝突判定
+
 void Player::CollisionPanchiVsEnemies() {
     EnemyManager& enemyManager = EnemyManager::Instance();
     int enemyCount = enemyManager.GetEnemyCount();
@@ -891,7 +877,6 @@ void Player::CollisionPanchiVsEnemies() {
                 enemy->ApplyDamage(1, 0);
                 // ヒットストップ
                 if (!slow)hitstop = true;
-
                 // カメラシェイク（簡素）
                 CameraManager& cameraMgr = CameraManager::Instance();
                 if (!cameraMgr.GetShakeFlag()) {
@@ -903,7 +888,6 @@ void Player::CollisionPanchiVsEnemies() {
         }
     }
 }
-
 void Player::CollisionPanchiVsProjectile() {
     EnemyBulletManager& enemyBManager = EnemyBulletManager::Instance();
     int enemyBCount = enemyBManager.GetProjectileCount();
@@ -925,34 +909,26 @@ void Player::CollisionPanchiVsProjectile() {
         }
     }
 }
-
-// 敵とSB
 void Player::CollisionSBVsEnemies() {
     // 敵探索
     EnemyManager& enemyManager = EnemyManager::Instance();
     int enemyCount = enemyManager.GetEnemyCount();
     for (int i = 0; i < enemyCount; ++i) {
         Enemy* enemy = enemyManager.GetEnemy(i);
-
         // SB探索
         SBManager& sbManager = SBManager::Instance();
         int enemyBCount = sbManager.GetProjectileCount();
         for (int i = 0; i < enemyBCount; ++i) {
             SB* sb = sbManager.GetProjectile(i);
-
             // 衝突処理
             if (Collision::SphereVsSphere(enemy->GetPosition(), sb->GetPosition(), enemy->GetRadius(), atkRadius)) {
-
                 if (enemy->GetHealth() > 0) {
-
-
                     // 向きを設定
                     direction = VecMath::sign(enemy->GetPosition().x - position.x);
                     // 旋回処理
                     if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
                     // 敵とSBヒット
                     sbhit = true;
-
                     // 自分を敵の近くへ
                     // 自機と敵の位置から左右判定　のちそこから一定距離にワープ　そして殺す
                     sbdir = VecMath::Normalize(VecMath::Subtract(enemy->GetPosition(), position));
@@ -960,12 +936,6 @@ void Player::CollisionSBVsEnemies() {
                     // 敵の、自分方面に一定距離
                     sbPos = enemy->GetPosition();
                     sbPos.x += -(VecMath::sign(enemy->GetPosition().x - position.x)) * sbSpace;
-
-                    //Vec3 dir = VecMath::Normalize(VecMath::Subtract(position, enemy->GetPosition()));
-                    //dir *= backDir;
-                    //position = enemy->GetPosition() + dir;
-                    //enemy->ApplyDamage(1, 0);
-
                     // 武器を壊す
                     sb->Destroy();
                 }
@@ -973,7 +943,6 @@ void Player::CollisionSBVsEnemies() {
         }
     }
 }
-
 void Player::CollisionSBVsStage() {
     // SB探索
     SBManager& sbManager = SBManager::Instance();
@@ -984,7 +953,6 @@ void Player::CollisionSBVsStage() {
         Vec3 pos = sb->GetPosition();
         Vec3 dir = sb->GetDirection();
         float speed = sb->GetSpeed();
-
         HitResult hit;
         // ステージとの判定
         if (StageManager::Instance().RayCast(pos, pos + VecMath::Normalize(dir) * speed, hit)) {
@@ -992,14 +960,12 @@ void Player::CollisionSBVsStage() {
             direction = VecMath::sign(hit.position.x - position.x);
             // 旋回処理
             if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
-
             // 自分を敵の近くへ
             sbdir = VecMath::Normalize(VecMath::Subtract(hit.position, position));
             // 到達地点
             // 敵の、自分方面に一定距離
             sbPos = hit.position;
-
-
+            // 弾消す
             sb->Destroy();
             // stageとSBヒット
             sbhit = true;
