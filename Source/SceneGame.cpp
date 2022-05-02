@@ -120,6 +120,8 @@ void SceneGame::Initialize()
 
     Menu::Instance().Initialize();
 
+    Fade::Instance().Initialize();
+
     //デバッグ
     //hitEffect = new Effect("Data/Effect/player_hit.efk");
 
@@ -153,7 +155,7 @@ void SceneGame::Finalize()
 void SceneGame::Update(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
-    Mouse& mouse = Input::Instance().GetMouse();   
+    Mouse& mouse = Input::Instance().GetMouse();
 
     if (Menu::Instance().GetMenuFlag() == false)
     {
@@ -186,7 +188,7 @@ void SceneGame::Update(float elapsedTime)
         // カメラ
         {
             CameraManager& cameraMgr = CameraManager::Instance();
-            
+
             cameraMgr.Update(slowElapsedTime);
 
             Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
@@ -209,23 +211,37 @@ void SceneGame::Update(float elapsedTime)
 
         //エフェクト更新処理
         EffectManager::Instance().Update(slowElapsedTime);
-      
+
 
         // スロー時間表示
         w = player->GetSlowTimer() / player->GetSlowMax();
         et = elapsedTime;
-    }   
+    }
 
     // リセット
     if (player->GetHealth() <= 0)// ||  gamePad.GetButtonDown() & GamePad::BTN_Y)
     {
-        // デバッグ用で消してる
-       // Reset();
-    }
+        // フェードアウト
+        if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
 
+        // フェードアウトおわったら
+        if (Fade::Instance().GetFadeOutFinish())
+        {
+            // リセット
+            // デバッグ用で消してる
+            Reset();
+
+            // フェードイン
+            Fade::Instance().SetFadeInFlag(true);
+        }
+    }        
+    // フェードイン終わったら初期化
+    if (Fade::Instance().GetFadeInFinish())Fade::Instance().Initialize();
 
     // Menu
     Menu::Instance().Update(elapsedTime);
+    // Fade
+    Fade::Instance().Update(elapsedTime);
 
     //エフェクトデバッグ
    /* const mouseButton mouseClick =
@@ -292,10 +308,19 @@ void SceneGame::Render(float elapsedTime)
 
     // 2D描画
     {
+        // 攻撃予兆描画
+        RenderEnemyAttack();
+
+        // UI
         Bar->render(dc, 600, 650, 620, 25, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 605, 652, 605 * w, 21, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+
+        // メニュー
         Menu::Instance().Render(elapsedTime);
-        RenderEnemyAttack();
+
+        // フェード用
+        Fade::Instance().Render(elapsedTime);
+
     }
 
 
@@ -344,7 +369,7 @@ void SceneGame::Reset()
     int group = 0;
     bool walk = false;
     for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
-    {        
+    {
         //歩き回るかどうか
         if (i < 4)walk = true;
         else walk = false;
@@ -354,10 +379,11 @@ void SceneGame::Reset()
         else if (i < 6)group = 1;
         else if (i < 9)group = 2;
 
-        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0),group,walk);
+        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0), group, walk);
     }
     // プレイヤー蘇生 ポジションリセット
     player->Init();
+    
 
 }
 

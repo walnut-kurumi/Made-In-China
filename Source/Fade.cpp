@@ -1,16 +1,21 @@
 #include "Fade.h"
 #include "Input/Input.h"
 
-
-// 初期化
-void Fade::Initialize()
+// コンストラクタ
+Fade::Fade()
 {
     ID3D11Device* device = Graphics::Ins().GetDevice();
 
     fade = std::make_unique<Sprite>(device, L"./Data/Sprites/scene/black.png");
+}
 
+// 初期化
+void Fade::Initialize()
+{    
    fadeInFlag = false;
    fadeOutFlag = false;
+   fadeInFinish = false;
+   fadeOutFinish = false;
    fadeAlpha = 0.0f;
 }
 
@@ -24,7 +29,10 @@ void Fade::Update(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
-    
+ 
+    if (fadeInFlag)   FadeIn(0.02f);
+    if (fadeOutFlag) FadeOut(0.02f);
+
 }
 
 // 描画処理
@@ -34,8 +42,7 @@ void Fade::Render(float elapsedTime)
     ID3D11Device* device = gfx.GetDevice();
     ID3D11DeviceContext* dc = gfx.GetDeviceContext();
     // 2D描画
-    {        
-        if (fadeInFlag || fadeOutFlag)
+    {                
         {
             fade.get()->render(dc, 0, 0, 1920, 1080, 1, 1, 1, fadeAlpha, 0);
         }
@@ -45,19 +52,35 @@ void Fade::Render(float elapsedTime)
 // フェードイン
 void Fade::FadeIn(float speed)
 {  
-    if (fadeAlpha >= 1.0f)fadeAlpha -= speed;
+    fadeInFinish = false;    
+
+    // 明るくしてく（透明にしてく）
+    fadeAlpha -= speed;
+
+    if (fadeAlpha <= 0.0f)
+    {
+        fadeInFinish = true;
+        fadeInFlag = false;
+        
+        fadeOutFlag = false;
+    }
 }
 
 // フェードアウト
 void Fade::FadeOut(float speed)
 {
+    fadeOutFinish = false;    
+
+    // 暗くしていく（アルファ値あげる）
+    fadeAlpha += speed;
+
+    if (fadeAlpha >= 1.5f)
+    {
+        fadeOutFinish = true;
+        fadeOutFlag = false;
+
+        fadeInFinish = false;                
+    }
 }
 
-// リセット
-void Fade::ResetFade()
-{
-    fadeInFlag = false;
-    fadeOutFlag = false;
-    fadeAlpha = 0.0f;
-}
 

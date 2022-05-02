@@ -19,11 +19,15 @@ void SceneTitle::Initialize()
     end = false;
 
     Input::Instance().GetMouse().SetMoveCursor(true);
+
+    Fade::Instance().Initialize();
 }
 
 // 終了化
 void SceneTitle::Finalize()
 {
+    Fade::Instance().Finalize();
+
     delete titleSprite;
     delete cursorSprite;
     delete gameStart;
@@ -64,17 +68,28 @@ void SceneTitle::Update(float elapsedTime)
     const mouseButton mouseClick =
         Mouse::BTN_LEFT;
 
+    // すすむ
+    {
+        if (start && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
+        {
+            // フェードアウトする
+            Fade::Instance().SetFadeOutFlag(true);
+        }
+        // フェードアウト終わったら
+        if (Fade::Instance().GetFadeOutFinish())
+        {
+            //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
+            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        }
+    }
+    // おわる
+    {
+        if (end && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
+        {
+            DestroyWindow(GetActiveWindow());
+        }
+    }
 
-    if (start  && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
-    {
-        //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-    }
-    else if (end && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
-    {
-        DestroyWindow(GetActiveWindow());
-    }
-    
     const GamePadButton updown =
         GamePad::BTN_UP
         | GamePad::BTN_DOWN
@@ -97,6 +112,8 @@ void SceneTitle::Update(float elapsedTime)
 
 
     SceneSelect();
+
+    Fade::Instance().Update(elapsedTime);
 }
 
 // 描画処理
@@ -112,6 +129,8 @@ void SceneTitle::Render(float elapsedTime)
         gameStart->render(dc, startpos.x, startpos.y, startsize.x, startsize.y, 1, 1, 1, startAlpha, 0);
         gameEnd->render(dc, endpos.x, endpos.y, endsize.x, endsize.y, 1, 1, 1, endAlpha, 0);
         cursorSprite->render(dc, mousepos.x-12, mousepos.y-12, 23, 24, 1, 1, 1, 1, 0);
+
+        Fade::Instance().Render(elapsedTime);
     }
 
     // モデル描画

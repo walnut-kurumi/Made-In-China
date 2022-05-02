@@ -4,6 +4,7 @@
 #include <memory>
 #include "Graphics/Graphics.h"
 #include "Graphics/Sprite.h"
+#include "Fade.h"
 
 // ÉVÅ[Éì
 class Scene
