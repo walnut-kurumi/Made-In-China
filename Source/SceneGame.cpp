@@ -66,35 +66,7 @@ void SceneGame::Initialize()
     EnemyPositionSetting();
 
     // エネミー初期化			    
-    for (int i = 0; i <ENEMY_MAX; i++)
-    {        
-        if (ENEMY_MAX / 2 == i)
-        {
-            // ロード％更新
-            AddLoadPercent(1.0f);
-        }
-        if (ENEMY_MAX == i)
-        {
-            // ロード％更新
-            AddLoadPercent(2.0f);            
-        }
-
-         //EnemyGunner* gunner = new EnemyGunner(device);
-         EnemyMelee* gunner = new EnemyMelee(device);
-         gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
-
-        //歩き回るかどうか
-        if (i < 4)gunner->SetWalkFlag(true); 
-        else gunner->SetWalkFlag(false);
-
-        // グループ番号セット
-        if (i < 4)gunner->SetGroupNum(0);
-        else if (i < 6)gunner->SetGroupNum(1);
-        else if (i < 9)gunner->SetGroupNum(2);
-
-        EnemyManager::Instance().Register(gunner);
-        EnemyManager::Instance().Init();
-    }
+    EnemyInitialize(device);
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -364,8 +336,7 @@ void SceneGame::Reset()
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
-    EnemyManager::Instance().Init();
-    EnemyPositionSetting();
+    EnemyManager::Instance().Init();    
     int group = 0;
     bool walk = false;
     for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
@@ -373,18 +344,67 @@ void SceneGame::Reset()
         //歩き回るかどうか
         if (i < 4)walk = true;
         else walk = false;
-
-        // グループ番号セット
-        if (i < 4)group = 0;
-        else if (i < 6)group = 1;
-        else if (i < 9)group = 2;
-
-        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0), group, walk);
+          
+        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0), walk);
     }
     // プレイヤー蘇生 ポジションリセット
     player->Init();
     
 
+}
+
+// 敵の初期化
+void SceneGame::EnemyInitialize(ID3D11Device* device)
+{
+    for (int i = 0; i < ENEMY_MAX; i++)
+    {
+        if (ENEMY_MAX / 2 == i)
+        {
+            // ロード％更新
+            AddLoadPercent(1.0f);
+        }
+        if (ENEMY_MAX == i)
+        {
+            // ロード％更新
+            AddLoadPercent(2.0f);
+        }
+
+        // 近接と遠隔を交互に
+        if (i % 2 == 0)
+        {
+            EnemyGunner* gunner = new EnemyGunner(device);
+            gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
+
+            //歩き回るかどうか
+            if (i < 4)gunner->SetWalkFlag(true);
+            else gunner->SetWalkFlag(false);
+
+            // グループ番号セット
+            if (i < 4)gunner->SetGroupNum(0);
+            else if (i < 6)gunner->SetGroupNum(1);
+            else if (i < 9)gunner->SetGroupNum(2);
+
+            EnemyManager::Instance().Register(gunner);
+        }
+        else
+        {
+            EnemyMelee* melee = new EnemyMelee(device);
+            melee->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
+
+            //歩き回るかどうか
+            if (i < 4)melee->SetWalkFlag(true);
+            else melee->SetWalkFlag(false);
+
+            // グループ番号セット
+            if (i < 4)melee->SetGroupNum(0);
+            else if (i < 6)melee->SetGroupNum(1);
+            else if (i < 9)melee->SetGroupNum(2);
+
+            EnemyManager::Instance().Register(melee);
+        }
+
+        EnemyManager::Instance().Init();
+    }
 }
 
 // エネミー座標設定
