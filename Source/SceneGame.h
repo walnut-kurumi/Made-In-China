@@ -8,11 +8,8 @@
 #include "PerlinNoise.h"
 #include "Graphics/Misc.h"
 #include "Effect.h"
-#include "framebuffer.h"
-#include "fullscreen_quad.h"
 #include "Graphics/ConstantBuffer.h"
 #include "Graphics/Shader.h"
-#include "bloom.h"
 
  
 class SceneGame : public Scene
@@ -56,7 +53,7 @@ private:
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
 
-	ConstantBuffer<POST_EFFECT_CONSTANTS> postEffectConstant;
+	/*ConstantBuffer<POST_EFFECT_CONSTANTS> postEffectConstant;
 	ConstantBuffer<BLOOM_CONSTANTS> bloomConstant;
 	ConstantBuffer<MIST_CONSTANTS> mistConstant;
 	enum class FRAMEBUFFER { SCENE_MSAA, SCENE_RESOLVED, POST_PROCESSED };
@@ -71,6 +68,10 @@ private:
 
 	std::unique_ptr<bloom> bloom_effect;
 
+	std::unique_ptr<Rasterizer> rasterizer;
+	std::unique_ptr<Blender> blender;
+	std::unique_ptr<DeppthSteciler> depth;*/
+
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
 	bool a = false;
@@ -79,7 +80,10 @@ private:
 	// CAMERA_SHAKE
 	// https://www.gdcvault.com/play/1023557/Math-for-Game-Programmers-Juicing
 	// TODO:01 Define a constant buffer object.
-	ID3D11Buffer* constant_buffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> constant_buffer;
+	/*Microsoft::WRL::ComPtr<ID3D11Buffer> postConstantBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> bloomConstantBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> mistConstantBuffer;*/
 	// TODO:06 Defines the maximum amount of rotation(max_skew) and movement(max_sway) of the camera.
 	float max_skew = 5.00f;		// unit is degrees angle.
 	float max_sway = 16.00f;	// unit is pixels in screen space.
