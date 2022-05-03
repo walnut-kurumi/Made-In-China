@@ -163,13 +163,16 @@ private:
 	float sbSpace = 0;			// 敵の後ろ一定距離
 	Vec3 sbdir = { 0,0,0 };	// 向き
 	Vec3 sbPos = { 0,0,0 };	// 位置
-	bool clock = false;	 // プレイヤー以外の時間
+	int sbHitEmy = -1;	// SBがヒットした敵（）当てた敵は確実に倒す用
 	const float sbCost = 2.0f;
+
+	bool clock = false;	 // プレイヤー以外の時間
 	// SB時間制限
 	float sbTimer = 0.0f;
 	const float sbMaxTime = 0.5f;
 	// 死亡
 	bool isDead = false;
+
 
 
 	Cost cost;

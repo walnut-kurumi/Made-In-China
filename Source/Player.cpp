@@ -98,6 +98,7 @@ void Player::Init() {
     sbdir = { 0,0,0 };
     sbPos = { 0,0,0 };
     sbTimer = 0.0f;
+    sbHitEmy = -1;
 
     health = 1;
 
@@ -630,6 +631,14 @@ void Player::UpdateFinisherState(float elapsedTime) {
         // カメラシェイク（簡素）おわり
         CameraManager& cameraMgr = CameraManager::Instance();
         cameraMgr.SetShakeFlag(false);
+
+        // SBが当たった敵を確殺
+        if (sbHitEmy >= 0) {
+            EnemyManager& enemyManager = EnemyManager::Instance();
+            Enemy* enemy = enemyManager.GetEnemy(sbHitEmy);
+            enemy->ApplyDamage(1, 0);
+            sbHitEmy = -1;
+        }
     }
 }
 
@@ -877,6 +886,7 @@ void Player::CollisionSBVsEnemies() {
                     sbPos.x += -(VecMath::sign(enemy->GetPosition().x - position.x)) * sbSpace;
                     // 武器を壊す
                     sb->Destroy();
+                    sbHitEmy = i;
                 }
             }
         }
