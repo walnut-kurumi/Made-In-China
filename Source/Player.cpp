@@ -96,11 +96,13 @@ void Player::Init() {
 
     isDead = false;
 
+    // SB用
     sbSpeed = 3.0f;
     sbSpace = 4.0f;
     sbhit = false;
     sbdir = { 0,0,0 };
     sbPos = { 0,0,0 };
+    sbStartPos = { 0,0,0 };
     sbTimer = 0.0f;
     sbHitEmy = -1;
     invincible = false;
@@ -607,6 +609,8 @@ void Player::TransitionSBState() {
     clock = true;
     // 無敵
     invincible = true;
+    // スタート位置記録
+    sbStartPos = position;
     // アニメーションは止める
     //model->PlayAnimation(static_cast<int>(state), false);
 }
@@ -658,6 +662,8 @@ void Player::UpdateFinisherState(float elapsedTime) {
         atk = false;
         // 無敵解除
         invincible = false;
+        // Dest位置リセット
+        sbStartPos = { 0,0,0 };
         // カメラシェイク（簡素）おわり
         CameraManager& cameraMgr = CameraManager::Instance();
         cameraMgr.SetShakeFlag(false);
