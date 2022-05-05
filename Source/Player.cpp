@@ -41,6 +41,10 @@ Player::Player(ID3D11Device* device) {
 
     TransitionIdleState();
 
+    HRESULT hr = destructionCb.initialize(device, Graphics::Ins().GetDeviceContext());
+    _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
+   
+
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
@@ -101,6 +105,11 @@ void Player::Init() {
     sbHitEmy = -1;
     invincible = false;
 
+    dest.destruction = 0.0f;
+    dest.positionFactor = 0.0f;
+    dest.rotationFactor = 0.0f;
+    dest.scaleFactor = 0.0f;
+
     health = 1;
 
     cost.Reset();
@@ -152,14 +161,21 @@ void Player::Update(float elapsedTime) {
 
 
 void Player::Render(ID3D11DeviceContext* dc) {
-    model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
+    destructionCb.data.destruction = dest.destruction;
+    destructionCb.data.positionFactor = dest.positionFactor;
+    destructionCb.data.rotationFactor = dest.rotationFactor;
+    destructionCb.data.scaleFactor = dest.scaleFactor;
+    destructionCb.applyChanges();
+    dc->VSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
+    dc->PSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
+    dc->GSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
+
+    model->Begin(dc, Shaders::Ins()->GetDestructionShader());
+    //model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
     model->Render(dc);
 
     // 弾丸描画処理
     SBManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
-
-    centerPosition = position;
-    centerPosition.y += height / 2.0f;
 
 #ifdef _DEBUG
     // height
@@ -168,7 +184,6 @@ void Player::Render(ID3D11DeviceContext* dc) {
     debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
 
     // 必要なったら追加
-    debugRenderer.get()->DrawSphere(centerPosition, 1, Vec4(0.5f, 0.5f, 0, 1));
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(sbPos, 1, Vec4(1, 1, 0, 1));
     if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, atkRadius, Vec4(1, 1, 0, 1));
@@ -199,6 +214,13 @@ void Player::DrawDebugGUI() {
             int a = static_cast<int>(state);
             ImGui::SliderInt("State", &a, 0, static_cast<int>(AnimeState::End));
         }
+        // トランスフォーム
+        if (ImGui::CollapsingHeader("Destruction", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::SliderFloat("dest", &dest.destruction, 0, 1.0f);
+            ImGui::SliderFloat("pos", &dest.positionFactor, 0, 1.0f);
+            ImGui::SliderFloat("rot", &dest.rotationFactor, 0, 1.0f);
+            ImGui::SliderFloat("sca", &dest.scaleFactor, 0, 1.0f);
+        }
 
         ImGui::RadioButton("death", deathFlag);
         ImGui::SliderFloat("Height", &height, 0, 10.0f);
@@ -210,6 +232,8 @@ void Player::DrawDebugGUI() {
         float mpy = static_cast<float>(mouse.GetPositionY());        
         ImGui::SliderFloat("MousePosX", &mpx, -300, 300);
         ImGui::SliderFloat("MousePosY", &mpy, -200, 200);
+
+
     }
     ImGui::End();
 #endif

@@ -4,6 +4,7 @@
 #include "DebugRenderer.h"
 #include "SBManager.h"
 #include "Cost.h"
+#include "Graphics/ConstantBuffer.h"
 
 class Player : public Character
 {
@@ -123,8 +124,13 @@ private:
 	
 	AnimeState state = AnimeState::Idle;
 
+	ConstantBuffer<Destruction> destructionCb{};
+
 private:
 	std::unique_ptr<DebugRenderer> debugRenderer;
+
+	// デストラクションシェーダ用
+	Destruction dest{};
 
 	// 攻撃判定用 体の位置
 	Vec3 atkPos{};
@@ -165,6 +171,7 @@ private:
 	float sbSpace = 0;			// 敵の後ろ一定距離
 	Vec3 sbdir = { 0,0,0 };	// 向き
 	Vec3 sbPos = { 0,0,0 };	// 位置
+	Vec3 sbStartPos = { 0,0,0 };	// デストラクション用SBスタート位置
 	int sbHitEmy = -1;	// SBがヒットした敵（）当てた敵は確実に倒す用
 	const float sbCost = 2.0f;
 	bool invincible = false;	// 無敵状態（SB）
