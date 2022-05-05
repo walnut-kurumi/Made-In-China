@@ -50,6 +50,8 @@ public:
 	
 	bool GetClock() { return clock; }
 
+	bool GetInvincible() { return invincible; }
+
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
 	void CollisionSBVsEnemies();
@@ -165,6 +167,7 @@ private:
 	Vec3 sbPos = { 0,0,0 };	// 位置
 	int sbHitEmy = -1;	// SBがヒットした敵（）当てた敵は確実に倒す用
 	const float sbCost = 2.0f;
+	bool invincible = false;	// 無敵状態（SB）
 
 	bool clock = false;	 // プレイヤー以外の時間
 	// SB時間制限

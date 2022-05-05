@@ -99,6 +99,7 @@ void Player::Init() {
     sbPos = { 0,0,0 };
     sbTimer = 0.0f;
     sbHitEmy = -1;
+    invincible = false;
 
     health = 1;
 
@@ -580,6 +581,8 @@ void Player::TransitionSBState() {
     state = AnimeState::SB;
     sbhit = false;
     clock = true;
+    // 無敵
+    invincible = true;
     // アニメーションは止める
     //model->PlayAnimation(static_cast<int>(state), false);
 }
@@ -594,6 +597,7 @@ void Player::UpdateSBState(float elapsedTime) {
     if (VecMath::LengthVec3(sbPos - position) <= sbSpace) {
         position = sbPos;
         sbPos = { 0,0,0 };
+        sbdir = { 0,0,0 };
         TransitionFinisherState();
     }
 }
@@ -628,6 +632,8 @@ void Player::UpdateFinisherState(float elapsedTime) {
         // 攻撃位置リセット
         atkPos = { 0,0,0 };
         atk = false;
+        // 無敵解除
+        invincible = false;
         // カメラシェイク（簡素）おわり
         CameraManager& cameraMgr = CameraManager::Instance();
         cameraMgr.SetShakeFlag(false);
