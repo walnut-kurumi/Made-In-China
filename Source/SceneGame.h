@@ -10,11 +10,8 @@
 #include "Effect.h"
 #include "Graphics/ConstantBuffer.h"
 #include "Graphics/Shader.h"
-<<<<<<< HEAD
 #include "framebuffer.h"
-=======
 #include"Graphics/Rasterizer.h"
->>>>>>> f39fd7f8045d0b23446466f4511ddcf0874fc600
 
  
 class SceneGame : public Scene
