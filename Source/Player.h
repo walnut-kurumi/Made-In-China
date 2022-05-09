@@ -5,6 +5,7 @@
 #include "SBManager.h"
 #include "Cost.h"
 #include "Graphics/ConstantBuffer.h"
+#include "Effect.h"
 
 class Player : public Character
 {
@@ -53,6 +54,8 @@ public:
 
 	bool GetInvincible() { return invincible; }
 
+	float GetBlurPower() { return blurPower; }
+
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
 	void CollisionSBVsEnemies();
@@ -77,8 +80,6 @@ private:
 	
 	// 死亡した時に呼ばれる
 	void OnDead() override { isDead = true; }
-
-	void Vibration(float elapsedTime);
 
 	bool Raycast(Vec3 move);
 
@@ -140,12 +141,6 @@ private:
 	Vec3 waistPos{};
 	Vec3 headPos{};
 
-	// パッド振動
-	const int MAX_SPEED = 65535;                  
-	const int MIN_SPEED = 0;              
-	bool vibration = false;
-	float vibTimer = 0.0f;
-
 	float moveSpeed = 0.0f;
 	float turnSpeed = DirectX::XMConvertToRadians(3600);
 
@@ -178,6 +173,7 @@ private:
 	int sbHitEmy = -1;	// SBがヒットした敵（）当てた敵は確実に倒す用
 	const float sbCost = 2.0f;
 	bool invincible = false;	// 無敵状態（SB）
+	float blurPower = 0.0f;// 移動ブラー力
 
 	bool clock = false;	 // プレイヤー以外の時間
 	// SB時間制限
@@ -187,6 +183,9 @@ private:
 	bool isDead = false;
 
 
+	// 攻撃えふぇくと
+	Effect* attackEffect = nullptr;
+	Effekseer::Handle handle = 0;
 
 	Cost cost;
 };

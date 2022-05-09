@@ -22,8 +22,10 @@ HRESULT VertexShader::initialize(ID3D11Device* device, const char* csoName, D3D1
 	hr = device->CreateVertexShader(csoData.get(), csoSz, nullptr, shader.GetAddressOf());
 	_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
-	hr = device->CreateInputLayout(inputElementDesc, numElements, csoData.get(), csoSz, inputLayout.GetAddressOf());
-	_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
+	if (inputElementDesc) {
+		hr = device->CreateInputLayout(inputElementDesc, numElements, csoData.get(), csoSz, inputLayout.GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
+	}
 
 	return hr;
 }

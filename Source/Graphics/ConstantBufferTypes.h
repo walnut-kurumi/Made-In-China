@@ -53,3 +53,11 @@ struct scene_blur
     float dummy0;
     float dummy1;
 };
+
+struct Radial_Blur
+{
+    float TU;
+    float TV;
+    float BlurPower;
+    float dummy;
+};

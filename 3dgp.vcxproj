@@ -237,6 +237,7 @@
     <ClCompile Include="Source\Graphics\Vec.cpp" />
     <ClCompile Include="Source\PerlinNoise.cpp" />
     <ClCompile Include="Source\Player.cpp" />
+    <ClCompile Include="Source\RadialBlur.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
     <ClCompile Include="Source\SB.cpp" />
     <ClCompile Include="Source\SBManager.cpp" />
@@ -311,6 +312,7 @@
     <ClInclude Include="Source\Graphics\Vec.h" />
     <ClInclude Include="Source\PerlinNoise.h" />
     <ClInclude Include="Source\Player.h" />
+    <ClInclude Include="Source\RadialBlur.h" />
     <ClInclude Include="Source\ResourceManager.h" />
     <ClInclude Include="Source\SB.h" />
     <ClInclude Include="Source\SBManager.h" />
@@ -338,6 +340,7 @@
     <None Include="shader\GeometricPrimitive.hlsli" />
     <None Include="shader\Grass.hlsli" />
     <None Include="shader\OutLine.hlsli" />
+    <None Include="shader\RadialBlur.hlsli" />
     <None Include="shader\Ramp.hlsli" />
     <None Include="shader\RenderingEquation.hlsli" />
     <None Include="shader\SkinnedMesh.hlsli" />
@@ -508,6 +511,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="shader\RadialBlurPs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="shader\RadialBlurVs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="shader\RampPs.hlsl">

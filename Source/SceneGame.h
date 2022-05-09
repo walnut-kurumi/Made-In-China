@@ -10,9 +10,10 @@
 #include "Effect.h"
 #include "Graphics/ConstantBuffer.h"
 #include "Graphics/Shader.h"
-#include "framebuffer.h"
 #include"Graphics/Rasterizer.h"
 
+#include "framebuffer.h"
+#include "RadialBlur.h"
  
 class SceneGame : public Scene
 {
@@ -86,4 +87,7 @@ private:
 	DirectX::XMFLOAT2 mousepos = {};
 
 	std::unique_ptr<Framebuffer> framebuffer;
+	std::unique_ptr<RadialBlur> radialBlur;
+
+	ConstantBuffer<Radial_Blur> CBBlur;
 };

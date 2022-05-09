@@ -135,4 +135,7 @@ protected:
 
 	// -1‚ª¶ +1‚ª‰EŒü‚« 0‚ÍˆÚ“®‚È‚µ
 	int direction = 0;
+
+	// ŠÑ’Ê°‚ğŠÑ’Ê‚·‚é‚©”Û‚©
+	bool Penetrate = false;
 };
