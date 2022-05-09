@@ -88,8 +88,8 @@ void SceneGame::Initialize()
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
 
-    Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
-    LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");   
+    Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
+    LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");   
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
 
     Menu::Instance().Initialize();
@@ -296,8 +296,8 @@ void SceneGame::Render(float elapsedTime)
         RenderEnemyAttack();
 
         // UI
-        Bar->render(dc, 600, 650, 620, 25, 1.0f, 1.0f, 1.0f, 1.0f, 0);
-        LoadBar->render(dc, 605, 652, 605 * w, 21, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
         // ƒƒjƒ…[
         Menu::Instance().Render(elapsedTime);
