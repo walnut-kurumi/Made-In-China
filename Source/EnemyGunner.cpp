@@ -10,7 +10,7 @@
 // コンストラクタ
 EnemyGunner::EnemyGunner(ID3D11Device* device)
 {
-#if 0
+#if 1
     const char* idle = "Data/Models/Enemy/JummoAnimations/Idle.fbx";
     const char* run = "Data/Models/Enemy/JummoAnimations/Run.fbx";
     const char* walk = "Data/Models/Enemy/JummoAnimations/Walk.fbx";

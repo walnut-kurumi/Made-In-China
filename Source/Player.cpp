@@ -13,19 +13,16 @@
 
 #include "HitManager.h"
 
+
+
 Player::Player(ID3D11Device* device) {
 
-    //const char* idle = "Data/Models/Player/Animations/ver11/Idle.fbx";
-    //const char* run = "Data/Models/Player/Animations/ver11/Run.fbx";
-    //const char* jump = "Data/Models/Player/Animations/ver11/Jump.fbx";
-    //const char* attack = "Data/Models/Player/Animations/ver11/Attack.fbx";
+    const char* idle = "Data/Models/Player/Animations/ver12/henall.fbx";   
+    const char* run = "Data/Models/Player/Animations/ver11/Run.fbx";
+    const char* jump = "Data/Models/Player/Animations/ver11/Jump.fbx";
+    const char* attack = "Data/Models/Player/Animations/ver11/Attack.fbx";
 
-    const char* idle =   "Data/Models/Player/nico.fbx";
-    const char* run =    "Data/Models/Player/nico.fbx";
-    const char* jump =   "Data/Models/Player/nico.fbx";
-    const char* attack = "Data/Models/Player/nico.fbx";
-
-    model = new Model(device, "Data/Models/Player/nico.fbx", true, 0);
+    model = new Model(device, "Data/Models/Player/T12.fbx", true, 0);
 
     model->LoadAnimation(idle, 0, static_cast<int>(AnimeState::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(AnimeState::Run));
@@ -50,10 +47,13 @@ Player::Player(ID3D11Device* device) {
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
    
 
+    attackEffect = new Effect("Data/Effect/playerAttack.efk");
+
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
 Player::~Player() {
+    delete attackEffect;
     delete model;
 }
 
@@ -111,7 +111,6 @@ void Player::Init() {
     sbTimer = 0.0f;
     sbHitEmy = -1;
     invincible = false;
-    blurPower = 0.0f;
 
     dest.destruction = 0.0f;
     dest.positionFactor = 0.0f;
@@ -119,7 +118,6 @@ void Player::Init() {
     dest.scaleFactor = 0.0f;
 
     health = 1;
-
 
     // 中心座標更新
     UpdateCenterPosition();
@@ -157,6 +155,10 @@ void Player::Update(float elapsedTime) {
     CollisionSBVsStage();
     if (atk) CollisionPanchiVsEnemies();
     if (atk) CollisionPanchiVsProjectile();
+    
+    // Effect
+    if (atk) { handle = attackEffect->Play(position,3.0f); }
+    else { attackEffect->Stop(handle); }
 
     atkTimer -= elapsedTime;
 
@@ -628,16 +630,11 @@ void Player::TransitionSBState() {
     sbStartPos = position;
     // アニメーションは止める
     //model->PlayAnimation(static_cast<int>(state), false);
-    // ブラーパワー
-    blurPower = 15.0f;
 }
 void Player::UpdateSBState(float elapsedTime) {
     // 移動＋レイキャスト
     if(Raycast(sbdir * sbSpeed)) {
-        position = sbPos;
         sbPos = { 0,0,0 };
-        sbdir = { 0,0,0 };
-        blurPower = 0.0f;
         TransitionFinisherState();
     }
 
@@ -646,7 +643,6 @@ void Player::UpdateSBState(float elapsedTime) {
         position = sbPos;
         sbPos = { 0,0,0 };
         sbdir = { 0,0,0 };
-        blurPower = 0.0f;
         TransitionFinisherState();
     }
 }
