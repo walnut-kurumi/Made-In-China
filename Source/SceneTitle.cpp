@@ -44,11 +44,11 @@ void SceneTitle::Update(float elapsedTime)
         | GamePad::BTN_B
         | GamePad::BTN_BACK
         //| GamePad::BTN_DOWN
-        | GamePad::BTN_LEFT
+        //| GamePad::BTN_LEFT
         | GamePad::BTN_LEFT_SHOULDER
         | GamePad::BTN_LEFT_THUMB
         | GamePad::BTN_LEFT_TRIGGER
-        | GamePad::BTN_RIGHT
+        //| GamePad::BTN_RIGHT
         | GamePad::BTN_RIGHT_SHOULDER
         | GamePad::BTN_RIGHT_THUMB
         | GamePad::BTN_RIGHT_TRIGGER
@@ -57,46 +57,15 @@ void SceneTitle::Update(float elapsedTime)
         | GamePad::BTN_X
         | GamePad::BTN_Y;
 
-    Mouse& mouse = Input::Instance().GetMouse();
-    DirectX::XMFLOAT3 screenPosition;
-    screenPosition.x = static_cast<float>(mouse.GetPositionX());
-    screenPosition.y = static_cast<float>(mouse.GetPositionY());
-    mousepos.x = screenPosition.x;
-    mousepos.y = screenPosition.y;
+    Mouse& mouse = Input::Instance().GetMouse();    
 
     //マウス左クリックでマップ選択
     const mouseButton mouseClick =
         Mouse::BTN_LEFT;
 
-    // おわる
-    {
-        if (end && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
-        {
-            DestroyWindow(GetActiveWindow());
-        }
-    }
-
-    const GamePadButton updown =
-        GamePad::BTN_UP
-        | GamePad::BTN_DOWN
-        | GamePad::BTN_W
-        | GamePad::BTN_S;
-
-    if (screenPosition.x >= startpos.x && screenPosition.x < startpos.x + startsize.x)
-    {
-        if (screenPosition.y >= startpos.y && screenPosition.y <= startpos.y + startsize.y)
-        {
-            start = true;
-            end = false;
-        }
-        if (screenPosition.y >= endpos.y && screenPosition.y <= endpos.y + endsize.y)
-        {
-            start = false;
-            end = true;
-        }
-    }
-
+    // scene選択
     SceneSelect();
+   
     
     Fade::Instance().Update(elapsedTime);
 
@@ -114,7 +83,13 @@ void SceneTitle::Update(float elapsedTime)
             SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
         }
     }
-
+    // おわる
+    {
+        if (end && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
+        {
+            DestroyWindow(GetActiveWindow());
+        }
+    }
 
 }
 
@@ -146,7 +121,40 @@ void SceneTitle::Render(float elapsedTime)
 
 void SceneTitle::SceneSelect()
 {
-     
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    Mouse& mouse = Input::Instance().GetMouse();
+    DirectX::XMFLOAT3 screenPosition;
+    screenPosition.x = static_cast<float>(mouse.GetPositionX());
+    screenPosition.y = static_cast<float>(mouse.GetPositionY());
+    mousepos.x = screenPosition.x;
+    mousepos.y = screenPosition.y;
+
+    const GamePadButton up =
+        GamePad::BTN_UP
+        | GamePad::BTN_W;
+    const GamePadButton down =        
+        GamePad::BTN_DOWN        
+        | GamePad::BTN_S;
+
+    if (screenPosition.x >= startpos.x && screenPosition.x < startpos.x + startsize.x)
+    {
+        if (screenPosition.y >= startpos.y && screenPosition.y <= startpos.y + startsize.y)
+        {
+            start = true;
+            end = false;
+        }
+        if (screenPosition.y >= endpos.y && screenPosition.y <= endpos.y + endsize.y)
+        {
+            start = false;
+            end = true;
+        }
+    }
+    if (gamePad.GetButtonDown() & up || gamePad.GetButtonDown() & down)
+    {
+        start = !start;
+        end = !end;
+    }
+
     if (start)
     {
         startAlpha = 1.0f;
