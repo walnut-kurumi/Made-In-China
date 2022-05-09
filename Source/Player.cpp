@@ -113,6 +113,7 @@ void Player::Init() {
     sbTimer = 0.0f;
     sbHitEmy = -1;
     invincible = false;
+    blurPower = 0.0f;
 
     dest.destruction = 0.0f;
     dest.positionFactor = 0.0f;
@@ -241,6 +242,7 @@ void Player::DrawDebugGUI() {
             ImGui::SliderFloat("Poion X", &p.x, -300, 300);
             ImGui::SliderFloat("Poion Y", &p.y, -200, 200);
             ImGui::SliderFloat("Poion Z", &p.z, -300, 300);
+            ImGui::SliderFloat("blurPower", &blurPower, 0,150);
 
             int a = static_cast<int>(state);
             ImGui::SliderInt("State", &a, 0, static_cast<int>(AnimeState::End));
@@ -640,16 +642,17 @@ void Player::TransitionSBState() {
     invincible = true;
     // スタート位置記録
     sbStartPos = position;
-    // アニメーションは止める
-    //model->PlayAnimation(static_cast<int>(state), false);
 }
 void Player::UpdateSBState(float elapsedTime) {
     // 移動＋レイキャスト
     if(Raycast(sbdir * sbSpeed)) {
         sbPos = { 0,0,0 };
+        sbdir = { 0,0,0 };
         TransitionFinisherState();
     }
-
+    // ブラー
+    blurPower += elapsedTime * blur;
+    blurPower = min(blurPower, blurMax);
     // 敵に到達したらSB攻撃ステートへ
     if (VecMath::LengthVec3(sbPos - position) <= sbSpace) {
         position = sbPos;
@@ -673,7 +676,9 @@ void Player::UpdateFinisherState(float elapsedTime) {
     // 任意のアニメーション再生区間でのみ衝突判定処理をする
     float animationTime = model->GetCurrentAnimationSeconds();
     atk = animationTime >= 0.01f && animationTime <= 0.20f;
-
+    // ブラー
+    blurPower -= elapsedTime * blur;
+    blurPower = max(blurPower, 0.0f);
     // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
         // 終わったらアイドル状態へ
@@ -704,6 +709,7 @@ void Player::UpdateFinisherState(float elapsedTime) {
             enemy->ApplyDamage(1, 0);
             sbHitEmy = -1;
         }
+        blurPower = 0.0f;
     }
 }
 

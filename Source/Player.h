@@ -176,7 +176,9 @@ private:
 	int sbHitEmy = -1;	// SBがヒットした敵（）当てた敵は確実に倒す用
 	const float sbCost = 2.0f;
 	bool invincible = false;	// 無敵状態（SB）
-	float blurPower = 0.0f;// 移動ブラー力
+	float blurPower = 0.0f; // 移動ブラー力
+	float blurMax = 10.0f;	// ブラー最大値
+	float blur = 60.0f;		// ブラー増減スピード
 
 	bool clock = false;	 // プレイヤー以外の時間
 	// SB時間制限
