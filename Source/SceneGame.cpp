@@ -106,6 +106,7 @@ void SceneGame::Initialize()
     SetLoadPercent(10.0f);
 
     framebuffer = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
+    radialBlur = std::make_unique<RadialBlur>(device);
 }
 
 // 終了化
@@ -255,25 +256,31 @@ void SceneGame::Render(float elapsedTime)
     //dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
     //dc->VSSetConstantBuffers(3, 1, &constant_buffer);
  
-    // モデル描画
+    framebuffer->clear(dc);
+    framebuffer->activate(dc);
     {
-        // ステージ描画
-        StageManager::Instance().Render(dc, elapsedTime);
-        // プレイヤー描画
-        player->Render(dc);
-        // エネミー描画
-        EnemyManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
+        // モデル描画
+        {
+            // ステージ描画
+            StageManager::Instance().Render(dc, elapsedTime);
+            // プレイヤー描画
+            player->Render(dc);
+            // エネミー描画
+            EnemyManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
+        }
+
+        // デバック
+        {
+            player->DrawDebugGUI();
+        }
+
+        //3Dエフェクト描画
+        {
+            EffectManager::Instance().Render(cameraMgr.GetView(), cameraMgr.GetProjection());
+        }
     }
-   
-    // デバック
-    {
-        player->DrawDebugGUI();        
-    }
-    
-    //3Dエフェクト描画
-    {
-        EffectManager::Instance().Render(cameraMgr.GetView(), cameraMgr.GetProjection());
-    }
+    framebuffer->deactivate(dc);
+    radialBlur->blit(dc, framebuffer->shader_resource_views[0].GetAddressOf(), 0, 1);
 
     // 2D描画
     {

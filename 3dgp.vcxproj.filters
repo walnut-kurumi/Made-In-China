@@ -97,6 +97,12 @@
     <FxCompile Include="shader\BlurPs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="shader\RadialBlurVs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\RadialBlurPs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Framework.cpp" />
@@ -279,6 +285,9 @@
       <Filter>Source\Character\Player</Filter>
     </ClCompile>
     <ClCompile Include="Source\framebuffer.cpp" />
+    <ClCompile Include="Source\RadialBlur.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -487,6 +496,9 @@
       <Filter>Source\Character\Player</Filter>
     </ClInclude>
     <ClInclude Include="Source\framebuffer.h" />
+    <ClInclude Include="Source\RadialBlur.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\debug.hlsli">
@@ -529,6 +541,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\Constants.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="shader\RadialBlur.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
