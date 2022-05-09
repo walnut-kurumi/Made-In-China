@@ -292,6 +292,7 @@ void SkinnedMesh::render(ID3D11DeviceContext* deviceContext, const DirectX::XMFL
 
 			for (size_t boneIndex = 0; boneIndex < boneCount; ++boneIndex) {
 				const Skeleton::Bone& bone = mesh.bindPose.bones.at(boneIndex);
+			
 				const Animation::Keyframe::Node& boneNode = keyframe->nodes.at(bone.nodeIndex);
 				//ボーンのローカル行列とグローバル行列を合成（ワールド座標の位置に）
 				XMStoreFloat4x4(

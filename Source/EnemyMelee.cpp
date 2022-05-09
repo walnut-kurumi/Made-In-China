@@ -192,9 +192,9 @@ void EnemyMelee::CollisionProjectileVsEnemies()
 void EnemyMelee::CollisionPanchiVsPlayer()
 {
     // Õ“Ëˆ—
-    if (Collision::SphereVsSphere(attackPos, player->GetCenterPosition(), attackRadius, player->GetRadius())) {
-        // ƒ_ƒ[ƒW—^‚¦‚é
-        player->ApplyDamage(1, 0.8f);
+    if (Collision::SphereVsSphere(attackPos, player->GetCenterPosition(), attackRadius, player->GetRadius())) {        
+        // –³“G‚¶‚á‚È‚¢Žžƒ_ƒ[ƒW—^‚¦‚é
+        if (!player->GetInvincible()) player->ApplyDamage(1, 0.8f);
     }
 }
 

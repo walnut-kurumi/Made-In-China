@@ -3,6 +3,8 @@
 #include "Character.h"
 #include "DebugRenderer.h"
 #include "SBManager.h"
+#include "Cost.h"
+#include "Graphics/ConstantBuffer.h"
 
 class Player : public Character
 {
@@ -37,8 +39,8 @@ public:
 
 	bool GetDead() { return isDead; }
 
-	float GetSlowTimer() const { return slowTimer; }
-	float GetSlowMax() const { return slowMax; }
+	float GetSlowTimer() { return cost.GetCost(); }
+	float GetSlowMax() { return cost.GetMaxCost(); }
 
 	float GetPlaybackSpeed() { return slow ? slowSpeed : playbackSpeed; }
 	bool GetSlowFlag() { return slow; }
@@ -48,6 +50,8 @@ public:
 	float GetHitStopSpeed() { return hitstop ? hitstopSpeed : playbackSpeed; }
 	
 	bool GetClock() { return clock; }
+
+	bool GetInvincible() { return invincible; }
 
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
@@ -120,8 +124,13 @@ private:
 	
 	AnimeState state = AnimeState::Idle;
 
+	ConstantBuffer<Destruction> destructionCb{};
+
 private:
 	std::unique_ptr<DebugRenderer> debugRenderer;
+
+	// デストラクションシェーダ用
+	Destruction dest{};
 
 	// 攻撃判定用 体の位置
 	Vec3 atkPos{};
@@ -152,12 +161,6 @@ private:
 	float playbackSpeed = 0.0f;
 	float slowSpeed = 0.0f;
 	bool slow = false;
-	// スローモーションの時間
-	const float slowMax = 5.0f;
-	float slowTimer = slowMax;
-	const float CTMax = 2.0f;
-	float slowCTTimer = CTMax;
-	int slowCT = 0;	// クールタイム　0:無し 1:CT明け直後 2:CT中
 	// ヒットストップ用
 	float hitstopSpeed = 0.0f;
 	bool hitstop = false; // 攻撃当たったらtrue
@@ -168,10 +171,19 @@ private:
 	float sbSpace = 0;			// 敵の後ろ一定距離
 	Vec3 sbdir = { 0,0,0 };	// 向き
 	Vec3 sbPos = { 0,0,0 };	// 位置
+	Vec3 sbStartPos = { 0,0,0 };	// デストラクション用SBスタート位置
+	int sbHitEmy = -1;	// SBがヒットした敵（）当てた敵は確実に倒す用
+	const float sbCost = 2.0f;
+	bool invincible = false;	// 無敵状態（SB）
+
 	bool clock = false;	 // プレイヤー以外の時間
 	// SB時間制限
 	float sbTimer = 0.0f;
 	const float sbMaxTime = 0.5f;
 	// 死亡
 	bool isDead = false;
+
+
+
+	Cost cost;
 };

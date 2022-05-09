@@ -16,6 +16,12 @@
     <FxCompile Include="shader\DestructionVs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="shader\FullscreenQuadPS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\FullscreenQuadVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
     <FxCompile Include="shader\GeometricPrimitivePs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
@@ -88,10 +94,34 @@
     <FxCompile Include="shader\UVScroll_vs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="shader\FullscreenQuadPS.hlsl">
+    <FxCompile Include="shader\bloom_extraction_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="shader\FullscreenQuadVS.hlsl">
+    <FxCompile Include="shader\fullscreen_quad_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\fullscreen_quad_vs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\gaussian_blur_convolution_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\gaussian_blur_downsampling_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\gaussian_blur_horizontal_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\gaussian_blur_vertical_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\post_effect_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\resolve_depth_stencil_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\tone_map_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\BlurPs.hlsl">
@@ -269,11 +299,23 @@
     <ClCompile Include="Source\SceneTutorial.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Source\bloom.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\framebuffer.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\fullscreen_quad.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Source\EnemyMelee.cpp">
       <Filter>Source\Character\Enemy</Filter>
     </ClCompile>
     <ClCompile Include="Source\Fade.cpp">
       <Filter>Source\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Cost.cpp">
+      <Filter>Source\Character\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -467,6 +509,15 @@
     <ClInclude Include="Source\SceneTutorial.h">
       <Filter>Source\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Source\bloom.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\framebuffer.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\fullscreen_quad.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Source\EnemyMelee.h">
       <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
@@ -479,12 +530,18 @@
     <ClInclude Include="Source\Fade.h">
       <Filter>Source\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Cost.h">
+      <Filter>Source\Character\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\debug.hlsli">
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\Destruction.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="shader\FullscreenQuad.hlsli">
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\GeometricPrimitive.hlsli">
@@ -517,10 +574,13 @@
     <None Include="shader\UVScroll.hlsli">
       <Filter>Shader</Filter>
     </None>
-    <None Include="shader\Constants.hlsli">
+    <None Include="shader\fullscreen_quad.hlsli">
       <Filter>Shader</Filter>
     </None>
-    <None Include="shader\FullscreenQuad.hlsli">
+    <None Include="shader\noise.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="shader\Constants.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

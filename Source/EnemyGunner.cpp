@@ -203,8 +203,8 @@ void EnemyGunner::CollisionProjectileVsPlayer()
             // ”½ŽË‚µ‚Ä‚È‚©‚Á‚½‚ç
             if (!enemyB->GetReflectionFlag())
             {
-                // ƒ_ƒ[ƒW—^‚¦‚é
-                player->ApplyDamage(1, 0.8f);                
+                // –³“G‚¶‚á‚È‚¢Žžƒ_ƒ[ƒW—^‚¦‚é
+                if(!player->GetInvincible()) player->ApplyDamage(1, 0.8f);                
             }
         }
     }
