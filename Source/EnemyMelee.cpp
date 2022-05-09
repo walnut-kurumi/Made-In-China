@@ -6,6 +6,7 @@
 
 #include "HitManager.h"
 
+// コンストラクタ
 EnemyMelee::EnemyMelee(ID3D11Device* device)
 {
 #if 1
@@ -49,12 +50,14 @@ EnemyMelee::EnemyMelee(ID3D11Device* device)
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
+// デストラクタ
 EnemyMelee::~EnemyMelee()
 {
     delete model;
     isAttack = false;
 }
 
+// 初期化
 void EnemyMelee::Init()
 {
     angle = { 0,0,0 };
@@ -93,6 +96,7 @@ void EnemyMelee::Init()
     TransitionWalkState();
 }
 
+// 更新処理
 void EnemyMelee::Update(float elapsedTime)
 {
     position.z = 0;
@@ -125,9 +129,11 @@ void EnemyMelee::Update(float elapsedTime)
     //モデル行列更新
     model->UpdateTransform(transform);
 
+    // おちたらしぬ
     FallIsDead();
 }
 
+// 描画処理
 void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     if (isDead == false)

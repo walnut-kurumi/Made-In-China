@@ -7,6 +7,7 @@
 
 #include "HitManager.h"
 
+// コンストラクタ
 EnemyGunner::EnemyGunner(ID3D11Device* device)
 {
 #if 1
@@ -50,12 +51,14 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
+// デストラクタ
 EnemyGunner::~EnemyGunner()
 {
     delete model;    
     isAttack = false;
 }
 
+// 初期化
 void EnemyGunner::Init()
 {   
     angle = { 0,0,0 };
@@ -94,6 +97,7 @@ void EnemyGunner::Init()
     TransitionWalkState();
 }
 
+// 更新処理
 void EnemyGunner::Update(float elapsedTime)
 {
     position.z = 0;
@@ -129,6 +133,7 @@ void EnemyGunner::Update(float elapsedTime)
     FallIsDead();
 }
 
+// 描画処理
 void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 {
     if (isDead == false)
