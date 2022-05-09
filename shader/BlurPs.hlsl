@@ -5,7 +5,7 @@
 SamplerState samplerStates[3] : register(s0);
 Texture2D textureMaps[4] : register(t0);
 
-float4 main(VS_OUT pin) : SV_TARGET0
+float4 main(VS_OUT pin) : SV_TARGET
 {
     uint mipLevel = 0, width, height, numberOfLevels;
     textureMaps[1].GetDimensions(mipLevel, width, height, numberOfLevels);
@@ -36,7 +36,7 @@ float4 main(VS_OUT pin) : SV_TARGET0
     const float bloom_intensity = 1.0;
 #if 1
     // Tone mapping : HDR -> SDR
-    const float exposure = 1.2;   
+    const float exposure = expo;
     color.rgb = 1 - exp(-color.rgb * exposure);
 #endif
 

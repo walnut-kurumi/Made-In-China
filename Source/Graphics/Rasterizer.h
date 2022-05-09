@@ -9,7 +9,7 @@ public:
     enum RASTER_STATE
     {
         SOLID, WIREFRAME, CULL_NONE, 
-        WIREFRAME_CULL_NONE, CULL_FRONT,
+        WIREFRAME_CULL_NONE, CULL_FRONT,SOILD_FALSE,
         RS_END
     };
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> RasterizerStates[RS_END];
@@ -54,6 +54,19 @@ public:
 		RasterizerDesc.CullMode = D3D11_CULL_FRONT;
 		RasterizerDesc.AntialiasedLineEnable = FALSE;
 		hr = device->CreateRasterizerState(&RasterizerDesc, RasterizerStates[static_cast<size_t>(RASTER_STATE::CULL_FRONT)].GetAddressOf());
+		_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
+
+		RasterizerDesc.FillMode = D3D11_FILL_SOLID;
+		RasterizerDesc.CullMode = D3D11_CULL_BACK;
+		RasterizerDesc.FrontCounterClockwise = FALSE;
+		RasterizerDesc.DepthBias = 0;
+		RasterizerDesc.DepthBiasClamp = 0;
+		RasterizerDesc.SlopeScaledDepthBias = 0;
+		RasterizerDesc.DepthClipEnable = TRUE;
+		RasterizerDesc.ScissorEnable = FALSE;
+		RasterizerDesc.MultisampleEnable = FALSE;
+		RasterizerDesc.AntialiasedLineEnable = FALSE;
+		hr = device->CreateRasterizerState(&RasterizerDesc, RasterizerStates[static_cast<size_t>(RASTER_STATE::SOILD_FALSE)].GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
     };
     ~Rasterizer()

@@ -25,6 +25,8 @@ bool Framework::initialize() {
 	ID3D11Device* device = gfx.GetDevice();
 	ID3D11DeviceContext* dc = gfx.GetDeviceContext();
 
+	ras = std::make_unique<Rasterizer>(device);
+
 	//エフェクトマネージャー初期化
 	EffectManager::Instance().Initialize();
 
@@ -69,17 +71,37 @@ void Framework::render(float elapsedTime){
 	dc->ClearRenderTargetView(rtv, color);
 	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-
 	// 通常レンダリング
 	dc->OMSetRenderTargets(1, &rtv, dsv);
-
 	
 	CameraManager& cameraMgr = CameraManager::Instance();
 	cameraMgr.SetBuffer(dc);
 
+
 	// シーン描画
 	SceneManager::Instance().Render(elapsedTime);
+
 	
+
+#ifdef USE_IMGUI   
+
+
+	/*ImGui::Begin("Im");
+
+	 ImGui::SliderFloat("gaussian_sigma", &sigma, -10, 1);
+	 ImGui::SliderFloat("bloom_intensity", &intensity, -10, 1);
+	 ImGui::SliderFloat("expo", &expo, 0, 10);
+	 if (ImGui::TreeNode("smoothstep"))
+	 {
+		 ImGui::SliderFloat("x", &rgb.x, 0, 1);
+		 ImGui::SliderFloat("y", &rgb.y, 0, 1);
+		 ImGui::SliderFloat("z", &rgb.z, 0, 1);
+
+		 ImGui::TreePop();
+	 }
+
+	ImGui::End();*/
+#endif
 
 #ifdef USE_IMGUI
 	ImGui::Render();

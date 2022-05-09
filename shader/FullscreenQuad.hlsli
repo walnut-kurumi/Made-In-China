@@ -7,11 +7,11 @@ struct VS_OUT
 };
 cbuffer ColorCb : register(b2)
 {
-    float4 rgb;
+    float3 rgb;
 };
 cbuffer BlurCb : register(b3)
 {    
     float gaussianSigma;
     float bloomIntensity;
-    //float exposure;
+    float expo;
 };

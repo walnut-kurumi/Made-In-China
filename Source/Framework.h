@@ -12,6 +12,10 @@
 #include "Graphics/Graphics.h"
 #include "Input/Input.h"
 
+#include "Graphics/ConstantBuffer.h"
+#include "Graphics/Shader.h"
+#include"Graphics/Rasterizer.h"
+
 
 #ifdef USE_IMGUI
 #include "../imgui/imgui.h"
@@ -45,6 +49,9 @@ public:
 	int run();
 
 	LRESULT CALLBACK handleMessage(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+
+	std::unique_ptr<Rasterizer> ras;
 
 private:
 	bool initialize();

@@ -39,3 +39,17 @@ struct Scroll
     DirectX::XMFLOAT2 scroll_direction;
     DirectX::XMFLOAT2 scroll_dummy;
 };
+
+struct scene_col
+{
+    DirectX::XMFLOAT3 rgb;
+    float dummy;
+};
+
+struct scene_blur
+{
+    float sigma;
+    float intensity;
+    float dummy0;
+    float dummy1;
+};
