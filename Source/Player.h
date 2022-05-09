@@ -174,6 +174,7 @@ private:
 	const float sbCost = 2.0f;
 	bool invincible = false;	// 無敵状態（SB）
 	float blurPower = 0.0f;// 移動ブラー力
+	float blurMax = 15.0f;	// ブラー最大値
 
 	bool clock = false;	 // プレイヤー以外の時間
 	// SB時間制限
