@@ -123,6 +123,10 @@ void Player::Init() {
     UpdateCenterPosition();
 
     cost.Reset();
+
+    // ’n–ÊŠÑ’Ê‚·‚é‚©”Û‚©
+    Penetrate = false;
+
 }
 #include <Xinput.h>
 void Player::Update(float elapsedTime) {
