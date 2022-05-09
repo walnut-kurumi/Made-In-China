@@ -155,8 +155,6 @@ void Player::Update(float elapsedTime) {
 
     atkTimer -= elapsedTime;
 
-    Vibration(elapsedTime);
-
     //オブジェクト行列更新
     UpdateTransform();
     // モデルアニメーション更新処理
@@ -694,28 +692,6 @@ void Player::UpdateFinisherState(float elapsedTime) {
     }
 }
 
-
-void Player::Vibration(float elapsedTime) {
-    //// 振動試し
-    //Key& key = Input::Instance().GetKey();
-    //XINPUT_VIBRATION vib{};
-    //XINPUT_VIBRATION vib2{};
-    //{
-    //    vib.wLeftMotorSpeed = MAX_SPEED;
-    //    vib.wRightMotorSpeed = MIN_SPEED;
-    //    vib2.wLeftMotorSpeed = 0;
-    //    vib2.wRightMotorSpeed = 0;
-    //}
-    //XInputSetState(0, &vib);
-    //if (vibration && vibTimer >= 0.0f) {
-    //    if (slow) vibTimer -= elapsedTime / slowSpeed;
-    //    else vibTimer -= elapsedTime;
-    //}
-    //else {
-    //    XInputSetState(0, &vib2);
-    //}
-}
-
 bool Player::Raycast(Vec3 move) {
 
     // 移動量
@@ -887,9 +863,7 @@ void Player::CollisionPanchiVsEnemies() {
                 // カメラシェイク（簡素）
                 CameraManager& cameraMgr = CameraManager::Instance();
                 if (!cameraMgr.GetShakeFlag()) {
-                    cameraMgr.SetShakeFlag(true);
-                    vibration = true;
-                    vibTimer = 0.4f;
+                    cameraMgr.SetShakeFlag(true);;
                 }
             }
         }
@@ -910,8 +884,6 @@ void Player::CollisionPanchiVsProjectile() {
             CameraManager& cameraMgr = CameraManager::Instance();
             if (!cameraMgr.GetShakeFlag()) {
                 cameraMgr.SetShakeFlag(true);
-                vibration = true;
-                vibTimer = 0.4f;
             }
         }
     }
