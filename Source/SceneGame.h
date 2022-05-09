@@ -56,20 +56,7 @@ private:
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
 
-	/*Microsoft::WRL::ComPtr<ID3D11Buffer> colBuffers;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> bulrBuffers;
-	std::unique_ptr<framebuffer> framebuffers[8];
-	std::unique_ptr<fullscreen_quad> bit_block_transfer;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceViews[8];
-	Shader colPs;
-	Shader blurPs;
-	ConstantBuffer<scene_blur> blurConstant;
-	ConstantBuffer<scene_col> colConstant;
-	float sigma = 1.0f;
-	float intensity = 0.0f;
-	float expo = 1.2f;
-	DirectX::XMFLOAT3 rgb = { 1.0f,1.0f,1.0f };
-	std::unique_ptr<Rasterizer> ras;*/
+
 
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
