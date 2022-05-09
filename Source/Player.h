@@ -186,6 +186,7 @@ private:
 
 	// 攻撃えふぇくと
 	Effect* attackEffect = nullptr;
+	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
 
 	Cost cost;

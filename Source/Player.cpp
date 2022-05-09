@@ -48,12 +48,14 @@ Player::Player(ID3D11Device* device) {
    
 
     attackEffect = new Effect("Data/Effect/playerAttack.efk");
+    hitEffect = new Effect("Data/Effect/playerHit.efk");
 
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
 Player::~Player() {
     delete attackEffect;
+    delete hitEffect;
     delete model;
 }
 

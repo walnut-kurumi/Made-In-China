@@ -65,14 +65,6 @@ void Framework::render(float elapsedTime){
 	ID3D11DeviceContext* dc = gfx.GetDeviceContext();
 	ID3D11RenderTargetView* rtv = gfx.GetRenderTargetView();	
 	ID3D11DepthStencilView* dsv = gfx.GetDepthStencilView();
-
-
-	FLOAT color[] = { 0.6f,0.6f,0.6f,1.0f };
-	dc->ClearRenderTargetView(rtv, color);
-	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	// 通常レンダリング
-	dc->OMSetRenderTargets(1, &rtv, dsv);
 	
 	CameraManager& cameraMgr = CameraManager::Instance();
 	cameraMgr.SetBuffer(dc);

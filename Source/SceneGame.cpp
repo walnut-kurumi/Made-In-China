@@ -88,8 +88,8 @@ void SceneGame::Initialize()
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
 
-    Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
-    LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");   
+    Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
+    LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");   
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
 
     Menu::Instance().Initialize();
@@ -251,6 +251,17 @@ void SceneGame::Render(float elapsedTime)
     ID3D11DeviceContext* dc = gfx.GetDeviceContext();    
     CameraManager& cameraMgr = CameraManager::Instance();
 
+    ID3D11RenderTargetView* rtv = gfx.GetRenderTargetView();
+    ID3D11DepthStencilView* dsv = gfx.GetDepthStencilView();
+
+
+    FLOAT color[] = { 0.6f,0.6f,0.6f,1.0f };
+    dc->ClearRenderTargetView(rtv, color);
+    dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+    // 通常レンダリング
+    dc->OMSetRenderTargets(1, &rtv, dsv);
+
     //DirectX::XMFLOAT4X4 data{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
   
     //// TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.
@@ -296,8 +307,8 @@ void SceneGame::Render(float elapsedTime)
         RenderEnemyAttack();
 
         // UI
-        Bar->render(dc, 600, 650, 620, 25, 1.0f, 1.0f, 1.0f, 1.0f, 0);
-        LoadBar->render(dc, 605, 652, 605 * w, 21, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
         // メニュー
         Menu::Instance().Render(elapsedTime);

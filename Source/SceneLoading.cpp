@@ -55,6 +55,16 @@ void SceneLoading::Render(float elapsedTime)
 	ID3D11Device* device = Graphics::Ins().GetDevice();
 	ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();
 	Graphics& gfx = Graphics::Ins();
+	ID3D11RenderTargetView* rtv = gfx.GetRenderTargetView();
+	ID3D11DepthStencilView* dsv = gfx.GetDepthStencilView();
+
+
+	FLOAT color[] = { 0.6f,0.6f,0.6f,1.0f };
+	dc->ClearRenderTargetView(rtv, color);
+	dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	// ’ÊíƒŒƒ“ƒ_ƒŠƒ“ƒO
+	dc->OMSetRenderTargets(1, &rtv, dsv);
 
 	// 2D•`‰æ
 	{
