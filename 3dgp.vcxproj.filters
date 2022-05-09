@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="shader\BlurPs.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="shader\debug_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
@@ -95,6 +92,9 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\FullscreenQuadVS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\BlurPs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
@@ -274,12 +274,6 @@
     </ClCompile>
     <ClCompile Include="Source\Fade.cpp">
       <Filter>Source\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\framebuffer.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\fullscreen_quad.cpp">
-      <Filter>Source\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -484,12 +478,6 @@
     </ClInclude>
     <ClInclude Include="Source\Fade.h">
       <Filter>Source\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\framebuffer.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\fullscreen_quad.h">
-      <Filter>Source\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

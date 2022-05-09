@@ -68,20 +68,6 @@ void SceneTitle::Update(float elapsedTime)
     const mouseButton mouseClick =
         Mouse::BTN_LEFT;
 
-    // すすむ
-    {
-        if (start && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
-        {
-            // フェードアウトする
-            Fade::Instance().SetFadeOutFlag(true);
-        }
-        // フェードアウト終わったら
-        if (Fade::Instance().GetFadeOutFinish())
-        {
-            //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
-            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-        }
-    }
     // おわる
     {
         if (end && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
@@ -110,10 +96,26 @@ void SceneTitle::Update(float elapsedTime)
         }
     }
 
-
     SceneSelect();
-
+    
     Fade::Instance().Update(elapsedTime);
+
+    // すすむ
+    {
+        if (start && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
+        {
+            // フェードアウトする
+            Fade::Instance().SetFadeOutFlag(true);
+        }
+        // フェードアウト終わったら
+        if (Fade::Instance().GetFadeOutFinish())
+        {
+            //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
+            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        }
+    }
+
+
 }
 
 // 描画処理

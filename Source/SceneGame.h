@@ -10,6 +10,7 @@
 #include "Effect.h"
 #include "Graphics/ConstantBuffer.h"
 #include "Graphics/Shader.h"
+#include"Graphics/Rasterizer.h"
 
  
 class SceneGame : public Scene
@@ -53,24 +54,20 @@ private:
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
 
-	/*ConstantBuffer<POST_EFFECT_CONSTANTS> postEffectConstant;
-	ConstantBuffer<BLOOM_CONSTANTS> bloomConstant;
-	ConstantBuffer<MIST_CONSTANTS> mistConstant;
-	enum class FRAMEBUFFER { SCENE_MSAA, SCENE_RESOLVED, POST_PROCESSED };
+	/*Microsoft::WRL::ComPtr<ID3D11Buffer> colBuffers;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> bulrBuffers;
 	std::unique_ptr<framebuffer> framebuffers[8];
-	std::unique_ptr<fullscreen_quad> bitBlockTransfer;
-
-	enum class TEXTURE { T0, WAVE, T2, T3, ENVIRONMENT, DISTORTION };
+	std::unique_ptr<fullscreen_quad> bit_block_transfer;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shaderResourceViews[8];
-
-	PixelShader postEffectPs;
-	PixelShader toonMapPs;
-
-	std::unique_ptr<bloom> bloom_effect;
-
-	std::unique_ptr<Rasterizer> rasterizer;
-	std::unique_ptr<Blender> blender;
-	std::unique_ptr<DeppthSteciler> depth;*/
+	Shader colPs;
+	Shader blurPs;
+	ConstantBuffer<scene_blur> blurConstant;
+	ConstantBuffer<scene_col> colConstant;
+	float sigma = 1.0f;
+	float intensity = 0.0f;
+	float expo = 1.2f;
+	DirectX::XMFLOAT3 rgb = { 1.0f,1.0f,1.0f };
+	std::unique_ptr<Rasterizer> ras;*/
 
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;

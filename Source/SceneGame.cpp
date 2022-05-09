@@ -37,22 +37,6 @@ void SceneGame::Initialize()
     ID3D11Device* device = Graphics::Ins().GetDevice();
     Graphics& gfx = Graphics::Ins();
 
-    //Microsoft::WRL::ComPtr<ID3D11Texture2D> depth_stencil_buffer{};
-    //D3D11_TEXTURE2D_DESC texture2dDesc{};
-    //texture2dDesc.Width = gfx.GetScreenWidth();
-    //texture2dDesc.Height = gfx.GetScreenHeight();
-    //texture2dDesc.MipLevels = 1;
-    //texture2dDesc.ArraySize = 1;
-    //texture2dDesc.Format = DXGI_FORMAT_R32_TYPELESS; // DXGI_FORMAT_R24G8_TYPELESS DXGI_FORMAT_R32_TYPELESS
-    //texture2dDesc.SampleDesc.Count = 1;
-    //texture2dDesc.SampleDesc.Quality = 0;
-    //texture2dDesc.Usage = D3D11_USAGE_DEFAULT;
-    //texture2dDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    //texture2dDesc.CPUAccessFlags = 0;
-    //texture2dDesc.MiscFlags = 0;
-    //hr = device->CreateTexture2D(&texture2dDesc, NULL, depth_stencil_buffer.GetAddressOf());
-    //_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
-
     // プレイヤー
     player = std::make_unique<Player>(device);
     player->Init(); 
@@ -93,48 +77,15 @@ void SceneGame::Initialize()
 
     // CAMERA_SHAKE
     // TODO:02 Create a constant buffer object.
-    D3D11_BUFFER_DESC buffer_desc{};
-    buffer_desc.ByteWidth = sizeof(DirectX::XMFLOAT4X4);
-    buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-    buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    buffer_desc.CPUAccessFlags = 0;
-    buffer_desc.MiscFlags = 0;
-    buffer_desc.StructureByteStride = 0;
-    hr = device->CreateBuffer(&buffer_desc, nullptr, constant_buffer.GetAddressOf());
+    D3D11_BUFFER_DESC buffer_desc3{};
+    buffer_desc3.ByteWidth = sizeof(DirectX::XMFLOAT4X4);
+    buffer_desc3.Usage = D3D11_USAGE_DEFAULT;
+    buffer_desc3.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    buffer_desc3.CPUAccessFlags = 0;
+    buffer_desc3.MiscFlags = 0;
+    buffer_desc3.StructureByteStride = 0;
+    hr = device->CreateBuffer(&buffer_desc3, nullptr, constant_buffer.GetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
-
-   /* buffer_desc.ByteWidth = sizeof(POST_EFFECT_CONSTANTS);
-    buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-    buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    buffer_desc.CPUAccessFlags = 0;
-    buffer_desc.MiscFlags = 0;
-    buffer_desc.StructureByteStride = 0;
-    hr = device->CreateBuffer(&buffer_desc, nullptr, postConstantBuffer.GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
-
-    buffer_desc.ByteWidth = sizeof(BLOOM_CONSTANTS);
-    buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-    buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    buffer_desc.CPUAccessFlags = 0;
-    buffer_desc.MiscFlags = 0;
-    buffer_desc.StructureByteStride = 0;
-    hr = device->CreateBuffer(&buffer_desc, nullptr, bloomConstantBuffer.GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
-
-    buffer_desc.ByteWidth = sizeof(MIST_CONSTANTS);
-    buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-    buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    buffer_desc.CPUAccessFlags = 0;
-    buffer_desc.MiscFlags = 0;
-    buffer_desc.StructureByteStride = 0;
-    hr = device->CreateBuffer(&buffer_desc, nullptr, mistConstantBuffer.GetAddressOf());
-    _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
-
-
-
-    rasterizer = std::make_unique<Rasterizer>(device);
-    depth = std::make_unique<DeppthSteciler>(device);
-    blender = std::make_unique<Blender>(device);*/
 
 
     Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
@@ -150,16 +101,6 @@ void SceneGame::Initialize()
 
     //デバッグ
     //hitEffect = new Effect("Data/Effect/player_hit.efk");
-   /* framebuffers[static_cast<size_t>(FRAMEBUFFER::SCENE_RESOLVED)] = std::make_unique<framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
-    framebuffers[static_cast<size_t>(FRAMEBUFFER::POST_PROCESSED)] = std::make_unique<framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight(), FB_FLAG::COLOR);
-
-    bitBlockTransfer = std::make_unique<fullscreen_quad>(device);
-    postEffectPs.initialize(device, "shader\\obj\\post_effect_ps.cso");
-    toonMapPs.initialize(device, "shader\\obj\\tone_map_ps.cso");
-
-    shaderResourceViews[static_cast<size_t>(TEXTURE::DISTORTION)].Attach(queryTexture(device, L"./Data/Sprites/distortion.png", &texture2dDesc));
-
-    bloom_effect = std::make_unique<bloom>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());*/
 
     // ロード％ 100%
     SetLoadPercent(10.0f);
@@ -307,21 +248,10 @@ void SceneGame::Render(float elapsedTime)
     CameraManager& cameraMgr = CameraManager::Instance();
 
     //DirectX::XMFLOAT4X4 data{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-
-
+  
     //// TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.
     //dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
     //dc->VSSetConstantBuffers(3, 1, &constant_buffer);
-
-    //// UNIT.32
-    //dc->UpdateSubresource(postConstantBuffer.Get(),0,0,&postEffectConstant,0,0);
-    //dc->PSSetConstantBuffers(8, 1, postConstantBuffer.GetAddressOf());
-    //// UNIT.99
-    //dc->UpdateSubresource(bloomConstantBuffer.Get(), 0, 0, &bloomConstant, 0, 0);
-    //dc->PSSetConstantBuffers(6, 1, bloomConstantBuffer.GetAddressOf());
-    //// UNIT.99
-    //dc->UpdateSubresource(mistConstantBuffer.Get(), 0, 0, &mistConstant, 0, 0);
-    //dc->PSSetConstantBuffers(7, 1, mistConstantBuffer.GetAddressOf());
  
     // モデル描画
     {
@@ -342,38 +272,6 @@ void SceneGame::Render(float elapsedTime)
     {
         EffectManager::Instance().Render(cameraMgr.GetView(), cameraMgr.GetProjection());
     }
-
-    //// Apply post-effect processing. Includes shadows, bokeh, mist, bloom, etc.
-    //framebuffers[static_cast<size_t>(FRAMEBUFFER::POST_PROCESSED)]->clear(dc, FB_FLAG::COLOR);
-    //framebuffers[static_cast<size_t>(FRAMEBUFFER::POST_PROCESSED)]->activate(dc, FB_FLAG::COLOR);
-    //depth->setRasterMode(DeppthSteciler::DEPTH_STENCIL_STATE::ZT_OFF_ZW_OFF, dc);
-    //blender->setBlendMode(Blender::BLEND_STATE::BS_NONE, dc);
-    //rasterizer->setRasterMode(Rasterizer::RASTER_STATE::CULL_NONE, dc);
-    //dc->PSSetShaderResources(static_cast<UINT>(TEXTURE::DISTORTION), 1, shaderResourceViews[static_cast<size_t>(TEXTURE::DISTORTION)].GetAddressOf());
-    //ID3D11ShaderResourceView* post_effects_views[]{
-    //    framebuffers[static_cast<size_t>(FRAMEBUFFER::SCENE_RESOLVED)]->color_map().Get(),
-    //    framebuffers[static_cast<size_t>(FRAMEBUFFER::SCENE_RESOLVED)]->depth_map().Get() };
-    //bitBlockTransfer->blit(dc, post_effects_views, 0, _countof(post_effects_views), postEffectPs.getShader());
-    //framebuffers[static_cast<size_t>(FRAMEBUFFER::POST_PROCESSED)]->deactivate(dc);
-
-    //// Extracts high-luminance components and generates blurred images.
-    //depth->setRasterMode(DeppthSteciler::DEPTH_STENCIL_STATE::ZT_OFF_ZW_OFF, dc);
-    //blender->setBlendMode(Blender::BLEND_STATE::BS_NONE, dc);
-    //rasterizer->setRasterMode(Rasterizer::RASTER_STATE::CULL_NONE, dc);
-    //bloom_effect->make(dc, framebuffers[static_cast<size_t>(FRAMEBUFFER::POST_PROCESSED)]->color_map().Get());
-
-    //framebuffers[static_cast<size_t>(FRAMEBUFFER::POST_PROCESSED)]->activate(dc, FB_FLAG::COLOR);
-    //depth->setRasterMode(DeppthSteciler::DEPTH_STENCIL_STATE::ZT_OFF_ZW_OFF, dc);
-    //blender->setBlendMode(Blender::BLEND_STATE::BS_ADD, dc);
-    //rasterizer->setRasterMode(Rasterizer::RASTER_STATE::CULL_NONE, dc);
-    //bloom_effect->blit(dc);
-    //framebuffers[static_cast<size_t>(FRAMEBUFFER::POST_PROCESSED)]->deactivate(dc);
-
-    //// Tone mapping
-    //depth->setRasterMode(DeppthSteciler::DEPTH_STENCIL_STATE::ZT_OFF_ZW_OFF, dc);
-    //blender->setBlendMode(Blender::BLEND_STATE::BS_NONE, dc);
-    //rasterizer->setRasterMode(Rasterizer::RASTER_STATE::CULL_NONE, dc);
-    //bitBlockTransfer->blit(dc, framebuffers[static_cast<size_t>(FRAMEBUFFER::POST_PROCESSED)]->color_map().GetAddressOf(), 0, 1, toonMapPs.getShader());
 
     // 2D描画
     {
@@ -410,47 +308,17 @@ void SceneGame::Render(float elapsedTime)
     bool sh = cameraMgr.GetShakeFlag();
     ImGui::Checkbox("shakeFlag", &sh);
 
-    /*if (ImGui::CollapsingHeader("bloom configuration"))
+   /* ImGui::SliderFloat("gaussian_sigma", &sigma, -10, 1);
+    ImGui::SliderFloat("bloom_intensity", &intensity, -10, 1);
+    ImGui::SliderFloat("expo", &expo, 0, 10);
+    if (ImGui::TreeNode("smoothstep"))
     {
-        ImGui::SliderFloat("bloom_extraction_threshold", &bloomConstant.data.bloom_extraction_threshold, +0.0f, +10.0f);
-        ImGui::SliderFloat("blur_convolution_intensity", &bloomConstant.data.blur_convolution_intensity, +0.0f, +10.0f);
-    }
-    if (ImGui::CollapsingHeader("mist configuration"))
-    {
-        ImGui::SliderFloat("extinction:mist_density", &mistConstant.data.mist_density[0], 0.0f, 1.0f);
-        ImGui::SliderFloat("extinction:mist_height_falloff", &mistConstant.data.mist_height_falloff[0], -1000.0f, 1000.0f);
-        ImGui::SliderFloat("extinction:height_mist_offset", &mistConstant.data.height_mist_offset[0], -1000.0f, 1000.0f);
-        ImGui::SliderFloat("inscattering:mist_density", &mistConstant.data.mist_density[1], 0.0f, 1.0f);
-        ImGui::SliderFloat("inscattering:mist_height_falloff", &mistConstant.data.mist_height_falloff[1], -1000.0f, 1000.0f);
-        ImGui::SliderFloat("inscattering:height_mist_offset", &mistConstant.data.height_mist_offset[1], -1000.0f, 1000.0f);
-        ImGui::SliderFloat("mist_cutoff_distance", &mistConstant.data.mist_cutoff_distance, 0.0f, 500.0f);
-        ImGui::ColorEdit3("mist_color", mistConstant.data.mist_color);
+        ImGui::SliderFloat("x", &rgb.x, 0, 1);
+        ImGui::SliderFloat("y", &rgb.y, 0, 1);
+        ImGui::SliderFloat("z", &rgb.z, 0, 1);
 
-        ImGui::SliderFloat("mist_flow_speed", &mistConstant.data.mist_flow_speed, 0.0f, 500.0f);
-        ImGui::SliderFloat("mist_flow_noise_scale_factor", &mistConstant.data.mist_flow_noise_scale_factor, 0.0f, 0.1f);
-        ImGui::SliderFloat("mist_flow_density_lower_limit", &mistConstant.data.mist_flow_density_lower_limit, 0.0f, 1.0f);
-
-        ImGui::SliderFloat("distance_to_sun", &mistConstant.data.distance_to_sun, 0.0f, 1000.0f);
-        ImGui::SliderFloat("sun_highlight_exponential_factor", &mistConstant.data.sun_highlight_exponential_factor, 0.0f, 500.0f);
-        ImGui::SliderFloat("sun_highlight_intensity", &mistConstant.data.sun_highlight_intensity, 0.0f, 100.0f);
-    }
-    if (ImGui::CollapsingHeader("bokeh configuration"))
-    {
-        ImGui::SliderFloat("bokeh_aperture", &postEffectConstant.data.bokeh_aperture, 0.0f, 0.1f);
-        ImGui::SliderFloat("bokeh_focus", &postEffectConstant.data.bokeh_focus, 0.0f, 1.0f);
-    }
-    if (ImGui::CollapsingHeader("color adjustment"))
-    {
-        ImGui::SliderFloat("brightness", &postEffectConstant.data.brightness, -1.0f, +1.0f);
-        ImGui::SliderFloat("contrast", &postEffectConstant.data.contrast, -1.0f, +1.0f);
-        ImGui::SliderFloat("hue", &postEffectConstant.data.hue, -1.0f, +1.0f);
-        ImGui::SliderFloat("saturation", &postEffectConstant.data.saturation, -1.0f, +1.0f);
-    }
-
-    ImGui::ColorEdit3("pantone", postEffectConstant.data.pantone);
-    ImGui::SliderFloat("intensity", &postEffectConstant.data.pantone[3], +0.0f, +10.0f);
-
-    ImGui::SliderFloat("post_effect_options[0]", &postEffectConstant.data.post_effect_options, 0.0f, 1.0f);*/
+        ImGui::TreePop();
+    }*/
 
     ImGui::End();
 
