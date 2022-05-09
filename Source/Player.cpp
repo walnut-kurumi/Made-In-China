@@ -114,6 +114,9 @@ void Player::Init() {
 
     health = 1;
 
+    // 中心座標更新
+    UpdateCenterPosition();
+
     cost.Reset();
 }
 #include <Xinput.h>
@@ -133,6 +136,10 @@ void Player::Update(float elapsedTime) {
 
     // コスト更新処理
     cost.Update(elapsedTime);
+
+    // 中心座標更新
+    UpdateCenterPosition();
+
 
     // 旋回処理
     // 移動方向へ向く
@@ -184,6 +191,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     Vec3 heightPos = position;
     heightPos.y += height;
     debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
+    debugRenderer.get()->DrawSphere(centerPosition, 1, Vec4(0.5f, 1, 0.5f, 1));
 
     // 必要なったら追加
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
@@ -843,6 +851,13 @@ void Player::SBManagement(float elapsedTime) {
     else {
         sbTimer = 0.0f;
     }
+}
+
+// 中心座標更新
+void Player::UpdateCenterPosition()
+{
+    centerPosition = position;
+    centerPosition.y += height / 2.0f;
 }
 
 void Player::OnLanding() {

@@ -78,6 +78,9 @@ void EnemyGunner::Init()
     isAttack = false;
     isSearch = false;
 
+    // 索敵エリア更新
+    UpdateSearchArea();
+
     TransitionWalkState();
 }
 

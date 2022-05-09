@@ -374,7 +374,7 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
         if (i % 2 == 0)
         {
             EnemyGunner* gunner = new EnemyGunner(device);
-            gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));            
+            gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
             gunner->PositionInitialize();
 
             //歩き回るかどうか
@@ -383,7 +383,7 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
 
             // グループ番号セット
             gunner->SetInitialGroupNum(enemyGroup[i]);
-            gunner->GroupNumInitialize();            
+            gunner->GroupNumInitialize();
 
             EnemyManager::Instance().Register(gunner);
         }
@@ -403,9 +403,9 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
 
             EnemyManager::Instance().Register(melee);
         }
-
-        EnemyManager::Instance().Init();
     }
+
+    EnemyManager::Instance().Init();
 }
 
 // エネミー座標設定
