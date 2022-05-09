@@ -174,6 +174,7 @@ private:
 	const float sbCost = 2.0f;
 	bool invincible = false;	// 無敵状態（SB）
 	float blurPower = 0.0f;// 移動ブラー力
+	float blurMax = 15.0f;	// ブラー最大値
 
 	bool clock = false;	 // プレイヤー以外の時間
 	// SB時間制限
@@ -185,6 +186,7 @@ private:
 
 	// 攻撃えふぇくと
 	Effect* attackEffect = nullptr;
+	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
 
 	Cost cost;

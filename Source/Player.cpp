@@ -48,12 +48,14 @@ Player::Player(ID3D11Device* device) {
    
 
     attackEffect = new Effect("Data/Effect/playerAttack.efk");
+    hitEffect = new Effect("Data/Effect/playerHit.efk");
 
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
 Player::~Player() {
     delete attackEffect;
+    delete hitEffect;
     delete model;
 }
 
@@ -111,6 +113,7 @@ void Player::Init() {
     sbTimer = 0.0f;
     sbHitEmy = -1;
     invincible = false;
+    blurPower = 0.0f;
 
     dest.destruction = 0.0f;
     dest.positionFactor = 0.0f;
@@ -231,6 +234,7 @@ void Player::DrawDebugGUI() {
             ImGui::SliderFloat("Poion X", &p.x, -300, 300);
             ImGui::SliderFloat("Poion Y", &p.y, -200, 200);
             ImGui::SliderFloat("Poion Z", &p.z, -300, 300);
+            ImGui::SliderFloat("blurPower", &blurPower, 0,150);
 
             int a = static_cast<int>(state);
             ImGui::SliderInt("State", &a, 0, static_cast<int>(AnimeState::End));
@@ -630,15 +634,16 @@ void Player::TransitionSBState() {
     invincible = true;
     // スタート位置記録
     sbStartPos = position;
-    // アニメーションは止める
-    //model->PlayAnimation(static_cast<int>(state), false);
+    blurPower = 10.0f;
 }
 void Player::UpdateSBState(float elapsedTime) {
     // 移動＋レイキャスト
     if(Raycast(sbdir * sbSpeed)) {
         sbPos = { 0,0,0 };
+        sbdir = { 0,0,0 };
         TransitionFinisherState();
     }
+    blurPower += elapsedTime * 10.0f;
 
     // 敵に到達したらSB攻撃ステートへ
     if (VecMath::LengthVec3(sbPos - position) <= sbSpace) {
@@ -694,6 +699,7 @@ void Player::UpdateFinisherState(float elapsedTime) {
             enemy->ApplyDamage(1, 0);
             sbHitEmy = -1;
         }
+        blurPower = 0.0f;
     }
 }
 
