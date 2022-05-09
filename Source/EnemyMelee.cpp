@@ -77,6 +77,9 @@ void EnemyMelee::Init()
     isAttack = false;
     isSearch = false;
 
+    // 索敵エリア更新
+    UpdateSearchArea();
+
     TransitionWalkState();
 }
 
@@ -302,35 +305,25 @@ void EnemyMelee::MoveAttack(float cooldown)
     if (player->GetCenterPosition().x > position.x)direction = false;
     else if (player->GetCenterPosition().x < position.x) direction = true;
 
-    // クールダウン設定
-    attackCooldown = cooldown;
-
-    ID3D11Device* device = Graphics::Ins().GetDevice();
-
-    // 直進弾丸発射   
+    //  近接攻撃  
     {
         // 体の向き
         float vx;
         (direction ? vx = -1 : vx = 1);
         angle.y = DirectX::XMConvertToRadians(90 * vx);
-
+               
+        // 攻撃する向き               
+        attackPos = centerPosition;
+        attackPos.x = centerPosition.x + (3.0f * vx);
+        
         // 攻撃アニメーション再生
         model->PlayAnimation(static_cast<int>(state), false);
-        
-        // プレイヤーの中心座標
-        const Vec3& p = { player->GetCenterPosition() };
-        // エネミーの中心座標
-        const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
-
-        // 発射する向き       
-        // プレイヤーに向かって
-        Vec3 pe = { p - e };
-        VecMath::Normalize(pe);
-        attackPos = centerPosition + pe;
-        pe *= 0.1f;
-               
-        isAttack = false;
     }
+
+    // クールダウン設定
+    attackCooldown = cooldown;
+                  
+    isAttack = false;
 }
 
 // 吹っ飛ぶ
@@ -467,7 +460,7 @@ void EnemyMelee::WalkTimerUpdate(float elapsedTime)
 void EnemyMelee::TransitionRunState()
 {
     state = State::Run;
-    moveSpeed = 50;
+    moveSpeed = 60;
     model->PlayAnimation(static_cast<int>(state), true);
 
     // ターゲット切れるまで
