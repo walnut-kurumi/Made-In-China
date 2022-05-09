@@ -10,6 +10,7 @@
 #include "Effect.h"
 #include "Graphics/ConstantBuffer.h"
 #include "Graphics/Shader.h"
+#include "framebuffer.h"
 
  
 class SceneGame : public Scene
@@ -99,4 +100,6 @@ private:
 	bool menuflag = false;
 	
 	DirectX::XMFLOAT2 mousepos = {};
+
+	std::unique_ptr<Framebuffer> framebuffer;
 };

@@ -4,11 +4,11 @@
 #include <wrl.h>
 #include <cstdint>
 
-class framebuffer
+class Framebuffer
 {
 public:
-	framebuffer(ID3D11Device* device, uint32_t width, uint32_t height);
-	virtual ~framebuffer() = default;
+	Framebuffer(ID3D11Device* device, uint32_t width, uint32_t height);
+	virtual ~Framebuffer() = default;
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> render_target_view;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depth_stencil_view;
