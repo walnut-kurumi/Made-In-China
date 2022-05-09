@@ -634,7 +634,6 @@ void Player::TransitionSBState() {
     invincible = true;
     // スタート位置記録
     sbStartPos = position;
-    blurPower = 10.0f;
 }
 void Player::UpdateSBState(float elapsedTime) {
     // 移動＋レイキャスト
@@ -643,8 +642,9 @@ void Player::UpdateSBState(float elapsedTime) {
         sbdir = { 0,0,0 };
         TransitionFinisherState();
     }
-    blurPower += elapsedTime * 10.0f;
-
+    // ブラー
+    blurPower += elapsedTime * blur;
+    blurPower = min(blurPower, blurMax);
     // 敵に到達したらSB攻撃ステートへ
     if (VecMath::LengthVec3(sbPos - position) <= sbSpace) {
         position = sbPos;
@@ -668,7 +668,9 @@ void Player::UpdateFinisherState(float elapsedTime) {
     // 任意のアニメーション再生区間でのみ衝突判定処理をする
     float animationTime = model->GetCurrentAnimationSeconds();
     atk = animationTime >= 0.01f && animationTime <= 0.20f;
-
+    // ブラー
+    blurPower -= elapsedTime * blur;
+    blurPower = max(blurPower, 0.0f);
     // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
         // 終わったらアイドル状態へ
