@@ -88,4 +88,6 @@ private:
 
 	std::unique_ptr<Framebuffer> framebuffer;
 	std::unique_ptr<RadialBlur> radialBlur;
+
+	ConstantBuffer<Radial_Blur> CBBlur;
 };

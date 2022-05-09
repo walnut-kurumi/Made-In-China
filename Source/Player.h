@@ -53,6 +53,8 @@ public:
 
 	bool GetInvincible() { return invincible; }
 
+	float GetBlurPower() { return blurPower; }
+
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
 	void CollisionSBVsEnemies();
@@ -178,6 +180,7 @@ private:
 	int sbHitEmy = -1;	// SBがヒットした敵（）当てた敵は確実に倒す用
 	const float sbCost = 2.0f;
 	bool invincible = false;	// 無敵状態（SB）
+	float blurPower = 0.0f;// 移動ブラー力
 
 	bool clock = false;	 // プレイヤー以外の時間
 	// SB時間制限
