@@ -85,7 +85,7 @@ void CameraManager::Update(float elapsedTime){
 		Vec3 UP = { 0,1,0 };
 
 		// オブジェクトに当たったらカメラを近づける
-		CameraRay();
+		//CameraRay();
 
 		// カメラシェイク用乱数
 		camShake.x = static_cast<float>(rand() % 2 )- 1.0f;
