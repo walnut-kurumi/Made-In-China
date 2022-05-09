@@ -251,6 +251,17 @@ void SceneGame::Render(float elapsedTime)
     ID3D11DeviceContext* dc = gfx.GetDeviceContext();    
     CameraManager& cameraMgr = CameraManager::Instance();
 
+    ID3D11RenderTargetView* rtv = gfx.GetRenderTargetView();
+    ID3D11DepthStencilView* dsv = gfx.GetDepthStencilView();
+
+
+    FLOAT color[] = { 0.6f,0.6f,0.6f,1.0f };
+    dc->ClearRenderTargetView(rtv, color);
+    dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+    // ’ÊíƒŒƒ“ƒ_ƒŠƒ“ƒO
+    dc->OMSetRenderTargets(1, &rtv, dsv);
+
     //DirectX::XMFLOAT4X4 data{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
   
     //// TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.

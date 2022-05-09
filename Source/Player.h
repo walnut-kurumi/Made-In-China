@@ -81,8 +81,6 @@ private:
 	// 死亡した時に呼ばれる
 	void OnDead() override { isDead = true; }
 
-	void Vibration(float elapsedTime);
-
 	bool Raycast(Vec3 move);
 
 	void SBManagement(float elapsedTime);
@@ -142,12 +140,6 @@ private:
 	Vec3 atkPos{};
 	Vec3 waistPos{};
 	Vec3 headPos{};
-
-	// パッド振動
-	const int MAX_SPEED = 65535;                  
-	const int MIN_SPEED = 0;              
-	bool vibration = false;
-	float vibTimer = 0.0f;
 
 	float moveSpeed = 0.0f;
 	float turnSpeed = DirectX::XMConvertToRadians(3600);

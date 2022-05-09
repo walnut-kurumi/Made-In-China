@@ -381,7 +381,7 @@ void EnemyGunner::MoveBlow()
     vy /= lengthXY;
           
     // êÅÇ¡îÚÇŒÇ∑    100.0f = è’åÇÇÃã≠Ç≥
-    AddImpulse(Vec3(vx, vy, 0) * 100.0f);
+    AddImpulse(Vec3(vx, vy, 0) * 75.0f);
  
 }
 
