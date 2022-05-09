@@ -222,7 +222,12 @@ void EnemyGunner::CollisionProjectileVsPlayer()
             if (!enemyB->GetReflectionFlag())
             {
                 // –³“G‚¶‚á‚È‚¢Žžƒ_ƒ[ƒW—^‚¦‚é
-                if(!player->GetInvincible()) player->ApplyDamage(1, 0.8f);                
+                if (!player->GetInvincible())
+                {
+                    player->ApplyDamage(1, 0.8f);
+                    player->SetIsHit(true);
+                }
+                else player->SetIsHit(false);
             }
         }
     }

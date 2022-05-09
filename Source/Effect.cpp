@@ -33,12 +33,13 @@ Effect::~Effect()
 }
 
 //Ä¶
-Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& position, float scale)
+Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& position, float scale,float angle)
 {
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
-
+	
 	Effekseer::Handle handle = effekseerManager->Play(effekseerEffect, position.x, position.y, position.z);
-
+	
+	effekseerManager->SetRotation(handle, Effekseer::Vector3D{ 1,1,1}, angle);
 	effekseerManager->SetScale(handle, scale, scale, scale);
 	return handle;
 }

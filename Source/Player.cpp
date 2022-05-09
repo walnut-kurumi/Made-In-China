@@ -120,6 +120,7 @@ void Player::Init() {
     dest.scaleFactor = 0.0f;
 
     health = 1;
+    oldHealth = 0;
 
     // 中心座標更新
     UpdateCenterPosition();
@@ -163,8 +164,11 @@ void Player::Update(float elapsedTime) {
     if (atk) CollisionPanchiVsProjectile();
     
     // Effect
-    if (atk) { handle = attackEffect->Play(position,3.0f); }
-    else { attackEffect->Stop(handle); }
+    if (atk) 
+    {        
+        // TODO：直す 向き追加して角度
+        handle = attackEffect->Play(centerPosition,2.0f,angle.y); 
+    }
 
     atkTimer -= elapsedTime;
 
@@ -175,7 +179,11 @@ void Player::Update(float elapsedTime) {
     //モデル行列更新
     model->UpdateTransform(transform);
 
-
+    if (isHit)
+    {
+        handle = hitEffect->Play(centerPosition, 1.0f);
+        isHit = false;
+    }    
 
     // 死んだら
     if (health <= 0)isDead = true;

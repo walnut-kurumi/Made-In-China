@@ -118,6 +118,7 @@ protected:
 	float width = 4.0f;
 
 	int health = 5;
+	int oldHealth = 0;
 	int maxHealth = 5;
 	float invincibleTimer = 0.0f;
 	float friction = 5.0f;

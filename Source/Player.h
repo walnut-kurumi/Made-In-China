@@ -56,6 +56,9 @@ public:
 
 	float GetBlurPower() { return blurPower; }
 
+	bool GetIsHit() { return isHit; }
+	void SetIsHit(bool h) { isHit = h; }
+
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
 	void CollisionSBVsEnemies();
@@ -181,6 +184,8 @@ private:
 	const float sbMaxTime = 0.5f;
 	// 死亡
 	bool isDead = false;
+	// 攻撃くらった判定用
+	bool isHit = false;
 
 
 	// 攻撃えふぇくと
