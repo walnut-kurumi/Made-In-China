@@ -5,6 +5,7 @@
 #include "SBManager.h"
 #include "Cost.h"
 #include "Graphics/ConstantBuffer.h"
+#include "Effect.h"
 
 class Player : public Character
 {
@@ -182,6 +183,9 @@ private:
 	bool isDead = false;
 
 
+	// 攻撃えふぇくと
+	Effect* attackEffect = nullptr;
+	Effekseer::Handle handle = 0;
 
 	Cost cost;
 };
