@@ -12,6 +12,6 @@ float4 main(VS_OUT pin) : SV_TARGET
 {    
     float4 color = textureMaps[0].Sample(samplerStates[ANISOTROPIC], pin.texcoord);
     float alpha = color.a;
-    color.rgb = smoothstep(0.6, 0.8, dot(color.rgb, float3(1.0f,1.0f,0.7f))) * color.rgb;         
+    color.rgb = smoothstep(0.6, 0.8, dot(color.rgb, float3(rgb.x, rgb.y, rgb.z))) * color.rgb;         
     return float4(color.rgb, alpha);
 }
