@@ -104,6 +104,8 @@ void SceneGame::Initialize()
 
     // ƒ[ƒh“ 100%
     SetLoadPercent(10.0f);
+
+    framebuffer = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
 }
 
 // I—¹‰»
