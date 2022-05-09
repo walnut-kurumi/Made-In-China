@@ -27,6 +27,15 @@ cbuffer GRASS_CONTANT : register(b2)
 }
 row_major float4x4 data : register(b3);
 
+cbuffer RADIAL_BLUR_CONSTANT : register(b8)
+{
+    float TU;
+    float TV;
+    float BlurPower;
+    float demmy1;
+};
+
+
 cbuffer DESTRUCTION_CONSTANT_BUFFER : register(b9)
 {
     float _ScaleFactor;

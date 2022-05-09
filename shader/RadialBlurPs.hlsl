@@ -1,13 +1,14 @@
 #include "RadialBlur.hlsli"
+#include "Constants.hlsli"
 SamplerState sampler_states : register(s0);
 Texture2D texture_map : register(t0);
 float4 main(VS_OUT In) : SV_TARGET
 {
     //１テクセルの大きさをセット
-    float m_TU = 1.0f / 1280.0f;
-    float m_TV = 1.0f / 720.0f;
+    //float m_TU = 1.0f / 1280.0f;
+    //float m_TV = 1.0f / 720.0f;
+    //float m_BlurPower = 10.0f;
     float2 m_CenterTexel = (0.5f, 0.5f);
-    float m_BlurPower = 10.0f;
     float4 Color[10];
    
    //ブラーの中心位置 ← 現在のテクセル位置
@@ -17,11 +18,11 @@ float4 main(VS_OUT In) : SV_TARGET
     float len = length(dir);
    
    //方向ベクトルの正規化し、１テクセル分の長さとなる方向ベクトルを計算する
-    dir = normalize(dir) * float2(m_TU, m_TV);
+    dir = normalize(dir) * float2(TU, TV);
    
    //m_BlurPower でボケ具合を調整する
    //距離を積算することにより、爆発の中心位置に近いほどブラーの影響が小さくなるようにする
-    dir *= m_BlurPower * len;
+    dir *= BlurPower * len;
    //合成する
     //return myTexture.Sample(mySampler, pin.texcoord) * pin.color;
     Color[0] = texture_map.Sample(sampler_states, In.texcoord) * 0.19;

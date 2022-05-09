@@ -107,6 +107,7 @@ void SceneGame::Initialize()
 
     framebuffer = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
     radialBlur = std::make_unique<RadialBlur>(device);
+    CBBlur.initialize(device, gfx.GetDeviceContext());
 }
 
 // I—¹‰»
@@ -280,6 +281,13 @@ void SceneGame::Render(float elapsedTime)
         }
     }
     framebuffer->deactivate(dc);
+    CBBlur.data.BlurPower = player->GetBlurPower();
+    CBBlur.data.TU = 1.0f / gfx.GetScreenWidth();
+    CBBlur.data.TV = 1.0f / gfx.GetScreenHeight();
+    CBBlur.applyChanges();
+    dc->VSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
+    dc->PSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
+    dc->GSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
     radialBlur->blit(dc, framebuffer->shader_resource_views[0].GetAddressOf(), 0, 1);
 
     // 2D•`‰æ

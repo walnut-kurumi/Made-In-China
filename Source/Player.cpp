@@ -106,6 +106,7 @@ void Player::Init() {
     sbTimer = 0.0f;
     sbHitEmy = -1;
     invincible = false;
+    blurPower = 0.0f;
 
     dest.destruction = 0.0f;
     dest.positionFactor = 0.0f;
@@ -113,6 +114,7 @@ void Player::Init() {
     dest.scaleFactor = 0.0f;
 
     health = 1;
+
 
     // 中心座標更新
     UpdateCenterPosition();
@@ -621,11 +623,16 @@ void Player::TransitionSBState() {
     sbStartPos = position;
     // アニメーションは止める
     //model->PlayAnimation(static_cast<int>(state), false);
+    // ブラーパワー
+    blurPower = 15.0f;
 }
 void Player::UpdateSBState(float elapsedTime) {
     // 移動＋レイキャスト
     if(Raycast(sbdir * sbSpeed)) {
+        position = sbPos;
         sbPos = { 0,0,0 };
+        sbdir = { 0,0,0 };
+        blurPower = 0.0f;
         TransitionFinisherState();
     }
 
@@ -634,6 +641,7 @@ void Player::UpdateSBState(float elapsedTime) {
         position = sbPos;
         sbPos = { 0,0,0 };
         sbdir = { 0,0,0 };
+        blurPower = 0.0f;
         TransitionFinisherState();
     }
 }
