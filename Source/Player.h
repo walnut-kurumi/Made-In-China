@@ -84,6 +84,9 @@ private:
 
 	void SBManagement(float elapsedTime);
 
+	// 中心座標更新
+	void UpdateCenterPosition();
+
 protected:
 	void OnLanding() override;
 

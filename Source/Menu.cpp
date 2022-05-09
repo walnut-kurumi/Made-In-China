@@ -1,16 +1,18 @@
 #include "Menu.h"
 #include "Input/Input.h"
-
+#include "SceneManager.h"
+#include "SceneLoading.h"
+#include "SceneGame.h"
 
 // ‰Šú‰»
 void Menu::Initialize()
 {    
     ID3D11Device* device = Graphics::Ins().GetDevice();
 
-    gameStart = new Sprite(device, L"./Data/Sprites/scene//start.png");
-    gameEnd = new Sprite(device, L"./Data/Sprites/scene//end.png");    
+    gameRetry = new Sprite(device, L"./Data/Sprites/scene/retry.png");
+    gameEnd = new Sprite(device, L"./Data/Sprites/scene/end.png");    
 
-    start = true;
+    retry = true;
     end = false;   
 }
 
@@ -18,7 +20,7 @@ void Menu::Initialize()
 void Menu::Finalize()
 {   
     delete gameEnd;
-    delete gameStart;
+    delete gameRetry;
 }
 
 // XVˆ—
@@ -50,7 +52,7 @@ void Menu::Render(float elapsedTime)
     {       
         if (menuflag == true)
         {
-            gameStart->render(dc, startpos.x, startpos.y, startsize.x, startsize.y, 1, 1, 1, startAlpha, 0);
+            gameRetry->render(dc, retrypos.x, retrypos.y, retrysize.x, retrysize.y, 1, 1, 1, retryAlpha, 0);
             gameEnd->render(dc, endpos.x, endpos.y, endsize.x, endsize.y, 1, 1, 1, endAlpha, 0);
         }        
     }
@@ -73,62 +75,63 @@ void Menu::menu()
     GamePad& gamePad = Input::Instance().GetGamePad();
 
 
-    if (start && (mouse.GetButtonDown() & mouseClick))
+    if (retry && (mouse.GetButtonDown() & mouseClick))
     {
-        // SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
     }
     else if (end && (mouse.GetButtonDown() & mouseClick))
     {
         DestroyWindow(GetActiveWindow());
     }
-
-    const GamePadButton up =
-        GamePad::BTN_UP;
-    /*| GamePad::BTN_DOWN
-    | GamePad::BTN_W
-    | GamePad::BTN_S;*/
-    const GamePadButton down =
-        GamePad::BTN_DOWN;
-
-    if (screenPosition.x >= startpos.x && screenPosition.x < startpos.x + startsize.x)
-    {
-        if (screenPosition.y >= startpos.y && screenPosition.y <= startpos.y + startsize.y)
-        {
-            start = true;
-            end = false;
-        }
-        else if (screenPosition.y >= endpos.y && screenPosition.y <= endpos.y + endsize.y)
-        {
-            start = false;
-            end = true;
-        }
-    }
-
-    if (gamePad.GetButtonDown() & up)
-    {
-        start = true;
-        end = false;
-    }
-    else if (gamePad.GetButton() & down)
-    {
-        start = false;
-        end = true;
-    }
-
+ 
 }
 
 
 void Menu::SceneSelect()
 {
 
-    if (start)
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    Mouse& mouse = Input::Instance().GetMouse();
+    DirectX::XMFLOAT3 screenPosition;
+    screenPosition.x = static_cast<float>(mouse.GetPositionX());
+    screenPosition.y = static_cast<float>(mouse.GetPositionY());
+    mousepos.x = screenPosition.x;
+    mousepos.y = screenPosition.y;
+
+    const GamePadButton up =
+        GamePad::BTN_UP
+        | GamePad::BTN_W;
+    const GamePadButton down =
+        GamePad::BTN_DOWN
+        | GamePad::BTN_S;
+
+    if (screenPosition.x >= retrypos.x && screenPosition.x < retrypos.x + retrysize.x)
     {
-        startAlpha = 1.0f;
+        if (screenPosition.y >= retrypos.y && screenPosition.y <= retrypos.y + retrysize.y)
+        {
+            retry = true;
+            end = false;
+        }
+        if (screenPosition.y >= endpos.y && screenPosition.y <= endpos.y + endsize.y)
+        {
+            retry = false;
+            end = true;
+        }
+    }
+    if (gamePad.GetButtonDown() & up || gamePad.GetButtonDown() & down)
+    {
+        retry = !retry;
+        end = !end;
+    }
+
+    if (retry)
+    {
+        retryAlpha = 1.0f;
         endAlpha = 0.4f;
     }
     if (end)
     {
-        startAlpha = 0.4f;
+        retryAlpha = 0.4f;
         endAlpha = 1.0f;
     }
 }

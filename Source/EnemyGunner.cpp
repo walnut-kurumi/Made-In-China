@@ -7,17 +7,28 @@
 
 #include "HitManager.h"
 
+// コンストラクタ
 EnemyGunner::EnemyGunner(ID3D11Device* device)
 {
+#if 1
+    const char* idle = "Data/Models/Enemy/JummoAnimations/Idle.fbx";
+    const char* run = "Data/Models/Enemy/JummoAnimations/Run.fbx";
+    const char* walk = "Data/Models/Enemy/JummoAnimations/Walk.fbx";
+    const char* attack = "Data/Models/Enemy/JummoAnimations/Attack.fbx";
+    const char* blow = "Data/Models/Enemy/JummoAnimations/GetHit1.fbx";
+    const char* death = "Data/Models/Enemy/JummoAnimations/Death.fbx";
 
+    model = new Model(device, "Data/Models/Enemy/Jummo.fbx");
+#else
     const char* idle = "Data/Models/Enemy/Animations/Idle.fbx";
-    const char* run = "Data/Models/Enemy/Animations/Running.fbx";
-    const char* walk = "Data/Models/Enemy/Animations/Walking.fbx";
+    const char* run = "Data/Models/Enemy/Animations/Run.fbx";
+    const char* walk = "Data/Models/Enemy/Animations/Walk.fbx";
     const char* attack = "Data/Models/Enemy/Animations/Attack.fbx";
     const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
     const char* death = "Data/Models/Enemy/Animations/Death.fbx";
 
-    model = new Model(device, "Data/Models/Enemy/Jummo.fbx");
+    model = new Model(device, "Data/Models/Enemy/Enemy.fbx", true);
+#endif
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(State::Run));
@@ -40,12 +51,14 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
+// デストラクタ
 EnemyGunner::~EnemyGunner()
 {
     delete model;    
     isAttack = false;
 }
 
+// 初期化
 void EnemyGunner::Init()
 {   
     angle = { 0,0,0 };
@@ -78,9 +91,13 @@ void EnemyGunner::Init()
     isAttack = false;
     isSearch = false;
 
+    // 索敵エリア更新
+    UpdateSearchArea();
+
     TransitionWalkState();
 }
 
+// 更新処理
 void EnemyGunner::Update(float elapsedTime)
 {
     position.z = 0;
@@ -116,6 +133,7 @@ void EnemyGunner::Update(float elapsedTime)
     FallIsDead();
 }
 
+// 描画処理
 void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 {
     if (isDead == false)

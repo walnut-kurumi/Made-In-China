@@ -10,6 +10,7 @@
 #include "Effect.h"
 #include "Graphics/ConstantBuffer.h"
 #include "Graphics/Shader.h"
+#include "framebuffer.h"
 #include"Graphics/Rasterizer.h"
 
  
@@ -83,4 +84,6 @@ private:
 	bool menuflag = false;
 	
 	DirectX::XMFLOAT2 mousepos = {};
+
+	std::unique_ptr<Framebuffer> framebuffer;
 };

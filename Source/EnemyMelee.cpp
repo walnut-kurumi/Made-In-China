@@ -6,17 +6,28 @@
 
 #include "HitManager.h"
 
+// コンストラクタ
 EnemyMelee::EnemyMelee(ID3D11Device* device)
 {
-
-    const char* idle = "Data/Models/Enemy/Animations/Idle.fbx";
-    const char* run = "Data/Models/Enemy/Animations/Running.fbx";
-    const char* walk = "Data/Models/Enemy/Animations/Walking.fbx";
-    const char* attack = "Data/Models/Enemy/Animations/Attack.fbx";
-    const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
-    const char* death = "Data/Models/Enemy/Animations/Death.fbx";
+#if 1
+    const char* idle = "Data/Models/Enemy/JummoAnimations/Idle.fbx";
+    const char* run = "Data/Models/Enemy/JummoAnimations/Run.fbx";
+    const char* walk = "Data/Models/Enemy/JummoAnimations/Walk.fbx";
+    const char* attack = "Data/Models/Enemy/JummoAnimations/Attack.fbx";
+    const char* blow = "Data/Models/Enemy/JummoAnimations/GetHit1.fbx";
+    const char* death = "Data/Models/Enemy/JummoAnimations/Death.fbx";
 
     model = new Model(device, "Data/Models/Enemy/Jummo.fbx");
+#else
+     const char* idle = "Data/Models/Enemy/Animations/Idle.fbx";
+     const char* run = "Data/Models/Enemy/Animations/Run.fbx";
+     const char* walk = "Data/Models/Enemy/Animations/Walk.fbx";
+     const char* attack = "Data/Models/Enemy/Animations/Attack.fbx";
+     const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
+     const char* death = "Data/Models/Enemy/Animations/Death.fbx";
+
+     model = new Model(device, "Data/Models/Enemy/Enemy.fbx",true);
+#endif
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(State::Run));
@@ -39,12 +50,14 @@ EnemyMelee::EnemyMelee(ID3D11Device* device)
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
+// デストラクタ
 EnemyMelee::~EnemyMelee()
 {
     delete model;
     isAttack = false;
 }
 
+// 初期化
 void EnemyMelee::Init()
 {
     angle = { 0,0,0 };
@@ -77,9 +90,13 @@ void EnemyMelee::Init()
     isAttack = false;
     isSearch = false;
 
+    // 索敵エリア更新
+    UpdateSearchArea();
+
     TransitionWalkState();
 }
 
+// 更新処理
 void EnemyMelee::Update(float elapsedTime)
 {
     position.z = 0;
@@ -112,9 +129,11 @@ void EnemyMelee::Update(float elapsedTime)
     //モデル行列更新
     model->UpdateTransform(transform);
 
+    // おちたらしぬ
     FallIsDead();
 }
 
+// 描画処理
 void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
     if (isDead == false)
@@ -302,35 +321,25 @@ void EnemyMelee::MoveAttack(float cooldown)
     if (player->GetCenterPosition().x > position.x)direction = false;
     else if (player->GetCenterPosition().x < position.x) direction = true;
 
-    // クールダウン設定
-    attackCooldown = cooldown;
-
-    ID3D11Device* device = Graphics::Ins().GetDevice();
-
-    // 直進弾丸発射   
+    //  近接攻撃  
     {
         // 体の向き
         float vx;
         (direction ? vx = -1 : vx = 1);
         angle.y = DirectX::XMConvertToRadians(90 * vx);
-
+               
+        // 攻撃する向き               
+        attackPos = centerPosition;
+        attackPos.x = centerPosition.x + (3.0f * vx);
+        
         // 攻撃アニメーション再生
         model->PlayAnimation(static_cast<int>(state), false);
-        
-        // プレイヤーの中心座標
-        const Vec3& p = { player->GetCenterPosition() };
-        // エネミーの中心座標
-        const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
-
-        // 発射する向き       
-        // プレイヤーに向かって
-        Vec3 pe = { p - e };
-        VecMath::Normalize(pe);
-        attackPos = centerPosition + pe;
-        pe *= 0.1f;
-               
-        isAttack = false;
     }
+
+    // クールダウン設定
+    attackCooldown = cooldown;
+                  
+    isAttack = false;
 }
 
 // 吹っ飛ぶ
@@ -467,7 +476,7 @@ void EnemyMelee::WalkTimerUpdate(float elapsedTime)
 void EnemyMelee::TransitionRunState()
 {
     state = State::Run;
-    moveSpeed = 50;
+    moveSpeed = 60;
     model->PlayAnimation(static_cast<int>(state), true);
 
     // ターゲット切れるまで
