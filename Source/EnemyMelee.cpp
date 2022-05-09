@@ -8,15 +8,25 @@
 
 EnemyMelee::EnemyMelee(ID3D11Device* device)
 {
-
-    const char* idle = "Data/Models/Enemy/Animations/Idle.fbx";
-    const char* run = "Data/Models/Enemy/Animations/Running.fbx";
-    const char* walk = "Data/Models/Enemy/Animations/Walking.fbx";
-    const char* attack = "Data/Models/Enemy/Animations/Attack.fbx";
-    const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
-    const char* death = "Data/Models/Enemy/Animations/Death.fbx";
+#if 1
+    const char* idle = "Data/Models/Enemy/JummoAnimations/Idle.fbx";
+    const char* run = "Data/Models/Enemy/JummoAnimations/Run.fbx";
+    const char* walk = "Data/Models/Enemy/JummoAnimations/Walk.fbx";
+    const char* attack = "Data/Models/Enemy/JummoAnimations/Attack.fbx";
+    const char* blow = "Data/Models/Enemy/JummoAnimations/GetHit1.fbx";
+    const char* death = "Data/Models/Enemy/JummoAnimations/Death.fbx";
 
     model = new Model(device, "Data/Models/Enemy/Jummo.fbx");
+#else
+     const char* idle = "Data/Models/Enemy/Animations/Idle.fbx";
+     const char* run = "Data/Models/Enemy/Animations/Run.fbx";
+     const char* walk = "Data/Models/Enemy/Animations/Walk.fbx";
+     const char* attack = "Data/Models/Enemy/Animations/Attack.fbx";
+     const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
+     const char* death = "Data/Models/Enemy/Animations/Death.fbx";
+
+     model = new Model(device, "Data/Models/Enemy/Enemy.fbx",true);
+#endif
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(State::Run));
