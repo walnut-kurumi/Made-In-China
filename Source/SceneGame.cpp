@@ -265,7 +265,7 @@ void SceneGame::Render(float elapsedTime)
     //dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
     //dc->VSSetConstantBuffers(3, 1, &constant_buffer);
  
-    framebuffer->clear(dc);
+    framebuffer->clear(dc,1.0f,1.0f,1.0f,0.0f);
     framebuffer->activate(dc);
     {
         // ƒ‚ƒfƒ‹•`‰æ
