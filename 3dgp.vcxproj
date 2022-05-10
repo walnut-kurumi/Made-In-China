@@ -249,7 +249,7 @@
     <ClCompile Include="Source\SceneOver.cpp" />
     <ClCompile Include="Source\SceneTitle.cpp" />
     <ClCompile Include="Source\SceneTutorial.cpp" />
-    <ClCompile Include="Source\Stage.cpp" />    
+    <ClCompile Include="Source\Stage.cpp" />
     <ClCompile Include="Source\StageCollision0.cpp" />
     <ClCompile Include="Source\StageCollision1.cpp" />
     <ClCompile Include="Source\StageCollision2.cpp" />
