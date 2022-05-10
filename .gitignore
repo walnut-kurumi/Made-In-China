@@ -14,3 +14,4 @@ x86/
 [Ll]ogs/
 *.cso
 *.vcxproj.user
+imgui.ini

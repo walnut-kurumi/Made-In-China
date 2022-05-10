@@ -24,6 +24,7 @@ void Model::PlayAnimation(int index, bool loop)
 	animationSeconds = 0.0f;
 	animationBlendTime = 0.0f;
 	animationBlendSeconds = 0.8f;
+	stopAnimation = false;
 }
 
 void Model::Begin(ID3D11DeviceContext* dc, Shader shader, bool wireframe)
@@ -51,10 +52,17 @@ bool Model::IsPlayAnimatimon()
 	return true;
 }
 
+void Model::AnimationStop(bool b)
+{
+	stopAnimation = b;
+}
+
 void Model::UpdateAnimation(float elapsedTime)
 {
 	//Ä¶’†‚¶‚á‚È‚¢‚È‚çˆ—‚µ‚È‚¢
 	if (!IsPlayAnimatimon()) return;
+	// Ä¶’†’f’†
+	if (stopAnimation)return;
 
 	// ƒuƒŒƒ“ƒh—¦‚ÌŒvZ
 	float blendRate = 1.0f;

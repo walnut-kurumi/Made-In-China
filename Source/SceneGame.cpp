@@ -200,24 +200,21 @@ void SceneGame::Update(float elapsedTime)
     }
 
     // リセット
-    //if (player->GetHealth() <= 0)// ||  gamePad.GetButtonDown() & GamePad::BTN_Y)
-    //{
-    //    // フェードアウト
-    //    if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
-
-    //    // フェードアウトおわったら
-    //    if (Fade::Instance().GetFadeOutFinish())
-    //    {
-    //        // リセット
-    //        // デバッグ用で消してる
-    //        Reset();
-
-    //        // フェードイン
-    //        Fade::Instance().SetFadeInFlag(true);
-    //    }
-    //}        
+    if (player->GetReset()) {
+        // フェードアウト
+        if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
+    
+        // フェードアウトおわったら
+        if (Fade::Instance().GetFadeOutFinish()) {
+            // リセット
+            Reset();
+    
+            // フェードイン
+            Fade::Instance().SetFadeInFlag(true);
+        }
+    }        
     // フェードイン終わったら初期化
-    if (Fade::Instance().GetFadeInFinish())Fade::Instance().Initialize();
+    if (Fade::Instance().GetFadeInFinish()) Fade::Instance().Initialize();
 
     // Menu
     Menu::Instance().Update(elapsedTime);

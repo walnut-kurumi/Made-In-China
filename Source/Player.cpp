@@ -30,6 +30,7 @@ Player::Player(ID3D11Device* device) {
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Attack));
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Throw));
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Finisher));
+    model->LoadAnimation(idle, 0, static_cast<int>(AnimeState::Death));
 
     position = { 0.0f, 0.0f, 0.0f };
     scale = { 0.05f, 0.05f, 0.05f };
@@ -40,6 +41,7 @@ Player::Player(ID3D11Device* device) {
     UpdateState[static_cast<int>(AnimeState::Throw)] = &Player::UpdateSBThrowState;
     UpdateState[static_cast<int>(AnimeState::SB)] = &Player::UpdateSBState;
     UpdateState[static_cast<int>(AnimeState::Finisher)] = &Player::UpdateFinisherState;
+    UpdateState[static_cast<int>(AnimeState::Death)] = &Player::UpdateDeathState;
 
     TransitionIdleState();
 
@@ -60,6 +62,7 @@ Player::~Player() {
 }
 
 void Player::Init() {
+    TransitionIdleState();
     SetPosition({ 0, 1, 0 });
     angle = { 0,0,0 };
     transform = {
@@ -102,6 +105,7 @@ void Player::Init() {
     height = 8.0f;
 
     isDead = false;
+    reset = false;
 
     // SB用
     sbSpeed = 3.0f;
@@ -115,10 +119,12 @@ void Player::Init() {
     invincible = false;
     blurPower = 0.0f;
 
+    slow = false;
+
     dest.destruction = 0.0f;
-    dest.positionFactor = 0.0f;
-    dest.rotationFactor = 0.0f;
-    dest.scaleFactor = 0.0f;
+    dest.positionFactor = 1.0f;
+    dest.rotationFactor = 0.2f;
+    dest.scaleFactor = 0.2f;
 
     health = 1;
     oldHealth = 0;
@@ -130,7 +136,6 @@ void Player::Init() {
 
     // 地面貫通するか否か
     Penetrate = false;
-
 }
 #include <Xinput.h>
 void Player::Update(float elapsedTime) {
@@ -140,9 +145,6 @@ void Player::Update(float elapsedTime) {
 
     // 無敵時間更新
     UpdateInvincibleTimer(elapsedTime);
-   
-    // スロー
-    InputSlow(elapsedTime);
 
     // SB時間制限
     SBManagement(elapsedTime);
@@ -256,7 +258,7 @@ void Player::DrawDebugGUI() {
         }
         // トランスフォーム
         if (ImGui::CollapsingHeader("Destruction", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::SliderFloat("dest", &dest.destruction, 0, 1.0f);
+            ImGui::SliderFloat("dest", &dest.destruction, 0, 5.0f);
             ImGui::SliderFloat("pos", &dest.positionFactor, 0, 1.0f);
             ImGui::SliderFloat("rot", &dest.rotationFactor, 0, 1.0f);
             ImGui::SliderFloat("sca", &dest.scaleFactor, 0, 1.0f);
@@ -517,8 +519,15 @@ void Player::TransitionIdleState() {
 }
 // 待機ステート更新処理
 void Player::UpdateIdleState(float elapsedTime) {
+    // 死んだら
+    if (isDead) {
+        TransitionDeathState();
+        return;
+    }
     //  移動入力処理
     if (InputMove(elapsedTime)) TransitionRunState();
+    // スロー
+    InputSlow(elapsedTime);
     // ジャンプ入力処理
     if (InputJump()) TransitionJumpState();
     // 攻撃入力処理
@@ -534,8 +543,15 @@ void Player::TransitionRunState() {
 }
 //走るステート更新処理
 void Player::UpdateRunState(float elapsedTime) {
+    // 死んだら
+    if (isDead) {
+        TransitionDeathState();
+        return;
+    }
     //  移動入力処理
     if (!InputMove(elapsedTime)) TransitionIdleState();
+    // スロー
+    InputSlow(elapsedTime);
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
     // ジャンプ入力処理
@@ -551,8 +567,15 @@ void Player::TransitionJumpState() {
 }
 //ジャンプステート更新処理
 void Player::UpdateJumpState(float elapsedTime) {
+    // 死んだら
+    if (isDead) {
+        TransitionDeathState();
+        return;
+    }
     //  移動入力処理
     InputMove(elapsedTime);
+    // スロー
+    InputSlow(elapsedTime);
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
     // ジャンプ入力処理
@@ -570,6 +593,11 @@ void Player::TransitionAttackState() {
     velocity = {0,0,0};
 }
 void Player::UpdateAttackState(float elapsedTime) {
+    // 死んだら
+    if (isDead) {
+        TransitionDeathState();
+        return;
+    }
     static bool first = false;
     if (!first) {
         // 攻撃の向き指定
@@ -634,6 +662,11 @@ void Player::TransitionSBThrowState() {
     velocity = { 0,0,0 };
 }
 void Player::UpdateSBThrowState(float elapsedTime) {
+    // 死んだら
+    if (isDead) {
+        TransitionDeathState();
+        return;
+    }
     // SB発動したら次のステートへ
     if (InputSB()) TransitionSBState();
     // 何かに当たったら発動
@@ -651,6 +684,11 @@ void Player::TransitionSBState() {
     sbStartPos = position;
 }
 void Player::UpdateSBState(float elapsedTime) {
+    // 死んだら
+    if (isDead) {
+        TransitionDeathState();
+        return;
+    }
     // 移動＋レイキャスト
     if(Raycast(sbdir * sbSpeed)) {
         sbPos = { 0,0,0 };
@@ -680,6 +718,11 @@ void Player::TransitionFinisherState() {
     atkPos = VecMath::Normalize(atkPos) * 3;
 }
 void Player::UpdateFinisherState(float elapsedTime) {
+    // 死んだら
+    if (isDead) {
+        TransitionDeathState();
+        return;
+    }
     // 任意のアニメーション再生区間でのみ衝突判定処理をする
     float animationTime = model->GetCurrentAnimationSeconds();
     atk = animationTime >= 0.01f && animationTime <= 0.20f;
@@ -717,6 +760,21 @@ void Player::UpdateFinisherState(float elapsedTime) {
             sbHitEmy = -1;
         }
         blurPower = 0.0f;
+    }
+}
+
+void Player::TransitionDeathState() {
+    // 遷移
+    state = AnimeState::Death;
+    slow = true;
+    model->AnimationStop(true);
+}
+void Player::UpdateDeathState(float elapsedTime) {
+    dest.destruction += elapsedTime * 10.0f;
+    if (dest.destruction >= 5.0f) {
+        dest.destruction = 5.0f;
+        reset = true;
+        model->AnimationStop(false);
     }
 }
 
