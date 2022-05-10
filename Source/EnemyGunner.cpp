@@ -140,8 +140,6 @@ void EnemyGunner::Update(float elapsedTime)
 // •`‰æˆ—
 void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 {
-    //if (isDead == false)
-    {
         switch (groupNum)
         {
         case 0:
@@ -159,11 +157,10 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
         }
         model->Begin(dc, *shader);
         model->Render(dc, materialColor);
+     
 
-        // ’eŠÛ•`‰æˆ—
-        EnemyBulletManager::Instance().Render(dc, shader);
-
-
+    if (isDead == false)
+    {
 #ifdef _DEBUG
         // height
         Vec3 heightPos = position;

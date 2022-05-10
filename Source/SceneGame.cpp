@@ -17,7 +17,7 @@
 
 #include "StageManager.h"
 #include "StageSkybox.h"
-#include "StageMain.h"
+#include "StageMain1.h"
 #include "StageCollision.h"
 
 #include "Framework.h"
@@ -52,7 +52,7 @@ void SceneGame::Initialize()
         // ロード％更新
         AddLoadPercent(1.0f);
 
-        StageMain* stageMain = new StageMain(device);
+        StageMain1* stageMain = new StageMain1(device);
         stageMain->PlayerData(player.get());
         StageManager::Instance().Register(stageMain);
         StageCollision* stageCollision = new StageCollision(device);
@@ -276,6 +276,7 @@ void SceneGame::Render(float elapsedTime)
             player->Render(dc);
             // エネミー描画
             EnemyManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
+            EnemyBulletManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
         }
 
         // デバック

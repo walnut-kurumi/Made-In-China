@@ -24,7 +24,10 @@ public:
 	void SetScale(Effekseer::Handle handle, const DirectX::XMFLOAT3& scale);
 	
 	// スピード設定
-	void SetSpeed(Effekseer::Handle handle, float speed);
+	void SetPlaySpeed(Effekseer::Handle handle, float speed);
+
+	// 角度セット
+	void SetRotation(Effekseer::Handle handle, const DirectX::XMFLOAT3& radian);
 
 private:
 	Effekseer::EffectRef effekseerEffect = nullptr;

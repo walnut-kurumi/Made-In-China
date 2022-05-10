@@ -20,5 +20,5 @@ public:
 
 private:
 	std::unique_ptr<Model> model = nullptr;
-	float lifeTimer = 2.0f;
+	float lifeTimer = 20.0f;
 };

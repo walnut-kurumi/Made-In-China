@@ -4,7 +4,7 @@
 #include "Collision.h"
 #include <algorithm>
 #include "StageManager.h"
-
+#include "EnemyBulletManager.h"
 
 // ‰Šú‰»ˆ—
 void EnemyManager::Init()
@@ -55,7 +55,7 @@ void EnemyManager::Render(ID3D11DeviceContext* dc, Shader* shader)
 	for (Enemy* enemy : enemies)
 	{
 		enemy->Render(dc, shader);
-	}
+	}	
 }
 
 

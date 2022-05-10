@@ -7,13 +7,14 @@ EnemyBulletStraight::EnemyBulletStraight(ID3D11Device* device, EnemyBulletManage
 	// 表示サイズを調整
 	scale.x = scale.y = scale.z = 1.0f;	
 
-	ballisticEffect = new Effect("Data/Effect/enemyBullet.efk");
+	ballisticEffect = new Effect("Data/Effect/enemyBullet2.efk");
 
 	debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
 EnemyBulletStraight::~EnemyBulletStraight()
-{	
+{
+	ballisticEffect->Stop(handle);
 }
 // 更新処理
 void EnemyBulletStraight::Update(float elapsedTime)
@@ -33,7 +34,12 @@ void EnemyBulletStraight::Update(float elapsedTime)
 	position.y += direction.y * bulletSpeed;
 	position.z += direction.z * bulletSpeed;
 
-	// エフェクト座標
+	// エフェクト更新
+	float angle = 90;
+	if (direction.x > 0)angle = -90;
+	else angle = 90;
+	float radian = DirectX::XMConvertToRadians(angle);
+	ballisticEffect->SetRotation(handle, Vec3(0, radian, 0));
 	ballisticEffect->SetPosition(handle, position);
 
 	// オブジェクト行列を更新
@@ -65,10 +71,11 @@ void EnemyBulletStraight::Launch(const DirectX::XMFLOAT3& direction, const Direc
 	this->direction = direction;
 	this->position = position;
 
+	// エフェクト
 	float angle = 90;
 	if (direction.x > 0)angle = -90;
 	else angle = 90;
 	float radian = DirectX::XMConvertToRadians(angle);
 	handle = ballisticEffect->PlayDirection(position, 1.0f, radian);
-	ballisticEffect->SetSpeed(handle, 8.0f);
+	ballisticEffect->SetPlaySpeed(handle, 50.0f);
 }

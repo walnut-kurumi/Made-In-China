@@ -140,8 +140,6 @@ void EnemyMelee::Update(float elapsedTime)
 // •`‰æˆ—
 void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-    if (isDead == false)
-    {
         switch (groupNum)
         {
         case 0:
@@ -161,6 +159,8 @@ void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
         model->Render(dc, materialColor);
 
       
+    if (isDead == false)
+    {
 #ifdef _DEBUG
         // height
         Vec3 heightPos = position;
