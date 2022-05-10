@@ -18,7 +18,7 @@
 #include "StageManager.h"
 #include "StageSkybox.h"
 #include "StageMain1.h"
-#include "StageCollision.h"
+#include "StageCollision1.h"
 
 #include "Framework.h"
 
@@ -55,7 +55,7 @@ void SceneGame::Initialize()
         StageMain1* stageMain = new StageMain1(device);
         stageMain->PlayerData(player.get());
         StageManager::Instance().Register(stageMain);
-        StageCollision* stageCollision = new StageCollision(device);
+        StageCollision1* stageCollision = new StageCollision1(device);
         StageManager::Instance().Register(stageCollision);
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);

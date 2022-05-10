@@ -1,13 +1,13 @@
-#include "StageCollision.h"
+#include "StageCollision0.h"
 #include "StageManager.h"
 #include "Graphics/Shaders.h"
 #include "Camera/CameraManager.h"
 #include "Input/GamePad.h"
 #include "Input/input.h"
 
-StageCollision::StageCollision(ID3D11Device* device)
+StageCollision0::StageCollision0(ID3D11Device* device)
 {
-   
+
     model = new Model(device, ".\\Data\\Models\\Stage\\MDL_stage_atari.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
 
@@ -21,18 +21,18 @@ StageCollision::StageCollision(ID3D11Device* device)
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
-StageCollision::~StageCollision()
+StageCollision0::~StageCollision0()
 {
     delete model;
 }
 
-void StageCollision::Update(float elapsedTime)
+void StageCollision0::Update(float elapsedTime)
 {
     UpdateTransform();
     model->UpdateTransform(transform);
 }
 
-void StageCollision::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
+void StageCollision0::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
 {
     //Scroll.data.scroll_direction;
     //deviceContext->UpdateSubresource(
@@ -45,7 +45,7 @@ void StageCollision::Render(ID3D11DeviceContext* deviceContext, float elapsedTim
     //debugRenderer.get()->Render(deviceContext, CameraManager::Instance().GetViewProjection());
 }
 
-bool StageCollision::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
+bool StageCollision0::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
     //return false;
     return Collision::RayVsModel(start, end, model->GetSkinnedMeshs(), transform, hit);

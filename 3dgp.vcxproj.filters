@@ -230,9 +230,6 @@
     <ClCompile Include="Source\Stage.cpp">
       <Filter>Source\Stages</Filter>
     </ClCompile>
-    <ClCompile Include="Source\StageMain1.cpp">
-      <Filter>Source\Stages</Filter>
-    </ClCompile>
     <ClCompile Include="Source\StageManager.cpp">
       <Filter>Source\Stages</Filter>
     </ClCompile>
@@ -266,9 +263,6 @@
     <ClCompile Include="Source\SceneOver.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Source\StageCollision.cpp">
-      <Filter>Source\Stages</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Menu.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
@@ -287,6 +281,24 @@
     <ClCompile Include="Source\framebuffer.cpp" />
     <ClCompile Include="Source\RadialBlur.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageCollision1.cpp">
+      <Filter>Source\Stages\Stage1</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageMain1.cpp">
+      <Filter>Source\Stages\Stage1</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageMain0.cpp">
+      <Filter>Source\Stages\Stage0</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageCollision0.cpp">
+      <Filter>Source\Stages\Stage0</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageMain2.cpp">
+      <Filter>Source\Stages\Stage2</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageColiision2.cpp">
+      <Filter>Source\Stages\Stage2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -435,9 +447,6 @@
     <ClInclude Include="Source\Stage.h">
       <Filter>Source\Stages</Filter>
     </ClInclude>
-    <ClInclude Include="Source\StageMain1.h">
-      <Filter>Source\Stages</Filter>
-    </ClInclude>
     <ClInclude Include="Source\StageManager.h">
       <Filter>Source\Stages</Filter>
     </ClInclude>
@@ -471,9 +480,6 @@
     <ClInclude Include="Source\SceneOver.h">
       <Filter>Source\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Source\StageCollision.h">
-      <Filter>Source\Stages</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Menu.h">
       <Filter>Source\Scenes</Filter>
     </ClInclude>
@@ -498,6 +504,24 @@
     <ClInclude Include="Source\framebuffer.h" />
     <ClInclude Include="Source\RadialBlur.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageCollision1.h">
+      <Filter>Source\Stages\Stage1</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageMain1.h">
+      <Filter>Source\Stages\Stage1</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageMain0.h">
+      <Filter>Source\Stages\Stage0</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageCollision0.h">
+      <Filter>Source\Stages\Stage0</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageMain2.h">
+      <Filter>Source\Stages\Stage2</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageColiision2.h">
+      <Filter>Source\Stages\Stage2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -598,6 +622,15 @@
     </Filter>
     <Filter Include="Source\Character\Player\Bullet">
       <UniqueIdentifier>{c0322eb6-3b81-47b3-a5dd-a74394cf20ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Stages\Stage1">
+      <UniqueIdentifier>{42ef9c29-1c2e-4e13-bd0f-44de80c1bf88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Stages\Stage0">
+      <UniqueIdentifier>{91ea5a78-d184-4228-84eb-8450bfd9a5b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Stages\Stage2">
+      <UniqueIdentifier>{814fa5c0-8752-4cfd-8250-3db9f5c0bc01}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

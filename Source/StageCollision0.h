@@ -7,11 +7,11 @@
 #include "Graphics/Vec.h"
 #include"Player.h"
 
-class StageCollision : public Stage
+class StageCollision0 : public Stage
 {
 public:
-	StageCollision(ID3D11Device* device);
-	~StageCollision();
+	StageCollision0(ID3D11Device* device);
+	~StageCollision0();
 
 	void Update(float elapsedTime) override;
 
@@ -25,4 +25,4 @@ private:
 
 	std::unique_ptr<DebugRenderer> debugRenderer;
 	//Player* player = nullptr;
-};
+}; 
