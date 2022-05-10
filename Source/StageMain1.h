@@ -7,11 +7,11 @@
 #include "Graphics/Vec.h"
 #include"Player.h"
 
-class StageMain : public Stage
+class StageMain1 : public Stage
 {
 public:
-	StageMain(ID3D11Device* device);
-	~StageMain();
+	StageMain1(ID3D11Device* device);
+	~StageMain1();
 
 	void Update(float elapsedTime) override;
 

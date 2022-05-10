@@ -1,11 +1,11 @@
-#include "StageMain.h"
+#include "StageMain1.h"
 #include "StageManager.h"
 #include "Graphics/Shaders.h"
 #include "Camera/CameraManager.h"
 #include "Input/GamePad.h"
 #include "Input/input.h"
 
-StageMain::StageMain(ID3D11Device* device)
+StageMain1::StageMain1(ID3D11Device* device)
 {
     back = new Sprite(device, L"./Data/Sprites/BackGround.png");
 
@@ -24,26 +24,26 @@ StageMain::StageMain(ID3D11Device* device)
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
-StageMain::~StageMain()
+StageMain1::~StageMain1()
 {
     delete model;
     delete back;
 }
 
-void StageMain::Update(float elapsedTime)
+void StageMain1::Update(float elapsedTime)
 {
     bgpos = { player->GetPosition().x-20,player->GetPosition().y };
     UpdateTransform();
     model->UpdateTransform(transform);
 }
 
-void StageMain::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
+void StageMain1::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
 {
     //Scroll.data.scroll_direction;
     //deviceContext->UpdateSubresource(
     back->render(deviceContext, bgpos.x, -150, 1500, 1150, 1.0f, 1.0f, 1.0f, 1.0f, 0);    
 
-    model->Begin(deviceContext, Shaders::Ins()->GetRampShader());
+    model->Begin(deviceContext, Shaders::Ins()->GetSkinnedMeshShader());
     model->Render(deviceContext);
 
     // •K—v‚È‚Á‚½‚ç’Ç‰Á
@@ -52,7 +52,7 @@ void StageMain::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
     //debugRenderer.get()->Render(deviceContext, CameraManager::Instance().GetViewProjection());
 }
 
-bool StageMain::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
+bool StageMain1::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
     return false;
     //return Collision::RayVsModel(start, end, model->GetSkinnedMeshs(), transform, hit);

@@ -251,7 +251,7 @@
     <ClCompile Include="Source\SceneTutorial.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
     <ClCompile Include="Source\StageCollision.cpp" />
-    <ClCompile Include="Source\StageMain.cpp" />
+    <ClCompile Include="Source\StageMain1.cpp" />
     <ClCompile Include="Source\StageManager.cpp" />
     <ClCompile Include="Source\StageSkybox.cpp" />
   </ItemGroup>
@@ -327,7 +327,7 @@
     <ClInclude Include="Source\SceneTutorial.h" />
     <ClInclude Include="Source\Stage.h" />
     <ClInclude Include="Source\StageCollision.h" />
-    <ClInclude Include="Source\StageMain.h" />
+    <ClInclude Include="Source\StageMain1.h" />
     <ClInclude Include="Source\StageManager.h" />
     <ClInclude Include="Source\StageSkybox.h" />
     <ClInclude Include="Source\EnemyGunner.h" />

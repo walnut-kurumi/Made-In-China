@@ -230,7 +230,7 @@
     <ClCompile Include="Source\Stage.cpp">
       <Filter>Source\Stages</Filter>
     </ClCompile>
-    <ClCompile Include="Source\StageMain.cpp">
+    <ClCompile Include="Source\StageMain1.cpp">
       <Filter>Source\Stages</Filter>
     </ClCompile>
     <ClCompile Include="Source\StageManager.cpp">
@@ -435,7 +435,7 @@
     <ClInclude Include="Source\Stage.h">
       <Filter>Source\Stages</Filter>
     </ClInclude>
-    <ClInclude Include="Source\StageMain.h">
+    <ClInclude Include="Source\StageMain1.h">
       <Filter>Source\Stages</Filter>
     </ClInclude>
     <ClInclude Include="Source\StageManager.h">
