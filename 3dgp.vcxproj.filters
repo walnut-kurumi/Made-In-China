@@ -297,7 +297,7 @@
     <ClCompile Include="Source\StageMain2.cpp">
       <Filter>Source\Stages\Stage2</Filter>
     </ClCompile>
-    <ClCompile Include="Source\StageColiision2.cpp">
+    <ClCompile Include="Source\StageCollision2.cpp">
       <Filter>Source\Stages\Stage2</Filter>
     </ClCompile>
   </ItemGroup>
@@ -520,7 +520,7 @@
     <ClInclude Include="Source\StageMain2.h">
       <Filter>Source\Stages\Stage2</Filter>
     </ClInclude>
-    <ClInclude Include="Source\StageColiision2.h">
+    <ClInclude Include="Source\StageCollision2.h">
       <Filter>Source\Stages\Stage2</Filter>
     </ClInclude>
   </ItemGroup>
