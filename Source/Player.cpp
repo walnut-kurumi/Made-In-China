@@ -170,7 +170,11 @@ void Player::Update(float elapsedTime) {
     if (atk) 
     {        
         // TODOF’¼‚· Œü‚«’Ç‰Á‚µ‚ÄŠp“x
-        handle = attackEffect->Play(centerPosition,2.0f,angle.y); 
+        //handle = attackEffect->PlayDirection(centerPosition, direction, angle.y, 2.0f);        
+        if (angle.y > 0)efcDir = 1;
+        else efcDir = 0;
+        float radian = DirectX::XMConvertToRadians(180 * efcDir);
+        handle = attackEffect->PlayDirection(centerPosition, 2.0f, radian);
     }
 
     atkTimer -= elapsedTime;
@@ -238,6 +242,9 @@ void Player::DrawDebugGUI() {
             ImGui::SliderFloat("Position Y", &position.y, -200, 200);
             ImGui::SliderFloat("Position Z", &position.z, -300, 300);
 
+            ImGui::InputFloat3("Angle", &angle.x);
+            ImGui::InputInt("Direction", &direction);
+            ImGui::InputInt("efcDirection", &efcDir);
 
             Vec3 p = CameraManager::Instance().GetPos();
 

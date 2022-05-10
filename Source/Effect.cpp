@@ -33,13 +33,24 @@ Effect::~Effect()
 }
 
 //再生
-Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& position, float scale,float angle)
+Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& position, float scale)
+{
+	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
+
+	Effekseer::Handle handle = effekseerManager->Play(effekseerEffect, position.x, position.y, position.z);
+	
+	effekseerManager->SetScale(handle, scale, scale, scale);
+	return handle;
+}
+
+//再生
+Effekseer::Handle Effect::PlayDirection(const DirectX::XMFLOAT3& position, float scale, float radian)
 {
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
 	
 	Effekseer::Handle handle = effekseerManager->Play(effekseerEffect, position.x, position.y, position.z);
 	
-	effekseerManager->SetRotation(handle, Effekseer::Vector3D{ 1,1,1}, angle);
+	effekseerManager->SetRotation(handle, 0.0f,radian,0.0f);
 	effekseerManager->SetScale(handle, scale, scale, scale);
 	return handle;
 }
@@ -66,4 +77,13 @@ void Effect::SetScale(Effekseer::Handle handle, const DirectX::XMFLOAT3& scale)
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
 
 	effekseerManager->SetScale(handle, scale.x, scale.y, scale.z);
+}
+
+
+// スピード設定
+void Effect::SetSpeed(Effekseer::Handle handle, float speed)
+{
+	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
+
+	effekseerManager->SetSpeed(handle, speed);
 }
