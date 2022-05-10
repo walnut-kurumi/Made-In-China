@@ -26,6 +26,7 @@ public:
 	void LoadAnimation(const char* fbxFilename, float samplingRate, int index);
 
 	bool IsPlayAnimatimon();
+	void AnimationStop(bool b);
 
 	void Begin(ID3D11DeviceContext* dc, Shader shader, bool wireframe = false);
 	void Render(ID3D11DeviceContext* dc, const Vec4 materialColor = { 1.0f, 1.0f, 1.0f, 1.0f });// , const Animation::Keyframe* keyframe = nullptr);
@@ -63,4 +64,5 @@ private:
 	float animationSeconds = 0.0f;
 	float animationBlendTime = 0.0f;
 	float animationBlendSeconds = 0.0f;
+	bool stopAnimation = false;
 };
