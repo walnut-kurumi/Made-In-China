@@ -126,7 +126,7 @@ void Player::Init() {
     dest.rotationFactor = 0.2f;
     dest.scaleFactor = 0.2f;
 
-    health = 1;
+    health = 10;
     oldHealth = 0;
 
     // 中心座標更新
@@ -598,6 +598,8 @@ void Player::UpdateAttackState(float elapsedTime) {
         TransitionDeathState();
         return;
     }
+    // スロー
+    InputSlow(elapsedTime);
     static bool first = false;
     if (!first) {
         // 攻撃の向き指定
@@ -667,6 +669,8 @@ void Player::UpdateSBThrowState(float elapsedTime) {
         TransitionDeathState();
         return;
     }
+    // スロー
+    InputSlow(elapsedTime);
     // SB発動したら次のステートへ
     if (InputSB()) TransitionSBState();
     // 何かに当たったら発動
@@ -689,6 +693,8 @@ void Player::UpdateSBState(float elapsedTime) {
         TransitionDeathState();
         return;
     }
+    // スロー
+    InputSlow(elapsedTime);
     // 移動＋レイキャスト
     if(Raycast(sbdir * sbSpeed)) {
         sbPos = { 0,0,0 };
@@ -766,11 +772,16 @@ void Player::UpdateFinisherState(float elapsedTime) {
 void Player::TransitionDeathState() {
     // 遷移
     state = AnimeState::Death;
+    // スローに
     slow = true;
+    // 重力無くす
+    gravFlag = false;
+    // 最後のアニメーション状態で止める
     model->AnimationStop(true);
 }
 void Player::UpdateDeathState(float elapsedTime) {
     dest.destruction += elapsedTime * 10.0f;
+    // 体が分解しきったら
     if (dest.destruction >= 5.0f) {
         dest.destruction = 5.0f;
         reset = true;
