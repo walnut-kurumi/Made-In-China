@@ -42,7 +42,9 @@ bool StageManager::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOA
         HitResult tmp;
         if (stage->RayCast(start, end, tmp)) {
             if (tmp.distance < hit.distance) {
+                // ƒ^ƒCƒv‚ªŠÑ’Ê‚¾‚Á‚½‚ç
                 hit = tmp;
+                if (stage->GetType() == Stage::Type::Penetrate) hit.penetrate = true;
                 result = true;
             }
         }

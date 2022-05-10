@@ -12,6 +12,7 @@ struct HitResult
 	float distance = 0.0f;                    // レイの始点から交点までの距離
 	int materialIndex = -1;                   // 衝突したポリゴンのマテリアル番号
 	Vec3 rotation = { 0, 0, 0 }; // 回転量
+	bool penetrate = false; // 貫通
 };
 
 class Collision
