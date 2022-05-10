@@ -126,9 +126,11 @@ void Player::Init() {
     dest.rotationFactor = 0.2f;
     dest.scaleFactor = 0.2f;
 
-    health = 10;
+    health = 5;
     oldHealth = 0;
 
+
+    gravFlag = true;
     // 中心座標更新
     UpdateCenterPosition();
 
