@@ -81,9 +81,17 @@ void Effect::SetScale(Effekseer::Handle handle, const DirectX::XMFLOAT3& scale)
 
 
 // スピード設定
-void Effect::SetSpeed(Effekseer::Handle handle, float speed)
+void Effect::SetPlaySpeed(Effekseer::Handle handle, float speed)
 {
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
 
 	effekseerManager->SetSpeed(handle, speed);
+}
+
+// 角度設定
+void Effect::SetRotation(Effekseer::Handle handle, const DirectX::XMFLOAT3& radian)
+{
+	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
+
+	effekseerManager->SetRotation(handle, radian.x, radian.y, radian.z);
 }

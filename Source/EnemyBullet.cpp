@@ -12,6 +12,7 @@ EnemyBullet::EnemyBullet(EnemyBulletManager* manager) :manager(manager)
 void EnemyBullet::Destroy()
 {
 	manager->Remove(this);
+	ballisticEffect->Stop(handle);
 }
 
 void EnemyBullet::CollisionVsStage()
@@ -26,7 +27,7 @@ void EnemyBullet::CollisionVsStage()
 
 	if (StageManager::Instance().RayCast(start, end, hit)) 
 	{
-		Destroy();
+		Destroy();		
 	}
 }
 
