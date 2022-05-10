@@ -47,12 +47,16 @@ EnemyMelee::EnemyMelee(ID3D11Device* device)
 
     scale = { 0.05f, 0.05f, 0.05f };
 
+    // えふぇくと
+    deadEffect = new Effect("Data/Effect/enemyDead.efk");
+
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
 // デストラクタ
 EnemyMelee::~EnemyMelee()
 {
+    delete deadEffect;
     delete model;
     isAttack = false;
 }
@@ -587,7 +591,7 @@ void EnemyMelee::TransitionDeathState()
 {
     state = State::Death;
     model->PlayAnimation(static_cast<int>(state), false);
-
+    handle = deadEffect->Play(centerPosition, 1.0f);
     // 止まる
     moveSpeed = 0;
     Move(0.0f, 0.0f, moveSpeed);
@@ -598,9 +602,9 @@ void EnemyMelee::TransitionDeathState()
 void EnemyMelee::UpdateDeathState(float elapsedTime)
 {
     // 死亡アニメーション終わったら消滅させる
-    OnDead();
     if (!model->IsPlayAnimatimon())
-    {
-        Destroy();
+    {        
+        OnDead();
+        //Destroy();
     }
 }

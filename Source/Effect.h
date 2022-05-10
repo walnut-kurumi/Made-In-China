@@ -11,7 +11,8 @@ public:
 	~Effect();
 
 	//再生
-	Effekseer::Handle Play(const DirectX::XMFLOAT3& position, float scale = 1.0f, float angle = 0.0f);
+	Effekseer::Handle Play(const DirectX::XMFLOAT3& position, float scale = 1.0f);
+	Effekseer::Handle PlayDirection(const DirectX::XMFLOAT3& position, float scale = 1.0f, float radian = 0.0f);
 
 	//停止
 	void Stop(Effekseer::Handle handle);
@@ -21,6 +22,9 @@ public:
 
 	//スケール設定
 	void SetScale(Effekseer::Handle handle, const DirectX::XMFLOAT3& scale);
+	
+	// スピード設定
+	void SetSpeed(Effekseer::Handle handle, float speed);
 
 private:
 	Effekseer::EffectRef effekseerEffect = nullptr;

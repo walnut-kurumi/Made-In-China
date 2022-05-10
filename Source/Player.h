@@ -194,6 +194,7 @@ private:
 	Effect* attackEffect = nullptr;
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
+	int efcDir = 0;
 
 	Cost cost;
 };

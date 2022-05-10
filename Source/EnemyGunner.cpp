@@ -47,13 +47,17 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     position = { 0.0f, 0.0f, 0.0f };    
 
     scale = { 0.05f, 0.05f, 0.05f };
-       
+      
+    // エフェクト
+    deadEffect = new Effect("Data/Effect/enemyDead.efk");
+
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
 // デストラクタ
 EnemyGunner::~EnemyGunner()
 {
+    delete deadEffect;
     delete model;    
     isAttack = false;
 }
@@ -136,7 +140,7 @@ void EnemyGunner::Update(float elapsedTime)
 // 描画処理
 void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 {
-    if (isDead == false)
+    //if (isDead == false)
     {
         switch (groupNum)
         {
@@ -613,7 +617,7 @@ void EnemyGunner::TransitionDeathState()
 {
     state = State::Death;    
     model->PlayAnimation(static_cast<int>(state), false);
-
+    handle = deadEffect->Play(centerPosition, 1.0f);
     // 止まる
     moveSpeed = 0;
     Move(0.0f, 0.0f, moveSpeed);
@@ -624,9 +628,9 @@ void EnemyGunner::TransitionDeathState()
 void EnemyGunner::UpdateDeathState(float elapsedTime)
 {    
    // 死亡アニメーション終わったら消滅させる
-    OnDead();
     if (!model->IsPlayAnimatimon())
-    {
-        Destroy();
+    {        
+        OnDead();
+        //Destroy();
     }
 }

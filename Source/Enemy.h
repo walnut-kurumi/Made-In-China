@@ -5,6 +5,7 @@
 #include "DebugRenderer.h"
 #include "EnemyBulletManager.h"
 #include "Player.h"
+#include "Effect.h"
 
 // エネミー
 class Enemy : public Character
@@ -95,4 +96,9 @@ protected:
 
 	// マテリアルカラー
 	Vec4 materialColor = { 1,1,1,1 };
+
+
+	// エフェクト
+	Effect* deadEffect = nullptr;	
+	Effekseer::Handle handle = 0;
 };
