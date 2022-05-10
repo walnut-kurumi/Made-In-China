@@ -250,7 +250,7 @@
     <ClCompile Include="Source\SceneTitle.cpp" />
     <ClCompile Include="Source\SceneTutorial.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
-    <ClCompile Include="Source\StageColiision2.cpp" />
+    <ClCompile Include="Source\StageCollision2.cpp" />
     <ClCompile Include="Source\StageCollision0.cpp" />
     <ClCompile Include="Source\StageCollision1.cpp" />
     <ClCompile Include="Source\StageMain0.cpp" />
@@ -330,7 +330,7 @@
     <ClInclude Include="Source\SceneTitle.h" />
     <ClInclude Include="Source\SceneTutorial.h" />
     <ClInclude Include="Source\Stage.h" />
-    <ClInclude Include="Source\StageColiision2.h" />
+    <ClInclude Include="Source\StageCollision2.h" />
     <ClInclude Include="Source\StageCollision0.h" />
     <ClInclude Include="Source\StageCollision1.h" />
     <ClInclude Include="Source\StageMain0.h" />
