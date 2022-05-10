@@ -40,6 +40,7 @@ Player::Player(ID3D11Device* device) {
     UpdateState[static_cast<int>(AnimeState::Throw)] = &Player::UpdateSBThrowState;
     UpdateState[static_cast<int>(AnimeState::SB)] = &Player::UpdateSBState;
     UpdateState[static_cast<int>(AnimeState::Finisher)] = &Player::UpdateFinisherState;
+    UpdateState[static_cast<int>(AnimeState::Jump)] = &Player::UpdateDeathState;
 
     TransitionIdleState();
 
@@ -115,6 +116,8 @@ void Player::Init() {
     invincible = false;
     blurPower = 0.0f;
 
+    slow = false;
+
     dest.destruction = 0.0f;
     dest.positionFactor = 0.0f;
     dest.rotationFactor = 0.0f;
@@ -140,9 +143,6 @@ void Player::Update(float elapsedTime) {
 
     // 無敵時間更新
     UpdateInvincibleTimer(elapsedTime);
-   
-    // スロー
-    InputSlow(elapsedTime);
 
     // SB時間制限
     SBManagement(elapsedTime);
@@ -512,12 +512,16 @@ void Player::TransitionIdleState() {
 void Player::UpdateIdleState(float elapsedTime) {
     //  移動入力処理
     if (InputMove(elapsedTime)) TransitionRunState();
+    // スロー
+    InputSlow(elapsedTime);
     // ジャンプ入力処理
     if (InputJump()) TransitionJumpState();
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
     // シフトブレイク
     if (InputSB()) TransitionSBThrowState();
+    // 死んだら
+    if (isDead) TransitionDeathState();
 }
 
 //走るステート遷移
@@ -529,6 +533,8 @@ void Player::TransitionRunState() {
 void Player::UpdateRunState(float elapsedTime) {
     //  移動入力処理
     if (!InputMove(elapsedTime)) TransitionIdleState();
+    // スロー
+    InputSlow(elapsedTime);
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
     // ジャンプ入力処理
@@ -546,6 +552,8 @@ void Player::TransitionJumpState() {
 void Player::UpdateJumpState(float elapsedTime) {
     //  移動入力処理
     InputMove(elapsedTime);
+    // スロー
+    InputSlow(elapsedTime);
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
     // ジャンプ入力処理
@@ -711,6 +719,14 @@ void Player::UpdateFinisherState(float elapsedTime) {
         }
         blurPower = 0.0f;
     }
+}
+
+void Player::TransitionDeathState() {
+    state = AnimeState::Jump;
+    slow = true;
+}
+void Player::UpdateDeathState(float elapsedTime) {
+
 }
 
 bool Player::Raycast(Vec3 move) {

@@ -39,6 +39,7 @@ public:
 	Vec3 GetMoveVec() const;
 
 	bool GetDead() { return isDead; }
+	bool GetReset() { return reset; }
 
 	float GetSlowTimer() { return cost.GetCost(); }
 	float GetSlowMax() { return cost.GetMaxCost(); }
@@ -123,6 +124,9 @@ protected:
 	void TransitionFinisherState();
 	void UpdateFinisherState(float elapsedTime);
 
+	// 死亡ステート
+	void TransitionDeathState();
+	void UpdateDeathState(float elapsedTime);
 
 private:
 	template<class Type, typename Return, typename ...Args>
@@ -186,6 +190,7 @@ private:
 	const float sbMaxTime = 0.5f;
 	// 死亡
 	bool isDead = false;
+	bool reset = false;
 	// 攻撃くらった判定用
 	bool isHit = false;
 

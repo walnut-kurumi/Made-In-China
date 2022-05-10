@@ -352,7 +352,7 @@ void Character::UpdateHorizontalMove(float elapsedTime) {
                 position.x = hit2.position.x;
                 position.z = hit2.position.z;
             }
-
+            
         }
         else {
             position.x += mx;
