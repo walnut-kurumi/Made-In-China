@@ -14,13 +14,15 @@ float4 main(VS_OUT In) : SV_TARGET
    
     //ブラーの中心位置 ← 現在のテクセル位置
     float2 dir = m_CenterTexel - In.texcoord;
-   
+    // 横のみ
+    dir.y = 0.0f;
+    
     //距離を計算する
     float len = length(dir);
-   
+    
     //方向ベクトルの正規化し、１テクセル分の長さとなる方向ベクトルを計算する
     dir = normalize(dir) * float2(TU, TV);
-   
+    
     //m_BlurPower でボケ具合を調整する
     //距離を積算することにより、爆発の中心位置に近いほどブラーの影響が小さくなるようにする
     dir *= BlurPower * len;
