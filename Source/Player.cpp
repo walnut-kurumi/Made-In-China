@@ -521,7 +521,7 @@ void Player::UpdateIdleState(float elapsedTime) {
     // シフトブレイク
     if (InputSB()) TransitionSBThrowState();
     // 死んだら
-    if (isDead) TransitionDeathState();
+    //if (isDead) TransitionDeathState();
 }
 
 //走るステート遷移
