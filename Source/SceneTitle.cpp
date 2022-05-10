@@ -10,8 +10,8 @@
 void SceneTitle::Initialize()
 {
     ID3D11Device* device = Graphics::Ins().GetDevice();
-    titleSprite = new Sprite(device, L"./Data/Sprites//title.png");
-    cursorSprite = new Sprite(device, L"./Data/Sprites//cursor.png");
+    titleSprite = new Sprite(device, L"./Data/Sprites/title.png");
+    cursorSprite = new Sprite(device, L"./Data/Sprites/cursor.png");
     gameStart = new Sprite(device, L"./Data/Sprites/scene//start.png");
     gameEnd = new Sprite(device, L"./Data/Sprites/scene//end.png");
 
