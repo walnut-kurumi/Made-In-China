@@ -10,6 +10,7 @@ public:
 	{
 		Normal,	// 特別なことはない
 		Main,	// メインステージ
+		Penetrate, // 貫通床
 		End
 	};
 

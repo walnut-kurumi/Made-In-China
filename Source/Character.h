@@ -138,5 +138,5 @@ protected:
 	int direction = 0;
 
 	// ŠÑ’Ê°‚ğŠÑ’Ê‚·‚é‚©”Û‚©
-	bool Penetrate = false;
+	bool penetrate = false;
 };
