@@ -118,6 +118,7 @@ void Player::Init() {
     sbHitEmy = -1;
     invincible = false;
     blurPower = 0.0f;
+    blur = 80.0f;
 
     slow = false;
 
@@ -688,6 +689,7 @@ void Player::TransitionSBState() {
     invincible = true;
     // スタート位置記録
     sbStartPos = position;
+    blurPower = 3.0f;
 }
 void Player::UpdateSBState(float elapsedTime) {
     // 死んだら
