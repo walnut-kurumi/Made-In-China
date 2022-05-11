@@ -25,20 +25,31 @@ std::shared_ptr<SkinnedMesh> ResourceManager::LoadModelResource(const char* file
 	return model;
 }
 
-std::shared_ptr<SkinnedMesh::Animation> ResourceManager::LoadAnimationResource(const char* filename, float samplingRate, int index) {
-	// モデルを検索
-	AnimeMap::iterator it = animes.find(filename);
-	if (it != animes.end()) {
+std::shared_ptr<SkinnedMesh::Animation> ResourceManager::LoadAnimationResource(const char* modelName, const char* filename, float samplingRate, int index) {
+	// アニメーションを検索
+	AnimeMap::iterator ait = animes.find(filename);
+	if (ait != animes.end()) {
 		// リンク（寿命）が切れていないか確認
-		if (!it->second.expired()) {
+		if (!ait->second.expired()) {
 			// 読み込み済みのモデルリソースを返す
-			return it->second.lock();
+			return ait->second.lock();
+		}
+	}
+	// モデルを検索
+	ModelMap::iterator mit = models.find(modelName);
+	std::shared_ptr<SkinnedMesh> model;
+	if (mit != models.end()) {
+		// リンク（寿命）が切れていないか確認
+		if (!mit->second.expired()) {
+			// 読み込み済みのモデルリソースを渡す
+			model = mit->second.lock();
 		}
 	}
 
 	// 新規モデルリソース作成＆読み込み
-	auto model = std::make_unique<SkinnedMesh>(filename, samplingRate, index);
+	model->LoadAnimation(filename, samplingRate, index);
 	auto anime = std::make_shared<SkinnedMesh::Animation>(model->GetAnimes(index));
+
 	// マップに登録
 	animes[filename] = anime;
 	return anime;

@@ -65,4 +65,6 @@ private:
 	float animationBlendTime = 0.0f;
 	float animationBlendSeconds = 0.0f;
 	bool stopAnimation = false;
+
+	const char* modelFilename{};
 };
