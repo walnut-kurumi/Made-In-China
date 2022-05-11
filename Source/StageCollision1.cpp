@@ -9,7 +9,8 @@ StageCollision1::StageCollision1(ID3D11Device* device)
 {
    
     //model = new Model(device, ".\\Data\\Models\\Stage\\Stage1_collision.fbx", true, 0);
-    model = new Model(device, ".\\Data\\Models\\Stage\\oldStages\\MDL_stage_atari.fbx", true, 0);
+    model = new Model(device, ".\\Data\\Models\\Stage\\newStages\\Stage1_collision.fbx", true, 0);
+    //model = new Model(device, ".\\Data\\Models\\Stage\\oldStages\\MDL_stage_atari.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
 
     position.x = -140;
