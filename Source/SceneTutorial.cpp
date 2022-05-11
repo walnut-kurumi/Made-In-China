@@ -17,8 +17,8 @@
 
 #include "StageManager.h"
 #include "StageSkybox.h"
-#include "StageMain.h"
-#include "StageCollision.h"
+#include "StageMain0.h"
+#include "StageCollision0.h"
 
 #include "Framework.h"
 
@@ -51,10 +51,10 @@ void SceneTutorial::Initialize()
         // ロード％更新
         AddLoadPercent(1.0f);
 
-        StageMain* stageMain = new StageMain(device);
+        StageMain0* stageMain = new StageMain0(device);
         stageMain->PlayerData(player.get());
         StageManager::Instance().Register(stageMain);
-        StageCollision* stageCollision = new StageCollision(device);
+        StageCollision0* stageCollision = new StageCollision0(device);
         StageManager::Instance().Register(stageCollision);
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);

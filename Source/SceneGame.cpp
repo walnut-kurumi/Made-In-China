@@ -17,8 +17,8 @@
 
 #include "StageManager.h"
 #include "StageSkybox.h"
-#include "StageMain.h"
-#include "StageCollision.h"
+#include "StageMain1.h"
+#include "StageCollision1.h"
 
 #include "Framework.h"
 
@@ -52,10 +52,10 @@ void SceneGame::Initialize()
         // ロード％更新
         AddLoadPercent(1.0f);
 
-        StageMain* stageMain = new StageMain(device);
+        StageMain1* stageMain = new StageMain1(device);
         stageMain->PlayerData(player.get());
         StageManager::Instance().Register(stageMain);
-        StageCollision* stageCollision = new StageCollision(device);
+        StageCollision1* stageCollision = new StageCollision1(device);
         StageManager::Instance().Register(stageCollision);
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);
@@ -200,24 +200,21 @@ void SceneGame::Update(float elapsedTime)
     }
 
     // リセット
-    //if (player->GetHealth() <= 0)// ||  gamePad.GetButtonDown() & GamePad::BTN_Y)
-    //{
-    //    // フェードアウト
-    //    if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
-
-    //    // フェードアウトおわったら
-    //    if (Fade::Instance().GetFadeOutFinish())
-    //    {
-    //        // リセット
-    //        // デバッグ用で消してる
-    //        Reset();
-
-    //        // フェードイン
-    //        Fade::Instance().SetFadeInFlag(true);
-    //    }
-    //}        
+    if (player->GetReset()) {
+        // フェードアウト
+        if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
+    
+        // フェードアウトおわったら
+        if (Fade::Instance().GetFadeOutFinish()) {
+            // リセット
+            Reset();
+    
+            // フェードイン
+            Fade::Instance().SetFadeInFlag(true);
+        }
+    }        
     // フェードイン終わったら初期化
-    if (Fade::Instance().GetFadeInFinish())Fade::Instance().Initialize();
+    if (Fade::Instance().GetFadeInFinish()) Fade::Instance().Initialize();
 
     // Menu
     Menu::Instance().Update(elapsedTime);
@@ -268,7 +265,7 @@ void SceneGame::Render(float elapsedTime)
     //dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
     //dc->VSSetConstantBuffers(3, 1, &constant_buffer);
  
-    framebuffer->clear(dc);
+    framebuffer->clear(dc,1.0f,1.0f,1.0f,0.0f);
     framebuffer->activate(dc);
     {
         // モデル描画
@@ -279,6 +276,7 @@ void SceneGame::Render(float elapsedTime)
             player->Render(dc);
             // エネミー描画
             EnemyManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
+            EnemyBulletManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
         }
 
         // デバック

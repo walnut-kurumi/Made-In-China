@@ -47,13 +47,17 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     position = { 0.0f, 0.0f, 0.0f };    
 
     scale = { 0.05f, 0.05f, 0.05f };
-       
+      
+    // エフェクト
+    deadEffect = new Effect("Data/Effect/enemyDead.efk");
+
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
 // デストラクタ
 EnemyGunner::~EnemyGunner()
 {
+    delete deadEffect;
     delete model;    
     isAttack = false;
 }
@@ -136,8 +140,6 @@ void EnemyGunner::Update(float elapsedTime)
 // 描画処理
 void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 {
-    if (isDead == false)
-    {
         switch (groupNum)
         {
         case 0:
@@ -155,11 +157,10 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
         }
         model->Begin(dc, *shader);
         model->Render(dc, materialColor);
+     
 
-        // 弾丸描画処理
-        EnemyBulletManager::Instance().Render(dc, shader);
-
-
+    if (isDead == false)
+    {
 #ifdef _DEBUG
         // height
         Vec3 heightPos = position;
@@ -222,7 +223,12 @@ void EnemyGunner::CollisionProjectileVsPlayer()
             if (!enemyB->GetReflectionFlag())
             {
                 // 無敵じゃない時ダメージ与える
-                if(!player->GetInvincible()) player->ApplyDamage(1, 0.8f);                
+                if (!player->GetInvincible())
+                {
+                    player->ApplyDamage(1, 0.8f);
+                    player->SetIsHit(true);
+                }
+                else player->SetIsHit(false);
             }
         }
     }
@@ -608,7 +614,7 @@ void EnemyGunner::TransitionDeathState()
 {
     state = State::Death;    
     model->PlayAnimation(static_cast<int>(state), false);
-
+    handle = deadEffect->Play(centerPosition, 1.0f);
     // 止まる
     moveSpeed = 0;
     Move(0.0f, 0.0f, moveSpeed);
@@ -619,9 +625,9 @@ void EnemyGunner::TransitionDeathState()
 void EnemyGunner::UpdateDeathState(float elapsedTime)
 {    
    // 死亡アニメーション終わったら消滅させる
-    OnDead();
     if (!model->IsPlayAnimatimon())
-    {
-        Destroy();
+    {        
+        OnDead();
+        //Destroy();
     }
 }

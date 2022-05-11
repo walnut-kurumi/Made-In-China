@@ -22,6 +22,7 @@ private:
 		Land,	 //　着地
 		SB,		 //　シフトブレイク
 		Throw,	 //　シフトブレイク投擲
+		Death,	 //　死亡
 		End,	 //　お　わ　り　💛 ふぁっ〇ゅ～～～！！
 	};
 
@@ -39,6 +40,7 @@ public:
 	Vec3 GetMoveVec() const;
 
 	bool GetDead() { return isDead; }
+	bool GetReset() { return reset; }
 
 	float GetSlowTimer() { return cost.GetCost(); }
 	float GetSlowMax() { return cost.GetMaxCost(); }
@@ -55,6 +57,9 @@ public:
 	bool GetInvincible() { return invincible; }
 
 	float GetBlurPower() { return blurPower; }
+
+	bool GetIsHit() { return isHit; }
+	void SetIsHit(bool h) { isHit = h; }
 
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
@@ -120,6 +125,9 @@ protected:
 	void TransitionFinisherState();
 	void UpdateFinisherState(float elapsedTime);
 
+	// 死亡ステート
+	void TransitionDeathState();
+	void UpdateDeathState(float elapsedTime);
 
 private:
 	template<class Type, typename Return, typename ...Args>
@@ -173,8 +181,9 @@ private:
 	int sbHitEmy = -1;	// SBがヒットした敵（）当てた敵は確実に倒す用
 	const float sbCost = 2.0f;
 	bool invincible = false;	// 無敵状態（SB）
-	float blurPower = 0.0f;// 移動ブラー力
-	float blurMax = 15.0f;	// ブラー最大値
+	float blurPower = 0.0f; // 移動ブラー力
+	float blurMax = 13.0f;	// ブラー最大値
+	float blur = 0.0f;		// ブラー増減スピード
 
 	bool clock = false;	 // プレイヤー以外の時間
 	// SB時間制限
@@ -182,12 +191,16 @@ private:
 	const float sbMaxTime = 0.5f;
 	// 死亡
 	bool isDead = false;
+	bool reset = false;
+	// 攻撃くらった判定用
+	bool isHit = false;
 
 
 	// 攻撃えふぇくと
 	Effect* attackEffect = nullptr;
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
+	int efcDir = 0;
 
 	Cost cost;
 };

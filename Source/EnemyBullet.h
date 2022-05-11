@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include "DebugRenderer.h"
+#include "Effect.h"
 
 // 前方宣言
 class EnemyBulletManager;
@@ -62,4 +63,8 @@ protected:
 
 	// パリィした弾かどうか -> 弾き返してたら敵に当たるようになる
 	bool reflectionFlag = false;
+
+	// エフェクト
+	Effect* ballisticEffect = nullptr;
+	Effekseer::Handle handle = 0;
 };

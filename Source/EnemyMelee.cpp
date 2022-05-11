@@ -47,12 +47,16 @@ EnemyMelee::EnemyMelee(ID3D11Device* device)
 
     scale = { 0.05f, 0.05f, 0.05f };
 
+    // えふぇくと
+    deadEffect = new Effect("Data/Effect/enemyDead.efk");
+
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
 // デストラクタ
 EnemyMelee::~EnemyMelee()
 {
+    delete deadEffect;
     delete model;
     isAttack = false;
 }
@@ -136,8 +140,6 @@ void EnemyMelee::Update(float elapsedTime)
 // 描画処理
 void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-    if (isDead == false)
-    {
         switch (groupNum)
         {
         case 0:
@@ -157,6 +159,8 @@ void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
         model->Render(dc, materialColor);
 
       
+    if (isDead == false)
+    {
 #ifdef _DEBUG
         // height
         Vec3 heightPos = position;
@@ -213,7 +217,12 @@ void EnemyMelee::CollisionPanchiVsPlayer()
     // 衝突処理
     if (Collision::SphereVsSphere(attackPos, player->GetCenterPosition(), attackRadius, player->GetRadius())) {        
         // 無敵じゃない時ダメージ与える
-        if (!player->GetInvincible()) player->ApplyDamage(1, 0.8f);
+        if (!player->GetInvincible())
+        {
+            player->ApplyDamage(1, 0.8f);
+            player->SetIsHit(true);
+        }
+        else player->SetIsHit(false);
     }
 }
 
@@ -582,7 +591,7 @@ void EnemyMelee::TransitionDeathState()
 {
     state = State::Death;
     model->PlayAnimation(static_cast<int>(state), false);
-
+    handle = deadEffect->Play(centerPosition, 1.0f);
     // 止まる
     moveSpeed = 0;
     Move(0.0f, 0.0f, moveSpeed);
@@ -593,9 +602,9 @@ void EnemyMelee::TransitionDeathState()
 void EnemyMelee::UpdateDeathState(float elapsedTime)
 {
     // 死亡アニメーション終わったら消滅させる
-    OnDead();
     if (!model->IsPlayAnimatimon())
-    {
-        Destroy();
+    {        
+        OnDead();
+        //Destroy();
     }
 }
