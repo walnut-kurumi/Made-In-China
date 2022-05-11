@@ -167,6 +167,7 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbxFilename, bool tri
 		}
 
 
+
 		//再帰で全ノードを取得
 		traverse(fbxScene->GetRootNode());
 
