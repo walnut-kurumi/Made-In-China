@@ -9,7 +9,7 @@ public:
     enum RASTER_STATE
     {
         SOLID, WIREFRAME, CULL_NONE, 
-        WIREFRAME_CULL_NONE, CULL_FRONT,SOILD_FALSE,
+        WIREFRAME_CULL_NONE, CULL_FRONT,SOLID_FALSE,
         RS_END
     };
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> RasterizerStates[RS_END];
@@ -66,7 +66,7 @@ public:
 		RasterizerDesc.ScissorEnable = FALSE;
 		RasterizerDesc.MultisampleEnable = FALSE;
 		RasterizerDesc.AntialiasedLineEnable = FALSE;
-		hr = device->CreateRasterizerState(&RasterizerDesc, RasterizerStates[static_cast<size_t>(RASTER_STATE::SOILD_FALSE)].GetAddressOf());
+		hr = device->CreateRasterizerState(&RasterizerDesc, RasterizerStates[static_cast<size_t>(RASTER_STATE::SOLID_FALSE)].GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
     };
     ~Rasterizer()

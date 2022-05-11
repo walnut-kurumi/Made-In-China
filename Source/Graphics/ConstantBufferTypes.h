@@ -61,3 +61,35 @@ struct Radial_Blur
     float BlurPower;
     float dummy;
 };
+
+// 色調補正情報
+struct ColorGradingData
+{
+    float	hueShift = 0;	// 色相調整
+    float	saturation = 1;	// 彩度調整
+    float	brightness = 1;	// 明度調整
+    float	dummy;
+};
+
+// ガウスフィルター計算情報
+struct GaussianFilterData
+{
+    int					kernelSize = 8;		// カーネルサイズ
+    float				deviation = 10.0f;	// 標準偏差
+    DirectX::XMFLOAT2	textureSize;			// 暈すテクスチャのサイズ
+};
+
+// 高輝度抽出用情報
+struct LuminanceExtractionData
+{
+    float				threshold = 0.5f;	// 閾値
+    float				intensity = 1.0f;	// ブルームの強度
+    DirectX::XMFLOAT2	dummy2;
+};
+
+// ポストエフェクトの最終パス用情報
+struct FinalpassnData
+{
+    //	ブルームテクスチャ
+    ID3D11ShaderResourceView* bloomTexture;
+};

@@ -58,6 +58,12 @@ public:
 		float x, float y, float w, float h, float r, float g, float b, float a);
 
 
+	// 頂点バッファの取得
+	const Microsoft::WRL::ComPtr<ID3D11Buffer>& GetVertexBuffer() const { return vertexBuffer; }
+
+	// シェーダーリソースビューの取得
+	const Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& GetShaderResourceView() const { return shaderResourceView; }
+
 	inline void rotate(float& x, float& y, float cx, float cy, float cos, float sin) {
 		x -= cx;
 		y -= cy;
