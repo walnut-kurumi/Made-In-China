@@ -192,56 +192,6 @@ SkinnedMesh::SkinnedMesh(ID3D11Device* device, const char* fbxFilename, bool tri
 	createComObjects(device, fbxFilename);
 }
 
-SkinnedMesh::SkinnedMesh(const char* animationFilename, float samplingRate, int index) {
-	std::filesystem::path cerealFilename(animationFilename);
-	cerealFilename.replace_extension("cereal");
-	if (std::filesystem::exists(cerealFilename.c_str())) {
-		std::ifstream ifs(cerealFilename.c_str(), std::ios::binary);
-		cereal::BinaryInputArchive deserialization(ifs);
-		deserialization(sceneView, meshes, materials, animationClips);
-	}
-	else {
-		// マネージャー生成
-		FbxManager* fbxManager = FbxManager::Create();
-
-		// IOSettingを生成
-		FbxIOSettings* ioSettings = FbxIOSettings::Create(fbxManager, IOSROOT);
-
-		//fbxScene生成
-		FbxScene* fbxScene = FbxScene::Create(fbxManager, "");
-
-		// インポーター生成
-		FbxImporter* fbxImporter = FbxImporter::Create(fbxManager, "");
-		bool importStatus = false;
-		importStatus = fbxImporter->Initialize(animationFilename, -1, fbxManager->GetIOSettings());
-		_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
-
-		// FbxSceneオブジェクトにFBXファイル内の情報を流し込む
-		importStatus = fbxImporter->Import(fbxScene);
-		_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
-
-
-		// シーンを流し込んだらImporterは解放
-		fbxImporter->Destroy();
-
-
-		//再帰で全ノードを取得
-		traverse(fbxScene->GetRootNode());
-
-		//アニメーションを抽出
-		fetchAnimations(fbxScene, samplingRate, index);
-
-
-
-		// マネージャ解放:関連するすべてのオブジェクトが解放される
-		fbxManager->Destroy();
-		//シリアル作成
-		std::ofstream ofs(cerealFilename.c_str(), std::ios::binary);
-		cereal::BinaryOutputArchive serialization(ofs);
-		serialization(sceneView, meshes, materials, animationClips);
-	}
-}
-
 void SkinnedMesh::traverse(FbxNode* fbxNode) {
 	Scene::Node& node = sceneView.nodes.emplace_back();
 	{
@@ -333,69 +283,53 @@ void SkinnedMesh::render(ID3D11DeviceContext* deviceContext, const DirectX::XMFL
 	}
 }
 
-void SkinnedMesh::updateAnimation(Animation::Keyframe& keyframe) {
-	size_t nodeCount = keyframe.nodes.size();
-	for (size_t nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
-		Animation::Keyframe::Node& node = keyframe.nodes.at(nodeIndex);
-		XMMATRIX S = XMMatrixScaling(node.scaling.x, node.scaling.y, node.scaling.z);
-		XMMATRIX R = XMMatrixRotationQuaternion(XMLoadFloat4(&node.rotation));
-		XMMATRIX T = XMMatrixTranslation(node.translation.x, node.translation.y, node.translation.z);
-
-		int64_t parentIndex = sceneView.nodes.at(nodeIndex).parentIndex;
-		XMMATRIX P =
-			parentIndex < 0 
-			? XMMatrixIdentity()												// 親がいない：オブジェクト座標に直接
-			: XMLoadFloat4x4(&keyframe.nodes.at(parentIndex).globalTransform);	// 親がいる　：親の座標からワールド座標に変換
-
-		XMStoreFloat4x4(&node.globalTransform, S * R * T * P);
-	}
-}
-
 //アニメーション追加
 bool SkinnedMesh::LoadAnimation(const char* animationFilename, float samplingRate, int index) {
-	FbxManager* fbxManager = FbxManager::Create();
-	FbxScene* fbxScene = FbxScene::Create(fbxManager, "");
+	//FbxManager* fbxManager = FbxManager::Create();
+	//FbxScene* fbxScene = FbxScene::Create(fbxManager, "");
 
-	FbxImporter* fbxImporter = FbxImporter::Create(fbxManager, "");
-	bool importStatus = false;
-	importStatus = fbxImporter->Initialize(animationFilename);
-	_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
-	importStatus = fbxImporter->Import(fbxScene);
-	_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
+	//FbxImporter* fbxImporter = FbxImporter::Create(fbxManager, "");
+	//bool importStatus = false;
+	//importStatus = fbxImporter->Initialize(animationFilename);
+	//_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
+	//importStatus = fbxImporter->Import(fbxScene);
+	//_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
 
-	fetchAnimations(fbxScene, samplingRate, index);
+	//fetchAnimations(fbxScene, samplingRate, index);
 
-	fbxManager->Destroy();
+	//fbxManager->Destroy();
 
+
+
+	std::filesystem::path cerealFilename(animationFilename);
+	cerealFilename.replace_extension("cereal");
+	if (std::filesystem::exists(cerealFilename.c_str())) {
+		std::ifstream ifs(cerealFilename.c_str(), std::ios::binary);
+		cereal::BinaryInputArchive deserialization(ifs);
+		deserialization(animationClips);
+	}
+	else {
+		FbxManager* fbxManager = FbxManager::Create();
+		FbxScene* fbxScene = FbxScene::Create(fbxManager, "");
+
+		FbxImporter* fbxImporter = FbxImporter::Create(fbxManager, "");
+		bool importStatus = false;
+		importStatus = fbxImporter->Initialize(animationFilename);
+		_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
+		importStatus = fbxImporter->Import(fbxScene);
+		_ASSERT_EXPR_A(importStatus, fbxImporter->GetStatus().GetErrorString());
+
+		fetchAnimations(fbxScene, samplingRate, index);
+
+		fbxManager->Destroy();
+
+		//シリアル作成
+		std::ofstream ofs(cerealFilename.c_str(), std::ios::binary);
+		cereal::BinaryOutputArchive serialization(ofs);
+		serialization(animationClips);
+	}
 	return true;
 }
-
-void SkinnedMesh::blendAnimations(const Animation::Keyframe* keyframes[2], float factor,
-	Animation::Keyframe& keyframe)
-{
-	size_t nodeCount = keyframes[0]->nodes.size();
-	keyframe.nodes.resize(nodeCount);
-	for (size_t nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
-		XMVECTOR S[2] = {
-			XMLoadFloat3(&keyframes[0]->nodes.at(nodeIndex).scaling),
-			XMLoadFloat3(&keyframes[1]->nodes.at(nodeIndex).scaling)
-		};
-		XMStoreFloat3(&keyframe.nodes.at(nodeIndex).scaling, XMVectorLerp(S[0], S[1], factor));
-
-		XMVECTOR R[2] = {
-			XMLoadFloat4(&keyframes[0]->nodes.at(nodeIndex).rotation),
-			XMLoadFloat4(&keyframes[1]->nodes.at(nodeIndex).rotation)
-		};
-		XMStoreFloat4(&keyframe.nodes.at(nodeIndex).rotation, XMQuaternionSlerp(R[0], R[1], factor));
-
-		XMVECTOR T[2] = {
-			XMLoadFloat3(&keyframes[0]->nodes.at(nodeIndex).translation),
-			XMLoadFloat3(&keyframes[1]->nodes.at(nodeIndex).translation)
-		};
-		XMStoreFloat3(&keyframe.nodes.at(nodeIndex).translation, XMVectorLerp(T[0], T[1], factor));
-	}
-}
-
 
 void SkinnedMesh::fetchMeshes(FbxScene* fbxScene/*, std::vector<Mesh>& meshes*/) {
 	for (const Scene::Node& node : sceneView.nodes)	{
@@ -635,65 +569,6 @@ void SkinnedMesh::fetchAnimations(FbxScene* fbxScene,
 	/*std::vector<Animation> animationClips,*/
 	float samplingRate, /*この値が 0 の場合、アニメーション データは既定のフレーム レートでサンプリングされます。*/
 	int index) {
-#if 0
-
-	FbxArray<FbxString*> animationStackNames;
-	//既存のすべてのアニメーション スタック名を入力
-	fbxScene->FillAnimStackNameArray(animationStackNames);
-	const int animationStackCount = animationStackNames.GetCount();
-	for (int animationStackIndex = 0; animationStackIndex < animationStackCount; ++animationStackIndex) {
-		Animation& animationClip = animationClips.emplace_back();
-		animationClip.name = animationStackNames[animationStackIndex]->Buffer();
-
-		FbxAnimStack* animationStack = fbxScene->FindMember<FbxAnimStack>(animationClip.name.c_str());
-		fbxScene->SetCurrentAnimationStack(animationStack);
-
-		//アニメーションのタイムモード
-		const FbxTime::EMode timeMode = fbxScene->GetGlobalSettings().GetTimeMode();
-		FbxTime oneSecond;
-
-		//１秒に使うlong long型の数値
-		oneSecond.SetTime(0, 0, 1, 0, 0, timeMode);
-		//1フレーム時間を設定
-		animationClip.samplingRate =
-			samplingRate > 0
-			? samplingRate
-			: static_cast<float>(oneSecond.GetFrameRate(timeMode));
-
-		//秒間のフレーム数
-		const FbxTime samplingInterval = static_cast<FbxLongLong>(oneSecond.Get() / animationClip.samplingRate);
-		//アニメーション時間取得
-		const FbxTakeInfo* takeInfo = fbxScene->GetTakeInfo(animationClip.name.c_str());
-		const FbxTime startTime = takeInfo->mLocalTimeSpan.GetStart();
-		const FbxTime stopTime = takeInfo->mLocalTimeSpan.GetStop();
-		for (FbxTime time = startTime; time < stopTime; time += samplingInterval) {
-			Animation::Keyframe& keyframe = animationClip.sequence.emplace_back();
-
-			const size_t nodeCount = sceneView.nodes.size();
-			keyframe.nodes.resize(nodeCount);
-			for (size_t nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
-				//スキンのクラスターのリンク名から、スケルトンノードを検索
-				FbxNode* fbxNode = fbxScene->FindNodeByName(sceneView.nodes.at(nodeIndex).name.c_str());
-				if (fbxNode) {
-					Animation::Keyframe::Node& node = keyframe.nodes.at(nodeIndex);
-					// ノードの変換行列,シーンのグローバル座標系を指定
-					node.globalTransform = to_xmfloat4x4(fbxNode->EvaluateGlobalTransform(time));
-					// 親のローカル座標系に関するノードの変換行列
-					const FbxAMatrix& localTransform = fbxNode->EvaluateLocalTransform(time);
-					node.scaling = to_xmfloat3(localTransform.GetS());
-					node.rotation = to_xmfloat4(localTransform.GetQ());
-					node.translation = to_xmfloat3(localTransform.GetT());
-				}
-			}
-		}
-	}
-	//削除～
-	for (int animationStackIndex = 0; animationStackIndex < animationStackCount; ++animationStackIndex) {
-		delete animationStackNames[animationStackIndex];
-	}
-#else
-
-
 	FbxArray<FbxString*> animationStackNames;
 	//既存のすべてのアニメーション スタック名を入力
 	fbxScene->FillAnimStackNameArray(animationStackNames);
@@ -756,8 +631,6 @@ void SkinnedMesh::fetchAnimations(FbxScene* fbxScene,
 	for (int animationStackIndex = 0; animationStackIndex < animationStackCount; ++animationStackIndex) {
 		delete animationStackNames[animationStackIndex];
 	}
-
-#endif
 }
 
 

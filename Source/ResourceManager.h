@@ -20,7 +20,7 @@ public:
 	// モデルリソース読み込み
 	std::shared_ptr<SkinnedMesh> LoadModelResource(const char* filename, bool triangulate, BOOL frontCounterClockwise);
 
-	std::shared_ptr<SkinnedMesh::Animation> LoadAnimationResource(const char* filename, float samplingRate, int index);
+	std::shared_ptr<SkinnedMesh::Animation> LoadAnimationResource(const char* modelName, const char* filename, float samplingRate, int index);
 private:
 	using ModelMap = std::map<std::string, std::weak_ptr<SkinnedMesh>>;
 	ModelMap models;

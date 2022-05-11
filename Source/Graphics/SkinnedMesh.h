@@ -313,7 +313,6 @@ private:
 
 public:
 	SkinnedMesh(ID3D11Device* device, const char* fbxFilename, bool triangulate = false, float samplingRate = 0);
-	SkinnedMesh(const char* animationFilename, float samplingRate, int index);
 	virtual ~SkinnedMesh() = default;
 
 	void traverse(FbxNode* fbxNode);
@@ -323,10 +322,8 @@ public:
 	void fetchAnimations(FbxScene* fbxScene, /*std::vector<Animation> animationClips,*/ float samplingRate, int index);
 	void createComObjects(ID3D11Device* device, const char* fbxFilename);
 	void render(ID3D11DeviceContext* deviceContext, const DirectX::XMFLOAT4X4& world, const DirectX::XMFLOAT4& materialColor, const Animation::Keyframe* keyframe = nullptr);
-	
-	void updateAnimation(Animation::Keyframe& keyframe);
+
 	bool LoadAnimation(const char* animationFilename, float samplingRate, int index);
-	void blendAnimations(const Animation::Keyframe* keyframes[2], float factor, Animation::Keyframe& keyframe);
 
 	const std::vector<Mesh>& GetMeshs() const { return meshes; }
 	const Animation& GetAnimes(int index) const { return animationClips.at(index); }

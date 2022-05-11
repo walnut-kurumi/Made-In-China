@@ -9,6 +9,7 @@ Model::Model(ID3D11Device* device, const char* fbxFilename, bool triangulate, fl
 	//skinnedMesh = std::make_unique<SkinnedMesh>(device, fbxFilename, triangulate);
 	//skinnedMesh.get()->Init(device, frontCounterClockwise);
 	skinnedMesh = ResourceManager::Instance().LoadModelResource(fbxFilename, triangulate, frontCounterClockwise);
+	modelFilename = fbxFilename;
 }
 
 Model::~Model()
@@ -41,7 +42,7 @@ void Model::Render(ID3D11DeviceContext* dc, const Vec4 materialColor)  // , cons
 void Model::LoadAnimation(const char* fbxFilename, float samplingRate, int index)
 {
 	//skinnedMesh.get()->LoadAnimation(fbxFilename, samplingRate, index);
-	anime.emplace(index,  ResourceManager::Instance().LoadAnimationResource(fbxFilename, samplingRate, index));
+	anime.emplace(index,  ResourceManager::Instance().LoadAnimationResource(modelFilename, fbxFilename, samplingRate, index));
 	skinnedMesh.get()->animationClips.emplace(index, *anime[index].get());
 }
 
