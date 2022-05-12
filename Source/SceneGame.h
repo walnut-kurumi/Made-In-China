@@ -56,7 +56,11 @@ private:
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
 
-
+	ConstantBuffer<scene_blur> SBBlur;
+	float sigma = 1.0f;
+	float intensity = 0.5f;
+	float expo = 1.2f;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> constant_buffers[8];
 
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
@@ -85,9 +89,12 @@ private:
 	bool menuflag = false;
 	
 	DirectX::XMFLOAT2 mousepos = {};
+	Shader BluShader;
 
-	std::unique_ptr<Framebuffer> framebuffer;
+	std::unique_ptr<Framebuffer> framebuffer[8];
 	std::unique_ptr<RadialBlur> radialBlur;
 
 	ConstantBuffer<Radial_Blur> CBBlur;
+
+
 };

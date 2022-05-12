@@ -9,9 +9,3 @@ cbuffer ColorCb : register(b2)
 {
     float3 rgb;
 };
-cbuffer BlurCb : register(b3)
-{    
-    float gaussianSigma;
-    float bloomIntensity;
-    float expo;
-};

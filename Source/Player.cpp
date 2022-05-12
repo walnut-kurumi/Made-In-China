@@ -162,7 +162,8 @@ void Player::Update(float elapsedTime) {
     UpdateCenterPosition();
 
     Key& key = Input::Instance().GetKey();
-    if (key.STATE('l')) {
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    if (gamePad.GetAxisLY() < 0.0f && std::abs(gamePad.GetAxisLY()) >= std::abs(gamePad.GetAxisLX())) {
         penetrate = true;
     }
     else {
@@ -797,7 +798,8 @@ void Player::UpdateFinisherState(float elapsedTime) {
             EnemyManager& enemyManager = EnemyManager::Instance();
             Enemy* enemy = enemyManager.GetEnemy(sbHitEmy);
             // ˆê’è‹——£‹ß‚¢‚ÆE‚·
-            if(VecMath::LengthVec3(position - enemy->GetPosition()) <= 10) enemy->ApplyDamage(1, 0);
+            if(VecMath::LengthVec3(position - enemy->GetPosition()) <= 10)
+                enemy->ApplyDamage(1, 0);
             sbHitEmy = -1;
         }
         // ƒuƒ‰[‚Ì’l
@@ -902,7 +904,7 @@ bool Player::Raycast(Vec3 move) {
     }
 
     // …•½‘¬—ÍŒvZ
-    float velocityLengthXZ = sqrtf(move.x * move.x + move.z * move.z);
+    float velocityLengthXZ = sqrtf(move.x * move.x);
     // ˆÚ“®‚µ‚½•ûŒü
     direction = VecMath::sign(velocity.x);
 
@@ -1033,8 +1035,8 @@ void Player::CollisionSBVsEnemies() {
         // SB’Tõ
         SBManager& sbManager = SBManager::Instance();
         int enemyBCount = sbManager.GetProjectileCount();
-        for (int i = 0; i < enemyBCount; ++i) {
-            SB* sb = sbManager.GetProjectile(i);
+        for (int j = 0; j < enemyBCount; ++j) {
+            SB* sb = sbManager.GetProjectile(j);
             // Õ“Ëˆ—
             if (Collision::SphereVsSphere(enemy->GetPosition(), sb->GetPosition(), enemy->GetRadius(), atkRadius)) {
                 if (enemy->GetHealth() > 0) {

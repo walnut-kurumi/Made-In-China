@@ -218,13 +218,8 @@
     <ClCompile Include="Source\Fade.cpp" />
     <ClCompile Include="Source\framebuffer.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
-    <ClCompile Include="Source\Graphics\FinalpassShader.cpp" />
-    <ClCompile Include="Source\Graphics\GaussianBlurShader.cpp" />
     <ClCompile Include="Source\Graphics\GeometricPrimitive.cpp" />
     <ClCompile Include="Source\Graphics\Graphics.cpp" />
-    <ClCompile Include="Source\Graphics\LuminanceExtractionShader.cpp" />
-    <ClCompile Include="Source\Graphics\RenderTarget.cpp" />
-    <ClCompile Include="Source\Graphics\SpriteResource.cpp" />
     <ClCompile Include="Source\HitManager.cpp" />
     <ClCompile Include="Source\Input\GamePad.cpp" />
     <ClCompile Include="Source\Input\Input.cpp" />
@@ -244,7 +239,6 @@
     <ClCompile Include="Source\Graphics\Vec.cpp" />
     <ClCompile Include="Source\PerlinNoise.cpp" />
     <ClCompile Include="Source\Player.cpp" />
-    <ClCompile Include="Source\PostprocessingRenderer.cpp" />
     <ClCompile Include="Source\RadialBlur.cpp" />
     <ClCompile Include="Source\ResourceManager.cpp" />
     <ClCompile Include="Source\SB.cpp" />
@@ -302,14 +296,9 @@
     <ClInclude Include="Source\Graphics\ConstantBufferTypes.h" />
     <ClInclude Include="Source\Framework.h" />
     <ClInclude Include="Source\Graphics\DepthStensiler.h" />
-    <ClInclude Include="Source\Graphics\FinalpassShader.h" />
-    <ClInclude Include="Source\Graphics\GaussianBlurShader.h" />
     <ClInclude Include="Source\Graphics\GeometricPrimitive.h" />
     <ClInclude Include="Source\Graphics\Graphics.h" />
-    <ClInclude Include="Source\Graphics\LuminanceExtractionShader.h" />
     <ClInclude Include="Source\Graphics\Rasterizer.h" />
-    <ClInclude Include="Source\Graphics\RenderTarget.h" />
-    <ClInclude Include="Source\Graphics\SpriteResource.h" />
     <ClInclude Include="Source\HighResolutionTimer.h" />
     <ClInclude Include="Source\HitManager.h" />
     <ClInclude Include="Source\Input\GamePad.h" />
@@ -331,7 +320,6 @@
     <ClInclude Include="Source\Graphics\Vec.h" />
     <ClInclude Include="Source\PerlinNoise.h" />
     <ClInclude Include="Source\Player.h" />
-    <ClInclude Include="Source\PostprocessingRenderer.h" />
     <ClInclude Include="Source\RadialBlur.h" />
     <ClInclude Include="Source\ResourceManager.h" />
     <ClInclude Include="Source\SB.h" />
@@ -360,13 +348,9 @@
     <None Include="shader\Constants.hlsli" />
     <None Include="shader\debug.hlsli" />
     <None Include="shader\Destruction.hlsli" />
-    <None Include="shader\FilterFunctions.hlsli" />
-    <None Include="shader\Finalpass.hlsli" />
     <None Include="shader\FullscreenQuad.hlsli" />
-    <None Include="shader\GaussianBlur.hlsli" />
     <None Include="shader\GeometricPrimitive.hlsli" />
     <None Include="shader\Grass.hlsli" />
-    <None Include="shader\LuminanceExtractions.hlsli" />
     <None Include="shader\OutLine.hlsli" />
     <None Include="shader\RadialBlur.hlsli" />
     <None Include="shader\Ramp.hlsli" />
@@ -413,35 +397,11 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">shader\obj\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">shader\obj\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="shader\FinalpassPS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="shader\FinalpassVS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-    </FxCompile>
     <FxCompile Include="shader\FullscreenQuadPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="shader\FullscreenQuadVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-    </FxCompile>
-    <FxCompile Include="shader\GaussianBlurPS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="shader\GaussianBlurVS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="shader\GeometricPrimitivePs.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">shader\obj\%(Filename).cso</ObjectFileOutput>
@@ -534,18 +494,6 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">shader\obj\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">shader\obj\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">shader\obj\%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="shader\LuminanceExtractionsPS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="shader\LuminanceExtractionsVS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="shader\OutLineGs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
