@@ -317,7 +317,7 @@
     </ClCompile>
     <ClCompile Include="Source\PostprocessingRenderer.cpp">
       <Filter>Source\Graphics</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="Source\StageCollision1.cpp">
       <Filter>Source\Stages\Stage1</Filter>
     </ClCompile>
@@ -335,6 +335,12 @@
     </ClCompile>
     <ClCompile Include="Source\StageCollision2.cpp">
       <Filter>Source\Stages\Stage2</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Door.cpp">
+      <Filter>Source\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DoorManager.cpp">
+      <Filter>Source\Stages</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -558,7 +564,7 @@
     </ClInclude>
     <ClInclude Include="Source\PostprocessingRenderer.h">
       <Filter>Source\Graphics</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="Source\StageCollision1.h">
       <Filter>Source\Stages\Stage1</Filter>
     </ClInclude>
@@ -576,6 +582,12 @@
     </ClInclude>
     <ClInclude Include="Source\StageCollision2.h">
       <Filter>Source\Stages\Stage2</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Door.h">
+      <Filter>Source\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DoorManager.h">
+      <Filter>Source\Stages</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

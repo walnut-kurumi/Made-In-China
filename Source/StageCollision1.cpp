@@ -9,13 +9,11 @@ StageCollision1::StageCollision1(ID3D11Device* device)
 {
    
     //model = new Model(device, ".\\Data\\Models\\Stage\\Stage1_collision.fbx", true, 0);
-    //model = new Model(device, ".\\Data\\Models\\Stage\\newStages\\Stage1_collision.fbx", true, 0);
-    model = new Model(device, ".\\Data\\Models\\Stage\\oldStages\\MDL_stage_atari.fbx", true, 0);
-    scale.x = scale.y = scale.z = 0.05f;
+    model = new Model(device, ".\\Data\\Models\\Stage\\newStages\\Stage1_collision.fbx", true, 0);
+    //model = new Model(device, ".\\Data\\Models\\Stage\\oldStages\\MDL_stage_atari.fbx", true, 0);
 
-    position.x = -140;
-    position.y = -20;
-    position.z = 5;
+    scale.x = scale.y = scale.z = 0.05f;
+    scale.x *= -1;
 
     angle.y = DirectX::XMConvertToRadians(-90);
 
@@ -30,6 +28,7 @@ StageCollision1::~StageCollision1()
 
 void StageCollision1::Update(float elapsedTime)
 {
+    scale.x = scale.y = scale.z = 0.05f;
     UpdateTransform();
     model->UpdateTransform(transform);
 }
