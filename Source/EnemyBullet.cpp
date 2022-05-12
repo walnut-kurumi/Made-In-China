@@ -12,7 +12,7 @@ EnemyBullet::EnemyBullet(EnemyBulletManager* manager) :manager(manager)
 void EnemyBullet::Destroy()
 {
 	manager->Remove(this);
-	ballisticEffect->Stop(handle);
+	//ballisticEffect->Stop(handle);
 }
 
 void EnemyBullet::CollisionVsStage()

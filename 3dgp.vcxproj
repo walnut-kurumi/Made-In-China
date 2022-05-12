@@ -204,6 +204,8 @@
     <ClCompile Include="Source\Collision.cpp" />
     <ClCompile Include="Source\Cost.cpp" />
     <ClCompile Include="Source\DebugRenderer.cpp" />
+    <ClCompile Include="Source\Door.cpp" />
+    <ClCompile Include="Source\DoorManager.cpp" />
     <ClCompile Include="Source\Effect.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
     <ClCompile Include="Source\Enemy.cpp" />
@@ -283,6 +285,8 @@
     <ClInclude Include="Source\Collision.h" />
     <ClInclude Include="Source\Cost.h" />
     <ClInclude Include="Source\DebugRenderer.h" />
+    <ClInclude Include="Source\Door.h" />
+    <ClInclude Include="Source\DoorManager.h" />
     <ClInclude Include="Source\Effect.h" />
     <ClInclude Include="Source\EffectManager.h" />
     <ClInclude Include="Source\Enemy.h" />

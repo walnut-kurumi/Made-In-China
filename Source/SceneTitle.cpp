@@ -17,6 +17,13 @@ void SceneTitle::Initialize()
 
     start = true;
     end = false;
+    startAlpha = 1.0f;
+    endAlpha = 1.0f;
+    startsize = { 320,180 };
+    endsize = { 320,180 };    
+    startpos = { Graphics::Ins().GetScreenWidth() / 2 - startsize.x / 2,Graphics::Ins().GetScreenHeight() / 2 - startsize.y / 2 + 60 };
+    endpos = { startpos.x,startpos.y + endsize.y * 1.2f };
+
 
     Input::Instance().GetMouse().SetMoveCursor(true);
 

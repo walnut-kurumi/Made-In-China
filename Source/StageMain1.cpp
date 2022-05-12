@@ -10,14 +10,11 @@ StageMain1::StageMain1(ID3D11Device* device)
     back = new Sprite(device, L"./Data/Sprites/BackGround.png");
 
     //model = new Model(device, ".\\Data\\Models\\Stage\\Stage1.fbx", true, 0);
-    //model = new Model(device, ".\\Data\\Models\\Stage\\newStages\\Stage1.fbx", true, 0);
-    model = new Model(device, ".\\Data\\Models\\Stage\\oldStages\\MDL_stage_ah.fbx", true, 0);
+    model = new Model(device, ".\\Data\\Models\\Stage\\newStages\\Stage1.fbx", true, 0);
+    //model = new Model(device, ".\\Data\\Models\\Stage\\oldStages\\MDL_stage_ah.fbx", true, 0);
 
     scale.x = scale.y = scale.z = 0.05f;
-
-    position.x = -140;
-    position.y = -20;
-    position.z = 5;
+    scale.x *= -1;
 
     angle.y = DirectX::XMConvertToRadians(-90);
 
@@ -34,7 +31,7 @@ StageMain1::~StageMain1()
 }
 
 void StageMain1::Update(float elapsedTime)
-{
+{    
     bgpos = { player->GetPosition().x-20,player->GetPosition().y };
     UpdateTransform();
     model->UpdateTransform(transform);
