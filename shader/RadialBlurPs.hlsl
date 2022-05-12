@@ -48,5 +48,5 @@ float4 main(VS_OUT In) : SV_TARGET
     Color[17] = texture_map.Sample(sampler_states, In.texcoord + dir * 17.0f) * 0.03;
     Color[18] = texture_map.Sample(sampler_states, In.texcoord + dir * 18.0f) * 0.02;
     return (Color[0] + Color[1] + Color[2] + Color[3] + Color[4] + Color[5] + Color[6] + Color[7] + Color[8] + Color[9] +
-    Color[10] + Color[11] + Color[12] + Color[13] + Color[14] + Color[15] + Color[16] + Color[17] + Color[18]) / 2;
+    Color[10] + Color[11] + Color[12] + Color[13] + Color[14] + Color[15] + Color[16] + Color[17] + Color[18]) * 4;
 }

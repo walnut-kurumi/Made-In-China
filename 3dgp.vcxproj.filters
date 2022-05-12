@@ -103,24 +103,6 @@
     <FxCompile Include="shader\RadialBlurPs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="shader\LuminanceExtractionsVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\LuminanceExtractionsPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\GaussianBlurVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\GaussianBlurPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\FinalpassVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\FinalpassPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Framework.cpp" />
@@ -300,24 +282,6 @@
     <ClCompile Include="Source\RadialBlur.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\LuminanceExtractionShader.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\GaussianBlurShader.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\FinalpassShader.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\RenderTarget.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\SpriteResource.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PostprocessingRenderer.cpp">
-      <Filter>Source\Graphics</Filter>
-	</ClCompile>
     <ClCompile Include="Source\StageCollision1.cpp">
       <Filter>Source\Stages\Stage1</Filter>
     </ClCompile>
@@ -541,24 +505,6 @@
     <ClInclude Include="Source\RadialBlur.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\LuminanceExtractionShader.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\GaussianBlurShader.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\FinalpassShader.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\RenderTarget.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\SpriteResource.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PostprocessingRenderer.h">
-      <Filter>Source\Graphics</Filter>
-	</ClInclude>
     <ClInclude Include="Source\StageCollision1.h">
       <Filter>Source\Stages\Stage1</Filter>
     </ClInclude>
@@ -622,18 +568,6 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\RadialBlur.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="shader\FilterFunctions.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="shader\LuminanceExtractions.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="shader\GaussianBlur.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="shader\Finalpass.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
