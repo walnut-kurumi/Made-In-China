@@ -17,7 +17,7 @@ StageCollision1::StageCollision1(ID3D11Device* device)
 
     angle.y = DirectX::XMConvertToRadians(-90);
 
-    type = Type::Main;
+    type = Type::Penetrate;
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 

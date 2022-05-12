@@ -7,8 +7,6 @@ void Character::UpdateTransform() {
     // スケール行列を作成
     DirectX::XMMATRIX S = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
 
-    //DirectX::XMMATRIX R = DirectX::XMMatrixRotationRollPitchYaw(angle.x, angle.y, angle.z);
-
     // 回転行列を作成
     DirectX::XMMATRIX X = DirectX::XMMatrixRotationX(angle.x);
     DirectX::XMMATRIX Y = DirectX::XMMatrixRotationY(angle.y);
@@ -112,8 +110,7 @@ void Character::UpdateVerticalVelocitiy(float elapsedFrame) {
     if(gravFlag) velocity.y += gravity * 1.75f * elapsedFrame;
 
     // 最大値処理
-    if (velocity.y < downMax)
-        velocity.y = downMax;
+    if (velocity.y < downMax) velocity.y = downMax;
 }
 
 void Character::UpdateVerticalMove(float elapsedTime) {
@@ -121,9 +118,6 @@ void Character::UpdateVerticalMove(float elapsedTime) {
     float my = velocity.y * elapsedTime;
 
     slopeRate = 0.0f;
-
-    //  キャラクターのY軸方向となる法線ベクトル
-    //normal = { 0,1,0 };
 
     // 落下中
     if (my < 0.0f) {
@@ -135,7 +129,12 @@ void Character::UpdateVerticalMove(float elapsedTime) {
         // レイキャストによる地面判定
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit)) {
-
+            // 貫通タイプかつ、貫通モードなら
+            if (penetrate&&hit.penetrate) {
+                position.y += my;
+                isGround = false;
+                return;
+            }
             // 地面に接地している
             position.x = hit.position.x;
             position.y = hit.position.y;
@@ -162,7 +161,6 @@ void Character::UpdateVerticalMove(float elapsedTime) {
     }   
     // 上昇中
     else if (my > 0.0f) {
-
         // レイの開始位置は頭
         DirectX::XMFLOAT3 start = { position.x, position.y + height, position.z };
         // レイの終点位置は移動後の位置
@@ -171,7 +169,11 @@ void Character::UpdateVerticalMove(float elapsedTime) {
         // レイキャストによる天井判定
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit)) {
-
+            // 貫通タイプなら貫通
+            if (hit.penetrate) {
+                position.y += my;
+                return;
+            }
             // 天井に接している
             position.x = hit.position.x;
             position.y = hit.position.y - height;
@@ -186,21 +188,6 @@ void Character::UpdateVerticalMove(float elapsedTime) {
             position.y += my;
         }
     }
-
-
-    // 地面の向きに沿うようにXZ軸回転
-    {
-        // Y軸が法線ベクトル方向に向くオイラー角回転を算出する
-        angle.x = atan2f(normal.z, normal.y);
-        angle.z = -atan2f(normal.x, normal.y);
-        float ax = atan2f(normal.z, normal.y);
-        float az = -atan2f(normal.x, normal.y);
-        // 線形補完で滑らかに回転する
-        //angle.x = Mathf::Lerp(angle.x, ax, 0.2f);
-        //angle.z = Mathf::Lerp(angle.z, az, 0.2f);
-    }
-
-
 }
 
 // 衝撃を与える
@@ -215,14 +202,7 @@ void Character::AddImpulse(const Vec3& impulse) {
 
 // 水平速力更新処理
 void Character::UpdateHorizontalVelocity(float elapsedFrame) {
-    //moveVecX = min(moveVecX, maxMoveSpeed);
-    //moveVecZ = min(moveVecZ, maxMoveSpeed);
-    //
-    //
-    //Character::velocity.x += moveVecX * elapsedFrame;
-    //Character::velocity.z += moveVecZ * elapsedFrame;
-    
-    ////// XZ平面の速力を減速する
+    // XZ平面の速力を減速する
     float length = sqrtf(velocity.x * velocity.x);
     if (length > 0.0f) {
         // 摩擦力
@@ -274,10 +254,6 @@ void Character::UpdateHorizontalVelocity(float elapsedFrame) {
 
 // 水平移動更新処理
 void Character::UpdateHorizontalMove(float elapsedTime) {
-    /*  移動処理
-     position.x += velocity.x * elapsedTime;
-     position.z += velocity.z * elapsedTime;*/
-
      // 水平速力計算
     float velocityLengthXZ = sqrtf(velocity.x * velocity.x + velocity.z * velocity.z);
     
