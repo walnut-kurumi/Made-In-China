@@ -24,8 +24,7 @@ void EnemyBulletStraight::Update(float elapsedTime)
 	if (lifeTimer <= 0.0f)
 	{
 		// Ž©•ª‚ðíœ
-		Destroy();
-		ballisticEffect->Stop(handle);
+		Destroy();		
 	}
 
 	// ˆÚ“®
@@ -77,5 +76,5 @@ void EnemyBulletStraight::Launch(const DirectX::XMFLOAT3& direction, const Direc
 	else angle = 90;
 	float radian = DirectX::XMConvertToRadians(angle);
 	handle = ballisticEffect->PlayDirection(position, 1.0f, radian);
-	ballisticEffect->SetPlaySpeed(handle, 50.0f);
+	ballisticEffect->SetPlaySpeed(handle, 5.0f);
 }
