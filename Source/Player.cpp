@@ -160,7 +160,8 @@ void Player::Update(float elapsedTime) {
     UpdateCenterPosition();
 
     Key& key = Input::Instance().GetKey();
-    if (key.STATE('l')) {
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    if (gamePad.GetAxisLY() < 0.0f && std::abs(gamePad.GetAxisLY()) >= std::abs(gamePad.GetAxisLX())) {
         penetrate = true;
     }
     else {
