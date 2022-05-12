@@ -3,7 +3,9 @@
 #include "Graphics/Shaders.h"
 #include "Input/Input.h"
 #include "Camera/CameraManager.h"
+
 #include "StageManager.h"
+#include "DoorManager.h"
 
 #include "EnemyManager.h"
 #include "EnemyBulletManager.h"
@@ -393,16 +395,16 @@ bool Player::InputSB() {
     // 武器を持っている場合 pad
     if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_TRIGGER) {
         if (weapon
-            && (gamePad.GetAxisRX() != 0 || gamePad.GetAxisRY() != 0)
+            && (gamePad.GetAxisLX() != 0 || gamePad.GetAxisLY() != 0)
             && cost.Approval(sbCost)) {
             // 武器を投げる
             weapon = false;
             // 発射
             SBNormal* sb = new SBNormal(device, &SBManager::Instance());
             // 向き、　発射地点
-            sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisRX(), gamePad.GetAxisRY(), 0)), position + waistPos);
+            sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisLX(), gamePad.GetAxisLY(), 0)), position + waistPos);
             // 向きを設定
-            direction = VecMath::sign(-gamePad.GetAxisRX());
+            direction = VecMath::sign(-gamePad.GetAxisLX());
             // 旋回処理
             if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
             // コスト
@@ -1070,6 +1072,21 @@ void Player::CollisionSBVsStage() {
         HitResult hit;
         // ステージとの判定
         if (StageManager::Instance().RayCast(pos, pos + VecMath::Normalize(dir) * speed, hit)) {
+            // 向きを設定
+            direction = VecMath::sign(hit.position.x - position.x);
+            // 旋回処理
+            if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
+            // 自分を敵の近くへ
+            sbdir = VecMath::Normalize(VecMath::Subtract(hit.position, position));
+            // 到達地点
+            // 敵の、自分方面に一定距離
+            sbPos = hit.position;
+            // 弾消す
+            sb->Destroy();
+            // stageとSBヒット
+            sbhit = true;
+        }
+        else if (DoorManager::Instance().RayCast(pos, pos + VecMath::Normalize(dir) * speed, hit)) {
             // 向きを設定
             direction = VecMath::sign(hit.position.x - position.x);
             // 旋回処理

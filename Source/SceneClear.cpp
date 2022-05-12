@@ -13,9 +13,15 @@ void SceneClear::Initialize()
     cursorSprite = new Sprite(device, L"./Data/Sprites//cursor.png");
     gameStart = new Sprite(device, L"./Data/Sprites/scene//start.png");
     gameEnd = new Sprite(device, L"./Data/Sprites/scene//end.png");
-
+  
     start = true;
     end = false;
+    startAlpha = 1.0f;
+    endAlpha = 0.4f;
+    startsize = { 320,180 };
+    endsize = { 320,180 };
+    startpos = { Graphics::Ins().GetScreenWidth() / 2 - startsize.x / 2,Graphics::Ins().GetScreenHeight() / 2 - startsize.y / 2 + 60 };
+    endpos = { startpos.x,startpos.y + endsize.y * 1.2f };
 
     Input::Instance().GetMouse().SetMoveCursor(true);
 }

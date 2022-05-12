@@ -1,6 +1,7 @@
 #include "Character.h"
 #include "Collision.h"
 #include "StageManager.h"
+#include "DoorManager.h"
 #include "Camera/CameraManager.h"
 
 void Character::UpdateTransform() {
@@ -153,6 +154,31 @@ void Character::UpdateVerticalMove(float elapsedTime) {
             isGround = true;
             velocity.y = 0.0f;
         }
+        else if (DoorManager::Instance().RayCast(start, end, hit)) {
+            // 貫通タイプかつ、貫通モードなら
+            if (penetrate && hit.penetrate) {
+                position.y += my;
+                isGround = false;
+                return;
+            }
+            // 地面に接地している
+            position.x = hit.position.x;
+            position.y = hit.position.y;
+            position.z = hit.position.z;
+
+            // 回転
+            angle.y += hit.rotation.y;
+
+            //  傾斜率の計算
+            float normalLengthXZ = sqrtf(hit.normal.x * hit.normal.x + hit.normal.z * hit.normal.z);
+            slopeRate = 1.0f - (hit.normal.y / (normalLengthXZ + hit.normal.y));
+
+            // 着地した
+            if (!isGround) OnLanding();
+
+            isGround = true;
+            velocity.y = 0.0f;
+        }
         else{
             // 空中に浮いてる
             position.y += my;
@@ -169,6 +195,22 @@ void Character::UpdateVerticalMove(float elapsedTime) {
         // レイキャストによる天井判定
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit)) {
+            // 貫通タイプなら貫通
+            if (hit.penetrate) {
+                position.y += my;
+                return;
+            }
+            // 天井に接している
+            position.x = hit.position.x;
+            position.y = hit.position.y - height;
+            position.z = hit.position.z;
+
+            // 回転
+            angle.y += hit.rotation.y;
+
+            velocity.y = 0.0f;
+        }
+        else if (DoorManager::Instance().RayCast(start, end, hit)) {
             // 貫通タイプなら貫通
             if (hit.penetrate) {
                 position.y += my;
@@ -329,6 +371,62 @@ void Character::UpdateHorizontalMove(float elapsedTime) {
                 position.z = hit2.position.z;
             }
             
+        }        
+        else if (DoorManager::Instance().RayCast(start, end, hit)) {
+            // 壁までのベクトル
+            DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start);
+            DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end);
+            DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
+
+            // 壁の法線
+            DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+
+            // 入射ベクトルを法線に射影                          // ベクトルの否定する
+            DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
+
+            // 補正位置の計算                   // v1 ベクトル乗数 v2 ベクター乗算   3 番目のベクトルに追加された最初の 2 つのベクトルの積を計算
+            DirectX::XMVECTOR CollectPosition = DirectX::XMVectorMultiplyAdd(Normal, Dot, End); // 戻り値 ベクトルの積和を返す    戻り値　＝　v1 * v2 + v3
+            DirectX::XMFLOAT3 collectPosition;
+            DirectX::XMStoreFloat3(&collectPosition, CollectPosition);
+
+            HitResult hit2; // 補正位置が壁に埋まっているかどうか
+            if (!DoorManager::Instance().RayCast(hit.position, collectPosition, hit2)) {
+                position.x = collectPosition.x;
+                position.z = collectPosition.z;
+            }
+            else {
+                position.x = hit2.position.x;
+                position.z = hit2.position.z;
+            }
+
+        }
+        else if (DoorManager::Instance().RayCast(start2, end2, hit)) {
+            // 壁までのベクトル
+            DirectX::XMVECTOR Start = DirectX::XMLoadFloat3(&start2);
+            DirectX::XMVECTOR End = DirectX::XMLoadFloat3(&end2);
+            DirectX::XMVECTOR Vec = DirectX::XMVectorSubtract(End, Start);
+
+            // 壁の法線
+            DirectX::XMVECTOR Normal = DirectX::XMLoadFloat3(&hit.normal);
+
+            // 入射ベクトルを法線に射影                          // ベクトルの否定する
+            DirectX::XMVECTOR Dot = DirectX::XMVector3Dot(DirectX::XMVectorNegate(Vec), Normal);
+
+            // 補正位置の計算                   // v1 ベクトル乗数 v2 ベクター乗算   3 番目のベクトルに追加された最初の 2 つのベクトルの積を計算
+            DirectX::XMVECTOR CollectPosition = DirectX::XMVectorMultiplyAdd(Normal, Dot, End); // 戻り値 ベクトルの積和を返す    戻り値　＝　v1 * v2 + v3
+            DirectX::XMFLOAT3 collectPosition;
+            DirectX::XMStoreFloat3(&collectPosition, CollectPosition);
+
+            HitResult hit2; // 補正位置が壁に埋まっているかどうか
+            if (!DoorManager::Instance().RayCast(hit.position, collectPosition, hit2)) {
+                position.x = collectPosition.x;
+                position.z = collectPosition.z;
+            }
+            else {
+                position.x = hit2.position.x;
+                position.z = hit2.position.z;
+            }
+
         }
         else {
             position.x += mx;

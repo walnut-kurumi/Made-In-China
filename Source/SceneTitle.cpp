@@ -18,7 +18,7 @@ void SceneTitle::Initialize()
     start = true;
     end = false;
     startAlpha = 1.0f;
-    endAlpha = 1.0f;
+    endAlpha = 0.4f;
     startsize = { 320,180 };
     endsize = { 320,180 };    
     startpos = { Graphics::Ins().GetScreenWidth() / 2 - startsize.x / 2,Graphics::Ins().GetScreenHeight() / 2 - startsize.y / 2 + 60 };
@@ -78,7 +78,7 @@ void SceneTitle::Update(float elapsedTime)
 
     // すすむ
     {
-        if (start && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
+        if (start && (gamePad.GetButtonUp() & anyButton || mouse.GetButtonUp() & mouseClick))
         {
             // フェードアウトする
             Fade::Instance().SetFadeOutFlag(true);
@@ -92,7 +92,7 @@ void SceneTitle::Update(float elapsedTime)
     }
     // おわる
     {
-        if (end && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
+        if (end && (gamePad.GetButtonUp() & anyButton || mouse.GetButtonUp() & mouseClick))
         {
             DestroyWindow(GetActiveWindow());
         }
