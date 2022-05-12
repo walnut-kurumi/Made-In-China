@@ -117,7 +117,7 @@ void Player::Init() {
     sbHitEmy = -1;
     invincible = false;
     blurPower = 0.0f;
-    blur = 80.0f;
+    blur = 90.0f;
 
     slow = false;
 
