@@ -26,8 +26,8 @@ Player::Player(ID3D11Device* device) {
     model->LoadAnimation(idle, 0, static_cast<int>(AnimeState::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(AnimeState::Run));
     model->LoadAnimation(jump, 0, static_cast<int>(AnimeState::Jump));
-    model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Attack));
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Throw));
+    model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Attack));
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Finisher));
     model->LoadAnimation(idle, 0, static_cast<int>(AnimeState::Death));
 
@@ -113,11 +113,13 @@ void Player::Init() {
     sbdir = { 0,0,0 };
     sbPos = { 0,0,0 };
     sbStartPos = { 0,0,0 };
-    sbTimer = 0.0f;
+    sbEraseLen = 2500.0f;// SBが消える距離（Sq）60
     sbHitEmy = -1;
     invincible = false;
     blurPower = 0.0f;
-    blur = 80.0f;
+    blur = 90.0f;
+    stopTime = 0.2f;
+    stopTimer = 0.0f;
 
     slow = false;
 
@@ -157,7 +159,14 @@ void Player::Update(float elapsedTime) {
     // 中心座標更新
     UpdateCenterPosition();
 
-
+    Key& key = Input::Instance().GetKey();
+    GamePad& gamePad = Input::Instance().GetGamePad();
+    if (gamePad.GetAxisLY() < 0.0f && std::abs(gamePad.GetAxisLY()) >= std::abs(gamePad.GetAxisLX())) {
+        penetrate = true;
+    }
+    else {
+        penetrate = false;
+    }
     // 旋回処理
     // 移動方向へ向く
     if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
@@ -393,6 +402,10 @@ bool Player::InputSB() {
             SBNormal* sb = new SBNormal(device, &SBManager::Instance());
             // 向き、　発射地点
             sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisRX(), gamePad.GetAxisRY(), 0)), position + waistPos);
+            // 向きを設定
+            direction = VecMath::sign(-gamePad.GetAxisRX());
+            // 旋回処理
+            if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
             // コスト
             cost.Consume(sbCost);
             return true;
@@ -438,7 +451,12 @@ bool Player::InputSB() {
 
             // 向き
             Vec3 atkPos = playerScreenPos - cursor;
-            atkPos = VecMath::Normalize(atkPos);            
+            atkPos = VecMath::Normalize(atkPos);          
+
+            // 向きを設定
+            direction = VecMath::sign(atkPos.x);
+            // 旋回処理
+            if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
 
             // 発射地点
             sb->Launch(atkPos, position + waistPos);
@@ -671,6 +689,11 @@ void Player::UpdateSBThrowState(float elapsedTime) {
         TransitionDeathState();
         return;
     }
+    // 投げる途中でアニメーション停止
+    float animationTime = model->GetCurrentAnimationSeconds();
+    if (animationTime > 0.1f) {
+        model->AnimationStop(true);
+    }
     // スロー
     InputSlow(elapsedTime);
     // SB発動したら次のステートへ
@@ -719,8 +742,8 @@ void Player::UpdateSBState(float elapsedTime) {
 void Player::TransitionFinisherState() {
     // 遷移
     state = AnimeState::Finisher;
-    model->PlayAnimation(static_cast<int>(state), false);
-
+    // 投げるアニメーション再開
+    model->AnimationStop(false);
     // 攻撃の場所
     Vec3 front = VecMath::Normalize({ transform._31,transform._32,transform._33 });
     atkPos = { front.x,0,0 };
@@ -732,14 +755,21 @@ void Player::UpdateFinisherState(float elapsedTime) {
         TransitionDeathState();
         return;
     }
-    // 任意のアニメーション再生区間でのみ衝突判定処理をする
-    float animationTime = model->GetCurrentAnimationSeconds();
-    atk = animationTime >= 0.01f && animationTime <= 0.20f;
+
     // ブラー
     blurPower -= elapsedTime * blur;
     blurPower = max(blurPower, 0.0f);
-    // アニメーションが終わった最後の処理
+
+    // アニメーションが終わったら振り切った姿勢で硬直
+    bool stop = false;
     if (!model->IsPlayAnimatimon()) {
+        stopTimer += elapsedTime;
+        if (stopTimer >= stopTime) stop = true;
+    }
+
+
+    // アニメーションが終わった最後の処理
+    if (stop) {
         // 終わったらアイドル状態へ
         TransitionIdleState();
         // ヒットストップおわり
@@ -765,10 +795,14 @@ void Player::UpdateFinisherState(float elapsedTime) {
         if (sbHitEmy >= 0) {
             EnemyManager& enemyManager = EnemyManager::Instance();
             Enemy* enemy = enemyManager.GetEnemy(sbHitEmy);
-            enemy->ApplyDamage(1, 0);
+            // 一定距離近いと殺す
+            if(VecMath::LengthVec3(position - enemy->GetPosition()) <= 10) enemy->ApplyDamage(1, 0);
             sbHitEmy = -1;
         }
+        // ブラーの値
         blurPower = 0.0f;
+        // 硬直用タイマー
+        stopTimer = 0.0f;
     }
 }
 
@@ -791,6 +825,13 @@ void Player::UpdateDeathState(float elapsedTime) {
         model->AnimationStop(false);
     }
 }
+
+
+
+
+
+
+
 
 bool Player::Raycast(Vec3 move) {
 
@@ -907,18 +948,15 @@ bool Player::Raycast(Vec3 move) {
 }
 
 void Player::SBManagement(float elapsedTime) {
+    // 武器を持っていない間
     if (!weapon) {
-        sbTimer += elapsedTime;
-        if (sbTimer >= sbMaxTime) {
-            weapon = true;
-            sbTimer = 0.0f;
-            // SB探索
-            SBManager& sbManager = SBManager::Instance();
-            int sbCount = sbManager.GetProjectileCount();
-            for (int i = 0; i < sbCount; ++i) {
-                // SB情報
-                SB* sb = sbManager.GetProjectile(i);
-
+        SBManager& sbManager = SBManager::Instance();
+        int sbCount = sbManager.GetProjectileCount();
+        for (int i = 0; i < sbCount; ++i) {
+            // SB情報
+            SB* sb = sbManager.GetProjectile(i);
+            if (VecMath::LengthVec3(sb->GetMoveLen(), true) >= sbEraseLen) {
+                weapon = true;
                 // 向きを設定
                 direction = VecMath::sign(sb->GetPosition().x - position.x);
                 // 旋回処理
@@ -931,9 +969,6 @@ void Player::SBManagement(float elapsedTime) {
                 sb->Destroy();
             }
         }
-    }
-    else {
-        sbTimer = 0.0f;
     }
 }
 

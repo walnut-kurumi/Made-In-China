@@ -20,6 +20,9 @@
 #include "StageMain1.h"
 #include "StageCollision1.h"
 
+#include "DoorManager.h"
+#include "Door.h"
+
 #include "Framework.h"
 
 #include"EffectManager.h"
@@ -59,6 +62,14 @@ void SceneGame::Initialize()
         StageManager::Instance().Register(stageCollision);
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);
+    }
+    // ドア
+    {        
+        DoorManager::Instance().Init();
+
+        Door* door = new Door(device);
+        //door->PlayerData(player.get());
+        DoorManager::Instance().Register(door);            
     }
     // ロード％更新
     AddLoadPercent(1.0f);

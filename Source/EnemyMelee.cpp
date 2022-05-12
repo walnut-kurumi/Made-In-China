@@ -9,7 +9,7 @@
 // コンストラクタ
 EnemyMelee::EnemyMelee(ID3D11Device* device)
 {
-#if 1
+#if 0
     const char* idle = "Data/Models/Enemy/JummoAnimations/Idle.fbx";
     const char* run = "Data/Models/Enemy/JummoAnimations/Run.fbx";
     const char* walk = "Data/Models/Enemy/JummoAnimations/Walk.fbx";
@@ -19,12 +19,12 @@ EnemyMelee::EnemyMelee(ID3D11Device* device)
 
     model = new Model(device, "Data/Models/Enemy/Jummo.fbx");
 #else
-     const char* idle = "Data/Models/Enemy/Animations/Idle.fbx";
-     const char* run = "Data/Models/Enemy/Animations/Run.fbx";
-     const char* walk = "Data/Models/Enemy/Animations/Walk.fbx";
-     const char* attack = "Data/Models/Enemy/Animations/Attack.fbx";
-     const char* blow = "Data/Models/Enemy/Animations/GetHit1.fbx";
-     const char* death = "Data/Models/Enemy/Animations/Death.fbx";
+    const char* idle = "Data/Models/Enemy/Animations/ver1/Idle.fbx";
+    const char* run = "Data/Models/Enemy/Animations/ver1/Run.fbx";
+    const char* walk = "Data/Models/Enemy/Animations/ver1/Walk.fbx";
+    const char* attack = "Data/Models/Enemy/Animations/ver1/Idle.fbx";
+    const char* blow = "Data/Models/Enemy/Animations/ver1/Run.fbx";
+    const char* death = "Data/Models/Enemy/Animations/ver1/Walk.fbx";
 
      model = new Model(device, "Data/Models/Enemy/Enemy.fbx",true);
 #endif
@@ -105,26 +105,29 @@ void EnemyMelee::Update(float elapsedTime)
 {
     position.z = 0;
 
-    if (isDead)return;
+    if (!isDead)
+    {
 
-    (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
+        (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
-    // 中心座標更新
-    UpdateCenterPosition();
+        // 中心座標更新
+        UpdateCenterPosition();
 
-    // 反射した弾丸との衝突判定
-    CollisionProjectileVsEnemies();
-    // 攻撃とプレイヤーの判定
-    if(isAttack)CollisionPanchiVsPlayer();
-    
+        // 反射した弾丸との衝突判定
+        CollisionProjectileVsEnemies();
+        // 攻撃とプレイヤーの判定
+        if (isAttack)CollisionPanchiVsPlayer();
+
+       
+        // 無敵時間更新
+        UpdateInvincibleTimer(elapsedTime);
+
+        // 索敵エリア更新
+        UpdateSearchArea();
+    }
     // 速度更新
     UpdateSpeed(elapsedTime);
 
-    // 無敵時間更新
-    UpdateInvincibleTimer(elapsedTime);
-
-    // 索敵エリア更新
-    UpdateSearchArea();
 
     //オブジェクト行列更新
     UpdateTransform();
@@ -359,14 +362,10 @@ void EnemyMelee::MoveBlow()
     // エネミーの中心座標
     const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
 
-    float vx = e.x - p.x;
-    float vy = e.y - p.y;
-    float lengthXY = sqrtf(vx * vx + vy * vy);
-    vx /= lengthXY;
-    vy /= lengthXY;
+    Vec3 pe = VecMath::Normalize(e - p);
 
     // 吹っ飛ばす    100.0f = 衝撃の強さ
-    AddImpulse(Vec3(vx, vy, 0) * 100.0f);
+    AddImpulse(pe * 75.0f);
 
 }
 
@@ -596,6 +595,8 @@ void EnemyMelee::TransitionDeathState()
     moveSpeed = 0;
     Move(0.0f, 0.0f, moveSpeed);
     velocity = { 0,0,0 };
+
+    OnDead();
 }
 
 //死亡ステート更新処理

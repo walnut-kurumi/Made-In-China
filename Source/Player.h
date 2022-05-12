@@ -179,16 +179,16 @@ private:
 	Vec3 sbPos = { 0,0,0 };	// 位置
 	Vec3 sbStartPos = { 0,0,0 };	// デストラクション用SBスタート位置
 	int sbHitEmy = -1;	// SBがヒットした敵（）当てた敵は確実に倒す用
+	float sbEraseLen = 0.0f; // シフトブレイクが消える距離
 	const float sbCost = 2.0f;
 	bool invincible = false;	// 無敵状態（SB）
 	float blurPower = 0.0f; // 移動ブラー力
 	float blurMax = 13.0f;	// ブラー最大値
 	float blur = 0.0f;		// ブラー増減スピード
+	float stopTime = 0.0f;	// シフトブレイク後の停止時間
+	float stopTimer = 0.0f;	// シフトブレイク後の停止時間タイマー
 
 	bool clock = false;	 // プレイヤー以外の時間
-	// SB時間制限
-	float sbTimer = 0.0f;
-	const float sbMaxTime = 0.5f;
 	// 死亡
 	bool isDead = false;
 	bool reset = false;

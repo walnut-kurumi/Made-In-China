@@ -15,6 +15,7 @@ SBNormal::~SBNormal() {
 }
 // 更新処理
 void SBNormal::Update(float elapsedTime) {
+	Vec3 m = position;
 	// 寿命処理
 	lifeTimer -= elapsedTime;
 	if (lifeTimer <= 0.0f) {
@@ -26,6 +27,9 @@ void SBNormal::Update(float elapsedTime) {
 	position.x += direction.x * bulletSpeed;
 	position.y += direction.y * bulletSpeed;
 	position.z += direction.z * bulletSpeed;
+
+	// 移動距離
+	moveLen += position - m;
 	// オブジェクト行列を更新
 	UpdateTransform();
 	// モデル行列更新

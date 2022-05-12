@@ -13,6 +13,8 @@ public:
 
 private:
 	Shader embeddedShader;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState>	rasterizerState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState>	depthStencilState;
 
 public:
 	void blit(
