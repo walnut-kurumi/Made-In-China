@@ -315,7 +315,6 @@ void SceneGame::Render(float elapsedTime)
     //scene_blur blu{ sigma,intensity,expo };
     SBBlur.data.sigma = sigma;
     SBBlur.data.intensity = intensity;
-    SBBlur.data.dummy0 = expo;
     SBBlur.applyChanges();
     dc->VSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
     dc->PSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
@@ -367,7 +366,6 @@ void SceneGame::Render(float elapsedTime)
 
     ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
     ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
-    ImGui::SliderFloat("expo", &expo, 0, 10);
    /* ImGui::SliderFloat("gaussian_sigma", &sigma, -10, 1);
     ImGui::SliderFloat("bloom_intensity", &intensity, -10, 1);
     ImGui::SliderFloat("expo", &expo, 0, 10);
