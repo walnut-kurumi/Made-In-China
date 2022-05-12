@@ -4,6 +4,7 @@
 #include "Collision.h"
 #include "DebugRenderer.h"
 #include "Framework.h"
+#include "Player.h"
 
 class Door
 {
@@ -11,6 +12,8 @@ class Door
 public:
 	Door(ID3D11Device* device);
 	~Door();
+
+	void Init();
 
 	void Update(float elapsedTime);
 
@@ -28,12 +31,18 @@ public:
 	
 	void OpenTheDoor();
 
+	void CollisionPlayerAtkVsDoor();
+
+	void PlayerData(Player* p) { player = p; }
+
 protected:
 	// 行列更新処理
 	void UpdateTransform();
 
 protected:
 	Model* model;
+
+	Player* player = nullptr;
 
 	Vec3 position = { 0, 0, 0 };
 	Vec3 angle = { 0, 0 ,0 };
@@ -47,6 +56,10 @@ protected:
 	
 	// 開いているか
 	bool isOpen = false;
+
+	// 当たり判定用
+	Vec3 centerPos = { 0,0,0 };
+	float radius = 0.0f;
 
 
 	std::unique_ptr<DebugRenderer> debugRenderer;

@@ -68,17 +68,20 @@ void SceneGame::Initialize()
         DoorManager::Instance().Init();
 
         Door* door = new Door(device);
-        //door->PlayerData(player.get());
+        door->SetPos(Vec3(-54.0f, 29.6f , -3.5f));
+        door->PlayerData(player.get());        
         DoorManager::Instance().Register(door);            
     }
     // ロード％更新
     AddLoadPercent(1.0f);
 
-    // エネミー座標設定
-    EnemyPositionSetting();
-
-    // エネミー初期化			    
-    EnemyInitialize(device);
+    // エネミー
+    {
+        // エネミー座標設定
+        EnemyPositionSetting();
+        // エネミー初期化			    
+        EnemyInitialize(device);
+    }
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -128,6 +131,10 @@ void SceneGame::Finalize()
 {
     // エネミー終了処理	
     EnemyManager::Instance().Clear();
+
+    // ドア終了処理
+    DoorManager::Instance().Clear();
+
     // ステージ終了処理
     StageManager::Instance().Clear();
     StageManager::Destory();    
@@ -171,6 +178,8 @@ void SceneGame::Update(float elapsedTime)
         // ステージ
         StageManager::Instance().Update(slowElapsedTime);
 
+        // ドア
+        DoorManager::Instance().Update(elapsedTime);
 
         // プレイヤー
         {
@@ -285,6 +294,8 @@ void SceneGame::Render(float elapsedTime)
         {
             // ステージ描画
             StageManager::Instance().Render(dc, elapsedTime);
+            // ドア描画
+            DoorManager::Instance().Render(dc, elapsedTime);
             // プレイヤー描画
             player->Render(dc);
             // エネミー描画
@@ -294,7 +305,7 @@ void SceneGame::Render(float elapsedTime)
 
         // デバック
         {
-            player->DrawDebugGUI();
+            player->DrawDebugGUI();            
         }
 
         //3Dエフェクト描画
@@ -414,38 +425,18 @@ void SceneGame::Reset()
 void SceneGame::EnemyInitialize(ID3D11Device* device)
 {
     for (int i = 0; i < ENEMY_MAX; i++)
-    {
-        if (ENEMY_MAX / 2 == i)
-        {
-            // ロード％更新
-            AddLoadPercent(1.0f);
-        }
+    {        
         if (ENEMY_MAX == i)
         {
             // ロード％更新
             AddLoadPercent(1.0f);
         }
 
-        // 近接と遠隔を交互に
-        if (i % 2 == 0)
-        {
-            EnemyGunner* gunner = new EnemyGunner(device);
-            gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
-            gunner->PositionInitialize();
-
-            //歩き回るかどうか
-            gunner->SetInitialWalk(enemyWalk[i]);
-            gunner->WalkFlagInitialize();
-
-            // グループ番号セット
-            gunner->SetInitialGroupNum(enemyGroup[i]);
-            gunner->GroupNumInitialize();
-
-            EnemyManager::Instance().Register(gunner);
-        }
-        else
+        // 近接
+        if (i == 0)
         {
             EnemyMelee* melee = new EnemyMelee(device);
+            // 座標セット
             melee->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
             melee->PositionInitialize();
 
@@ -459,6 +450,24 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
 
             EnemyManager::Instance().Register(melee);
         }
+        else
+        {
+            EnemyGunner* gunner = new EnemyGunner(device);
+            // 座標セット
+            gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
+            gunner->PositionInitialize();
+
+            //歩き回るかどうか
+            gunner->SetInitialWalk(enemyWalk[i]);
+            gunner->WalkFlagInitialize();
+
+            // グループ番号セット
+            gunner->SetInitialGroupNum(enemyGroup[i]);
+            gunner->GroupNumInitialize();
+
+            EnemyManager::Instance().Register(gunner);
+        }
+       
     }
 
     EnemyManager::Instance().Init();
@@ -468,36 +477,18 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
 void SceneGame::EnemyPositionSetting()
 {
 
-    enemyPos[0] = {-75,0.5f};
-    enemyPos[1] = {-85,0.5f};
-    enemyPos[2] = {-105,0.5f};
-    enemyPos[3] = {-120,0.5f};
-    enemyPos[4] = {-40,20.5f};
-    enemyPos[5] = {4,42.5f};
-    enemyPos[6] = {-65,55.5f};
-    enemyPos[7] = {-130,85.5f};
-    enemyPos[8] = {20,70.5f};    
-
+    enemyPos[0] = { -5.0f,29.5f };
+    enemyPos[1] = { -48.0f,29.5f };
+    enemyPos[2] = { -140.0f,28.0f };
 
     enemyGroup[0] =0;
     enemyGroup[1] =0;
-    enemyGroup[2] =0;
-    enemyGroup[3] =0;  
-    enemyGroup[4] =1;
-    enemyGroup[5] =1;
-    enemyGroup[6] =2;
-    enemyGroup[7] =2;
-    enemyGroup[8] =2;
-
+    enemyGroup[2] =1;
+    
     enemyWalk[0] = true;
-    enemyWalk[1] = true;
+    enemyWalk[1] = false;
     enemyWalk[2] = true;
-    enemyWalk[3] = true;
-    enemyWalk[4] = false;
-    enemyWalk[5] = false;
-    enemyWalk[6] = false;
-    enemyWalk[7] = false;
-    enemyWalk[8] = false;
+   
 }
 
 

@@ -66,6 +66,10 @@ public:
 	void CollisionSBVsEnemies();
 	void CollisionSBVsStage();
 
+	Vec3 GetAttackPosistion() const { return atkPos + position + waistPos; }
+	bool GetIsAtk() const { return atk; }
+	float GetAtkRadius() const { return atkRadius; }
+
 private:
 
 	// 移動入力処理

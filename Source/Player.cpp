@@ -3,7 +3,9 @@
 #include "Graphics/Shaders.h"
 #include "Input/Input.h"
 #include "Camera/CameraManager.h"
+
 #include "StageManager.h"
+#include "DoorManager.h"
 
 #include "EnemyManager.h"
 #include "EnemyBulletManager.h"
@@ -394,16 +396,16 @@ bool Player::InputSB() {
     // 武器を持っている場合 pad
     if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT_TRIGGER) {
         if (weapon
-            && (gamePad.GetAxisRX() != 0 || gamePad.GetAxisRY() != 0)
+            && (gamePad.GetAxisLX() != 0 || gamePad.GetAxisLY() != 0)
             && cost.Approval(sbCost)) {
             // 武器を投げる
             weapon = false;
             // 発射
             SBNormal* sb = new SBNormal(device, &SBManager::Instance());
             // 向き、　発射地点
-            sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisRX(), gamePad.GetAxisRY(), 0)), position + waistPos);
+            sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisLX(), gamePad.GetAxisLY(), 0)), position + waistPos);
             // 向きを設定
-            direction = VecMath::sign(-gamePad.GetAxisRX());
+            direction = VecMath::sign(-gamePad.GetAxisLX());
             // 旋回処理
             if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
             // コスト
@@ -796,7 +798,8 @@ void Player::UpdateFinisherState(float elapsedTime) {
             EnemyManager& enemyManager = EnemyManager::Instance();
             Enemy* enemy = enemyManager.GetEnemy(sbHitEmy);
             // 一定距離近いと殺す
-            if(VecMath::LengthVec3(position - enemy->GetPosition()) <= 10) enemy->ApplyDamage(1, 0);
+            if(VecMath::LengthVec3(position - enemy->GetPosition()) <= 10)
+                enemy->ApplyDamage(1, 0);
             sbHitEmy = -1;
         }
         // ブラーの値
@@ -901,7 +904,7 @@ bool Player::Raycast(Vec3 move) {
     }
 
     // 水平速力計算
-    float velocityLengthXZ = sqrtf(move.x * move.x + move.z * move.z);
+    float velocityLengthXZ = sqrtf(move.x * move.x);
     // 移動した方向
     direction = VecMath::sign(velocity.x);
 
@@ -1032,8 +1035,8 @@ void Player::CollisionSBVsEnemies() {
         // SB探索
         SBManager& sbManager = SBManager::Instance();
         int enemyBCount = sbManager.GetProjectileCount();
-        for (int i = 0; i < enemyBCount; ++i) {
-            SB* sb = sbManager.GetProjectile(i);
+        for (int j = 0; j < enemyBCount; ++j) {
+            SB* sb = sbManager.GetProjectile(j);
             // 衝突処理
             if (Collision::SphereVsSphere(enemy->GetPosition(), sb->GetPosition(), enemy->GetRadius(), atkRadius)) {
                 if (enemy->GetHealth() > 0) {
@@ -1071,6 +1074,21 @@ void Player::CollisionSBVsStage() {
         HitResult hit;
         // ステージとの判定
         if (StageManager::Instance().RayCast(pos, pos + VecMath::Normalize(dir) * speed, hit)) {
+            // 向きを設定
+            direction = VecMath::sign(hit.position.x - position.x);
+            // 旋回処理
+            if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
+            // 自分を敵の近くへ
+            sbdir = VecMath::Normalize(VecMath::Subtract(hit.position, position));
+            // 到達地点
+            // 敵の、自分方面に一定距離
+            sbPos = hit.position;
+            // 弾消す
+            sb->Destroy();
+            // stageとSBヒット
+            sbhit = true;
+        }
+        else if (DoorManager::Instance().RayCast(pos, pos + VecMath::Normalize(dir) * speed, hit)) {
             // 向きを設定
             direction = VecMath::sign(hit.position.x - position.x);
             // 旋回処理

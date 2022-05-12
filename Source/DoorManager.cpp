@@ -13,6 +13,8 @@ void DoorManager::Update(float elapsedTime)
 void DoorManager::Render(ID3D11DeviceContext* dc, float elapsedTime)
 {
 	for (Door* door : doors) door->Render(dc,elapsedTime);
+
+    RenderGui();
 }
 
 void DoorManager::RenderGui()

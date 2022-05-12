@@ -1,10 +1,15 @@
 #include "Door.h"
+#include "Camera/CameraManager.h"
 
 Door::Door(ID3D11Device* device)
 {
 	model = new Model(device, "./Data/Models/Stage/StageDoor.fbx", true, 0);
 
 	scale.x = scale.y = scale.z = 0.05f;
+    angle = { 0, DirectX::XMConvertToRadians(90), 0 };
+
+    isOpen = false;    
+    radius = 4.0f;
 
 	debugRenderer = std::make_unique<DebugRenderer>(device);
 }
@@ -14,9 +19,35 @@ Door::~Door()
 	delete model;
 }
 
+void Door::Init()
+{    
+    scale.x = scale.y = scale.z = 0.05f;
+    angle = { 0, DirectX::XMConvertToRadians(90), 0 };
+
+    isOpen = false;
+    radius = 4.0f;
+
+    centerPos = position;
+    centerPos.y = position.y + 5.0f;
+    centerPos.z = 0.0f;
+}
+
 void Door::Update(float elapsedTime)
 {
+    centerPos = position;    
+    centerPos.y = position.y + 5.0f;
+    centerPos.z = 0.0f;    
+    
+
 	UpdateTransform();
+    model->UpdateTransform(transform);
+
+
+    // プレイヤーの攻撃とドアの当たり判定
+    CollisionPlayerAtkVsDoor();
+
+    // ドア開ける
+    OpenTheDoor();
 }
 
 void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
@@ -25,7 +56,8 @@ void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
 	model->Render(dc);
 
 	// 必要なったら追加
-	//debugRenderer.get()->DrawSphere(position, 25, Vec4(1, 0, 1, 1));
+    debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
+    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 void Door::RenderGui()
@@ -34,11 +66,12 @@ void Door::RenderGui()
     if (ImGui::Begin("Door", nullptr, ImGuiWindowFlags_None)) {
         // トランスフォーム
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::SliderFloat3("Position", &position.x, -300, 300);
-            ImGui::SliderFloat3("Angle", &angle.x, 0, 360);
+            ImGui::SliderFloat3("Pos", &position.x, -100, 100);
+            ImGui::SliderFloat3("centerPos", &centerPos.x, -100, 100);
+            ImGui::SliderFloat3("Angle", &angle.x, 0, 3.14f);
         }
         unsigned int flag = static_cast<int>(isOpen);
-        ImGui::CheckboxFlags("IsOpen", &flag, 0);      
+        ImGui::CheckboxFlags("IsOpen", &flag, 1);      
     }
     ImGui::End();
 #endif
@@ -52,7 +85,28 @@ bool Door::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end,
 // 攻撃されたらドア開ける
 void Door::OpenTheDoor()
 {
-    //isOpen = true;
+    if (isOpen && (angle.y <= 3.14 && angle.y >= 0))
+    {
+        Vec3 p = player->GetPosition();
+        Vec3 d = centerPos;
+        Vec3 pd = VecMath::Normalize(d - p);
+
+        if (pd.x > 0)angle.y += DirectX::XMConvertToRadians(15.0f);
+        else angle.y -= DirectX::XMConvertToRadians(15.0f);
+    }
+}
+
+void Door::CollisionPlayerAtkVsDoor()
+{
+    if (player->GetIsAtk())
+    {        
+
+        if (Collision::SphereVsSphere(centerPos, player->GetAttackPosistion(), radius, player->GetAtkRadius()))
+        {
+            isOpen = true;
+        }
+    }
+
 }
 
 void Door::UpdateTransform()

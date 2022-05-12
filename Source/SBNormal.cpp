@@ -3,9 +3,10 @@
 
 SBNormal::SBNormal(ID3D11Device* device, SBManager* manager) 
 	: SB(manager) {
-	model = new Model(device, "Data/Models/Bullet/bullet.fbx", true, 0);
+	model = new Model(device, "Data/Models/Bullet/katana.fbx", true, 0);
 	// 表示サイズを調整
-	scale.x = scale.y = scale.z = 1.0f;
+	scale.x = scale.z = 0.05f;
+	scale.y = 0.14f;
 
 	debugRenderer = std::make_unique<DebugRenderer>(device);
 }
