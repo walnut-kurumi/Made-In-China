@@ -185,6 +185,8 @@ private:
 	float blurPower = 0.0f; // 移動ブラー力
 	float blurMax = 13.0f;	// ブラー最大値
 	float blur = 0.0f;		// ブラー増減スピード
+	float stopTime = 0.0f;	// シフトブレイク後の停止時間
+	float stopTimer = 0.0f;	// シフトブレイク後の停止時間タイマー
 
 	bool clock = false;	 // プレイヤー以外の時間
 	// 死亡
