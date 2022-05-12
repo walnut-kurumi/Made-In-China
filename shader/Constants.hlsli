@@ -14,6 +14,13 @@ cbuffer SCENE_CONSTANT_BUFFER : register(b1)
     float4 cameraPosition;
 };
 
+cbuffer BlurCb : register(b4)
+{
+    float gaussianSigma;
+    float bloomIntensity;
+    float expo;
+};
+
 cbuffer GRASS_CONTANT : register(b2)
 {
     float4 bottomColor;

@@ -103,7 +103,7 @@ void GaussianBlurShader::Begin(ID3D11DeviceContext* rc)
 	const float blend_factor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	rc->OMSetBlendState(blendState.Get(), blend_factor, 0xFFFFFFFF);
 	depth->setRasterMode(DeppthSteciler::DEPTH_STENCIL_STATE::ZT_ON_ZW_ON, rc);
-	rasterizer->setRasterMode(Rasterizer::RASTER_STATE::SOLID_FALSE, rc);
+	rasterizer->setRasterMode(Rasterizer::RASTER_STATE::SOLID, rc);
 	rc->PSSetSamplers(0, 1, samplerState.GetAddressOf());
 }
 

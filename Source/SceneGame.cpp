@@ -112,13 +112,15 @@ void SceneGame::Initialize()
 
     //デバッグ
     //hitEffect = new Effect("Data/Effect/player_hit.efk");
+    BluShader = Shaders::Ins()->GetBlurShader();
 
-    // ロード％ 100%
-    SetLoadPercent(10.0f);
-
-    framebuffer = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
+    framebuffer[0] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
+    framebuffer[1] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth()/2, gfx.GetScreenHeight()/2);
     radialBlur = std::make_unique<RadialBlur>(device);
     CBBlur.initialize(device, gfx.GetDeviceContext());
+    SBBlur.initialize(device, gfx.GetDeviceContext());
+    // ロード％ 100%
+    SetLoadPercent(10.0f);
 }
 
 // 終了化
@@ -276,8 +278,8 @@ void SceneGame::Render(float elapsedTime)
     //dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
     //dc->VSSetConstantBuffers(3, 1, &constant_buffer);
  
-    framebuffer->clear(dc,1.0f,1.0f,1.0f,0.0f);
-    framebuffer->activate(dc);
+    framebuffer[0]->clear(dc,1.0f,1.0f,1.0f,0.0f);
+    framebuffer[0]->activate(dc);
     {
         // モデル描画
         {
@@ -300,7 +302,8 @@ void SceneGame::Render(float elapsedTime)
             EffectManager::Instance().Render(cameraMgr.GetView(), cameraMgr.GetProjection());
         }
     }
-    framebuffer->deactivate(dc);
+
+    framebuffer[0]->deactivate(dc);
     CBBlur.data.BlurPower = player->GetBlurPower();
     CBBlur.data.TU = 1.0f / gfx.GetScreenWidth();
     CBBlur.data.TV = 1.0f / gfx.GetScreenHeight();
@@ -308,7 +311,24 @@ void SceneGame::Render(float elapsedTime)
     dc->VSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
     dc->PSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
     dc->GSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
-    radialBlur->blit(dc, framebuffer->shader_resource_views[0].GetAddressOf(), 0, 1);
+
+    //scene_blur blu{ sigma,intensity,expo };
+    SBBlur.data.sigma = sigma;
+    SBBlur.data.intensity = intensity;
+    SBBlur.data.dummy0 = expo;
+    SBBlur.applyChanges();
+    dc->VSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
+    dc->PSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
+    dc->GSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
+
+    framebuffer[1]->clear(dc);
+    framebuffer[1]->activate(dc);
+    radialBlur->blit(dc, framebuffer[0]->shader_resource_views[0].GetAddressOf(), 0, 1);
+    framebuffer[1]->deactivate(dc);
+
+    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> shader_resource_views[2] = 
+        { framebuffer[0]->shader_resource_views[0].Get(), framebuffer[1]->shader_resource_views[0].Get() };
+    radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
 
     // 2D描画
     {
@@ -345,6 +365,9 @@ void SceneGame::Render(float elapsedTime)
     bool sh = cameraMgr.GetShakeFlag();
     ImGui::Checkbox("shakeFlag", &sh);
 
+    ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
+    ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
+    ImGui::SliderFloat("expo", &expo, 0, 10);
    /* ImGui::SliderFloat("gaussian_sigma", &sigma, -10, 1);
     ImGui::SliderFloat("bloom_intensity", &intensity, -10, 1);
     ImGui::SliderFloat("expo", &expo, 0, 10);

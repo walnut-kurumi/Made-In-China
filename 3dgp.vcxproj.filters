@@ -103,24 +103,6 @@
     <FxCompile Include="shader\RadialBlurPs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="shader\LuminanceExtractionsVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\LuminanceExtractionsPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\GaussianBlurVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\GaussianBlurPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\FinalpassVS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\FinalpassPS.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Framework.cpp" />
@@ -634,18 +616,6 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\RadialBlur.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="shader\FilterFunctions.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="shader\LuminanceExtractions.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="shader\GaussianBlur.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="shader\Finalpass.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

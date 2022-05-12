@@ -1,4 +1,5 @@
-#include "FullscreenQuad.hlsli"
+#include "Constants.hlsli"
+#include "RadialBlur.hlsli"
 #define POINT 0
 #define LINEAR 1
 #define ANISOTROPIC 2
@@ -34,7 +35,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     blurColor /= gaussianKernelTotal;
  
     const float bloom_intensity = 1.0;
-#if 1
+#if 0
     // Tone mapping : HDR -> SDR
     const float exposure = expo;
     color.rgb = 1 - exp(-color.rgb * exposure);
