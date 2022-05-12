@@ -113,7 +113,7 @@ void Player::Init() {
     sbdir = { 0,0,0 };
     sbPos = { 0,0,0 };
     sbStartPos = { 0,0,0 };
-    sbTimer = 0.0f;
+    sbEraseLen = 2500.0f;// SBÇ™è¡Ç¶ÇÈãóó£ÅiSqÅj60
     sbHitEmy = -1;
     invincible = false;
     blurPower = 0.0f;
@@ -907,18 +907,15 @@ bool Player::Raycast(Vec3 move) {
 }
 
 void Player::SBManagement(float elapsedTime) {
+    // ïêäÌÇéùÇ¡ÇƒÇ¢Ç»Ç¢ä‘
     if (!weapon) {
-        sbTimer += elapsedTime;
-        if (sbTimer >= sbMaxTime) {
-            weapon = true;
-            sbTimer = 0.0f;
-            // SBíTçı
-            SBManager& sbManager = SBManager::Instance();
-            int sbCount = sbManager.GetProjectileCount();
-            for (int i = 0; i < sbCount; ++i) {
-                // SBèÓïÒ
-                SB* sb = sbManager.GetProjectile(i);
-
+        SBManager& sbManager = SBManager::Instance();
+        int sbCount = sbManager.GetProjectileCount();
+        for (int i = 0; i < sbCount; ++i) {
+            // SBèÓïÒ
+            SB* sb = sbManager.GetProjectile(i);
+            if (VecMath::LengthVec3(sb->GetMoveLen(), true) >= sbEraseLen) {
+                weapon = true;
                 // å¸Ç´Çê›íË
                 direction = VecMath::sign(sb->GetPosition().x - position.x);
                 // ê˘âÒèàóù
@@ -931,9 +928,6 @@ void Player::SBManagement(float elapsedTime) {
                 sb->Destroy();
             }
         }
-    }
-    else {
-        sbTimer = 0.0f;
     }
 }
 

@@ -32,6 +32,8 @@ public:
 	float GetRadius() const { return radius; }
 	// スピード取得
 	float GetSpeed() const { return bulletSpeed; }
+	// 移動距離取得
+	const Vec3& GetMoveLen() const { return moveLen; }
 	// 破棄
 	void Destroy();
 
@@ -47,10 +49,11 @@ protected:
 	Vec3	position = { 0,0,0 };
 	Vec3	direction = { 0,0,1 };
 	Vec3	scale = { 1,1,1 };
+	Vec3	moveLen = {};
 	DirectX::XMFLOAT4X4 transform = { 1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1 };
 	SBManager* manager = nullptr;
 
 	float radius = 1.5f;
-	float speed = 100.0f;
+	float speed = 300.0f;
 	float bulletSpeed = 0.0f;
 };
