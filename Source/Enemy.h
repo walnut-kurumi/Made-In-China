@@ -6,6 +6,7 @@
 #include "EnemyBulletManager.h"
 #include "Player.h"
 #include "Effect.h"
+#include "DoorManager.h"
 
 // エネミー
 class Enemy : public Character

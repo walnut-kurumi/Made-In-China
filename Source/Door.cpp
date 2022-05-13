@@ -1,5 +1,6 @@
 #include "Door.h"
 #include "Camera/CameraManager.h"
+#include "EnemyManager.h"
 
 Door::Door(ID3D11Device* device)
 {
@@ -57,6 +58,7 @@ void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
 
 	// 必要なったら追加
     debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
+    debugRenderer.get()->DrawSphere(collisionPos, radius, Vec4(1, 0, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
@@ -91,11 +93,29 @@ void Door::OpenTheDoor()
         Vec3 d = centerPos;
         Vec3 pd = VecMath::Normalize(d - p);
 
-        if (pd.x > 0)angle.y += DirectX::XMConvertToRadians(15.0f);
-        else angle.y -= DirectX::XMConvertToRadians(15.0f);
+        // Right
+        if (pd.x > 0)
+        {
+            angle.y += DirectX::XMConvertToRadians(15.0f);
+
+            collisionPos = centerPos;
+            collisionPos.x = centerPos.x + 4.0f;
+        }
+        // Left
+        else
+        {
+            angle.y -= DirectX::XMConvertToRadians(15.0f);
+
+            collisionPos = centerPos;
+            collisionPos.x = centerPos.x - 4.0f;
+        }
+
+        // 敵とドアの判定
+        CollisionEnemyVsDoor();
     }
 }
 
+// 自機攻撃とドアの判定
 void Door::CollisionPlayerAtkVsDoor()
 {
     if (player->GetIsAtk())
@@ -107,6 +127,33 @@ void Door::CollisionPlayerAtkVsDoor()
         }
     }
 
+}
+
+// ドアを開けたときに敵が重なっていたら倒す
+void Door::CollisionEnemyVsDoor()
+{
+    EnemyManager& enemyManager = EnemyManager::Instance();
+    int enemyCount = enemyManager.GetEnemyCount();
+    for (int i = 0; i < enemyCount; ++i)
+    {
+        Enemy* enemy = enemyManager.GetEnemy(i);
+        // 死んでたらリターン
+        if (enemy->GetHealth() <= 0) return;
+
+        // 衝突処理
+        if (Collision::SphereVsSphere(enemy->GetPosition(), collisionPos, enemy->GetRadius(), radius))
+        {
+            enemy->ApplyDamage(1, 0);
+            // ヒットストップ
+            if (!player->GetSlowFlag())player->SetHitstop(true);
+            // カメラシェイク（簡素）
+            CameraManager& cameraMgr = CameraManager::Instance();
+            if (!cameraMgr.GetShakeFlag())
+            {
+                cameraMgr.SetShakeFlag(true);;
+            }
+        }
+    }
 }
 
 void Door::UpdateTransform()
