@@ -195,7 +195,7 @@ void SceneGame::Update(float elapsedTime)
             cameraMgr.Update(slowElapsedTime);
 
             Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
-            CameraManager::Instance().SetTarget(target);
+            CameraManager::Instance().SetGoal(target);
         }
 
 
