@@ -59,7 +59,7 @@ private:
 	ConstantBuffer<scene_blur> SBBlur;
 	float sigma = 1.0f;
 	float intensity = 0.07f;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> constant_buffers[8];
+	float exp = 1.0f;
 
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
