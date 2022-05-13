@@ -295,6 +295,14 @@ bool EnemyGunner::Search()
     //当たっていたら索敵範囲内なのでtrue
     if (Collision::PointVsRect(Vec2(player->GetCenterPosition().x, player->GetCenterPosition().y), searchAreaPos, searchAreaScale))
     {
+        // プレイヤーの中心座標
+        const Vec3& p = { player->GetCenterPosition() };
+        // エネミーの中心座標
+        const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };                  
+        HitResult hit = {};
+        // ドアとレイキャストして当たっていたら見つけてないのでfalse
+        if (DoorManager::Instance().RayCast(e, p, hit)) return false;        
+
         if (player->GetCenterPosition().x > position.x)direction = false;
         else if (player->GetCenterPosition().x < position.x) direction = true;
 
@@ -373,8 +381,7 @@ void EnemyGunner::MoveAttack(float cooldown)
         // 発射する向き       
         // プレイヤーに向かって
         Vec3 pe = { p - e };
-        VecMath::Normalize(pe);
-        pe *= 0.1f;
+        pe =  VecMath::Normalize(pe);        
 
         // 発射
         EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());

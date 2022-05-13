@@ -31,7 +31,9 @@ public:
 	
 	void OpenTheDoor();
 
+	// ドアとの当たり判定
 	void CollisionPlayerAtkVsDoor();
+	void CollisionEnemyVsDoor();
 
 	void PlayerData(Player* p) { player = p; }
 
@@ -54,10 +56,14 @@ protected:
 		0,0,0,1
 	};
 	
+
 	// 開いているか
 	bool isOpen = false;
 
 	// 当たり判定用
+	// ドアを開けるときの判定用座標
+	Vec3 collisionPos = { 0,0,0 };
+	// ドアの中心座標
 	Vec3 centerPos = { 0,0,0 };
 	float radius = 0.0f;
 
