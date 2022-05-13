@@ -46,6 +46,8 @@ public:
 	float GetCurrentAnimationSeconds() {
 		return animationSeconds;
 	}
+	// Ä¶’†‚©”Û‚©
+	const bool GetPlay() { return stopAnimation; }
 
 private:
 	std::shared_ptr<SkinnedMesh> skinnedMesh;

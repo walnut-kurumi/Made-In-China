@@ -400,10 +400,8 @@ bool Player::InputSB() {
             && cost.Approval(sbCost)) {
             // 武器を投げる
             weapon = false;
-            // 発射
-            SBNormal* sb = new SBNormal(device, &SBManager::Instance());
-            // 向き、　発射地点
-            sb->Launch(VecMath::Normalize(Vec3(-gamePad.GetAxisLX(), gamePad.GetAxisLY(), 0)), position + waistPos);
+            // 投げる向きを設定
+            sbdir = Vec3(-gamePad.GetAxisLX(), gamePad.GetAxisLY(), 0);
             // 向きを設定
             direction = VecMath::sign(-gamePad.GetAxisLX());
             // 旋回処理
@@ -439,9 +437,6 @@ bool Player::InputSB() {
             && cost.Approval(sbCost)) {
             // 武器を投げる
             weapon = false;
-            // 発射
-            SBNormal* sb = new SBNormal(device, &SBManager::Instance());
-
             // マウスカーソル座標を取得            
             Vec3 cursor;
             cursor.x = static_cast<float>(mouse.GetPositionX());
@@ -459,9 +454,8 @@ bool Player::InputSB() {
             direction = VecMath::sign(atkPos.x);
             // 旋回処理
             if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
-
-            // 発射地点
-            sb->Launch(atkPos, position + waistPos);
+            // 投げる向きを設定
+            sbdir = atkPos;
             // コスト
             cost.Consume(sbCost);
             return true;
@@ -693,8 +687,9 @@ void Player::UpdateSBThrowState(float elapsedTime) {
     }
     // 投げる途中でアニメーション停止
     float animationTime = model->GetCurrentAnimationSeconds();
-    if (animationTime > 0.1f) {
+    if (!model->GetPlay() && animationTime > 0.1f) {
         model->AnimationStop(true);
+        Launch(sbdir);
     }
     // スロー
     InputSlow(elapsedTime);
@@ -732,7 +727,7 @@ void Player::UpdateSBState(float elapsedTime) {
     // ブラー
     blurPower += elapsedTime * blur;
     blurPower = min(blurPower, blurMax);
-    // 敵に到達したらSB攻撃ステートへ
+    // 弾に到達したらSB攻撃ステートへ
     if (VecMath::LengthVec3(sbPos - position) <= sbSpace) {
         position = sbPos;
         sbPos = { 0,0,0 };
@@ -852,24 +847,11 @@ bool Player::Raycast(Vec3 move) {
         // レイキャストによる地面判定
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit)) {
-
             // 地面に接地している
-            position.x = hit.position.x;
             position.y = hit.position.y;
-            position.z = hit.position.z;
-
-            // 回転
-            angle.y += hit.rotation.y;
-
-            //  傾斜率の計算
-            float normalLengthXZ = sqrtf(hit.normal.x * hit.normal.x + hit.normal.z * hit.normal.z);
-            slopeRate = 1.0f - (hit.normal.y / (normalLengthXZ + hit.normal.y));
-
             // 着地した
             if (!isGround) OnLanding();
-
             isGround = true;
-            velocity.y = 0.0f;
             result = true;
         }
         else {
@@ -888,10 +870,7 @@ bool Player::Raycast(Vec3 move) {
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit)) {
             // 天井に接している
-            position.x = hit.position.x;
             position.y = hit.position.y - waistPos.y;
-            position.z = hit.position.z;
-
             result = true;
         }
         else {
@@ -938,11 +917,9 @@ bool Player::Raycast(Vec3 move) {
             HitResult hit2; // 補正位置が壁に埋まっているかどうか
             if (!StageManager::Instance().RayCast(hit.position, collectPosition, hit2)) {
                 position.x = collectPosition.x;
-                position.z = collectPosition.z;
             }
             else {
                 position.x = hit2.position.x;
-                position.z = hit2.position.z;
             }
             result = true;
         }
@@ -980,6 +957,14 @@ void Player::UpdateCenterPosition()
 {
     centerPosition = position;
     centerPosition.y += height / 2.0f;
+}
+
+void Player::Launch(const Vec3& direction) {
+    ID3D11Device* device = Graphics::Ins().GetDevice();
+    // 発射
+    SBNormal* sb = new SBNormal(device, &SBManager::Instance());
+    // 向き、　発射地点
+    sb->Launch(VecMath::Normalize(direction), position + waistPos);
 }
 
 void Player::OnLanding() {

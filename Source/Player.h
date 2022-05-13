@@ -91,6 +91,9 @@ private:
 	void SBManagement(float elapsedTime);
 	// 中心座標更新
 	void UpdateCenterPosition();
+	// SB投げる処理
+	void Launch(const Vec3& direction);
+
 
 protected:
 	void OnLanding() override;
@@ -186,6 +189,8 @@ private:
 	float blur = 0.0f;		// ブラー増減スピード
 	float stopTime = 0.0f;	// シフトブレイク後の停止時間
 	float stopTimer = 0.0f;	// シフトブレイク後の停止時間タイマー
+
+
 
 	bool clock = false;	 // プレイヤー以外の時間
 	// 死亡
