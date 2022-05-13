@@ -3,7 +3,7 @@
 #include "../Input/Input.h"
 #include "../Graphics/Graphics.h"
 #include "../StageManager.h"
-
+#include "../Mathf.h"
 
 void CameraManager::Init() {
 	Graphics& gfx = Graphics::Ins();
@@ -25,7 +25,7 @@ void CameraManager::Init() {
 	_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
 	srand((unsigned)time(NULL));
-
+	delay = 0.2f;
 }
 
 void CameraManager::Update(float elapsedTime){
@@ -76,10 +76,15 @@ void CameraManager::Update(float elapsedTime){
 		DirectX::XMVECTOR Front = transform.r[2];
 		DirectX::XMFLOAT3 front;
 		DirectX::XMStoreFloat3(&front, Front);
+
+
 		//注視点から後ろベクトル方向に一定距離離れたカメラ視点を求める
+		// ディレイを挟む
+		CameraDelay();
 		position.x = front.x * range + target.x;
 		position.y = front.y * range + target.y;
 		position.z = front.z * range + target.z;
+
 
 		// 上ベクトル
 		Vec3 UP = { 0,1,0 };
@@ -139,6 +144,14 @@ bool CameraManager::CameraRay()
 		return true;
 	}
 	return false;
+}
+
+void CameraManager::CameraDelay() {
+
+	target.x = Mathf::Lerp(target.x, goal.x, delay);
+	target.y = Mathf::Lerp(target.y, goal.y, delay);
+	target.z = Mathf::Lerp(target.z, goal.z, delay);
+
 }
 
 // カメラシェイクタイマー更新

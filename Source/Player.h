@@ -13,17 +13,17 @@ private:
 
 	enum class AnimeState
 	{
-		Idle,	 //　待機
-		Run,	 //　走り
+		Idle,	 // 待機
+		Run,	 // 走り
 		Attack,  // 攻撃
-		Jump,	 //　ジャンプ開始
+		Jump,	 // ジャンプ開始
 		Finisher,// フィニッシャー
-		Fall,	 //　落下
-		Land,	 //　着地
-		SB,		 //　シフトブレイク
-		Throw,	 //　シフトブレイク投擲
-		Death,	 //　死亡
-		End,	 //　お　わ　り　💛 ふぁっ〇ゅ～～～！！
+		Fall,	 // 落下
+		Land,	 // 着地
+		SB,		 // シフトブレイク
+		Throw,	 // シフトブレイク投擲
+		Death,	 // 死亡
+		End,	 // お　わ　り　💛 ふぁっ〇ゅ～～～！！
 	};
 
 public:
@@ -74,26 +74,21 @@ private:
 
 	// 移動入力処理
 	bool InputMove(float elapsedTime);
-
 	// ジャンプ入力処理
 	bool InputJump();
-
 	// スローモーション入力処理
 	void InputSlow(float elapsedTime);
-
 	// SB入力処理
 	bool InputSB();
-
 	// 通常攻撃&パリィ
 	bool InputAttack();
-	
+
 	// 死亡した時に呼ばれる
 	void OnDead() override { isDead = true; }
-
+	// SB移動用のレイキャスト
 	bool Raycast(Vec3 move);
-
+	// シフトブレイク全処理
 	void SBManagement(float elapsedTime);
-
 	// 中心座標更新
 	void UpdateCenterPosition();
 

@@ -195,7 +195,7 @@ void SceneGame::Update(float elapsedTime)
             cameraMgr.Update(slowElapsedTime);
 
             Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
-            CameraManager::Instance().SetTarget(target);
+            CameraManager::Instance().SetGoal(target);
         }
 
 
@@ -334,11 +334,11 @@ void SceneGame::Render(float elapsedTime)
 
     framebuffer[1]->clear(dc);
     framebuffer[1]->activate(dc);
-    radialBlur->blit(dc, framebuffer[0]->shader_resource_views[0].GetAddressOf(), 0, 1);
+    radialBlur->blit(dc, framebuffer[0]->shaderResourceViews[0].GetAddressOf(), 0, 1);
     framebuffer[1]->deactivate(dc);
 
     Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> shader_resource_views[2] = 
-        { framebuffer[0]->shader_resource_views[0].Get(), framebuffer[1]->shader_resource_views[0].Get() };
+        { framebuffer[0]->shaderResourceViews[0].Get(), framebuffer[1]->shaderResourceViews[0].Get() };
     radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
 
     // 2D•`‰æ

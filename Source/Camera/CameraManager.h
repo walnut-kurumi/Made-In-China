@@ -31,15 +31,19 @@ public:
 	void Update(float elapsedTime);
 	void SetBuffer(ID3D11DeviceContext* dc);
 
-	void SetTarget(const Vec3 & target) { this->target = target; }
+	void SetTarget(const Vec3& target) { this->target = target; }
+	void SetGoal(const Vec3& goal) { this->goal = goal; }
 
 	bool CameraRay();
+	// ÉJÉÅÉâí«ê’íxâÑ
+	void CameraDelay();
 	
 	DirectX::XMFLOAT4X4 GetViewProjection() { return viewProjection; }
 	DirectX::XMFLOAT4X4 GetView() { return mainC.GetView(); }
 	DirectX::XMFLOAT4X4 GetProjection() { return mainC.GetProjection(); }
 	Vec3 GetPos() { return position; }
 	Vec3 GetTarget() { return target; }
+	Vec3 GetGoal() { return goal; }
 
 	void SetShakeFlag(bool s) { shake = s; shakeTimer = 0.2f; }
 	bool GetShakeFlag() { return shake; }
@@ -49,6 +53,7 @@ public:
 private:
 
 	Vec3 target = { 0,0,0 };
+	Vec3 goal = { 0,0,0 };
 	Vec3 angle = { 0,0,0 };
 	Vec3 position = { 0,0,0 };
 	DirectX::XMFLOAT4X4 viewProjection;
@@ -66,6 +71,8 @@ private:
 	ConstantBuffer<CbScene> cbScene;
 
 	int timer = 0;
+
+	float delay = 0.1f;
 public:
 
 	Camera mainC{};
