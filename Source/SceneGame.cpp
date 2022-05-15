@@ -1,7 +1,7 @@
 #include "SceneGame.h"
+
 #include "Camera/CameraManager.h"
 #include "SceneManager.h"
-#include "SceneGame.h"
 #include "Input/Input.h"
 #include "Graphics/Graphics.h"
 

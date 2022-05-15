@@ -1,18 +1,18 @@
-
 #include "SceneTutorial.h"
-
-#include "Input/Input.h"
-
 #include "Camera/CameraManager.h"
+#include "Input/Input.h"
 #include "Graphics/Graphics.h"
 
 #include "EnemyManager.h"
 #include "EnemyGunner.h"
+#include "EnemyMelee.h"
 
-
-#include "SceneLoading.h"
-#include "SceneGame.h"
 #include "SceneManager.h"
+#include "SceneGame.h"
+#include "SceneLoading.h"
+#include "SceneClear.h"
+#include "SceneOver.h"
+
 #include "Menu.h"
 
 #include "StageManager.h"
@@ -20,9 +20,11 @@
 #include "StageMain0.h"
 #include "StageCollision0.h"
 
+
 #include "Framework.h"
 
-#include"EffectManager.h"
+#include "EffectManager.h"
+#include "Graphics/Texture.h"
 
 
 // 初期化
@@ -34,7 +36,7 @@ void SceneTutorial::Initialize()
     HRESULT hr{ S_OK };
 
     ID3D11Device* device = Graphics::Ins().GetDevice();
-
+    Graphics& gfx = Graphics::Ins();
 
     // プレイヤー
     player = std::make_unique<Player>(device);
@@ -59,33 +61,16 @@ void SceneTutorial::Initialize()
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);
     }
+    
     // ロード％更新
     AddLoadPercent(1.0f);
 
-    // エネミー座標設定
-    EnemyPositionSetting();
-
-    // エネミー初期化			    
-    for (int i = 0; i < ENEMY_MAX; i++)
+    // エネミー
     {
-        if (ENEMY_MAX / 2 == i)
-        {
-            // ロード％更新
-            AddLoadPercent(1.0f);
-        }
-        if (ENEMY_MAX == i)
-        {
-            // ロード％更新
-            AddLoadPercent(2.0f);
-        }
-
-        EnemyGunner* gunner = new EnemyGunner(device);
-        gunner->SetPosition(DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0));
-
-        gunner->SetWalkFlag(false); //歩き回るかどうか        
-
-        EnemyManager::Instance().Register(gunner);
-        EnemyManager::Instance().Init();
+        // エネミー座標設定
+        EnemyPositionSetting();
+        // エネミー初期化			    
+        EnemyInitialize(device);
     }
 
     // ロード％更新
@@ -93,15 +78,40 @@ void SceneTutorial::Initialize()
 
     // マウスカーソル動かすかどうか
     Input::Instance().GetMouse().SetMoveCursor(true);
-  
-    // スプライト
-    Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
-    LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");
+
+    // CAMERA_SHAKE
+    // TODO:02 Create a constant buffer object.
+    D3D11_BUFFER_DESC buffer_desc3{};
+    buffer_desc3.ByteWidth = sizeof(DirectX::XMFLOAT4X4);
+    buffer_desc3.Usage = D3D11_USAGE_DEFAULT;
+    buffer_desc3.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    buffer_desc3.CPUAccessFlags = 0;
+    buffer_desc3.MiscFlags = 0;
+    buffer_desc3.StructureByteStride = 0;
+    hr = device->CreateBuffer(&buffer_desc3, nullptr, constant_buffer.GetAddressOf());
+    _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
+
+
+    Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
+    LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
 
-    // メニュー
     Menu::Instance().Initialize();
 
+    // ロード％更新
+    AddLoadPercent(1.0f);
+
+    Fade::Instance().Initialize();
+
+    //デバッグ
+    //hitEffect = new Effect("Data/Effect/player_hit.efk");
+    BluShader = Shaders::Ins()->GetBlurShader();
+
+    framebuffer[0] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
+    framebuffer[1] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth() / 2, gfx.GetScreenHeight() / 2);
+    radialBlur = std::make_unique<RadialBlur>(device);
+    CBBlur.initialize(device, gfx.GetDeviceContext());
+    SBBlur.initialize(device, gfx.GetDeviceContext());
     // ロード％ 100%
     SetLoadPercent(10.0f);
 }
@@ -111,6 +121,7 @@ void SceneTutorial::Finalize()
 {
     // エネミー終了処理	
     EnemyManager::Instance().Clear();
+   
     // ステージ終了処理
     StageManager::Instance().Clear();
     StageManager::Destory();
@@ -124,6 +135,8 @@ void SceneTutorial::Finalize()
     delete enemyattack;
     delete LoadBar;
     delete Bar;
+    //デバッグ
+   // delete hitEffect;
 }
 
 // 更新処理
@@ -135,7 +148,8 @@ void SceneTutorial::Update(float elapsedTime)
     if (Menu::Instance().GetMenuFlag() == false)
     {
 
-        float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();        
+        float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
+        //TODO: 敵の数増えるとelapsedTime　おかしくなる
         // ヒットストップ
         slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
         // スローモーション
@@ -150,7 +164,6 @@ void SceneTutorial::Update(float elapsedTime)
 
         // ステージ
         StageManager::Instance().Update(slowElapsedTime);
-
 
         // プレイヤー
         {
@@ -171,6 +184,7 @@ void SceneTutorial::Update(float elapsedTime)
 
 
         // エネミー
+        if (!player->GetClock())
         {
             EnemyManager::Instance().SetPlayer(player.get());
             // ソート
@@ -192,22 +206,42 @@ void SceneTutorial::Update(float elapsedTime)
     }
 
     // リセット
-    if (player->GetHealth() <= 0)// ||  gamePad.GetButtonDown() & GamePad::BTN_Y)
-    {
-        // デバッグ用で消してる
-        Reset();
-    }
+    if (player->GetReset()) {
+        // フェードアウト
+        if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
 
+        // フェードアウトおわったら
+        if (Fade::Instance().GetFadeOutFinish()) {
+            // リセット
+            Reset();
+
+            // フェードイン
+            Fade::Instance().SetFadeInFlag(true);
+        }
+    }
+    // フェードイン終わったら初期化
+    if (Fade::Instance().GetFadeInFinish()) Fade::Instance().Initialize();
 
     // Menu
     Menu::Instance().Update(elapsedTime);
+    // Fade
+    Fade::Instance().Update(elapsedTime);
 
+    //エフェクトデバッグ
+   /* const mouseButton mouseClick =
+        Mouse::BTN_LEFT;
+    if(mouse.GetButtonDown() & mouseClick && a == false)
+        handle = hitEffect->Play(player->GetPosition()); a = true; ti = 0;
+
+    if (ti %= 300)
+        hitEffect->Stop(handle); a = false;
+
+    ti++;*/
 
     // TODO 現在のステージの死んでるエネミーの数が０の場合 次のステージへ
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
         // 次のステージへ移る処理
-        // ステージ１へ
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
     }
 }
@@ -218,7 +252,8 @@ void SceneTutorial::Render(float elapsedTime)
     Graphics& gfx = Graphics::Ins();
     ID3D11Device* device = gfx.GetDevice();
     ID3D11DeviceContext* dc = gfx.GetDeviceContext();
-    CameraManager& cameraMgr = CameraManager::Instance();    
+    CameraManager& cameraMgr = CameraManager::Instance();
+
     ID3D11RenderTargetView* rtv = gfx.GetRenderTargetView();
     ID3D11DepthStencilView* dsv = gfx.GetDepthStencilView();
 
@@ -230,32 +265,79 @@ void SceneTutorial::Render(float elapsedTime)
     // 通常レンダリング
     dc->OMSetRenderTargets(1, &rtv, dsv);
 
-    // モデル描画
+    //DirectX::XMFLOAT4X4 data{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+
+    //// TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.
+    //dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
+    //dc->VSSetConstantBuffers(3, 1, &constant_buffer);
+
+    framebuffer[0]->clear(dc, 1.0f, 1.0f, 1.0f, 0.0f);
+    framebuffer[0]->activate(dc);
     {
-        // ステージ描画
-        StageManager::Instance().Render(dc, elapsedTime);
-        // プレイヤー描画
-        player->Render(dc);
-        // エネミー描画
-        EnemyManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
+        // モデル描画
+        {
+            // ステージ描画
+            StageManager::Instance().Render(dc, elapsedTime);           
+            // プレイヤー描画
+            player->Render(dc);
+            // エネミー描画
+            EnemyManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
+            EnemyBulletManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
+        }
+
+        // デバック
+        {
+            player->DrawDebugGUI();
+        }
+
+        //3Dエフェクト描画
+        {
+            EffectManager::Instance().Render(cameraMgr.GetView(), cameraMgr.GetProjection());
+        }
     }
 
-    // デバック
-    {
-        player->DrawDebugGUI();
-    }
+    framebuffer[0]->deactivate(dc);
+    CBBlur.data.BlurPower = player->GetBlurPower();
+    CBBlur.data.TU = 1.0f / gfx.GetScreenWidth();
+    CBBlur.data.TV = 1.0f / gfx.GetScreenHeight();
+    CBBlur.applyChanges();
+    dc->VSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
+    dc->PSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
+    dc->GSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
 
-    //3Dエフェクト描画
-    {
-        EffectManager::Instance().Render(cameraMgr.GetView(), cameraMgr.GetProjection());
-    }
+    //scene_blur blu{ sigma,intensity,expo };
+    SBBlur.data.sigma = sigma;
+    SBBlur.data.intensity = intensity;
+    SBBlur.data.dummy0 = exp;
+    SBBlur.applyChanges();
+    dc->VSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
+    dc->PSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
+    dc->GSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
+
+    framebuffer[1]->clear(dc);
+    framebuffer[1]->activate(dc);
+    radialBlur->blit(dc, framebuffer[0]->shaderResourceViews[0].GetAddressOf(), 0, 1);
+    framebuffer[1]->deactivate(dc);
+
+    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> shader_resource_views[2] =
+    { framebuffer[0]->shaderResourceViews[0].Get(), framebuffer[1]->shaderResourceViews[0].Get() };
+    radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
 
     // 2D描画
     {
-        Bar->render(dc, 600, 650, 620, 25, 1.0f, 1.0f, 1.0f, 1.0f, 0);
-        LoadBar->render(dc, 605, 652, 605 * w, 21, 1.0f, 1.0f, 1.0f, 1.0f, 0);
-        Menu::Instance().Render(elapsedTime);
+        // 攻撃予兆描画
         RenderEnemyAttack();
+
+        // UI
+        Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+
+        // メニュー
+        Menu::Instance().Render(elapsedTime);
+
+        // フェード用
+        Fade::Instance().Render(elapsedTime);
+
     }
 
 
@@ -263,13 +345,46 @@ void SceneTutorial::Render(float elapsedTime)
 
 
     ImGui::Begin("ImGUI");
- 
+
+    // CAMERA_SHAKE
+    // TODO:07 Adjust the maximum amount of rotation(max_skew) and movement(max_sway) of the camera.
+    ImGui::SliderFloat("max_sway [pixel]", &max_sway, 0.0f, 64.0f);
+    ImGui::SliderFloat("max_skew [degree]", &max_skew, 0.0f, 10.0f);
+    // TODO:12 Defines the amount of seed shifting factor for perlin noise.
+    ImGui::SliderFloat("seed_shifting_factor", &seed_shifting_factor, 0.0f, 10.0f);
+
     ImGui::SliderFloat("elapsedTime", &et, 0.0f, 1.0f);
 
     bool sh = cameraMgr.GetShakeFlag();
     ImGui::Checkbox("shakeFlag", &sh);
 
-    ImGui::End();  
+    ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
+    ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
+    ImGui::SliderFloat("expo", &exp, 0, 10);
+    /* ImGui::SliderFloat("gaussian_sigma", &sigma, -10, 1);
+     ImGui::SliderFloat("bloom_intensity", &intensity, -10, 1);
+     ImGui::SliderFloat("expo", &expo, 0, 10);
+     if (ImGui::TreeNode("smoothstep"))
+     {
+         ImGui::SliderFloat("x", &rgb.x, 0, 1);
+         ImGui::SliderFloat("y", &rgb.y, 0, 1);
+         ImGui::SliderFloat("z", &rgb.z, 0, 1);
+
+         ImGui::TreePop();
+     }*/
+
+    ImGui::End();
+
+    /* ImGui::SetNextWindowPos(ImVec2(0, 10), ImGuiCond_FirstUseEver);
+     ImGui::SetNextWindowSize(ImVec2(30, 30), ImGuiCond_FirstUseEver);
+
+     if (ImGui::Begin("SRV", nullptr, ImGuiWindowFlags_None))
+     {
+         ImGui::Image(shaderResourceViews[0], { 320, 180 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+         ImGui::Image(shaderResourceViews[1], { 320, 180 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+         ImGui::Image(shaderResourceViews[2], { 320, 180 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+     }
+     ImGui::End();*/
 #endif
 
 }
@@ -279,34 +394,85 @@ void SceneTutorial::Reset()
 {
     // たまなし
     EnemyBulletManager::Instance().Clear();
+    SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
     EnemyManager::Instance().Init();
-    int group = 0;
-    bool walk = false;
-    for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
-    {
-        //歩き回るかどうか
-        if (i < 4)walk = true;
-        else walk = false;
+    EnemyManager::Instance().EnemyReset();
 
-        // グループ番号セット
-        if (i < 4)group = 0;
-        else if (i < 6)group = 1;
-        else if (i < 9)group = 2;
-
-        EnemyManager::Instance().SetPosition(i, DirectX::XMFLOAT3(enemyPos[i].x, enemyPos[i].y, 0), group, walk);
-    }
     // プレイヤー蘇生 ポジションリセット
     player->Init();
 
+
+}
+
+// 敵の初期化
+void SceneTutorial::EnemyInitialize(ID3D11Device* device)
+{
+    for (int i = 0; i < ENEMY_MAX; i++)
+    {
+        if (ENEMY_MAX == i)
+        {
+            // ロード％更新
+            AddLoadPercent(1.0f);
+        }
+
+        // 近接
+        if (i == 0)
+        {
+            EnemyMelee* melee = new EnemyMelee(device);
+            // 座標セット
+            melee->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
+            melee->PositionInitialize();
+
+            //歩き回るかどうか
+            melee->SetInitialWalk(enemyWalk[i]);
+            melee->WalkFlagInitialize();
+
+            // グループ番号セット
+            melee->SetInitialGroupNum(enemyGroup[i]);
+            melee->GroupNumInitialize();
+
+            EnemyManager::Instance().Register(melee);
+        }
+        else
+        {
+            EnemyGunner* gunner = new EnemyGunner(device);
+            // 座標セット
+            gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
+            gunner->PositionInitialize();
+
+            //歩き回るかどうか
+            gunner->SetInitialWalk(enemyWalk[i]);
+            gunner->WalkFlagInitialize();
+
+            // グループ番号セット
+            gunner->SetInitialGroupNum(enemyGroup[i]);
+            gunner->GroupNumInitialize();
+
+            EnemyManager::Instance().Register(gunner);
+        }
+
+    }
+
+    EnemyManager::Instance().Init();
 }
 
 // エネミー座標設定
 void SceneTutorial::EnemyPositionSetting()
 {
-    enemyPos[0] = { 0.0f,0.5f };
-    enemyPos[1] = { 0.0f,0.5f };
-    enemyPos[2] = { 0.0f,0.5f };   
+
+    enemyPos[0] = { -5.0f,29.5f };
+    enemyPos[1] = { -48.0f,29.5f };
+    enemyPos[2] = { -140.0f,28.0f };
+
+    enemyGroup[0] = 0;
+    enemyGroup[1] = 0;
+    enemyGroup[2] = 1;
+
+    enemyWalk[0] = true;
+    enemyWalk[1] = false;
+    enemyWalk[2] = true;
+
 }
 
 
