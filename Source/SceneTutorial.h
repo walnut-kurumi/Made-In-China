@@ -53,6 +53,7 @@ private:
 	bool enemyWalk[ENEMY_MAX] = {};
 
 	Sprite* Bar{};
+
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
 
@@ -94,6 +95,16 @@ private:
 	std::unique_ptr<RadialBlur> radialBlur;
 
 	ConstantBuffer<Radial_Blur> CBBlur;
+
+
+
+	// チュートリアル用変数
+	// 最初の敵倒したらカメラのターゲットをプレイヤーに変更
+	bool cameraTargetChange = false;
+	Vec3 camTargetPos = { -19,0,0 };
+	// 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける
+	// プレイヤーに渡してInputのとこでture/false判断する
+	bool isPlayerControl = false; 
 
 
 };

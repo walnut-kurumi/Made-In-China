@@ -41,6 +41,7 @@ void SceneTutorial::Initialize()
     // プレイヤー
     player = std::make_unique<Player>(device);
     player->Init();
+    player->SetPosition(Vec3(-19, 40, 0));
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -114,6 +115,10 @@ void SceneTutorial::Initialize()
     SBBlur.initialize(device, gfx.GetDeviceContext());
     // ロード％ 100%
     SetLoadPercent(10.0f);
+
+    // 変数初期化
+    camTargetPos = { -19,5,0 };
+    cameraTargetChange = false;
 }
 
 // 終了化
@@ -148,8 +153,7 @@ void SceneTutorial::Update(float elapsedTime)
     if (Menu::Instance().GetMenuFlag() == false)
     {
 
-        float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
-        //TODO: 敵の数増えるとelapsedTime　おかしくなる
+        float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();        
         // ヒットストップ
         slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
         // スローモーション
@@ -170,6 +174,8 @@ void SceneTutorial::Update(float elapsedTime)
             player->Update(slowElapsedTime);
             // シフトブレイク更新処理
             SBManager::Instance().Update(slowElapsedTime);
+
+            if (player->GetIsAtk())cameraTargetChange = true;
         }
 
         // カメラ
@@ -179,7 +185,8 @@ void SceneTutorial::Update(float elapsedTime)
             cameraMgr.Update(slowElapsedTime);
 
             Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
-            CameraManager::Instance().SetGoal(target);
+            if(cameraTargetChange) CameraManager::Instance().SetGoal(target);
+            else CameraManager::Instance().SetGoal(camTargetPos);
         }
 
 
@@ -238,7 +245,7 @@ void SceneTutorial::Update(float elapsedTime)
 
     ti++;*/
 
-    // TODO 現在のステージの死んでるエネミーの数が０の場合 次のステージへ
+    // TODO 現在のステージの死んでるエネミーの数が０の場合  次のステージへいけるようになる
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
         // 次のステージへ移る処理
@@ -417,7 +424,7 @@ void SceneTutorial::EnemyInitialize(ID3D11Device* device)
         }
 
         // 近接
-        if (i == 0)
+        if (i == 1)
         {
             EnemyMelee* melee = new EnemyMelee(device);
             // 座標セット
@@ -461,17 +468,17 @@ void SceneTutorial::EnemyInitialize(ID3D11Device* device)
 void SceneTutorial::EnemyPositionSetting()
 {
 
-    enemyPos[0] = { -5.0f,29.5f };
-    enemyPos[1] = { -48.0f,29.5f };
-    enemyPos[2] = { -140.0f,28.0f };
+    enemyPos[0] = { -2.0f,0.5f };
+    enemyPos[1] = { -90.0f,10.5f };
+    enemyPos[2] = { -150.0f,10.5f };
 
     enemyGroup[0] = 0;
-    enemyGroup[1] = 0;
-    enemyGroup[2] = 1;
+    enemyGroup[1] = 1;
+    enemyGroup[2] = 2;
 
-    enemyWalk[0] = true;
+    enemyWalk[0] = false;
     enemyWalk[1] = false;
-    enemyWalk[2] = true;
+    enemyWalk[2] = false;
 
 }
 

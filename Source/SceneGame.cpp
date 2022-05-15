@@ -162,7 +162,6 @@ void SceneGame::Update(float elapsedTime)
     {
 
         float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
-        //TODO: 敵の数増えるとelapsedTime　おかしくなる
         // ヒットストップ
         slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
         // スローモーション
@@ -254,7 +253,7 @@ void SceneGame::Update(float elapsedTime)
 
     ti++;*/
 
-    // TODO 現在のステージの死んでるエネミーの数が０の場合 次のステージへ
+    // TODO 現在のステージの死んでるエネミーの数が０の場合 次のステージへいけるようになる
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
         // 次のステージへ移る処理
@@ -479,7 +478,7 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
 void SceneGame::EnemyPositionSetting()
 {
 
-    enemyPos[0] = { -5.0f,29.5f };
+    enemyPos[0] = { -6.5f,29.5f };
     enemyPos[1] = { -48.0f,29.5f };
     enemyPos[2] = { -140.0f,28.0f };
 
