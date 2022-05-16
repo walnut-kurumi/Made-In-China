@@ -11,20 +11,12 @@
 EnemyGunner::EnemyGunner(ID3D11Device* device)
 {
 
-  /*  const char* idle = "Data/Models/Enemy/Animations/ver1/Idle.fbx";
-    const char* run = "Data/Models/Enemy/Animations/ver1/Run.fbx";
-    const char* walk = "Data/Models/Enemy/Animations/ver1/Walk.fbx";
-    const char* attack = "Data/Models/Enemy/Animations/ver1/Idle.fbx";
-    const char* blow = "Data/Models/Enemy/Animations/ver1/Run.fbx";
-    const char* death = "Data/Models/Enemy/Animations/ver1/Walk.fbx";
-
-    model = new Model(device, "Data/Models/Enemy/Enemy.fbx", true);*/
 
     const char* idle = "Data/Models/Enemy/GunnerAnimation/Idle.fbx";
     const char* run = "Data/Models/Enemy/GunnerAnimation/Run.fbx";
     const char* walk = "Data/Models/Enemy/GunnerAnimation/Walk.fbx";
     const char* attack = "Data/Models/Enemy/GunnerAnimation/Attack.fbx";
-    const char* blow = "Data/Models/Enemy/GunnerAnimation/Death.fbx";
+    const char* blow = "Data/Models/Enemy/GunnerAnimation/GetHit.fbx";
     const char* death = "Data/Models/Enemy/GunnerAnimation/Death.fbx";
 
     model = new Model(device, "Data/Models/Enemy/Gunner.fbx", true);

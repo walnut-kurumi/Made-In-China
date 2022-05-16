@@ -69,6 +69,8 @@ void Character::Turn(float elapsedTime, float vx, float vz, float speed) {
 void Character::Jump(float speed) {
     //ã•ûŒü‚Ì—Í‚ğİ’è
     velocity.y = speed;
+    // ’n–Ê‚É‚Â‚¢‚Ä‚¢‚È‚¢
+    isGround = false;
 }
 
 void Character::UpdateSpeed(float elapsedTime) {

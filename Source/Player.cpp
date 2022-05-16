@@ -20,7 +20,7 @@
 Player::Player(ID3D11Device* device) {
     const char* idle = "Data/Models/Player/Animations/ver13/Idle.fbx";
     const char* run = "Data/Models/Player/Animations/ver13/Run.fbx";
-    const char* jump = "Data/Models/Player/Animations/ver1/Jump.fbx";
+    const char* jump = "Data/Models/Player/Animations/ver13/Jump.fbx";
     const char* attack = "Data/Models/Player/Animations/ver13/Attack.fbx";
 
     model = new Model(device, "Data/Models/Player/T13.fbx", true, 0);
@@ -254,6 +254,9 @@ void Player::DrawDebugGUI() {
 
     if (ImGui::Begin("Player", nullptr, ImGuiWindowFlags_None)) {
         // トランスフォーム
+        ImGui::InputInt("JumpCount", &jumpCount);        
+        ImGui::RadioButton("IsGround", isGround);
+
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::SliderFloat("Position X", &position.x, -300, 300);
             ImGui::SliderFloat("Position Y", &position.y, -200, 200);
@@ -370,13 +373,15 @@ bool Player::InputJump() {
     GamePad& gamePad = Input::Instance().GetGamePad();
 
     if (gamePad.GetButtonDown() & GamePad::BTN_A) {
-        jumpCount++;
-
-        // 空中のときは一回だけ
-        if (!isGround)jumpCount++;
+        
+        // 空中のときは1回だけ
+        if (!isGround)jumpCount += 2;
+        // 地面のときは2回
+        else jumpCount += 1;
         
         if (jumpCount <= jumpLimit) {
             Jump(jumpSpeed);
+
             return true;
         }
     }
