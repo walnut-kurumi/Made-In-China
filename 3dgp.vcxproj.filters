@@ -309,6 +309,12 @@
     <ClCompile Include="Source\SceneGameSt2.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Source\StagePenetrate1.cpp">
+      <Filter>Source\Stages\Stage1</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StagePenetrate2.cpp">
+      <Filter>Source\Stages\Stage2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -540,6 +546,12 @@
     </ClInclude>
     <ClInclude Include="Source\SceneGameSt2.h">
       <Filter>Source\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StagePenetrate1.h">
+      <Filter>Source\Stages\Stage1</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StagePenetrate2.h">
+      <Filter>Source\Stages\Stage2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

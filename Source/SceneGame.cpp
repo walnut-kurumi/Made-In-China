@@ -10,8 +10,7 @@
 #include "EnemyMelee.h"
 
 #include"SceneLoading.h"
-#include"SceneClear.h"
-#include"SceneOver.h"
+#include"SceneGameSt2.h"
 
 #include "Menu.h"
 
@@ -19,6 +18,7 @@
 #include "StageSkybox.h"
 #include "StageMain1.h"
 #include "StageCollision1.h"
+#include "StagePenetrate1.h"
 
 #include "DoorManager.h"
 #include "Door.h"
@@ -60,6 +60,8 @@ void SceneGame::Initialize()
         StageManager::Instance().Register(stageMain);
         StageCollision1* stageCollision = new StageCollision1(device);
         StageManager::Instance().Register(stageCollision);
+        StagePenetrate1* stagePenetrate = new StagePenetrate1(device);
+        StageManager::Instance().Register(stagePenetrate);
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);
     }
@@ -259,7 +261,7 @@ void SceneGame::Update(float elapsedTime)
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
         // 次のステージへ移る処理
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGameSt2));
     }
 }
 

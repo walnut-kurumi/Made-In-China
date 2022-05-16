@@ -180,7 +180,7 @@ void SceneTutorial::Update(float elapsedTime)
             // 着地したらスローできる
             if (player->GetPosition().y < 0.1f && isTutorial)
             {
-                isPause = true;
+                isPause = true;                
                 player->SetCanSlow(true);
             }
             // スロー入力したらそのままスロー

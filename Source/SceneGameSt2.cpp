@@ -19,6 +19,7 @@
 #include "StageSkybox.h"
 #include "StageMain2.h"
 #include "StageCollision2.h"
+#include "StagePenetrate2.h"
 
 #include "DoorManager.h"
 #include "Door.h"
@@ -60,6 +61,8 @@ void SceneGameSt2::Initialize()
         StageManager::Instance().Register(stageMain);
         StageCollision2* stageCollision = new StageCollision2(device);
         StageManager::Instance().Register(stageCollision);
+        StagePenetrate2* stagePenetrate = new StagePenetrate2(device);
+        StageManager::Instance().Register(stagePenetrate);
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);
     }

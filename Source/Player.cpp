@@ -138,6 +138,7 @@ void Player::Init() {
     isControl = true;
     canSlow = true;
     canAttack = true;
+    slowFixation = false;
 
     gravFlag = true;
     // 中心座標更新
