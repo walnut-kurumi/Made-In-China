@@ -309,6 +309,12 @@
     <ClCompile Include="Source\SceneGameSt2.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AfterimageSkinnedMesh.cpp">
+      <Filter>Source\Afterimage</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AfterimageManager.cpp">
+      <Filter>Source\Afterimage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -541,6 +547,18 @@
     <ClInclude Include="Source\SceneGameSt2.h">
       <Filter>Source\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Source\AfterimageBase.h">
+      <Filter>Source\Afterimage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AfterimageManager.h">
+      <Filter>Source\Afterimage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AfterimagePool.h">
+      <Filter>Source\Afterimage</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AfterimageSkinnedMesh.h">
+      <Filter>Source\Afterimage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\debug.hlsli">
@@ -649,6 +667,9 @@
     </Filter>
     <Filter Include="Source\Stages\Stage2">
       <UniqueIdentifier>{814fa5c0-8752-4cfd-8250-3db9f5c0bc01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Afterimage">
+      <UniqueIdentifier>{168e5c0c-dc7f-46a0-b279-ff35e0737c6f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

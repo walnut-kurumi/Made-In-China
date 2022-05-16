@@ -7,6 +7,8 @@
 #include "Graphics/ConstantBuffer.h"
 #include "Effect.h"
 
+#include "AfterimageManager.h"
+
 class Player : public Character
 {
 private:
@@ -220,4 +222,7 @@ private:
 	bool slowFixation = false;	// スロー固定
 
 	Cost cost;
+
+	// 残像
+	AfterimageManager* afterimageManager{};
 };

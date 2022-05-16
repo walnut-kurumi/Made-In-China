@@ -189,6 +189,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\AfterimageManager.cpp" />
+    <ClCompile Include="Source\AfterimageSkinnedMesh.cpp" />
     <ClCompile Include="Source\audio\Audio.cpp" />
     <ClCompile Include="Source\audio\AudioResource.cpp" />
     <ClCompile Include="Source\audio\AudioSource.cpp" />
@@ -263,6 +265,10 @@
     <ClCompile Include="Source\StageSkybox.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\AfterimageBase.h" />
+    <ClInclude Include="Source\AfterimageManager.h" />
+    <ClInclude Include="Source\AfterimagePool.h" />
+    <ClInclude Include="Source\AfterimageSkinnedMesh.h" />
     <ClInclude Include="Source\audio\Audio.h" />
     <ClInclude Include="Source\audio\AudioResource.h" />
     <ClInclude Include="Source\audio\AudioSource.h" />
