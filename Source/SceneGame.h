@@ -84,7 +84,7 @@ private:
 	ConstantBuffer<scene_blur> SBBlur;
 	float sigma = 1.0f;
 	float intensity = 0.07f;
-	float exp = 1.0f;
+	float exp = 0.35f;
 	std::unique_ptr<Framebuffer> framebuffer[8];
 	std::unique_ptr<RadialBlur> radialBlur;
 
