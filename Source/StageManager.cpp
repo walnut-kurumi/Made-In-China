@@ -52,3 +52,14 @@ bool StageManager::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOA
 
     return result;
 }
+
+// プレイヤーと次のステージへ移るときの場所で判定
+bool StageManager::CollisionPlayerVsNextStagePos(Vec3 playerPos, float playerRadius)
+{
+    for (Stage* stage : stages) {        
+        if (stage->GetType() == Stage::Type::Main)
+        {
+            return stage->CollisionPlayerVsNextStagePos(playerPos, playerRadius);
+        }
+    }
+}

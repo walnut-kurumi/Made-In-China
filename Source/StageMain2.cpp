@@ -17,6 +17,8 @@ StageMain2::StageMain2(ID3D11Device* device)
 
     bgpos = { -200, -600 };
 
+    NextStagePos = { -176.0f,66.5f,0.0f };
+
     type = Type::Main;
     debugRenderer = std::make_unique<DebugRenderer>(device);
 }
@@ -43,14 +45,13 @@ void StageMain2::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
     model->Begin(deviceContext, Shaders::Ins()->GetSkinnedMeshShader());
     model->Render(deviceContext);
 
-    // •K—v‚È‚Á‚½‚ç’Ç‰Á
-    debugRenderer.get()->DrawSphere(position, 25, Vec4(1, 0, 1, 1));
-
-    //debugRenderer.get()->Render(deviceContext, CameraManager::Instance().GetViewProjection());
+#ifdef _DEBUG
+    debugRenderer.get()->DrawSphere(NextStagePos, NextStageRadius, Vec4(0, 0.5f, 1, 1));
+    debugRenderer.get()->Render(deviceContext, CameraManager::Instance().GetViewProjection());
+#endif
 }
 
 bool StageMain2::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
-    return false;
-    //return Collision::RayVsModel(start, end, model->GetSkinnedMeshs(), transform, hit);
+    return false;    
 }

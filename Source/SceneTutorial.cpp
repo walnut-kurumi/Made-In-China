@@ -299,11 +299,15 @@ void SceneTutorial::Update(float elapsedTime)
 
     ti++;*/
 
-    // TODO 現在のステージの死んでるエネミーの数が０の場合  次のステージへいけるようになる
+    // 現在のステージの死んでるエネミーの数が０の場合
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
-        // 次のステージへ移る処理
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        // ゴールと判定とる         
+        if (StageManager::Instance().CollisionPlayerVsNextStagePos(player->GetCenterPosition(), player->GetRadius()))
+        {
+            // 次のステージへ移る処理
+            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        }
     }
 }
 

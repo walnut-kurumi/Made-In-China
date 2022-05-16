@@ -38,6 +38,9 @@ public:
 	Type GetType() { return type; }
 	void SetType(Type ty) { type = ty; }
 
+	// プレイヤーと次のステージへ移るときの場所で判定
+	bool CollisionPlayerVsNextStagePos(Vec3 palyerPos, float playerRadius);
+
 protected:
 	// 行列更新処理
 	void UpdateTransform();
@@ -56,5 +59,7 @@ protected:
 	};
 	Type type = Type::Normal;
 
-
+	// 次のステージに移るときの判定用
+	Vec3 NextStagePos = { 0,0,0 };
+	float NextStageRadius = 4.0f;	
 };
