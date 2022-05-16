@@ -245,10 +245,10 @@ void SkinnedMesh::render(ID3D11DeviceContext* deviceContext, const DirectX::XMFL
 				const Skeleton::Bone& bone = mesh.bindPose.bones.at(boneIndex);
 			
 				const Animation::Keyframe::Node& boneNode = keyframe->nodes.at(bone.nodeIndex);
-				//ボーンのローカル行列とグローバル行列を合成（ワールド座標の位置に）
+				// ボーンのローカル行列とグローバル行列を合成（ワールド座標の位置に）
 				XMStoreFloat4x4(
-					&data.boneTransforms[boneIndex],//モデルから見たボーンの行列
-					XMLoadFloat4x4(&bone.offsetTransform)//Model ~ bone
+					&data.boneTransforms[boneIndex],// モデルから見たボーンの行列
+					XMLoadFloat4x4(&bone.offsetTransform)// Model ~ bone
 					* XMLoadFloat4x4(&boneNode.globalTransform)// bone ~ pose global
 					* XMMatrixInverse(nullptr, XMLoadFloat4x4(&mesh.defaultGlobalTransform))// model ~ global
 				);
@@ -280,6 +280,8 @@ void SkinnedMesh::render(ID3D11DeviceContext* deviceContext, const DirectX::XMFL
 												
 			deviceContext->DrawIndexed(subset.indexCount, subset.startIndexLocation, 0);
 		}
+		// 残像用持っていくデータ
+		cb = data;
 	}
 }
 

@@ -307,6 +307,8 @@ public:
 	std::unordered_map<uint64_t, Material> materials;
 	std::unordered_map<int, Animation> animationClips;
 
+	Constants cb;
+
 private:
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
@@ -326,7 +328,9 @@ public:
 	bool LoadAnimation(const char* animationFilename, float samplingRate, int index);
 
 	const std::vector<Mesh>& GetMeshs() const { return meshes; }
+	const std::unordered_map<uint64_t, Material>& GetMaterial() const { return materials; }
 	const Animation& GetAnimes(int index) const { return animationClips.at(index); }
+	const Constants& GetCb() const { return cb; }
 
 protected:
 	Scene sceneView;

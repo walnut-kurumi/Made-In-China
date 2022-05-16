@@ -54,6 +54,8 @@ Player::Player(ID3D11Device* device) {
     hitEffect = new Effect("Data/Effect/playerHit.efk");
 
     debugRenderer = std::make_unique<DebugRenderer>(device);
+
+    AfterimageManager::Instance().Initialise();
 }
 
 Player::~Player() {
@@ -153,6 +155,16 @@ void Player::Init() {
 void Player::Update(float elapsedTime) {
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
+    // 残像マネージャー更新
+    AfterimageManager::Instance().SetParentData(
+        model->GetSkinnedMeshs()->GetMeshs(),
+        model->GetSkinnedMeshs()->GetMaterial(),
+        model->GetSkinnedMeshs()->GetCb(),
+        transform
+    );
+
+    AfterimageManager::Instance().Update(elapsedTime);
+
     UpdateSpeed(elapsedTime);
 
     // 無敵時間更新
@@ -224,8 +236,10 @@ void Player::Render(ID3D11DeviceContext* dc) {
     dc->PSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
     dc->GSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
 
+
     model->Begin(dc, Shaders::Ins()->GetDestructionShader());
     //model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
+    AfterimageManager::Instance().Render(dc);
     model->Render(dc);
 
     // 弾丸描画処理
@@ -539,6 +553,11 @@ bool Player::InputAttack() {
             else atkPos = { front.x,0,0 };
             atkPos = VecMath::Normalize(atkPos) * 3;
 
+            // 向きを設定
+            direction = VecMath::sign(atkPos.x);
+            // 旋回処理
+            if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
+
             // 攻撃のCT
             if(!isGround) atkTimer = 0.50f;
             return true;
@@ -556,6 +575,11 @@ bool Player::InputAttack() {
             
             atkPos = playerScreenPos - cursor;
             atkPos = VecMath::Normalize(atkPos) * 5;
+
+            // 向きを設定
+            direction = VecMath::sign(atkPos.x);
+            // 旋回処理
+            if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
 
             // 攻撃のCT
             if (!isGround) atkTimer = 0.50f;

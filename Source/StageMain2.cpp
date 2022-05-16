@@ -31,7 +31,7 @@ StageMain2::~StageMain2()
 
 void StageMain2::Update(float elapsedTime)
 {
-    bgpos = { player->GetPosition().x - 20,player->GetPosition().y };
+    bgpos = { player->GetPosition().x - 40,player->GetPosition().y };
     UpdateTransform();
     model->UpdateTransform(transform);
 }
@@ -40,7 +40,7 @@ void StageMain2::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
 {
     //Scroll.data.scroll_direction;
     //deviceContext->UpdateSubresource(
-    back->render(deviceContext, bgpos.x, -150, 1500, 1150, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+    back->render(deviceContext, bgpos.x, -400, 1500, 1150, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
     model->Begin(deviceContext, Shaders::Ins()->GetSkinnedMeshShader());
     model->Render(deviceContext);

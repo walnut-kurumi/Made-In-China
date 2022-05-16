@@ -189,6 +189,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\AfterimageManager.cpp" />
+    <ClCompile Include="Source\AfterimageSkinnedMesh.cpp" />
     <ClCompile Include="Source\audio\Audio.cpp" />
     <ClCompile Include="Source\audio\AudioResource.cpp" />
     <ClCompile Include="Source\audio\AudioSource.cpp" />
@@ -249,7 +251,6 @@
     <ClCompile Include="Source\SceneGameSt2.cpp" />
     <ClCompile Include="Source\SceneLoading.cpp" />
     <ClCompile Include="Source\SceneManager.cpp" />
-    <ClCompile Include="Source\SceneOver.cpp" />
     <ClCompile Include="Source\SceneTitle.cpp" />
     <ClCompile Include="Source\SceneTutorial.cpp" />
     <ClCompile Include="Source\Stage.cpp" />
@@ -265,6 +266,10 @@
     <ClCompile Include="Source\StageSkybox.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\AfterimageBase.h" />
+    <ClInclude Include="Source\AfterimageManager.h" />
+    <ClInclude Include="Source\AfterimagePool.h" />
+    <ClInclude Include="Source\AfterimageSkinnedMesh.h" />
     <ClInclude Include="Source\audio\Audio.h" />
     <ClInclude Include="Source\audio\AudioResource.h" />
     <ClInclude Include="Source\audio\AudioSource.h" />
@@ -334,7 +339,6 @@
     <ClInclude Include="Source\SceneGameSt2.h" />
     <ClInclude Include="Source\SceneLoading.h" />
     <ClInclude Include="Source\SceneManager.h" />
-    <ClInclude Include="Source\SceneOver.h" />
     <ClInclude Include="Source\SceneTitle.h" />
     <ClInclude Include="Source\SceneTutorial.h" />
     <ClInclude Include="Source\Stage.h" />
