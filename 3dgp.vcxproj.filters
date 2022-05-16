@@ -260,9 +260,6 @@
     <ClCompile Include="Source\SceneClear.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SceneOver.cpp">
-      <Filter>Source\Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Menu.cpp">
       <Filter>Source\Scenes</Filter>
     </ClCompile>
@@ -490,9 +487,6 @@
       <Filter>Source\Character\Player\Bullet</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneClear.h">
-      <Filter>Source\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneOver.h">
       <Filter>Source\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Source\Menu.h">

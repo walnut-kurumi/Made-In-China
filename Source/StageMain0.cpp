@@ -16,7 +16,7 @@ StageMain0::StageMain0(ID3D11Device* device)
 
     angle.y = DirectX::XMConvertToRadians(-90);
 
-    bgpos = { -200, -600 };
+    bgpos = { -100, -600 };
 
     type = Type::Main;
     debugRenderer = std::make_unique<DebugRenderer>(device);
@@ -39,7 +39,7 @@ void StageMain0::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
 {
     //Scroll.data.scroll_direction;
     //deviceContext->UpdateSubresource(
-    back->render(deviceContext, bgpos.x, -150, 1500, 1150, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+    back->render(deviceContext, bgpos.x, -435, 1500, 1150, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
     model->Begin(deviceContext, Shaders::Ins()->GetSkinnedMeshShader());
     model->Render(deviceContext);
