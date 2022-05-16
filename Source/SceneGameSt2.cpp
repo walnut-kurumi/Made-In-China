@@ -335,7 +335,7 @@ void SceneGameSt2::Render(float elapsedTime)
     framebuffer[1]->activate(dc);
     radialBlur->blit(dc, framebuffer[0]->shaderResourceViews[0].GetAddressOf(), 0, 1);
     framebuffer[1]->deactivate(dc);
-
+    
     Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> shader_resource_views[2] =
     { framebuffer[0]->shaderResourceViews[0].Get(), framebuffer[1]->shaderResourceViews[0].Get() };
     radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
