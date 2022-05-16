@@ -21,4 +21,8 @@ public:
 private:
 	std::unique_ptr<Model> model = nullptr;
 	float lifeTimer = 20.0f;
+
+	// エフェクト
+	//Effect* ballisticEffect = nullptr;
+	//Effekseer::Handle handle = 0;
 };

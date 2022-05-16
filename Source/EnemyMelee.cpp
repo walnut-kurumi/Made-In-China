@@ -72,7 +72,7 @@ void EnemyMelee::Init()
 
     materialColor = { 1,1,1,1 };
 
-    height = 6.0f;
+    height = 8.0f;
 
     centerPosition = position;
     centerPosition.y += 1.0f;

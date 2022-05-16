@@ -82,7 +82,7 @@ void EnemyGunner::Init()
 
     materialColor = { 1,1,1,1 };
 
-    height = 6.0f;
+    height = 8.0f;
 
     centerPosition = position;
     centerPosition.y += 1.0f;
@@ -349,7 +349,7 @@ void EnemyGunner::MoveAttack(float cooldown)
         // プレイヤーの中心座標
         const Vec3& p = { player->GetCenterPosition() };
         // エネミーの中心座標
-        const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
+        const Vec3& e = { centerPosition.x,centerPosition.y + 2.0f,0.0f };
 
         // 発射する向き       
         // プレイヤーに向かって

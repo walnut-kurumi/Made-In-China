@@ -48,8 +48,10 @@ void StageMain1::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
     model->Begin(deviceContext, Shaders::Ins()->GetRampShader());
     model->Render(deviceContext);
 
+#ifdef _DEBUG
     debugRenderer.get()->DrawSphere(NextStagePos, NextStageRadius, Vec4(0, 0.5f, 1, 1));
     debugRenderer.get()->Render(deviceContext, CameraManager::Instance().GetViewProjection());
+#endif
 }
 
 bool StageMain1::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)

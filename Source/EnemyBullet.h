@@ -69,8 +69,5 @@ protected:
 	
 	// 動くかどうか
 	bool isMove = true;
-
-	// エフェクト
-	Effect* ballisticEffect = nullptr;
-	Effekseer::Handle handle = 0;
+	
 };
