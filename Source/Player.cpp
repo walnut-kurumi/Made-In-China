@@ -181,9 +181,7 @@ void Player::Update(float elapsedTime) {
     
     // Effect
     if (atk) 
-    {        
-        // TODOF’¼‚· Œü‚«’Ç‰Á‚µ‚ÄŠp“x
-        //handle = attackEffect->PlayDirection(centerPosition, direction, angle.y, 2.0f);        
+    {                             
         if (angle.y > 0)efcDir = 1;
         else efcDir = 0;
         float radian = DirectX::XMConvertToRadians(180 * efcDir);
