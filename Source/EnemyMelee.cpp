@@ -10,14 +10,14 @@
 EnemyMelee::EnemyMelee(ID3D11Device* device)
 {
 
-    const char* idle = "Data/Models/Enemy/Animations/ver1/Idle.fbx";
-    const char* run = "Data/Models/Enemy/Animations/ver1/Run.fbx";
-    const char* walk = "Data/Models/Enemy/Animations/ver1/Walk.fbx";
-    const char* attack = "Data/Models/Enemy/Animations/ver1/Idle.fbx";
-    const char* blow = "Data/Models/Enemy/Animations/ver1/Run.fbx";
-    const char* death = "Data/Models/Enemy/Animations/ver1/Walk.fbx";
+    const char* idle = "Data/Models/Enemy/MeleeAnimation/Idle.fbx";
+    const char* run = "Data/Models/Enemy/MeleeAnimation/Run.fbx";
+    const char* walk = "Data/Models/Enemy/MeleeAnimation/Walk.fbx";
+    const char* attack = "Data/Models/Enemy/MeleeAnimation/Attack.fbx";
+    const char* blow = "Data/Models/Enemy/MeleeAnimation/GetHit.fbx";
+    const char* death = "Data/Models/Enemy/MeleeAnimation/Death.fbx";
 
-     model = new Model(device, "Data/Models/Enemy/Enemy.fbx",true);
+     model = new Model(device, "Data/Models/Enemy/Melee.fbx",true);
 
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
@@ -133,21 +133,7 @@ void EnemyMelee::Update(float elapsedTime)
 // 描画処理
 void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
-        switch (groupNum)
-        {
-        case 0:
-            materialColor = { 0,1,0,1 };
-            break;
-        case 1:
-            materialColor = { 0,0,1,1 };
-            break;
-        case 2:
-            materialColor = { 0,1,1,1 };
-            break;
 
-        default:
-            break;
-        }
         model->Begin(dc, *shader);
         model->Render(dc, materialColor);
 
@@ -232,7 +218,7 @@ void EnemyMelee::MoveWalk(bool direction)
 // 索敵エリア更新
 void EnemyMelee::UpdateSearchArea()
 {
-    if (!direction)
+    if (direction)
     {
         searchAreaPos = { position.x - 10, position.y };
         searchAreaScale = { 45, height + 5.0f };
@@ -577,9 +563,10 @@ void EnemyMelee::UpdateBlowState(float elapsedTime)
 {
     // 吹き飛ばしタイマー更新
     if (blowTimer > 0.0f)blowTimer -= elapsedTime;
-
     // 吹っ飛ばしたら死亡ステートへ               
     else TransitionDeathState();
+
+    if (!model->IsPlayAnimatimon()) TransitionDeathState();
 }
 
 
@@ -602,8 +589,7 @@ void EnemyMelee::UpdateDeathState(float elapsedTime)
 {
     // 死亡アニメーション終わったら消滅させる
     if (!model->IsPlayAnimatimon())
-    {        
-        OnDead();
+    {                
         //Destroy();
     }
 }

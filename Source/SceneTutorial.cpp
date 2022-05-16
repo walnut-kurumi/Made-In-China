@@ -449,6 +449,13 @@ void SceneTutorial::Render(float elapsedTime)
 // playerが死んだとき 等のリセット用
 void SceneTutorial::Reset()
 {
+    // 変数初期化
+    isTutorial = true;
+    isPause = false;
+    camTargetPos = { -19,5,0 };
+    cameraTargetChange = false;
+    isSlow = false;
+
     // たまなし
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
@@ -463,7 +470,10 @@ void SceneTutorial::Reset()
     player->Init();
     player->SetPosition(Vec3(-19, 40, 0));
 
-
+    // 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける   
+    player->SetIsControl(false);
+    player->SetCanSlow(false);
+    player->SetCanAttack(false);
 }
 
 // 敵の初期化

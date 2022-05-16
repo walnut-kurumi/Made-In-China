@@ -481,7 +481,7 @@ void SceneGame::EnemyPositionSetting()
 
     enemyPos[0] = { -6.5f,29.5f };
     enemyPos[1] = { -48.0f,29.5f };
-    enemyPos[2] = { -140.0f,28.0f };
+    enemyPos[2] = { -140.0f,29.5f };
 
     enemyGroup[0] =0;
     enemyGroup[1] =0;
