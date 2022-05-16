@@ -312,8 +312,8 @@ void SceneGame::Render(float elapsedTime)
             EffectManager::Instance().Render(cameraMgr.GetView(), cameraMgr.GetProjection());
         }
     }
-    framebuffer[0]->deactivate(dc);
 
+    framebuffer[0]->deactivate(dc);
     CBBlur.data.BlurPower = player->GetBlurPower();
     CBBlur.data.TU = 1.0f / gfx.GetScreenWidth();
     CBBlur.data.TV = 1.0f / gfx.GetScreenHeight();

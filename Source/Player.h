@@ -132,8 +132,8 @@ protected:
 	void UpdateDeathState(float elapsedTime);
 
 private:
-	template<class Type, typename Return, typename ...Args>
-	using Temp = Return(Type::*)(Args...);
+	template<class Type, typename Return, typename Args>
+	using Temp = Return(Type::*)(Args);
 	Temp<Player, void, float> UpdateState[static_cast<int>(AnimeState::End)];
 	
 	AnimeState state = AnimeState::Idle;
