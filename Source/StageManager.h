@@ -50,6 +50,9 @@ public:
 	int GetStageCount()const { return static_cast<int>(stages.size()); }
 	Stage* GetStage(int index) { return stages.at(index); }
 
+	// プレイヤーと次のステージへ移るときの場所で判定
+	bool CollisionPlayerVsNextStagePos(Vec3 playerPos, float playerRadius);
+
 private:
 	std::vector<Stage*> stages;
 

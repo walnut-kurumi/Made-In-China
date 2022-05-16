@@ -264,9 +264,7 @@ bool EnemyMelee::Search()
 
         if (player->GetCenterPosition().x > position.x)direction = false;
         else if (player->GetCenterPosition().x < position.x) direction = true;
-
-        materialColor = { 1.0f,0.25f,0.25f,1.0f };
-
+        
         isSearch = true;
 
         return true;

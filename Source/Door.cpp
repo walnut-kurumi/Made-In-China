@@ -54,7 +54,7 @@ void Door::Update(float elapsedTime)
 void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
 {
 	model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
-    model->Render(dc, Vec4{ 0.564f,0.42f,0.42f,1.0f });
+    model->Render(dc, Vec4{ 0.564f,0.42f,0.1f,1.0f });
 
 	// •K—v‚È‚Á‚½‚ç’Ç‰Á
     debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
