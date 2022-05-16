@@ -210,6 +210,7 @@ void SceneTutorial::Update(float elapsedTime)
         // プレイヤー
         {
             player->Update(slowElapsedTime);
+            player->SetSlowFixation(isSlow);
             // シフトブレイク更新処理
             SBManager::Instance().Update(slowElapsedTime);
 
@@ -223,6 +224,7 @@ void SceneTutorial::Update(float elapsedTime)
                 cameraTargetChange = true;
                 // 操作可能
                 player->SetIsControl(true);
+                player->SetSlowFixation(isSlow);
                 // 弾動かす
                 for (int i = 0; i < EnemyBulletManager::Instance().GetProjectileCount(); i++)
                 {

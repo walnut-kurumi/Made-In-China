@@ -64,6 +64,7 @@ public:
 	void SetIsControl(bool b) { isControl = b; }
 	void SetCanSlow(bool b) { canSlow = b; }
 	void SetCanAttack(bool b) { canAttack = b; }
+	void SetSlowFixation(bool b) { slowFixation = b; }
 
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
@@ -73,7 +74,7 @@ public:
 	Vec3 GetAttackPosistion() const { return atkPos + position + waistPos; }
 	bool GetIsAtk() const { return atk; }
 	float GetAtkRadius() const { return atkRadius; }
-	float GetSlowAlpha() const { return slowAlpha; }
+	float GetSlowAlpha() const { return slowAlpha; }	
 
 private:
 
@@ -216,6 +217,7 @@ private:
 	bool isControl = true;
 	bool canSlow = true;
 	bool canAttack = true;
+	bool slowFixation = false;	// スロー固定
 
 	Cost cost;
 };

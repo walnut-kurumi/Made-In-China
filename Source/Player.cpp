@@ -395,13 +395,19 @@ void Player::InputSlow(float elapsedTime) {
         // アルファ値を1/10秒で最大に
         slowAlpha += elapsedTime * 10;
         slowAlpha = min(0.95f, slowAlpha);
-    }
-    else {
+    }    
+    else if (!slowFixation) {
         cost.Trg(false);
         slow = false;
         // アルファ値を1/10秒で最小に
         slowAlpha -= elapsedTime * 10;
         slowAlpha = max(0.0f, slowAlpha);
+    }
+    // スロー固定にしてるとき
+    if (slowFixation)
+    { // アルファ値を1/10秒で最大に
+        slowAlpha += elapsedTime * 10;
+        slowAlpha = min(0.95f, slowAlpha);
     }
 }
 
