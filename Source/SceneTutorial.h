@@ -3,6 +3,8 @@
 #include "Scene.h"
 #include "Player.h"
 #include "Model.h"
+#include "framebuffer.h"
+#include "RadialBlur.h"
 
 #include <directxmath.h>
 #include "PerlinNoise.h"
@@ -57,10 +59,7 @@ private:
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
 
-	ConstantBuffer<scene_blur> SBBlur;
-	float sigma = 1.0f;
-	float intensity = 0.07f;
-	float exp = 1.0f;
+	Sprite* fade{};
 
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
@@ -89,12 +88,16 @@ private:
 	bool menuflag = false;
 
 	DirectX::XMFLOAT2 mousepos = {};
+
+	//シェーダー用の変数
 	Shader BluShader;
-
-	std::unique_ptr<Framebuffer> framebuffer[8];
-	std::unique_ptr<RadialBlur> radialBlur;
-
+	ConstantBuffer<scene_blur> SBBlur;
 	ConstantBuffer<Radial_Blur> CBBlur;
+	std::unique_ptr<RadialBlur> radialBlur;
+	std::unique_ptr<Framebuffer> framebuffer[8];
+	float sigma = 1.0f;
+	float intensity = 0.07f;
+	float exp = 0.35f;
 
 
 

@@ -96,6 +96,7 @@ void SceneTutorial::Initialize()
     Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
     LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
+    fade = new Sprite(device, L"./Data/Sprites/scene/black.png");
 
     Menu::Instance().Initialize();
 
@@ -149,6 +150,7 @@ void SceneTutorial::Finalize()
     delete enemyattack;
     delete LoadBar;
     delete Bar;
+    delete fade;
     //デバッグ
    // delete hitEffect;
 }
@@ -323,6 +325,7 @@ void SceneTutorial::Render(float elapsedTime)
     // 通常レンダリング
     dc->OMSetRenderTargets(1, &rtv, dsv);
 
+    // モデル描画
     //DirectX::XMFLOAT4X4 data{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 
     //// TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.
@@ -336,6 +339,10 @@ void SceneTutorial::Render(float elapsedTime)
         {
             // ステージ描画
             StageManager::Instance().Render(dc, elapsedTime);           
+
+            // スロー演出、敵や自機など重要なオブジェクト以外を暗くする
+            fade->render(dc, 0, 0, 1920, 1080, 1, 1, 1, player->GetSlowAlpha(), 0);
+
             // プレイヤー描画
             player->Render(dc);
             // エネミー描画
@@ -355,6 +362,7 @@ void SceneTutorial::Render(float elapsedTime)
     }
 
     framebuffer[0]->deactivate(dc);
+    //コンスタントバッファ―をセット
     CBBlur.data.BlurPower = player->GetBlurPower();
     CBBlur.data.TU = 1.0f / gfx.GetScreenWidth();
     CBBlur.data.TV = 1.0f / gfx.GetScreenHeight();
@@ -363,7 +371,6 @@ void SceneTutorial::Render(float elapsedTime)
     dc->PSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
     dc->GSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
 
-    //scene_blur blu{ sigma,intensity,expo };
     SBBlur.data.sigma = sigma;
     SBBlur.data.intensity = intensity;
     SBBlur.data.dummy0 = exp;
@@ -380,6 +387,7 @@ void SceneTutorial::Render(float elapsedTime)
     Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> shader_resource_views[2] =
     { framebuffer[0]->shaderResourceViews[0].Get(), framebuffer[1]->shaderResourceViews[0].Get() };
     radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
+
 
     // 2D描画
     {
@@ -419,17 +427,6 @@ void SceneTutorial::Render(float elapsedTime)
     ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
     ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
     ImGui::SliderFloat("expo", &exp, 0, 10);
-    /* ImGui::SliderFloat("gaussian_sigma", &sigma, -10, 1);
-     ImGui::SliderFloat("bloom_intensity", &intensity, -10, 1);
-     ImGui::SliderFloat("expo", &expo, 0, 10);
-     if (ImGui::TreeNode("smoothstep"))
-     {
-         ImGui::SliderFloat("x", &rgb.x, 0, 1);
-         ImGui::SliderFloat("y", &rgb.y, 0, 1);
-         ImGui::SliderFloat("z", &rgb.z, 0, 1);
-
-         ImGui::TreePop();
-     }*/
 
     ImGui::End();
 

@@ -61,10 +61,6 @@ public:
 	bool GetIsHit() { return isHit; }
 	void SetIsHit(bool h) { isHit = h; }
 
-	Vec3 GetAttackPosistion() const { return atkPos + position + waistPos; }
-	bool GetIsAtk() const { return atk; }
-	float GetAtkRadius() const { return atkRadius; }
-
 	void SetIsControl(bool b) { isControl = b; }
 	void SetCanSlow(bool b) { canSlow = b; }
 	void SetCanAttack(bool b) { canAttack = b; }
@@ -73,6 +69,11 @@ public:
 	void CollisionPanchiVsProjectile();
 	void CollisionSBVsEnemies();
 	void CollisionSBVsStage();
+
+	Vec3 GetAttackPosistion() const { return atkPos + position + waistPos; }
+	bool GetIsAtk() const { return atk; }
+	float GetAtkRadius() const { return atkRadius; }
+	float GetSlowAlpha() const { return slowAlpha; }
 
 private:
 
@@ -136,8 +137,8 @@ protected:
 	void UpdateDeathState(float elapsedTime);
 
 private:
-	template<class Type, typename Return, typename ...Args>
-	using Temp = Return(Type::*)(Args...);
+	template<class Type, typename Return, typename Args>
+	using Temp = Return(Type::*)(Args);
 	Temp<Player, void, float> UpdateState[static_cast<int>(AnimeState::End)];
 	
 	AnimeState state = AnimeState::Idle;
@@ -173,6 +174,7 @@ private:
 	float playbackSpeed = 0.0f;
 	float slowSpeed = 0.0f;
 	bool slow = false;
+	float slowAlpha = 0.0f;
 	// ヒットストップ用
 	float hitstopSpeed = 0.0f;
 	bool hitstop = false; // 攻撃当たったらtrue

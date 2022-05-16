@@ -1,9 +1,7 @@
 #include "Constants.hlsli"
 #include "RadialBlur.hlsli"
-#define POINT 0
-#define LINEAR 1
-#define ANISOTROPIC 2
-SamplerState samplerStates[3] : register(s0);
+
+SamplerState samplerStates : register(s0);
 Texture2D textureMaps[4] : register(t0);
 
 float4 main(VS_OUT pin) : SV_TARGET
@@ -11,7 +9,7 @@ float4 main(VS_OUT pin) : SV_TARGET
     uint mipLevel = 0, width, height, numberOfLevels;
     textureMaps[1].GetDimensions(mipLevel, width, height, numberOfLevels);
  
-    float4 color = textureMaps[0].Sample(samplerStates[ANISOTROPIC], pin.texcoord);
+    float4 color = textureMaps[0].Sample(samplerStates, pin.texcoord);
     float alpha = color.a;
  
     float3 blurColor = 0;
@@ -27,7 +25,7 @@ float4 main(VS_OUT pin) : SV_TARGET
         {
             float gaussianKernel = exp(-(x * x + y * y) / (2.0 * gaussianSigma * gaussianSigma)) /
                 (2 * 3.14159265358979 * gaussianSigma * gaussianSigma);
-            blurColor += textureMaps[1].Sample(samplerStates[LINEAR], pin.texcoord +
+            blurColor += textureMaps[1].Sample(samplerStates, pin.texcoord +
                 float2(x * 1.0 / width, y * 1.0 / height)).rgb * gaussianKernel;
             gaussianKernelTotal += gaussianKernel;
         }

@@ -246,6 +246,7 @@
     <ClCompile Include="Source\SBNormal.cpp" />
     <ClCompile Include="Source\SceneClear.cpp" />
     <ClCompile Include="Source\SceneGame.cpp" />
+    <ClCompile Include="Source\SceneGameSt2.cpp" />
     <ClCompile Include="Source\SceneLoading.cpp" />
     <ClCompile Include="Source\SceneManager.cpp" />
     <ClCompile Include="Source\SceneOver.cpp" />
@@ -328,6 +329,7 @@
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SceneClear.h" />
     <ClInclude Include="Source\SceneGame.h" />
+    <ClInclude Include="Source\SceneGameSt2.h" />
     <ClInclude Include="Source\SceneLoading.h" />
     <ClInclude Include="Source\SceneManager.h" />
     <ClInclude Include="Source\SceneOver.h" />
