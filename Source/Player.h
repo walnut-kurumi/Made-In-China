@@ -61,14 +61,18 @@ public:
 	bool GetIsHit() { return isHit; }
 	void SetIsHit(bool h) { isHit = h; }
 
+	Vec3 GetAttackPosistion() const { return atkPos + position + waistPos; }
+	bool GetIsAtk() const { return atk; }
+	float GetAtkRadius() const { return atkRadius; }
+
+	void SetIsControl(bool b) { isControl = b; }
+	void SetCanSlow(bool b) { canSlow = b; }
+	void SetCanAttack(bool b) { canAttack = b; }
+
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
 	void CollisionSBVsEnemies();
 	void CollisionSBVsStage();
-
-	Vec3 GetAttackPosistion() const { return atkPos + position + waistPos; }
-	bool GetIsAtk() const { return atk; }
-	float GetAtkRadius() const { return atkRadius; }
 
 private:
 
@@ -205,6 +209,11 @@ private:
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
 	int efcDir = 0;
+
+	// チュートリアル用変数
+	bool isControl = true;
+	bool canSlow = true;
+	bool canAttack = true;
 
 	Cost cost;
 };

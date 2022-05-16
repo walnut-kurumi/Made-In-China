@@ -99,12 +99,14 @@ private:
 
 
 	// チュートリアル用変数
+	// チュートリアル中か
+	bool isTutorial = true;
+	// 時間とめるか
+	bool isPause = false;
 	// 最初の敵倒したらカメラのターゲットをプレイヤーに変更
 	bool cameraTargetChange = false;
 	Vec3 camTargetPos = { -19,0,0 };
-	// 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける
-	// プレイヤーに渡してInputのとこでture/false判断する
-	bool isPlayerControl = false; 
-
+	// スローにしたか
+	bool isSlow = false;
 
 };
