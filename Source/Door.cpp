@@ -68,8 +68,7 @@ void Door::RenderGui()
     if (ImGui::Begin("Door", nullptr, ImGuiWindowFlags_None)) {
         // トランスフォーム
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::SliderFloat3("Pos", &position.x, -100, 100);
-            ImGui::SliderFloat3("centerPos", &centerPos.x, -100, 100);
+            ImGui::SliderFloat3("Pos", &position.x, -200, 200);            
             ImGui::SliderFloat3("Angle", &angle.x, 0, 3.14f);
         }
         unsigned int flag = static_cast<int>(isOpen);

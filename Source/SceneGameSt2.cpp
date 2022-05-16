@@ -69,11 +69,19 @@ void SceneGameSt2::Initialize()
     // ドア
     {
         DoorManager::Instance().Init();
+        static const int DOOR_MAX = 3;
+        Vec3 doorPos[DOOR_MAX] = {};
+        doorPos[0] = { -64.0f,0,-3.5f };
+        doorPos[1] = { -144.5f,34.0f,-3.5f };
+        doorPos[2] = { -85.0f,67.0f,-3.5f };
 
-        Door* door = new Door(device);
-        door->SetPos(Vec3(-54.0f, 29.6f, -3.5f));
-        door->PlayerData(player.get());
-        DoorManager::Instance().Register(door);
+        for (int i = 0; i < DOOR_MAX; i++)
+        {
+            Door* door = new Door(device);
+            door->SetPos(doorPos[i]);
+            door->PlayerData(player.get());
+            DoorManager::Instance().Register(door);
+        }
     }
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -426,37 +434,39 @@ void SceneGameSt2::EnemyInitialize(ID3D11Device* device)
         }
 
         // 近接
-        if (i == 0)
+        if (i < 3 || i == 4 || i == 5)
         {
             EnemyMelee* melee = new EnemyMelee(device);
+
             // 座標セット
             melee->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
             melee->PositionInitialize();
-
             //歩き回るかどうか
             melee->SetInitialWalk(enemyWalk[i]);
             melee->WalkFlagInitialize();
-
             // グループ番号セット
             melee->SetInitialGroupNum(enemyGroup[i]);
             melee->GroupNumInitialize();
+            // 向きセット
+            melee->SetDirection(enemyDirection[i]);
 
             EnemyManager::Instance().Register(melee);
         }
         else
         {
             EnemyGunner* gunner = new EnemyGunner(device);
+
             // 座標セット
             gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
             gunner->PositionInitialize();
-
             //歩き回るかどうか
             gunner->SetInitialWalk(enemyWalk[i]);
             gunner->WalkFlagInitialize();
-
             // グループ番号セット
             gunner->SetInitialGroupNum(enemyGroup[i]);
             gunner->GroupNumInitialize();
+            // 向きセット
+            gunner->SetDirection(enemyDirection[i]);
 
             EnemyManager::Instance().Register(gunner);
         }
@@ -470,17 +480,37 @@ void SceneGameSt2::EnemyInitialize(ID3D11Device* device)
 void SceneGameSt2::EnemyPositionSetting()
 {
 
-    enemyPos[0] = { -5.0f,29.5f };
-    enemyPos[1] = { -48.0f,29.5f };
-    enemyPos[2] = { -140.0f,28.0f };
+    enemyPos[0] = { -73.0f,0.5f };
+    enemyPos[1] = { -83.0f,0.5f };
+    enemyPos[2] = { -150.0f,34.0f };
+    enemyPos[3] = { -14.0f,67.0f };
+    enemyPos[4] = { -93.0f,67.0f };
+    enemyPos[5] = { -120.0f,67.0f };
+    enemyPos[6] = { -160.0f,67.0f };
 
     enemyGroup[0] = 0;
     enemyGroup[1] = 0;
     enemyGroup[2] = 1;
+    enemyGroup[3] = 3;
+    enemyGroup[4] = 4;
+    enemyGroup[5] = 4;
+    enemyGroup[6] = 5;
 
     enemyWalk[0] = true;
-    enemyWalk[1] = false;
-    enemyWalk[2] = true;
+    enemyWalk[1] = true;
+    enemyWalk[2] = false;
+    enemyWalk[3] = true;
+    enemyWalk[4] = false;
+    enemyWalk[5] = true;
+    enemyWalk[6] = false;
+
+    enemyDirection[0] = false;
+    enemyDirection[1] = false;
+    enemyDirection[2] = true;
+    enemyDirection[3] = false;
+    enemyDirection[4] = true;
+    enemyDirection[5] = true;
+    enemyDirection[6] = true;
 
 }
 

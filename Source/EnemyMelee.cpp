@@ -9,16 +9,7 @@
 // コンストラクタ
 EnemyMelee::EnemyMelee(ID3D11Device* device)
 {
-#if 0
-    const char* idle = "Data/Models/Enemy/JummoAnimations/Idle.fbx";
-    const char* run = "Data/Models/Enemy/JummoAnimations/Run.fbx";
-    const char* walk = "Data/Models/Enemy/JummoAnimations/Walk.fbx";
-    const char* attack = "Data/Models/Enemy/JummoAnimations/Attack.fbx";
-    const char* blow = "Data/Models/Enemy/JummoAnimations/GetHit1.fbx";
-    const char* death = "Data/Models/Enemy/JummoAnimations/Death.fbx";
 
-    model = new Model(device, "Data/Models/Enemy/Jummo.fbx");
-#else
     const char* idle = "Data/Models/Enemy/Animations/ver1/Idle.fbx";
     const char* run = "Data/Models/Enemy/Animations/ver1/Run.fbx";
     const char* walk = "Data/Models/Enemy/Animations/ver1/Walk.fbx";
@@ -27,7 +18,7 @@ EnemyMelee::EnemyMelee(ID3D11Device* device)
     const char* death = "Data/Models/Enemy/Animations/ver1/Walk.fbx";
 
      model = new Model(device, "Data/Models/Enemy/Enemy.fbx",true);
-#endif
+
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(State::Run));
@@ -402,7 +393,7 @@ void EnemyMelee::TransitionIdleState()
     turnFlag = false;
     walkFlag = false;
     isSearch = false;
-    idleTimer = 5.0f;
+    idleTimer = 2.5f;
     moveSpeed = 0;
     model->PlayAnimation(static_cast<int>(state), true);
 }

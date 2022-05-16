@@ -432,34 +432,36 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
         if (i == 0)
         {
             EnemyMelee* melee = new EnemyMelee(device);
+
             // 座標セット
             melee->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
             melee->PositionInitialize();
-
             //歩き回るかどうか
             melee->SetInitialWalk(enemyWalk[i]);
             melee->WalkFlagInitialize();
-
             // グループ番号セット
             melee->SetInitialGroupNum(enemyGroup[i]);
             melee->GroupNumInitialize();
+            // 向きセット
+            melee->SetDirection(enemyDirection[i]);
 
             EnemyManager::Instance().Register(melee);
         }
         else
         {
             EnemyGunner* gunner = new EnemyGunner(device);
+
             // 座標セット
             gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
             gunner->PositionInitialize();
-
             //歩き回るかどうか
             gunner->SetInitialWalk(enemyWalk[i]);
             gunner->WalkFlagInitialize();
-
             // グループ番号セット
             gunner->SetInitialGroupNum(enemyGroup[i]);
             gunner->GroupNumInitialize();
+            // 向きセット
+            gunner->SetDirection(enemyDirection[i]);
 
             EnemyManager::Instance().Register(gunner);
         }
@@ -485,6 +487,9 @@ void SceneGame::EnemyPositionSetting()
     enemyWalk[1] = false;
     enemyWalk[2] = true;
    
+    enemyDirection[0] = false;
+    enemyDirection[1] = true;
+    enemyDirection[2] = true;
 }
 
 

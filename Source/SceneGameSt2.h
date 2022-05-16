@@ -47,10 +47,11 @@ private:
 	std::unique_ptr<Player> player{};
 
 
-	static const int ENEMY_MAX = 3;
+	static const int ENEMY_MAX = 7;
 	Vec2 enemyPos[ENEMY_MAX] = {};
 	int enemyGroup[ENEMY_MAX] = {};
 	bool enemyWalk[ENEMY_MAX] = {};
+	bool enemyDirection[ENEMY_MAX] = {};
 
 	Sprite* Bar{};
 	Sprite* LoadBar{};

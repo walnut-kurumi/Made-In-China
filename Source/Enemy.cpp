@@ -14,7 +14,7 @@ void Enemy::FallIsDead()
 {
 	if (position.y < -100.0f)
 	{
-		position.y = position.z = 0.0f;
+		position = { 0,0,0 };
 		isDead = true;
 	}
 }
