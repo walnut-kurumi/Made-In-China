@@ -59,6 +59,8 @@ private:
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
 
+	Sprite* fade{};
+
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
 	bool a = false;

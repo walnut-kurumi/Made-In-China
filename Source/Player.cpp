@@ -96,6 +96,7 @@ void Player::Init() {
     // スローモーション関連
     playbackSpeed = 1.0f;
     slowSpeed = 0.5f;
+    slowAlpha = 0.0f;
 
     // ヒットストップ
     hitstopSpeed = 0.6f;
@@ -378,10 +379,16 @@ void Player::InputSlow(float elapsedTime) {
         && cost.Approval(elapsedTime)) {
         cost.Trg(true);
         slow = true;
+        // アルファ値を1/10秒で最大に
+        slowAlpha += elapsedTime * 10;
+        slowAlpha = min(0.95f, slowAlpha);
     }
     else {
         cost.Trg(false);
         slow = false;
+        // アルファ値を1/10秒で最小に
+        slowAlpha -= elapsedTime * 10;
+        slowAlpha = max(0.0f, slowAlpha);
     }
 }
 

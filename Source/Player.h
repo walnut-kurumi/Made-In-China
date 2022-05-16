@@ -69,6 +69,7 @@ public:
 	Vec3 GetAttackPosistion() const { return atkPos + position + waistPos; }
 	bool GetIsAtk() const { return atk; }
 	float GetAtkRadius() const { return atkRadius; }
+	float GetSlowAlpha() const { return slowAlpha; }
 
 private:
 
@@ -169,6 +170,7 @@ private:
 	float playbackSpeed = 0.0f;
 	float slowSpeed = 0.0f;
 	bool slow = false;
+	float slowAlpha = 0.0f;
 	// ヒットストップ用
 	float hitstopSpeed = 0.0f;
 	bool hitstop = false; // 攻撃当たったらtrue
