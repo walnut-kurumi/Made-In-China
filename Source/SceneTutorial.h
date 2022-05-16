@@ -97,7 +97,7 @@ private:
 	std::unique_ptr<Framebuffer> framebuffer[8];
 	float sigma = 1.0f;
 	float intensity = 0.07f;
-	float exp = 0.35f;
+	float exp = 1.3f;
 
 
 
