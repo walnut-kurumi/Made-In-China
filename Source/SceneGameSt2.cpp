@@ -1,5 +1,7 @@
-#include "SceneTutorial.h"
+#include "SceneGameSt2.h"
 #include "Camera/CameraManager.h"
+#include "SceneManager.h"
+#include "SceneGame.h"
 #include "Input/Input.h"
 #include "Graphics/Graphics.h"
 
@@ -7,28 +9,28 @@
 #include "EnemyGunner.h"
 #include "EnemyMelee.h"
 
-#include "SceneManager.h"
-#include "SceneGame.h"
-#include "SceneLoading.h"
-#include "SceneClear.h"
-#include "SceneOver.h"
+#include"SceneLoading.h"
+#include"SceneClear.h"
+#include"SceneOver.h"
 
 #include "Menu.h"
 
 #include "StageManager.h"
 #include "StageSkybox.h"
-#include "StageMain0.h"
-#include "StageCollision0.h"
+#include "StageMain2.h"
+#include "StageCollision2.h"
 
+#include "DoorManager.h"
+#include "Door.h"
 
 #include "Framework.h"
 
-#include "EffectManager.h"
-#include "Graphics/Texture.h"
+#include"EffectManager.h"
+#include"Graphics/Texture.h"
 
 
 // 初期化
-void SceneTutorial::Initialize()
+void SceneGameSt2::Initialize()
 {
     // ロード％初期化    
     SetLoadPercent(0.0f);
@@ -41,7 +43,6 @@ void SceneTutorial::Initialize()
     // プレイヤー
     player = std::make_unique<Player>(device);
     player->Init();
-    player->SetPosition(Vec3(-19, 40, 0));
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -54,15 +55,23 @@ void SceneTutorial::Initialize()
         // ロード％更新
         AddLoadPercent(1.0f);
 
-        StageMain0* stageMain = new StageMain0(device);
+        StageMain2* stageMain = new StageMain2(device);
         stageMain->PlayerData(player.get());
         StageManager::Instance().Register(stageMain);
-        StageCollision0* stageCollision = new StageCollision0(device);
+        StageCollision2* stageCollision = new StageCollision2(device);
         StageManager::Instance().Register(stageCollision);
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);
     }
-    
+    // ドア
+    {
+        DoorManager::Instance().Init();
+
+        Door* door = new Door(device);
+        door->SetPos(Vec3(-54.0f, 29.6f, -3.5f));
+        door->PlayerData(player.get());
+        DoorManager::Instance().Register(door);
+    }
     // ロード％更新
     AddLoadPercent(1.0f);
 
@@ -115,18 +124,17 @@ void SceneTutorial::Initialize()
     SBBlur.initialize(device, gfx.GetDeviceContext());
     // ロード％ 100%
     SetLoadPercent(10.0f);
-
-    // 変数初期化
-    camTargetPos = { -19,5,0 };
-    cameraTargetChange = false;
 }
 
 // 終了化
-void SceneTutorial::Finalize()
+void SceneGameSt2::Finalize()
 {
     // エネミー終了処理	
     EnemyManager::Instance().Clear();
-   
+
+    // ドア終了処理
+    DoorManager::Instance().Clear();
+
     // ステージ終了処理
     StageManager::Instance().Clear();
     StageManager::Destory();
@@ -145,7 +153,7 @@ void SceneTutorial::Finalize()
 }
 
 // 更新処理
-void SceneTutorial::Update(float elapsedTime)
+void SceneGameSt2::Update(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
@@ -153,7 +161,8 @@ void SceneTutorial::Update(float elapsedTime)
     if (Menu::Instance().GetMenuFlag() == false)
     {
 
-        float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();        
+        float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
+        //TODO: 敵の数増えるとelapsedTime　おかしくなる
         // ヒットストップ
         slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
         // スローモーション
@@ -169,13 +178,14 @@ void SceneTutorial::Update(float elapsedTime)
         // ステージ
         StageManager::Instance().Update(slowElapsedTime);
 
+        // ドア
+        DoorManager::Instance().Update(elapsedTime);
+
         // プレイヤー
         {
             player->Update(slowElapsedTime);
             // シフトブレイク更新処理
             SBManager::Instance().Update(slowElapsedTime);
-
-            if (player->GetIsAtk())cameraTargetChange = true;
         }
 
         // カメラ
@@ -185,8 +195,7 @@ void SceneTutorial::Update(float elapsedTime)
             cameraMgr.Update(slowElapsedTime);
 
             Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
-            if(cameraTargetChange) CameraManager::Instance().SetGoal(target);
-            else CameraManager::Instance().SetGoal(camTargetPos);
+            CameraManager::Instance().SetGoal(target);
         }
 
 
@@ -245,16 +254,16 @@ void SceneTutorial::Update(float elapsedTime)
 
     ti++;*/
 
-    // TODO 現在のステージの死んでるエネミーの数が０の場合  次のステージへいけるようになる
+    // TODO 現在のステージの死んでるエネミーの数が０の場合 次のステージへ
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
         // 次のステージへ移る処理
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
     }
 }
 
 // 描画処理
-void SceneTutorial::Render(float elapsedTime)
+void SceneGameSt2::Render(float elapsedTime)
 {
     Graphics& gfx = Graphics::Ins();
     ID3D11Device* device = gfx.GetDevice();
@@ -272,7 +281,6 @@ void SceneTutorial::Render(float elapsedTime)
     // 通常レンダリング
     dc->OMSetRenderTargets(1, &rtv, dsv);
 
-    // モデル描画
     //DirectX::XMFLOAT4X4 data{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 
     //// TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.
@@ -285,7 +293,9 @@ void SceneTutorial::Render(float elapsedTime)
         // モデル描画
         {
             // ステージ描画
-            StageManager::Instance().Render(dc, elapsedTime);           
+            StageManager::Instance().Render(dc, elapsedTime);
+            // ドア描画
+            DoorManager::Instance().Render(dc, elapsedTime);
             // プレイヤー描画
             player->Render(dc);
             // エネミー描画
@@ -305,7 +315,6 @@ void SceneTutorial::Render(float elapsedTime)
     }
 
     framebuffer[0]->deactivate(dc);
-    //コンスタントバッファ―をセット
     CBBlur.data.BlurPower = player->GetBlurPower();
     CBBlur.data.TU = 1.0f / gfx.GetScreenWidth();
     CBBlur.data.TV = 1.0f / gfx.GetScreenHeight();
@@ -330,7 +339,6 @@ void SceneTutorial::Render(float elapsedTime)
     Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> shader_resource_views[2] =
     { framebuffer[0]->shaderResourceViews[0].Get(), framebuffer[1]->shaderResourceViews[0].Get() };
     radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
-
 
     // 2D描画
     {
@@ -388,7 +396,7 @@ void SceneTutorial::Render(float elapsedTime)
 }
 
 // playerが死んだとき 等のリセット用
-void SceneTutorial::Reset()
+void SceneGameSt2::Reset()
 {
     // たまなし
     EnemyBulletManager::Instance().Clear();
@@ -404,7 +412,7 @@ void SceneTutorial::Reset()
 }
 
 // 敵の初期化
-void SceneTutorial::EnemyInitialize(ID3D11Device* device)
+void SceneGameSt2::EnemyInitialize(ID3D11Device* device)
 {
     for (int i = 0; i < ENEMY_MAX; i++)
     {
@@ -415,7 +423,7 @@ void SceneTutorial::EnemyInitialize(ID3D11Device* device)
         }
 
         // 近接
-        if (i == 1)
+        if (i == 0)
         {
             EnemyMelee* melee = new EnemyMelee(device);
             // 座標セット
@@ -456,26 +464,26 @@ void SceneTutorial::EnemyInitialize(ID3D11Device* device)
 }
 
 // エネミー座標設定
-void SceneTutorial::EnemyPositionSetting()
+void SceneGameSt2::EnemyPositionSetting()
 {
 
-    enemyPos[0] = { -2.0f,0.5f };
-    enemyPos[1] = { -90.0f,10.5f };
-    enemyPos[2] = { -150.0f,10.5f };
+    enemyPos[0] = { -5.0f,29.5f };
+    enemyPos[1] = { -48.0f,29.5f };
+    enemyPos[2] = { -140.0f,28.0f };
 
     enemyGroup[0] = 0;
-    enemyGroup[1] = 1;
-    enemyGroup[2] = 2;
+    enemyGroup[1] = 0;
+    enemyGroup[2] = 1;
 
-    enemyWalk[0] = false;
+    enemyWalk[0] = true;
     enemyWalk[1] = false;
-    enemyWalk[2] = false;
+    enemyWalk[2] = true;
 
 }
 
 
 // エネミー攻撃予兆描画
-void SceneTutorial::RenderEnemyAttack()
+void SceneGameSt2::RenderEnemyAttack()
 {
 
     ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();

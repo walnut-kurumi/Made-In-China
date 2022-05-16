@@ -322,7 +322,6 @@ void SceneGame::Render(float elapsedTime)
     dc->PSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
     dc->GSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
 
-    //scene_blur blu{ sigma,intensity,expo };
     SBBlur.data.sigma = sigma;
     SBBlur.data.intensity = intensity;
     SBBlur.data.dummy0 = exp;
@@ -378,17 +377,6 @@ void SceneGame::Render(float elapsedTime)
     ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
     ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
     ImGui::SliderFloat("expo", &exp, 0, 10);
-   /* ImGui::SliderFloat("gaussian_sigma", &sigma, -10, 1);
-    ImGui::SliderFloat("bloom_intensity", &intensity, -10, 1);
-    ImGui::SliderFloat("expo", &expo, 0, 10);
-    if (ImGui::TreeNode("smoothstep"))
-    {
-        ImGui::SliderFloat("x", &rgb.x, 0, 1);
-        ImGui::SliderFloat("y", &rgb.y, 0, 1);
-        ImGui::SliderFloat("z", &rgb.z, 0, 1);
-
-        ImGui::TreePop();
-    }*/
 
     ImGui::End();
 
