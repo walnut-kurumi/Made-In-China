@@ -64,7 +64,8 @@ public:
 	void WalkFlagInitialize() { walk = initialWalk; }	
 
 	// 最初の向き ←左true　false右→
-	void SetDirection(bool b) { direction = b; }
+	void SetInitialDirection(bool b) { initialDirection = b; }
+	void DirectionInitialize() { direction = initialDirection; }
 
 	// ｵﾁﾀﾗｼﾇ
 	void FallIsDead();
@@ -88,6 +89,7 @@ protected:
 	bool isDead = false;
 	
 	// 移動する向き ←左true　false右→
+	bool initialDirection = false;
 	bool direction = false;
 
 

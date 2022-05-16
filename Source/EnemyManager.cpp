@@ -134,6 +134,7 @@ void EnemyManager::EnemyReset()
 		enemy->PositionInitialize();
 		enemy->GroupNumInitialize();
 		enemy->WalkFlagInitialize();
+		enemy->DirectionInitialize();
 	}
 }
 

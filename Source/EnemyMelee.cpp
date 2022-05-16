@@ -80,7 +80,6 @@ void EnemyMelee::Init()
 
     isDead = false;
 
-    direction = false;
 
     isAttack = false;
     isSearch = false;
@@ -225,7 +224,7 @@ void EnemyMelee::MoveWalk(bool direction)
 {
     // walk
     float vx;
-    (direction ? vx = -1 : vx = 1);
+    (direction ? vx = 1 : vx = -1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
     Move(vx, 0.0f, moveSpeed);
 }

@@ -456,6 +456,9 @@ void SceneTutorial::Reset()
     EnemyManager::Instance().Init();
     EnemyManager::Instance().EnemyReset();
 
+    // ドアリセット
+    DoorManager::Instance().Init();
+
     // プレイヤー蘇生 ポジションリセット
     player->Init();
     player->SetPosition(Vec3(-19, 40, 0));
@@ -489,7 +492,8 @@ void SceneTutorial::EnemyInitialize(ID3D11Device* device)
             melee->SetInitialGroupNum(enemyGroup[i]);
             melee->GroupNumInitialize();
             // 向きセット
-            melee->SetDirection(enemyDirection[i]);
+            melee->SetInitialDirection(enemyDirection[i]);
+            melee->DirectionInitialize();
 
             EnemyManager::Instance().Register(melee);
         }
@@ -507,7 +511,8 @@ void SceneTutorial::EnemyInitialize(ID3D11Device* device)
             gunner->SetInitialGroupNum(enemyGroup[i]);
             gunner->GroupNumInitialize();
             // 向きセット
-            gunner->SetDirection(enemyDirection[i]);
+            gunner->SetInitialDirection(enemyDirection[i]);
+            gunner->DirectionInitialize();
 
             EnemyManager::Instance().Register(gunner);
         }
