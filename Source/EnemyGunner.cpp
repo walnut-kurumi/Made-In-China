@@ -10,16 +10,7 @@
 // コンストラクタ
 EnemyGunner::EnemyGunner(ID3D11Device* device)
 {
-#if 0
-    const char* idle = "Data/Models/Enemy/JummoAnimations/Idle.fbx";
-    const char* run = "Data/Models/Enemy/JummoAnimations/Run.fbx";
-    const char* walk = "Data/Models/Enemy/JummoAnimations/Walk.fbx";
-    const char* attack = "Data/Models/Enemy/JummoAnimations/Attack.fbx";
-    const char* blow = "Data/Models/Enemy/JummoAnimations/GetHit1.fbx";
-    const char* death = "Data/Models/Enemy/JummoAnimations/Death.fbx";
 
-    model = new Model(device, "Data/Models/Enemy/Jummo.fbx");
-#else
   /*  const char* idle = "Data/Models/Enemy/Animations/ver1/Idle.fbx";
     const char* run = "Data/Models/Enemy/Animations/ver1/Run.fbx";
     const char* walk = "Data/Models/Enemy/Animations/ver1/Walk.fbx";
@@ -29,15 +20,15 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
 
     model = new Model(device, "Data/Models/Enemy/Enemy.fbx", true);*/
 
-    const char* idle = "Data/Models/Enemy/new2/Ewait.fbx";
-    const char* run = "Data/Models/Enemy/new2/Erun.fbx";
-    const char* walk = "Data/Models/Enemy/new2/Ewalk.fbx";
-    const char* attack = "Data/Models/Enemy/new2/Eatk.fbx";
-    const char* blow = "Data/Models/Enemy/new2/Edeath.fbx";
-    const char* death = "Data/Models/Enemy/new2/Edeath.fbx";
+    const char* idle = "Data/Models/Enemy/GunnerAnimation/Idle.fbx";
+    const char* run = "Data/Models/Enemy/GunnerAnimation/Run.fbx";
+    const char* walk = "Data/Models/Enemy/GunnerAnimation/Walk.fbx";
+    const char* attack = "Data/Models/Enemy/GunnerAnimation/Attack.fbx";
+    const char* blow = "Data/Models/Enemy/GunnerAnimation/Death.fbx";
+    const char* death = "Data/Models/Enemy/GunnerAnimation/Death.fbx";
 
-    model = new Model(device, "Data/Models/Enemy/new2/T.fbx", true);
-#endif
+    model = new Model(device, "Data/Models/Enemy/Gunner.fbx", true);
+
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(State::Run));
@@ -91,7 +82,7 @@ void EnemyGunner::Init()
 
     materialColor = { 1,1,1,1 };
 
-    height = 6.0f;
+    height = 8.0f;
 
     centerPosition = position;
     centerPosition.y += 1.0f;
@@ -99,8 +90,7 @@ void EnemyGunner::Init()
 
     isDead = false;
 
-    direction = false;
-
+   
     isAttack = false;
     isSearch = false;
 
@@ -151,22 +141,7 @@ void EnemyGunner::Update(float elapsedTime)
 
 // 描画処理
 void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
-{
-        switch (groupNum)
-        {
-        case 0:
-            materialColor = { 0,1,0,1 };
-            break;
-        case 1:
-            materialColor = { 0,0,1,1 };
-            break;
-        case 2:
-            materialColor = { 0,1,1,1 };
-            break;
-
-        default:
-            break;
-        }
+{      
         model->Begin(dc, *shader);
         model->Render(dc, materialColor);
      
@@ -251,7 +226,7 @@ void EnemyGunner::MoveWalk(bool direction)
 {
     // walk
     float vx;
-    (direction ? vx = -1 : vx = 1);
+    (direction ? vx = 1 : vx = -1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
     Move(vx, 0.0f,moveSpeed);
 }
@@ -259,20 +234,20 @@ void EnemyGunner::MoveWalk(bool direction)
 // 索敵エリア更新
 void EnemyGunner::UpdateSearchArea()
 {    
-    if (!direction)
+    if (direction)
     {        
-        searchAreaPos = { position.x - 10, position.y - 2.0f };        
+        searchAreaPos = { position.x - 10, position.y };        
         searchAreaScale = { 45, height + 5.0f };
     }
     else
     {        
-        searchAreaPos = { position.x - 35, position.y - 2.0f };        
+        searchAreaPos = { position.x - 35, position.y };        
         searchAreaScale = { 45, height + 5.0f };
     }    
     // 止まっているときは両方みれる
     if (!walk)
     {
-        searchAreaPos = { position.x - 25, position.y - 2.0f };
+        searchAreaPos = { position.x - 25, position.y };
         searchAreaScale = { 50, height + 5.0f };
     }
 }
@@ -305,9 +280,7 @@ bool EnemyGunner::Search()
 
         if (player->GetCenterPosition().x > position.x)direction = false;
         else if (player->GetCenterPosition().x < position.x) direction = true;
-
-        materialColor = { 1.0f,0.25f,0.25f,1.0f };
-
+      
         isSearch = true;
 
         return true;
@@ -376,7 +349,7 @@ void EnemyGunner::MoveAttack(float cooldown)
         // プレイヤーの中心座標
         const Vec3& p = { player->GetCenterPosition() };
         // エネミーの中心座標
-        const Vec3& e = { centerPosition.x,centerPosition.y,0.0f };
+        const Vec3& e = { centerPosition.x,centerPosition.y + 2.0f,0.0f };
 
         // 発射する向き       
         // プレイヤーに向かって
@@ -431,7 +404,7 @@ void EnemyGunner::TransitionIdleState()
     turnFlag = false;
     walkFlag = false;
     isSearch = false;
-    idleTimer = 5.0f;
+    idleTimer = 2.5f;
     moveSpeed = 0;
     model->PlayAnimation(static_cast<int>(state), true);
 }
@@ -643,8 +616,7 @@ void EnemyGunner::UpdateDeathState(float elapsedTime)
 {    
    // 死亡アニメーション終わったら消滅させる
     if (!model->IsPlayAnimatimon())
-    {        
-        OnDead();
+    {                
         //Destroy();
     }
 }

@@ -11,7 +11,6 @@
 #include "SceneGame.h"
 #include "SceneLoading.h"
 #include "SceneClear.h"
-#include "SceneOver.h"
 
 #include "Menu.h"
 
@@ -180,7 +179,7 @@ void SceneTutorial::Update(float elapsedTime)
             // 着地したらスローできる
             if (player->GetPosition().y < 0.1f && isTutorial)
             {
-                isPause = true;
+                isPause = true;                
                 player->SetCanSlow(true);
             }
             // スロー入力したらそのままスロー
@@ -300,11 +299,15 @@ void SceneTutorial::Update(float elapsedTime)
 
     ti++;*/
 
-    // TODO 現在のステージの死んでるエネミーの数が０の場合  次のステージへいけるようになる
+    // 現在のステージの死んでるエネミーの数が０の場合
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
-        // 次のステージへ移る処理
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        // ゴールと判定とる         
+        if (StageManager::Instance().CollisionPlayerVsNextStagePos(player->GetCenterPosition(), player->GetRadius()))
+        {
+            // 次のステージへ移る処理
+            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        }
     }
 }
 
@@ -449,6 +452,13 @@ void SceneTutorial::Render(float elapsedTime)
 // playerが死んだとき 等のリセット用
 void SceneTutorial::Reset()
 {
+    // 変数初期化
+    isTutorial = true;
+    isPause = false;
+    camTargetPos = { -19,5,0 };
+    cameraTargetChange = false;
+    isSlow = false;
+
     // たまなし
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
@@ -456,11 +466,17 @@ void SceneTutorial::Reset()
     EnemyManager::Instance().Init();
     EnemyManager::Instance().EnemyReset();
 
+    // ドアリセット
+    DoorManager::Instance().Init();
+
     // プレイヤー蘇生 ポジションリセット
     player->Init();
     player->SetPosition(Vec3(-19, 40, 0));
 
-
+    // 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける   
+    player->SetIsControl(false);
+    player->SetCanSlow(false);
+    player->SetCanAttack(false);
 }
 
 // 敵の初期化
@@ -478,34 +494,38 @@ void SceneTutorial::EnemyInitialize(ID3D11Device* device)
         if (i == 1)
         {
             EnemyMelee* melee = new EnemyMelee(device);
+
             // 座標セット
             melee->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
             melee->PositionInitialize();
-
             //歩き回るかどうか
             melee->SetInitialWalk(enemyWalk[i]);
             melee->WalkFlagInitialize();
-
             // グループ番号セット
             melee->SetInitialGroupNum(enemyGroup[i]);
             melee->GroupNumInitialize();
+            // 向きセット
+            melee->SetInitialDirection(enemyDirection[i]);
+            melee->DirectionInitialize();
 
             EnemyManager::Instance().Register(melee);
         }
         else
         {
             EnemyGunner* gunner = new EnemyGunner(device);
+
             // 座標セット
             gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
             gunner->PositionInitialize();
-
             //歩き回るかどうか
             gunner->SetInitialWalk(enemyWalk[i]);
             gunner->WalkFlagInitialize();
-
             // グループ番号セット
             gunner->SetInitialGroupNum(enemyGroup[i]);
             gunner->GroupNumInitialize();
+            // 向きセット
+            gunner->SetInitialDirection(enemyDirection[i]);
+            gunner->DirectionInitialize();
 
             EnemyManager::Instance().Register(gunner);
         }
@@ -520,7 +540,7 @@ void SceneTutorial::EnemyPositionSetting()
 {
 
     enemyPos[0] = { -2.0f,0.5f };
-    enemyPos[1] = { -90.0f,10.5f };
+    enemyPos[1] = { -70.0f,0.5f };
     enemyPos[2] = { -150.0f,10.5f };
 
     enemyGroup[0] = 0;
@@ -530,6 +550,10 @@ void SceneTutorial::EnemyPositionSetting()
     enemyWalk[0] = false;
     enemyWalk[1] = false;
     enemyWalk[2] = false;
+    
+    enemyDirection[0] = false;
+    enemyDirection[1] = true;
+    enemyDirection[2] = true;
 
 }
 

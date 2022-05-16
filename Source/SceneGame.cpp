@@ -10,8 +10,7 @@
 #include "EnemyMelee.h"
 
 #include"SceneLoading.h"
-#include"SceneClear.h"
-#include"SceneOver.h"
+#include"SceneGameSt2.h"
 
 #include "Menu.h"
 
@@ -19,6 +18,7 @@
 #include "StageSkybox.h"
 #include "StageMain1.h"
 #include "StageCollision1.h"
+#include "StagePenetrate1.h"
 
 #include "DoorManager.h"
 #include "Door.h"
@@ -60,6 +60,8 @@ void SceneGame::Initialize()
         StageManager::Instance().Register(stageMain);
         StageCollision1* stageCollision = new StageCollision1(device);
         StageManager::Instance().Register(stageCollision);
+        StagePenetrate1* stagePenetrate = new StagePenetrate1(device);
+        StageManager::Instance().Register(stagePenetrate);
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);
     }
@@ -255,11 +257,15 @@ void SceneGame::Update(float elapsedTime)
 
     ti++;*/
 
-    // TODO 現在のステージの死んでるエネミーの数が０の場合 次のステージへいけるようになる
+    // 現在のステージの死んでるエネミーの数が０の場合
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
-        // 次のステージへ移る処理
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
+        // ゴールと判定とる         
+        if (StageManager::Instance().CollisionPlayerVsNextStagePos(player->GetCenterPosition(), player->GetRadius()))
+        {
+            // 次のステージへ移る処理
+            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGameSt2));
+        }
     }
 }
 
@@ -408,6 +414,8 @@ void SceneGame::Reset()
     // 敵蘇生 ポジションリセット
     EnemyManager::Instance().Init();    
     EnemyManager::Instance().EnemyReset();
+    // ドアリセット
+    DoorManager::Instance().Init();
 
     // プレイヤー蘇生 ポジションリセット
     player->Init();
@@ -430,34 +438,38 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
         if (i == 0)
         {
             EnemyMelee* melee = new EnemyMelee(device);
+
             // 座標セット
             melee->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
             melee->PositionInitialize();
-
             //歩き回るかどうか
             melee->SetInitialWalk(enemyWalk[i]);
             melee->WalkFlagInitialize();
-
             // グループ番号セット
             melee->SetInitialGroupNum(enemyGroup[i]);
             melee->GroupNumInitialize();
+            // 向きセット
+            melee->SetInitialDirection(enemyDirection[i]);
+            melee->DirectionInitialize();
 
             EnemyManager::Instance().Register(melee);
         }
         else
         {
             EnemyGunner* gunner = new EnemyGunner(device);
+
             // 座標セット
             gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
             gunner->PositionInitialize();
-
             //歩き回るかどうか
             gunner->SetInitialWalk(enemyWalk[i]);
             gunner->WalkFlagInitialize();
-
             // グループ番号セット
             gunner->SetInitialGroupNum(enemyGroup[i]);
             gunner->GroupNumInitialize();
+            // 向きセット
+            gunner->SetInitialDirection(enemyDirection[i]);
+            gunner->DirectionInitialize();
 
             EnemyManager::Instance().Register(gunner);
         }
@@ -473,7 +485,7 @@ void SceneGame::EnemyPositionSetting()
 
     enemyPos[0] = { -6.5f,29.5f };
     enemyPos[1] = { -48.0f,29.5f };
-    enemyPos[2] = { -140.0f,28.0f };
+    enemyPos[2] = { -140.0f,29.5f };
 
     enemyGroup[0] =0;
     enemyGroup[1] =0;
@@ -483,6 +495,9 @@ void SceneGame::EnemyPositionSetting()
     enemyWalk[1] = false;
     enemyWalk[2] = true;
    
+    enemyDirection[0] = false;
+    enemyDirection[1] = true;
+    enemyDirection[2] = true;
 }
 
 

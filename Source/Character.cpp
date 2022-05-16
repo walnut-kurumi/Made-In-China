@@ -443,4 +443,7 @@ void Character::UpdateVelocity(float elapsedFrame) {
 void Character::UpdateMove(float elapsedTime) {
     UpdateVerticalMove(elapsedTime);
     UpdateHorizontalMove(elapsedTime);
+    
+    // â°ÉXÉNÇ»ÇÃÇ≈Zç¿ïWå≈íË
+    position.z = 0;
 }

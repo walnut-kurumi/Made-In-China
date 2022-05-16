@@ -121,7 +121,7 @@ private:
 	// 攻撃範囲
 	float attackRadius = 2.0f;
 	// 射程距離
-	float attackRange = 6.0f;
+	float attackRange = 7.0f;
 	// 攻撃CD
 	float attackCooldown = 0;
 
@@ -129,9 +129,7 @@ private:
 	// 吹っ飛ばす時間
 	float blowTimer = 0;
 
-	// 移動する向き ←左true　false右→
-	bool direction = false;
-
+	
 
 	// タゲ切るタイマー	
 	float targetTimer = 0.0f;

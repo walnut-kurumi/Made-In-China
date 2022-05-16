@@ -61,7 +61,11 @@ public:
 	// 初期化用
 	void SetInitialWalk(bool b) { initialWalk = b; }
 	// 初期化
-	void WalkFlagInitialize() { walk = initialWalk; }
+	void WalkFlagInitialize() { walk = initialWalk; }	
+
+	// 最初の向き ←左true　false右→
+	void SetInitialDirection(bool b) { initialDirection = b; }
+	void DirectionInitialize() { direction = initialDirection; }
 
 	// ｵﾁﾀﾗｼﾇ
 	void FallIsDead();
@@ -84,6 +88,11 @@ protected:
 	// 死んでるか
 	bool isDead = false;
 	
+	// 移動する向き ←左true　false右→
+	bool initialDirection = false;
+	bool direction = false;
+
+
 	// 初期座標
 	Vec3 initialPos = {};
 

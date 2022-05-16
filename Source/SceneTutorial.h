@@ -53,6 +53,7 @@ private:
 	Vec2 enemyPos[ENEMY_MAX] = {};
 	int enemyGroup[ENEMY_MAX] = {};
 	bool enemyWalk[ENEMY_MAX] = {};
+	bool enemyDirection[ENEMY_MAX] = {};
 
 	Sprite* Bar{};
 

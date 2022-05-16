@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include "SceneLoading.h"
 #include "SceneTutorial.h"
-#include "SceneGame.h"
+#include "SceneGameSt2.h"
 #include "Graphics/Graphics.h"
 
 
@@ -87,7 +87,7 @@ void SceneTitle::Update(float elapsedTime)
         if (Fade::Instance().GetFadeOutFinish())
         {
             SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
-            //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+            //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGameSt2));
         }
     }
     // ‚¨‚í‚é

@@ -2,7 +2,7 @@
 
 void DoorManager::Init()
 {
-	
+    for (Door* door : doors) door->Init();
 }
 
 void DoorManager::Update(float elapsedTime)

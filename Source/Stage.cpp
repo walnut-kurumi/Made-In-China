@@ -1,5 +1,12 @@
 #include "Stage.h"
 
+
+// プレイヤーと次のステージへ移るときの場所で判定
+bool Stage::CollisionPlayerVsNextStagePos(Vec3 playerPos, float playerRadius)
+{
+    return Collision::SphereVsSphere(NextStagePos, playerPos, NextStageRadius, playerRadius);
+}
+
 void Stage::UpdateTransform()
 {
     // スケール行列を作成

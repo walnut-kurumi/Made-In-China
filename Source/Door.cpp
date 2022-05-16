@@ -54,7 +54,7 @@ void Door::Update(float elapsedTime)
 void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
 {
 	model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
-	model->Render(dc);
+    model->Render(dc, Vec4{ 0.564f,0.42f,0.1f,1.0f });
 
 	// 必要なったら追加
     debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
@@ -68,8 +68,7 @@ void Door::RenderGui()
     if (ImGui::Begin("Door", nullptr, ImGuiWindowFlags_None)) {
         // トランスフォーム
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::SliderFloat3("Pos", &position.x, -100, 100);
-            ImGui::SliderFloat3("centerPos", &centerPos.x, -100, 100);
+            ImGui::SliderFloat3("Pos", &position.x, -200, 200);            
             ImGui::SliderFloat3("Angle", &angle.x, 0, 3.14f);
         }
         unsigned int flag = static_cast<int>(isOpen);

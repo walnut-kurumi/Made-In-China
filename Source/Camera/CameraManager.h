@@ -63,7 +63,7 @@ private:
 	float shakeTimer = 0.0f;
 
 	float rollSpeed = 1.0f;
-	float range = 150.0f; // Œ³65.0f
+	float range = 145.0f; // Œ³65.0f
 
 	float maxAngle = DirectX::XMConvertToRadians(45);
 	float minAngle = DirectX::XMConvertToRadians(-45);

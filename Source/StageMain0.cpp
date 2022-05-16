@@ -10,12 +10,15 @@ StageMain0::StageMain0(ID3D11Device* device)
     back = new Sprite(device, L"./Data/Sprites/BackGround.png");
 
     model = new Model(device, ".\\Data\\Models\\Stage\\Stage0.fbx", true, 0);
+   
     scale.x = scale.y = scale.z = 0.05f;
     scale.x *= -1;
 
     angle.y = DirectX::XMConvertToRadians(-90);
 
-    bgpos = { -200, -600 };
+    bgpos = { -100, -600 };
+
+    NextStagePos = { -168.0f,10.5f,0.0f };
 
     type = Type::Main;
     debugRenderer = std::make_unique<DebugRenderer>(device);
@@ -38,19 +41,18 @@ void StageMain0::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
 {
     //Scroll.data.scroll_direction;
     //deviceContext->UpdateSubresource(
-    back->render(deviceContext, bgpos.x, -150, 1500, 1150, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+    back->render(deviceContext, bgpos.x, -435, 1500, 1150, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
     model->Begin(deviceContext, Shaders::Ins()->GetSkinnedMeshShader());
     model->Render(deviceContext);
-
-    // •K—v‚È‚Á‚½‚ç’Ç‰Á
-    debugRenderer.get()->DrawSphere(position, 25, Vec4(1, 0, 1, 1));
-
-    //debugRenderer.get()->Render(deviceContext, CameraManager::Instance().GetViewProjection());
+    
+#ifdef _DEBUG
+    debugRenderer.get()->DrawSphere(NextStagePos, NextStageRadius, Vec4(0, 0.5f, 1, 1));
+    debugRenderer.get()->Render(deviceContext, CameraManager::Instance().GetViewProjection());
+#endif
 }
 
 bool StageMain0::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
 {
-    return false;
-    //return Collision::RayVsModel(start, end, model->GetSkinnedMeshs(), transform, hit);
+    return false;    
 }
