@@ -282,24 +282,6 @@
     <ClCompile Include="Source\RadialBlur.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Graphics\LuminanceExtractionShader.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\GaussianBlurShader.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\FinalpassShader.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\RenderTarget.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graphics\SpriteResource.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PostprocessingRenderer.cpp">
-      <Filter>Source\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Source\StageCollision1.cpp">
       <Filter>Source\Stages\Stage1</Filter>
     </ClCompile>
@@ -323,6 +305,9 @@
     </ClCompile>
     <ClCompile Include="Source\DoorManager.cpp">
       <Filter>Source\Stages</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneGameSt2.cpp">
+      <Filter>Source\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -529,24 +514,6 @@
     <ClInclude Include="Source\RadialBlur.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Graphics\LuminanceExtractionShader.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\GaussianBlurShader.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\FinalpassShader.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\RenderTarget.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graphics\SpriteResource.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PostprocessingRenderer.h">
-      <Filter>Source\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Source\StageCollision1.h">
       <Filter>Source\Stages\Stage1</Filter>
     </ClInclude>
@@ -570,6 +537,9 @@
     </ClInclude>
     <ClInclude Include="Source\DoorManager.h">
       <Filter>Source\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneGameSt2.h">
+      <Filter>Source\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

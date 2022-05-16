@@ -34,7 +34,7 @@ void SceneTutorial::Initialize()
     HRESULT hr{ S_OK };
 
     ID3D11Device* device = Graphics::Ins().GetDevice();
-
+    Graphics& gfx = Graphics::Ins();
 
     // プレイヤー
     player = std::make_unique<Player>(device);
@@ -101,6 +101,14 @@ void SceneTutorial::Initialize()
 
     // メニュー
     Menu::Instance().Initialize();
+
+    BluShader = Shaders::Ins()->GetBlurShader();
+
+    framebuffer[0] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
+    framebuffer[1] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth() / 2, gfx.GetScreenHeight() / 2);
+    radialBlur = std::make_unique<RadialBlur>(device);
+    CBBlur.initialize(device, gfx.GetDeviceContext());
+    SBBlur.initialize(device, gfx.GetDeviceContext());
 
     // ロード％ 100%
     SetLoadPercent(10.0f);
@@ -230,6 +238,8 @@ void SceneTutorial::Render(float elapsedTime)
     // 通常レンダリング
     dc->OMSetRenderTargets(1, &rtv, dsv);
 
+    framebuffer[0]->clear(dc, 1.0f, 1.0f, 1.0f, 0.0f);
+    framebuffer[0]->activate(dc);
     // モデル描画
     {
         // ステージ描画
@@ -249,6 +259,34 @@ void SceneTutorial::Render(float elapsedTime)
     {
         EffectManager::Instance().Render(cameraMgr.GetView(), cameraMgr.GetProjection());
     }
+
+    framebuffer[0]->deactivate(dc);
+    //コンスタントバッファ―をセット
+    CBBlur.data.BlurPower = player->GetBlurPower();
+    CBBlur.data.TU = 1.0f / gfx.GetScreenWidth();
+    CBBlur.data.TV = 1.0f / gfx.GetScreenHeight();
+    CBBlur.applyChanges();
+    dc->VSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
+    dc->PSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
+    dc->GSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
+
+    SBBlur.data.sigma = sigma;
+    SBBlur.data.intensity = intensity;
+    SBBlur.data.dummy0 = exp;
+    SBBlur.applyChanges();
+    dc->VSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
+    dc->PSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
+    dc->GSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
+
+    framebuffer[1]->clear(dc);
+    framebuffer[1]->activate(dc);
+    radialBlur->blit(dc, framebuffer[0]->shaderResourceViews[0].GetAddressOf(), 0, 1);
+    framebuffer[1]->deactivate(dc);
+
+    Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> shader_resource_views[2] =
+    { framebuffer[0]->shaderResourceViews[0].Get(), framebuffer[1]->shaderResourceViews[0].Get() };
+    radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
+
 
     // 2D描画
     {

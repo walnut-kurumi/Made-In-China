@@ -14,12 +14,12 @@
 
 #include "framebuffer.h"
 #include "RadialBlur.h"
- 
-class SceneGame : public Scene
+
+class SceneGameSt2 : public Scene
 {
 public:
-	SceneGame() {};
-	~SceneGame() override {};
+	SceneGameSt2() {};
+	~SceneGameSt2() override {};
 
 	// 初期化
 	virtual void Initialize() override;
@@ -43,7 +43,7 @@ public:
 	// 敵の攻撃予兆
 	void RenderEnemyAttack();
 
-private:	
+private:
 	std::unique_ptr<Player> player{};
 
 
@@ -76,7 +76,7 @@ private:
 	float et = 0;
 
 	bool menuflag = false;
-	
+
 	DirectX::XMFLOAT2 mousepos = {};
 
 	//シェーダー用の変数

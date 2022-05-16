@@ -5,6 +5,8 @@
 #include "Graphics/Graphics.h"
 #include "Graphics/Sprite.h"
 #include "Model.h"
+#include "framebuffer.h"
+#include "RadialBlur.h"
 
 class SceneTutorial : public Scene
 {
@@ -54,4 +56,15 @@ private:
 	bool menuflag = false;
 
 	DirectX::XMFLOAT2 mousepos = {};
+
+	//シェーダー用の変数
+	Shader BluShader;
+	ConstantBuffer<scene_blur> SBBlur;
+	ConstantBuffer<Radial_Blur> CBBlur;
+	std::unique_ptr<RadialBlur> radialBlur;
+	std::unique_ptr<Framebuffer> framebuffer[8];
+	float sigma = 1.0f;
+	float intensity = 0.07f;
+	float exp = 1.0f;
+
 };
