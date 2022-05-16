@@ -105,6 +105,7 @@ void SceneGame::Initialize()
     Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
     LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");   
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
+    fade = new Sprite(device, L"./Data/Sprites/scene/black.png");
 
     Menu::Instance().Initialize();
 
@@ -148,6 +149,7 @@ void SceneGame::Finalize()
     delete enemyattack;
     delete LoadBar;
     delete Bar;
+    delete fade;
     //デバッグ
    // delete hitEffect;
 }
@@ -295,6 +297,10 @@ void SceneGame::Render(float elapsedTime)
             StageManager::Instance().Render(dc, elapsedTime);
             // ドア描画
             DoorManager::Instance().Render(dc, elapsedTime);
+
+            // スロー演出、敵や自機など重要なオブジェクト以外を暗くする
+            fade->render(dc, 0, 0, 1920, 1080, 1, 1, 1, player->GetSlowAlpha(), 0);
+
             // プレイヤー描画
             player->Render(dc);
             // エネミー描画
@@ -312,8 +318,8 @@ void SceneGame::Render(float elapsedTime)
             EffectManager::Instance().Render(cameraMgr.GetView(), cameraMgr.GetProjection());
         }
     }
-    framebuffer[0]->deactivate(dc);
 
+    framebuffer[0]->deactivate(dc);
     CBBlur.data.BlurPower = player->GetBlurPower();
     CBBlur.data.TU = 1.0f / gfx.GetScreenWidth();
     CBBlur.data.TV = 1.0f / gfx.GetScreenHeight();
@@ -353,7 +359,6 @@ void SceneGame::Render(float elapsedTime)
 
         // フェード用
         Fade::Instance().Render(elapsedTime);
-
     }
 
 

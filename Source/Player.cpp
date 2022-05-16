@@ -96,6 +96,7 @@ void Player::Init() {
     // スローモーション関連
     playbackSpeed = 1.0f;
     slowSpeed = 0.5f;
+    slowAlpha = 0.0f;
 
     // ヒットストップ
     hitstopSpeed = 0.6f;
@@ -133,6 +134,10 @@ void Player::Init() {
     health = 5;
     oldHealth = 0;
 
+    // 操作可能か
+    isControl = true;
+    canSlow = true;
+    canAttack = true;
 
     gravFlag = true;
     // 中心座標更新
@@ -342,6 +347,9 @@ Vec3 Player::GetMoveVec() const {
 bool Player::InputMove(float elapsedTime) {
     if (deathFlag) return false;
 
+    // 操作不可ならリターン
+    if (!isControl)return false;
+
     // 進行ベクトル所得
     Vec3 moveVec = GetMoveVec();
 
@@ -354,6 +362,9 @@ bool Player::InputMove(float elapsedTime) {
 
 // ジャンプ入力処理
 bool Player::InputJump() {
+    // 操作不可ならリターン
+    if (!isControl)return false;
+
     Key& key = Input::Instance().GetKey();
     GamePad& gamePad = Input::Instance().GetGamePad();
 
@@ -372,20 +383,38 @@ bool Player::InputJump() {
 }
 
 void Player::InputSlow(float elapsedTime) {
+    // 操作不可ならリターン
+    if(!canSlow) if (!isControl) return;
+
     GamePad& gamePad = Input::Instance().GetGamePad();
     // 押してる間 且 コストがある間
     if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER
         && cost.Approval(elapsedTime)) {
         cost.Trg(true);
         slow = true;
-    }
-    else {
+        // アルファ値を1/10秒で最大に
+        slowAlpha += elapsedTime * 10;
+        slowAlpha = min(0.95f, slowAlpha);
+    }    
+    else if (!slowFixation) {
         cost.Trg(false);
         slow = false;
+        // アルファ値を1/10秒で最小に
+        slowAlpha -= elapsedTime * 10;
+        slowAlpha = max(0.0f, slowAlpha);
+    }
+    // スロー固定にしてるとき
+    if (slowFixation)
+    { // アルファ値を1/10秒で最大に
+        slowAlpha += elapsedTime * 10;
+        slowAlpha = min(0.95f, slowAlpha);
     }
 }
 
 bool Player::InputSB() {
+    // 操作不可ならリターン
+    if (!canAttack) if (!isControl)return false;
+
     GamePad& gamePad = Input::Instance().GetGamePad();
     ID3D11Device* device = Graphics::Ins().GetDevice();
     Key& key = Input::Instance().GetKey();
@@ -484,6 +513,10 @@ bool Player::InputSB() {
 }
 
 bool Player::InputAttack() {
+
+    // 操作不可ならリターン
+    if (!canAttack) if (!isControl)return false;
+
     // 入力情報を所得
     GamePad& gamePad = Input::Instance().GetGamePad();
     float ax = gamePad.GetAxisLX();

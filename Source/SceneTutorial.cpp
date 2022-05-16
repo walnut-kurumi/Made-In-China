@@ -96,6 +96,7 @@ void SceneTutorial::Initialize()
     Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
     LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
+    fade = new Sprite(device, L"./Data/Sprites/scene/black.png");
 
     Menu::Instance().Initialize();
 
@@ -117,8 +118,17 @@ void SceneTutorial::Initialize()
     SetLoadPercent(10.0f);
 
     // 変数初期化
+    isTutorial = true;
+    isPause = false;
     camTargetPos = { -19,5,0 };
-    cameraTargetChange = false;
+    cameraTargetChange = false;    
+    isSlow = false;
+
+    // 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける   
+    player->SetIsControl(false);
+    player->SetCanSlow(false);
+    player->SetCanAttack(false);
+
 }
 
 // 終了化
@@ -140,6 +150,7 @@ void SceneTutorial::Finalize()
     delete enemyattack;
     delete LoadBar;
     delete Bar;
+    delete fade;
     //デバッグ
    // delete hitEffect;
 }
@@ -152,19 +163,46 @@ void SceneTutorial::Update(float elapsedTime)
 
     if (Menu::Instance().GetMenuFlag() == false)
     {
-
-        float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();        
-        // ヒットストップ
-        slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
-        // スローモーション
-        slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
-
-
-
+        float slowElapsedTime = 0;
+        if (!isPause) {
+            slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
+            // ヒットストップ
+            slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
+            // スローモーション
+            slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
+        }
         DirectX::XMFLOAT3 screenPosition;
         screenPosition.x = static_cast<float>(mouse.GetPositionX());
         screenPosition.y = static_cast<float>(mouse.GetPositionY());
 
+        // チュートリアル
+        {
+            // 着地したらスローできる
+            if (player->GetPosition().y < 0.1f && isTutorial)
+            {
+                isPause = true;
+                player->SetCanSlow(true);
+            }
+            // スロー入力したらそのままスロー
+            if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER && isTutorial)
+            {
+                isSlow = true;
+                isPause = false;
+            }
+            if (isSlow && isTutorial)slowElapsedTime = elapsedTime * 0.25f;
+
+            // 弾止める
+            for (int i = 0; i < EnemyBulletManager::Instance().GetProjectileCount(); i++)
+            {
+                float posX = EnemyBulletManager::Instance().GetProjectile(i)->GetPosition().x;
+                if (posX <= -15.0f && isTutorial)
+                {
+                    EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(false);
+                    isPause = true;
+                    player->SetCanAttack(true);
+                }
+            }
+        }
 
         // ステージ
         StageManager::Instance().Update(slowElapsedTime);
@@ -172,10 +210,27 @@ void SceneTutorial::Update(float elapsedTime)
         // プレイヤー
         {
             player->Update(slowElapsedTime);
+            player->SetSlowFixation(isSlow);
             // シフトブレイク更新処理
             SBManager::Instance().Update(slowElapsedTime);
 
-            if (player->GetIsAtk())cameraTargetChange = true;
+            // チュートリアル終わり
+            if (player->GetIsAtk() && isTutorial) 
+            {
+                isTutorial = false;
+                isPause = false;
+                isSlow = false;
+                // カメラのターゲット変える
+                cameraTargetChange = true;
+                // 操作可能
+                player->SetIsControl(true);
+                player->SetSlowFixation(isSlow);
+                // 弾動かす
+                for (int i = 0; i < EnemyBulletManager::Instance().GetProjectileCount(); i++)
+                {
+                    EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(true);
+                }
+            }
         }
 
         // カメラ
@@ -286,6 +341,10 @@ void SceneTutorial::Render(float elapsedTime)
         {
             // ステージ描画
             StageManager::Instance().Render(dc, elapsedTime);           
+
+            // スロー演出、敵や自機など重要なオブジェクト以外を暗くする
+            fade->render(dc, 0, 0, 1920, 1080, 1, 1, 1, player->GetSlowAlpha(), 0);
+
             // プレイヤー描画
             player->Render(dc);
             // エネミー描画
@@ -399,6 +458,7 @@ void SceneTutorial::Reset()
 
     // プレイヤー蘇生 ポジションリセット
     player->Init();
+    player->SetPosition(Vec3(-19, 40, 0));
 
 
 }

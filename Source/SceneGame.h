@@ -90,5 +90,5 @@ private:
 
 	ConstantBuffer<Radial_Blur> CBBlur;
 
-
+	Sprite* fade{};
 };

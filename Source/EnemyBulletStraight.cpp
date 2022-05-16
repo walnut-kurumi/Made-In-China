@@ -28,10 +28,13 @@ void EnemyBulletStraight::Update(float elapsedTime)
 	}
 
 	// 移動
-	bulletSpeed = this->speed * elapsedTime;
-	position.x += direction.x * bulletSpeed;
-	position.y += direction.y * bulletSpeed;
-	position.z += direction.z * bulletSpeed;
+	if (isMove)
+	{
+		bulletSpeed = this->speed * elapsedTime;
+		position.x += direction.x * bulletSpeed;
+		position.y += direction.y * bulletSpeed;
+		position.z += direction.z * bulletSpeed;
+	}
 
 	// エフェクト更新
 	float angle = 90;

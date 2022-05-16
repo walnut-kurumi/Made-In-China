@@ -36,6 +36,9 @@ public:
 	// パリィフラグ取得
 	bool GetReflectionFlag() const { return reflectionFlag; }
 
+	// 動かすかどうか
+	void SetIsMove(bool b) { isMove = b; }
+
 	// 破棄
 	void Destroy();
 
@@ -63,6 +66,9 @@ protected:
 
 	// パリィした弾かどうか -> 弾き返してたら敵に当たるようになる
 	bool reflectionFlag = false;
+	
+	// 動くかどうか
+	bool isMove = true;
 
 	// エフェクト
 	Effect* ballisticEffect = nullptr;

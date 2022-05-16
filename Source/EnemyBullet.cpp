@@ -5,6 +5,7 @@
 
 EnemyBullet::EnemyBullet(EnemyBulletManager* manager) :manager(manager)
 {
+	isMove = true;
 	manager->Register(this);
 }
 
