@@ -97,7 +97,7 @@ void Player::Init() {
 
     // スローモーション関連
     playbackSpeed = 1.0f;
-    slowSpeed = 0.5f;
+    slowSpeed = 0.6f;
     slowAlpha = 0.0f;
 
     // ヒットストップ
@@ -153,10 +153,13 @@ void Player::Init() {
 }
 #include <Xinput.h>
 void Player::Update(float elapsedTime) {
+    // スロー中なら、スピードをちょっと上げる
+    if(slow) elapsedTime *= 1.3f;
+
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
     // 残像マネージャー更新
-    if (slow) {
+    if (slowAlpha > 0.0f) {
         AfterimageManager::Instance().SetParentData(
             model->GetSkinnedMeshs()->GetMeshs(),
             model->GetSkinnedMeshs()->GetMaterial(),
@@ -240,7 +243,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     dc->GSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
 
 
-    if (slow) {
+    if(slowAlpha > 0.0f) {
         model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
         AfterimageManager::Instance().Render(dc);
     }
@@ -419,7 +422,7 @@ void Player::InputSlow(float elapsedTime) {
         slow = true;
         // アルファ値を1/10秒で最大に
         slowAlpha += elapsedTime * 10;
-        slowAlpha = min(0.95f, slowAlpha);
+        slowAlpha = min(0.98f, slowAlpha);
     }    
     else if (!slowFixation) {
         cost.Trg(false);
