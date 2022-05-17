@@ -5,11 +5,12 @@
 Door::Door(ID3D11Device* device)
 {
 	model = new Model(device, "./Data/Models/Stage/StageDoor.fbx", true, 0);
+    backModel = new Model(device, "./Data/Models/Stage/StageDoor.fbx", true, 0);
 
 	scale.x = scale.y = scale.z = 0.05f;
     angle = { 0, DirectX::XMConvertToRadians(90), 0 };
 
-    isOpen = false;    
+    isOpen = false;
     radius = 4.0f;
 
 	//debugRenderer = std::make_unique<DebugRenderer>(device);
@@ -17,6 +18,7 @@ Door::Door(ID3D11Device* device)
 
 Door::~Door()
 {
+    delete backModel;
 	delete model;
 }
 
@@ -42,6 +44,7 @@ void Door::Update(float elapsedTime)
 
 	UpdateTransform();
     model->UpdateTransform(transform);
+    backModel->UpdateTransform(transform);
 
 
     // プレイヤーの攻撃とドアの当たり判定
@@ -53,9 +56,10 @@ void Door::Update(float elapsedTime)
 
 void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
 {
-	model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
+    backModel->Begin(dc, Shaders::Ins()->GetOutlineShader(),true);
+    backModel->Render(dc, backModelColor);
+    model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
     model->Render(dc, Vec4{ 0.564f,0.42f,0.1f,1.0f });
-
 	// 必要なったら追加
     //debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
     //debugRenderer.get()->DrawSphere(collisionPos, radius, Vec4(1, 0, 0, 1));

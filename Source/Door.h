@@ -17,8 +17,8 @@ public:
 
 	void Update(float elapsedTime);
 
-	void Render(ID3D11DeviceContext* deviceContext, float elapsedTime);	
-	void RenderGui();	
+	void Render(ID3D11DeviceContext* deviceContext, float elapsedTime);
+	void RenderGui();
 
 	bool RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit);
 
@@ -28,7 +28,7 @@ public:
 	void SetAngle(const Vec3& angle) { this->angle = angle; }
 	const Vec3& GetScale() const { return scale; }
 	void SetScale(const Vec3& scale) { this->scale = scale; }
-	
+
 	void OpenTheDoor();
 
 	// ドアとの当たり判定
@@ -43,6 +43,7 @@ protected:
 
 protected:
 	Model* model;
+	Model* backModel;
 
 	Player* player = nullptr;
 
@@ -55,7 +56,7 @@ protected:
 		0,0,1,0,
 		0,0,0,1
 	};
-	
+
 
 	// 開いているか
 	bool isOpen = false;
@@ -67,6 +68,8 @@ protected:
 	Vec3 centerPos = { 0,0,0 };
 	float radius = 0.0f;
 
+	// プレイヤーが近づいたら透明度上げ下げする
+	Vec4 backModelColor = { 0.1,0.1,0.7,1.0 };
 
-	//std::unique_ptr<DebugRenderer> debugRenderer;
+		//std::unique_ptr<DebugRenderer> debugRenderer;
 };

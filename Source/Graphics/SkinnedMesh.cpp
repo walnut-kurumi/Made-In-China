@@ -94,7 +94,7 @@ void SkinnedMesh::Init(ID3D11Device* device,BOOL frontCounterClockwise)
 	}
 }
 
-void SkinnedMesh::Begin(ID3D11DeviceContext* dc, Shader shader, bool wire)
+void SkinnedMesh::Begin(ID3D11DeviceContext* dc, Shader shader, bool wire, bool cullFront)
 {
 	// 各シェーダー設定
 	dc->VSSetShader(shader.GetVertexShader().Get(), nullptr, 0);
@@ -117,6 +117,8 @@ void SkinnedMesh::Begin(ID3D11DeviceContext* dc, Shader shader, bool wire)
 	// ワイヤーフレーム化ソリッド化
 	wire ? rasterizer->setRasterMode(Rasterizer::RASTER_STATE::WIREFRAME, dc) : rasterizer->setRasterMode(Rasterizer::RASTER_STATE::CULL_NONE, dc);
 	//wire ? dc->RSSetState(wireRasterizerState.Get()) : dc->RSSetState(solidRasterizerState.Get());
+
+	if (cullFront) rasterizer->setRasterMode(Rasterizer::RASTER_STATE::CULL_FRONT, dc);
 }
 
 void SkinnedMesh::End(ID3D11DeviceContext* dc)

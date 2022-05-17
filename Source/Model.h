@@ -30,9 +30,9 @@ public:
 
 	// ÉmÅ[Éhåüçı
 	SkinnedMesh::Animation::Keyframe::Node* FindNode(const char* name);
+	
+	void Begin(ID3D11DeviceContext* dc, Shader shader, bool wireframe = false, bool cullFront = false);
 
-
-	void Begin(ID3D11DeviceContext* dc, Shader shader, bool wireframe = false);
 	void Render(ID3D11DeviceContext* dc, const Vec4 materialColor = { 1.0f, 1.0f, 1.0f, 1.0f });// , const Animation::Keyframe* keyframe = nullptr);
 
 	const std::vector<SkinnedMesh::Mesh>& GetMeshs() const

@@ -86,7 +86,7 @@ private:
 
 public:
 	void Init(ID3D11Device* device, BOOL frontCounterClockwise);
-	void Begin(ID3D11DeviceContext* dc, Shader shader, bool wire = false);
+	void Begin(ID3D11DeviceContext* dc, Shader shader, bool wire = false, bool cullFront = false);
 	void End(ID3D11DeviceContext* dc);
 public:
 	static const int MAX_BONE_INFLUENCES = 4;

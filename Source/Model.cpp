@@ -25,8 +25,10 @@ void Model::PlayAnimation(int index, bool loop) {
 	stopAnimation = false;
 }
 
-void Model::Begin(ID3D11DeviceContext* dc, Shader shader, bool wireframe) {
-	skinnedMesh.get()->Begin(dc, shader, wireframe);
+
+void Model::Begin(ID3D11DeviceContext* dc, Shader shader, bool wireframe, bool cullFront)
+{
+	skinnedMesh.get()->Begin(dc, shader, wireframe, cullFront);
 }
 
 void Model::Render(ID3D11DeviceContext* dc, const Vec4 materialColor) {
