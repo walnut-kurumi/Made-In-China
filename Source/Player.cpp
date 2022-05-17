@@ -276,7 +276,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
         &p2,
         XMLoadFloat4x4(&left->globalTransform) * XMLoadFloat4x4(&transform)
     );
-    debugRenderer.get()->DrawSphere(DirectX::XMFLOAT3(p2._41,p2._42,p2._43), 1, Vec4(1, 1, 0, 1));
+    debugRenderer.get()->DrawSphere(DirectX::XMFLOAT3(p2._41,p2._42,p2._43), 2, Vec4(1, 0, 0, 1));
 
 #endif
 }
