@@ -821,16 +821,6 @@ void Player::UpdateSBState(float elapsedTime) {
             TransitionFinisherState();
         }
     }
-
-    //// フィニッシャー距離より遠いときは
-    //else if (sbSpace < len) {
-    //    // 敵方向に、フィニッシャー距離まで移動
-    //    position = sbdir * (len - sbSpace);
-    //}
-
-
-
-
 }
 
 void Player::TransitionFinisherState() {
@@ -861,7 +851,6 @@ void Player::UpdateFinisherState(float elapsedTime) {
         stopTimer += elapsedTime;
         if (stopTimer >= stopTime) stop = true;
     }
-
 
     // アニメーションが終わった最後の処理
     if (stop) {
