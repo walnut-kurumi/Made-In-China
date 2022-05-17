@@ -4,21 +4,18 @@
 #include "ResourceManager.h"
 
 
-Model::Model(ID3D11Device* device, const char* fbxFilename, bool triangulate, float samplingRate, BOOL frontCounterClockwise)
-{
+Model::Model(ID3D11Device* device, const char* fbxFilename, bool triangulate, float samplingRate, BOOL frontCounterClockwise) {
 	//skinnedMesh = std::make_unique<SkinnedMesh>(device, fbxFilename, triangulate);
 	//skinnedMesh.get()->Init(device, frontCounterClockwise);
 	skinnedMesh = ResourceManager::Instance().LoadModelResource(fbxFilename, triangulate, frontCounterClockwise);
 	modelFilename = fbxFilename;
 }
 
-Model::~Model()
-{
+Model::~Model() {
 	anime.clear();
 }
 
-void Model::PlayAnimation(int index, bool loop)
-{
+void Model::PlayAnimation(int index, bool loop) {
 	animationIndex = index;
 	animationLoopFlag = loop;
 	animationEndFlag = false;
@@ -28,38 +25,31 @@ void Model::PlayAnimation(int index, bool loop)
 	stopAnimation = false;
 }
 
-void Model::Begin(ID3D11DeviceContext* dc, Shader shader, bool wireframe)
-{
+void Model::Begin(ID3D11DeviceContext* dc, Shader shader, bool wireframe) {
 	skinnedMesh.get()->Begin(dc, shader, wireframe);
 }
 
-void Model::Render(ID3D11DeviceContext* dc, const Vec4 materialColor)  // , const Animation::Keyframe* keyframe = nullptr);
-{
+void Model::Render(ID3D11DeviceContext* dc, const Vec4 materialColor) {
 	skinnedMesh.get()->render(dc, this->transform, materialColor, &keyframe);
 	skinnedMesh.get()->End(dc);
 }
 
-void Model::LoadAnimation(const char* fbxFilename, float samplingRate, int index)
-{
+void Model::LoadAnimation(const char* fbxFilename, float samplingRate, int index) {
 	//skinnedMesh.get()->LoadAnimation(fbxFilename, samplingRate, index);
 	anime.emplace(index,  ResourceManager::Instance().LoadAnimationResource(modelFilename, fbxFilename, samplingRate, index));
 	skinnedMesh.get()->animationClips.emplace(index, *anime[index].get());
 }
 
-bool Model::IsPlayAnimatimon()
-{
+bool Model::IsPlayAnimatimon() {
 	if (animationIndex < 0) return false;
-	//if (animationIndex >= skinnedMesh.get()->animationClips.size()) return false;
 	return true;
 }
 
-void Model::AnimationStop(bool b)
-{
+void Model::AnimationStop(bool b) {
 	stopAnimation = b;
 }
 
-void Model::UpdateAnimation(float elapsedTime)
-{
+void Model::UpdateAnimation(float elapsedTime) {
 	//再生中じゃないなら処理しない
 	if (!IsPlayAnimatimon()) return;
 	// 再生中断中
@@ -172,7 +162,18 @@ void Model::UpdateAnimation(float elapsedTime)
 	}
 }
 
-void Model::UpdateTransform(const DirectX::XMFLOAT4X4& transform)
-{
+void Model::UpdateTransform(const DirectX::XMFLOAT4X4& transform) {
 	this->transform = transform;
+}
+
+// ノード検索
+SkinnedMesh::Animation::Keyframe::Node* Model::FindNode(const char* name) {
+	// 全てのノードを総当たりで名前比較する
+	for (auto& node : keyframe.nodes) {
+		if (::strcmp(node.name.c_str(), name) == 0) {
+			return &node;
+		}
+	}
+	// 見つからなかった
+	return nullptr;
 }

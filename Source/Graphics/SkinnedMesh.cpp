@@ -621,6 +621,8 @@ void SkinnedMesh::fetchAnimations(FbxScene* fbxScene,
 					int hour, minute, second, frame, field, residual;
 					time.GetTime(hour, minute, second, frame, field, residual, FbxTime::eFrames1000);
 					keyframe.seconds = frame / 1000.0f;
+
+					node.name = fbxNode->GetName();
 				}
 			}
 		}

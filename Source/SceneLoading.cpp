@@ -41,13 +41,6 @@ void SceneLoading::Update(float elapsedTime)
 	angle += speed * elapsedTime;
 	// w = 610 が最大
 	w = 61.0f * nextScene->LoadPercent;
-	// 次のシーンの準備が完了したらシーンを切り替える
-	if (nextScene->Ready())
-	{
-		SceneManager::Instance().ChangeScene(nextScene);
-
-		nextScene = nullptr;
-	}
 }
 
 void SceneLoading::Render(float elapsedTime)
@@ -74,6 +67,15 @@ void SceneLoading::Render(float elapsedTime)
 
 		Bar->render(dc, 600, 650, 620, 25, 1.0f,1.0f,1.0f,1.0f,0);			
 		LoadBar->render(dc, 605, 652, w, 21, 1.0f,1.0f,1.0f,1.0f,0);
+	}
+
+
+	// 次のシーンの準備が完了したらシーンを切り替える
+	if (nextScene->Ready())
+	{
+		SceneManager::Instance().ChangeScene(nextScene);
+
+		nextScene = nullptr;
 	}
 }
 

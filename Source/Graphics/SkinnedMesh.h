@@ -230,10 +230,12 @@ public:
 				DirectX::XMFLOAT3 scaling = { 1, 1, 1 };
 				DirectX::XMFLOAT4 rotation = { 0, 0, 0, 1 }; // Rotation quaternion
 				DirectX::XMFLOAT3 translation = { 0, 0, 0 }; // 親ノードの座標における位置（このノードの座標の原点）
+
+				std::string name;			// 名前
 				// 上三つ合成→ 子~親    Local Transform 
 				template<class T>
 				void serialize(T& archive) {
-					archive(globalTransform, scaling, rotation, translation);
+					archive(globalTransform, scaling, rotation, translation, name);
 				}
 			};
 			std::vector<Node> nodes;
@@ -331,6 +333,7 @@ public:
 	const std::unordered_map<uint64_t, Material>& GetMaterial() const { return materials; }
 	const Animation& GetAnimes(int index) const { return animationClips.at(index); }
 	const Constants& GetCb() const { return cb; }
+	const Scene& GetScene()const { return sceneView; }
 
 protected:
 	Scene sceneView;

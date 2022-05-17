@@ -238,12 +238,12 @@ void Player::Render(ID3D11DeviceContext* dc) {
     destructionCb.data.rotationFactor = dest.rotationFactor;
     destructionCb.data.scaleFactor = dest.scaleFactor;
     destructionCb.applyChanges();
-    dc->VSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
-    dc->PSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
-    dc->GSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
+    dc->VSSetConstantBuffers(9, 1, destructionCb.GetAddressOf());
+    dc->PSSetConstantBuffers(9, 1, destructionCb.GetAddressOf());
+    dc->GSSetConstantBuffers(9, 1, destructionCb.GetAddressOf());
 
 
-    if(slowAlpha > 0.0f) {
+    if (slowAlpha > 0.0f) {
         model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
         AfterimageManager::Instance().Render(dc);
     }
@@ -265,6 +265,18 @@ void Player::Render(ID3D11DeviceContext* dc) {
     //debugRenderer.get()->DrawSphere(sbPos, 1, Vec4(1, 1, 0, 1));
     if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, atkRadius, Vec4(1, 1, 0, 1));
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+
+
+    SkinnedMesh::Animation::Keyframe::Node* left = model->FindNode("joint45");
+    DirectX::XMFLOAT4X4 p = left->globalTransform;
+    DirectX::XMFLOAT4X4 p2;
+    using namespace DirectX;
+    XMStoreFloat4x4(
+        &p2,
+        XMLoadFloat4x4(&left->globalTransform) * XMLoadFloat4x4(&transform)
+    );
+    debugRenderer.get()->DrawSphere(DirectX::XMFLOAT3(p2._41,p2._42,p2._43), 1, Vec4(1, 1, 0, 1));
+
 #endif
 }
 
@@ -288,11 +300,18 @@ void Player::DrawDebugGUI() {
             ImGui::InputInt("Direction", &direction);
             ImGui::InputInt("efcDirection", &efcDir);
 
-            Vec3 p = CameraManager::Instance().GetPos();
+            SkinnedMesh::Animation::Keyframe::Node* left = model->FindNode("joint45");
+            DirectX::XMFLOAT4X4 p = left->globalTransform;
+            using namespace DirectX;
+            XMStoreFloat4x4(
+                &left->globalTransform,
+                XMLoadFloat4x4(&left->globalTransform) * XMLoadFloat4x4(&transform)
+            );
 
-            ImGui::SliderFloat("Poion X", &p.x, -300, 300);
-            ImGui::SliderFloat("Poion Y", &p.y, -200, 200);
-            ImGui::SliderFloat("Poion Z", &p.z, -300, 300);
+            ImGui::InputFloat("Poion X", &p._41);
+            ImGui::InputFloat("Poion Y", &p._42);
+            ImGui::InputFloat("Poion Z", &p._43);
+
             ImGui::SliderFloat("blurPower", &blurPower, 0,150);
 
             int a = static_cast<int>(state);
