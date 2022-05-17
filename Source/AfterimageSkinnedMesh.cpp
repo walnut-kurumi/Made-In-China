@@ -14,11 +14,13 @@ void AfterimageSkinnedMesh::Init() {
 
 	// 親の初期化
 	timer = 0.0f;      // 汎用タイマー.
+	alpha = 1.0f;
 }
 
 void AfterimageSkinnedMesh::Update(float elapsedTime) {
 	timer += elapsedTime;
-
+	alpha -= elapsedTime * 10;
+	alpha = max(0.0f, alpha);
 	// 一定時間過ぎたら消す
 	if (timer >= afterImageLifeTime) {
 		exists = false;
@@ -43,8 +45,7 @@ void AfterimageSkinnedMesh::Render(ID3D11DeviceContext* dc) {
 		//サブセットごとに描画
 		for (const SkinnedMesh::Subset& subset : mesh.subsets) {
 			const SkinnedMesh::Material& material = materials.at(subset.materialUniqueId);
-			//materialColorはdiffuseを入れる(render引数で各色の濃淡を調節)
-			DirectX::XMFLOAT4 materialColor = { 0.0f,0.5f,0.5f,0.2f };
+			DirectX::XMFLOAT4 materialColor = { 0.0f,0.5f,1.0f,	alpha };
 			XMStoreFloat4(&cb.materialColor, XMLoadFloat4(&materialColor) * XMLoadFloat4(&material.Kd));
 			dc->UpdateSubresource(constantBuffer.Get(), 0, 0, &cb, 0, 0);
 			dc->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
