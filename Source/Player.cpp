@@ -756,7 +756,7 @@ void Player::UpdateSBThrowState(float elapsedTime) {
     }
     // “Š‚°‚é“r’†‚ÅƒAƒjƒ[ƒVƒ‡ƒ“’âŽ~
     float animationTime = model->GetCurrentAnimationSeconds();
-    if (!model->GetPlay() && animationTime > 0.1f) {
+    if (!model->GetPlay() && animationTime > 0.15f) {
         model->AnimationStop(true);
         Launch(sbdir);
     }
