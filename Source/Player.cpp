@@ -267,6 +267,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 
 
+    // Œ•ª–{
     SkinnedMesh::Animation::Keyframe::Node* left = model->FindNode("joint45");
     DirectX::XMFLOAT4X4 p = left->globalTransform;
     DirectX::XMFLOAT4X4 p2;
@@ -299,18 +300,6 @@ void Player::DrawDebugGUI() {
             ImGui::InputFloat3("Angle", &angle.x);
             ImGui::InputInt("Direction", &direction);
             ImGui::InputInt("efcDirection", &efcDir);
-
-            SkinnedMesh::Animation::Keyframe::Node* left = model->FindNode("joint45");
-            DirectX::XMFLOAT4X4 p = left->globalTransform;
-            using namespace DirectX;
-            XMStoreFloat4x4(
-                &left->globalTransform,
-                XMLoadFloat4x4(&left->globalTransform) * XMLoadFloat4x4(&transform)
-            );
-
-            ImGui::InputFloat("Poion X", &p._41);
-            ImGui::InputFloat("Poion Y", &p._42);
-            ImGui::InputFloat("Poion Z", &p._43);
 
             ImGui::SliderFloat("blurPower", &blurPower, 0,150);
 
