@@ -16,6 +16,7 @@
 
 #include "framebuffer.h"
 #include "RadialBlur.h"
+#include "FullScreenQuad.h"
 
 class SceneTutorial : public Scene
 {
@@ -93,12 +94,17 @@ private:
 	//シェーダー用の変数
 	Shader BluShader;
 	ConstantBuffer<scene_blur> SBBlur;
-	ConstantBuffer<Radial_Blur> CBBlur;
-	std::unique_ptr<RadialBlur> radialBlur;
-	std::unique_ptr<Framebuffer> framebuffer[8];
+	Shader LumiShader;
+	ConstantBuffer<scene_col> LEcol;
 	float sigma = 1.0f;
 	float intensity = 0.07f;
 	float exp = 1.3f;
+	DirectX::XMFLOAT3 LErgb = {};
+	std::unique_ptr<Framebuffer> framebuffer[8];
+	std::unique_ptr<RadialBlur> radialBlur;
+	std::unique_ptr<FullScreenQuad> fullScreen;
+
+	ConstantBuffer<Radial_Blur> CBBlur;
 
 
 

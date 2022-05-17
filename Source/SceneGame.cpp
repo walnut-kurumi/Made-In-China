@@ -119,12 +119,16 @@ void SceneGame::Initialize()
     //デバッグ
     //hitEffect = new Effect("Data/Effect/player_hit.efk");
     BluShader = Shaders::Ins()->GetBlurShader();
+    LumiShader = Shaders::Ins()->GetLuminanceShader();
 
     framebuffer[0] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
-    framebuffer[1] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth()/2, gfx.GetScreenHeight()/2);
+    framebuffer[1] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
+    framebuffer[2] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth()/2, gfx.GetScreenHeight()/2);
+    fullScreen = std::make_unique<FullScreenQuad>(device);
     radialBlur = std::make_unique<RadialBlur>(device);
     CBBlur.initialize(device, gfx.GetDeviceContext());
     SBBlur.initialize(device, gfx.GetDeviceContext());
+    LEcol.initialize(device, gfx.GetDeviceContext());
     // ロード％ 100%
     SetLoadPercent(10.0f);
 }
@@ -292,8 +296,8 @@ void SceneGame::Render(float elapsedTime)
   
     //// TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.
     //dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
-    //dc->VSSetConstantBuffers(3, 1, &constant_buffer);
- 
+    //dc->VSSetConstantBuffers(3, 1, &constant_buffer); 
+
     framebuffer[0]->clear(dc,1.0f,1.0f,1.0f,0.0f);
     framebuffer[0]->activate(dc);
     {
@@ -316,7 +320,7 @@ void SceneGame::Render(float elapsedTime)
 
         // デバック
         {
-            player->DrawDebugGUI();            
+            player->DrawDebugGUI();
         }
 
         //3Dエフェクト描画
@@ -334,6 +338,17 @@ void SceneGame::Render(float elapsedTime)
     dc->PSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
     dc->GSSetConstantBuffers(8, 1, CBBlur.GetAddressOf());
 
+    framebuffer[1]->clear(dc);
+    framebuffer[1]->activate(dc);
+    radialBlur->blit(dc, framebuffer[0]->shaderResourceViews[0].GetAddressOf(), 0, 1);
+    framebuffer[1]->deactivate(dc);
+
+    LEcol.data.rgb = LErgb;
+    LEcol.applyChanges();
+    dc->VSSetConstantBuffers(5, 1, LEcol.GetAddressOf());
+    dc->PSSetConstantBuffers(5, 1, LEcol.GetAddressOf());
+    dc->GSSetConstantBuffers(5, 1, LEcol.GetAddressOf());
+
     SBBlur.data.sigma = sigma;
     SBBlur.data.intensity = intensity;
     SBBlur.data.dummy0 = exp;
@@ -342,13 +357,13 @@ void SceneGame::Render(float elapsedTime)
     dc->PSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
     dc->GSSetConstantBuffers(4, 1, SBBlur.GetAddressOf());
 
-    framebuffer[1]->clear(dc);
-    framebuffer[1]->activate(dc);
-    radialBlur->blit(dc, framebuffer[0]->shaderResourceViews[0].GetAddressOf(), 0, 1);
-    framebuffer[1]->deactivate(dc);
-    
+    framebuffer[2]->clear(dc);
+    framebuffer[2]->activate(dc);
+    fullScreen->blit(dc, framebuffer[1]->shaderResourceViews[0].GetAddressOf(), 0, 1, LumiShader.GetPixelShader().Get());
+    framebuffer[2]->deactivate(dc);
+
     Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> shader_resource_views[2] = 
-        { framebuffer[0]->shaderResourceViews[0].Get(), framebuffer[1]->shaderResourceViews[0].Get() };
+        { framebuffer[1]->shaderResourceViews[0].Get(), framebuffer[2]->shaderResourceViews[0].Get() };
     radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
 
     // 2D描画
@@ -388,6 +403,9 @@ void SceneGame::Render(float elapsedTime)
     ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
     ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
     ImGui::SliderFloat("expo", &exp, 0, 10);
+    ImGui::SliderFloat("LEx", &LErgb.x, 0, 1);
+    ImGui::SliderFloat("LEy", &LErgb.y, 0, 1);
+    ImGui::SliderFloat("LEz", &LErgb.z, 0, 1);
 
     ImGui::End();
 

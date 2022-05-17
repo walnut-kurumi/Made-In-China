@@ -318,6 +318,9 @@
     <ClCompile Include="Source\StagePenetrate2.cpp">
       <Filter>Source\Stages\Stage2</Filter>
     </ClCompile>
+    <ClCompile Include="Source\FullScreenQuad.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -564,6 +567,9 @@
     </ClInclude>
     <ClInclude Include="Source\StagePenetrate2.h">
       <Filter>Source\Stages\Stage2</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\FullScreenQuad.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
