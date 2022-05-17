@@ -12,7 +12,7 @@ Door::Door(ID3D11Device* device)
     isOpen = false;    
     radius = 4.0f;
 
-	debugRenderer = std::make_unique<DebugRenderer>(device);
+	//debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
 Door::~Door()
@@ -57,9 +57,9 @@ void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
     model->Render(dc, Vec4{ 0.564f,0.42f,0.1f,1.0f });
 
 	// •K—v‚È‚Á‚½‚ç’Ç‰Á
-    debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
-    debugRenderer.get()->DrawSphere(collisionPos, radius, Vec4(1, 0, 0, 1));
-    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    //debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
+    //debugRenderer.get()->DrawSphere(collisionPos, radius, Vec4(1, 0, 0, 1));
+    //debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 void Door::RenderGui()

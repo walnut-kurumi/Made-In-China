@@ -113,4 +113,7 @@ private:
 	// スローにしたか
 	bool isSlow = false;
 
+
+	// 次のシーンへ移る
+	bool changeScene = false;
 };
