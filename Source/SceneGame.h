@@ -97,4 +97,7 @@ private:
 	ConstantBuffer<Radial_Blur> CBBlur;
 
 	Sprite* fade{};
+
+	// Ÿ‚ÌƒV[ƒ“‚ÖˆÚ‚é
+	bool changeScene = false;
 };

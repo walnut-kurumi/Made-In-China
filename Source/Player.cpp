@@ -112,8 +112,8 @@ void Player::Init() {
     reset = false;
 
     // SB用
-    sbSpeed = 3.0f;
-    sbSpace = 4.0f;
+    sbSpeed = 5.0f;
+    sbSpace = 7.0f;
     sbhit = false;
     sbdir = { 0,0,0 };
     sbPos = { 0,0,0 };
@@ -156,14 +156,16 @@ void Player::Update(float elapsedTime) {
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
     // 残像マネージャー更新
-    AfterimageManager::Instance().SetParentData(
-        model->GetSkinnedMeshs()->GetMeshs(),
-        model->GetSkinnedMeshs()->GetMaterial(),
-        model->GetSkinnedMeshs()->GetCb(),
-        transform
-    );
+    if (slow) {
+        AfterimageManager::Instance().SetParentData(
+            model->GetSkinnedMeshs()->GetMeshs(),
+            model->GetSkinnedMeshs()->GetMaterial(),
+            model->GetSkinnedMeshs()->GetCb(),
+            transform
+        );
+        AfterimageManager::Instance().Update(elapsedTime);
+    }
 
-    AfterimageManager::Instance().Update(elapsedTime);
 
     UpdateSpeed(elapsedTime);
 
@@ -203,7 +205,8 @@ void Player::Update(float elapsedTime) {
         if (angle.y > 0)efcDir = 1;
         else efcDir = 0;
         float radian = DirectX::XMConvertToRadians(180 * efcDir);
-        handle = attackEffect->PlayDirection(centerPosition, 2.0f, radian);
+        attackEffect->SetPlaySpeed(handle, 1.5f);
+        handle = attackEffect->PlayDirection(centerPosition, 1.6f, radian);
     }
 
     atkTimer -= elapsedTime;
@@ -237,9 +240,11 @@ void Player::Render(ID3D11DeviceContext* dc) {
     dc->GSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
 
 
+    if (slow) {
+        model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
+        AfterimageManager::Instance().Render(dc);
+    }
     model->Begin(dc, Shaders::Ins()->GetDestructionShader());
-    //model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
-    AfterimageManager::Instance().Render(dc);
     model->Render(dc);
 
     // 弾丸描画処理
@@ -433,7 +438,7 @@ void Player::InputSlow(float elapsedTime) {
 
 bool Player::InputSB() {
     // 操作不可ならリターン
-    if (!canAttack) if (!isControl)return false;
+    if (!isControl)return false;
 
     GamePad& gamePad = Input::Instance().GetGamePad();
     ID3D11Device* device = Graphics::Ins().GetDevice();
@@ -806,6 +811,7 @@ void Player::TransitionFinisherState() {
     Vec3 front = VecMath::Normalize({ transform._31,transform._32,transform._33 });
     atkPos = { front.x,0,0 };
     atkPos = VecMath::Normalize(atkPos) * 3;
+    atk = true;
 }
 void Player::UpdateFinisherState(float elapsedTime) {
     // 死んだら

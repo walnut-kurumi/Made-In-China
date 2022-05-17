@@ -1,7 +1,7 @@
 #include "SceneClear.h"
 #include "SceneManager.h"
 #include "SceneLoading.h"
-#include "SceneTitle.h"
+#include "SceneTutorial.h"
 #include "Graphics/Graphics.h"
 
 
@@ -11,7 +11,7 @@ void SceneClear::Initialize()
     ID3D11Device* device = Graphics::Ins().GetDevice();
     clearSprite = new Sprite(device, L"./Data/Sprites//clear.png");
     cursorSprite = new Sprite(device, L"./Data/Sprites//cursor.png");
-    gameStart = new Sprite(device, L"./Data/Sprites/scene//start.png");
+    gameStart = new Sprite(device, L"./Data/Sprites/scene//retry.png");
     gameEnd = new Sprite(device, L"./Data/Sprites/scene//end.png");
   
     start = true;
@@ -24,6 +24,8 @@ void SceneClear::Initialize()
     endpos = { startpos.x,startpos.y + endsize.y * 1.2f };
 
     Input::Instance().GetMouse().SetMoveCursor(true);
+
+    Fade::Instance().Initialize();
 }
 
 // 終了化
@@ -69,18 +71,32 @@ void SceneClear::Update(float elapsedTime)
     const mouseButton mouseClick =
         Mouse::BTN_LEFT;
 
-
-    if (start && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
-    {
-        SceneManager::Instance().ChangeScene(new SceneTitle);
-    }
-    else if (end && (gamePad.GetButtonDown() & anyButton || mouse.GetButtonDown() & mouseClick))
-    {
-        DestroyWindow(GetActiveWindow());
-    }
-
-
+    // scene選択
     SceneSelect();
+
+    Fade::Instance().Update(elapsedTime);
+
+    // すすむ
+    {
+        if (start && (gamePad.GetButtonUp() & anyButton || mouse.GetButtonUp() & mouseClick))
+        {
+            // フェードアウトする
+            Fade::Instance().SetFadeOutFlag(true);
+        }
+        // フェードアウト終わったら
+        if (Fade::Instance().GetFadeOutFinish())
+        {
+            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
+        }
+    }
+    // おわる
+    {
+        if (end && (gamePad.GetButtonUp() & anyButton || mouse.GetButtonUp() & mouseClick))
+        {
+            DestroyWindow(GetActiveWindow());
+        }
+    }
+
 }
 
 // 描画処理
@@ -95,7 +111,7 @@ void SceneClear::Render(float elapsedTime)
         clearSprite->render(dc, 0, 0, gfx.GetScreenWidth(), gfx.GetScreenHeight());        
         gameStart->render(dc, startpos.x, startpos.y, startsize.x, startsize.y, 1, 1, 1, startAlpha, 0);
         gameEnd->render(dc, endpos.x, endpos.y, endsize.x, endsize.y, 1, 1, 1, endAlpha, 0);
-        cursorSprite->render(dc, mousepos.x - 12, mousepos.y - 12, 23, 24, 1, 1, 1, 1, 0);
+        //cursorSprite->render(dc, mousepos.x - 12, mousepos.y - 12, 23, 24, 1, 1, 1, 1, 0);
     }
 
     // モデル描画

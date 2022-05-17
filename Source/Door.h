@@ -68,5 +68,5 @@ protected:
 	float radius = 0.0f;
 
 
-	std::unique_ptr<DebugRenderer> debugRenderer;
+	//std::unique_ptr<DebugRenderer> debugRenderer;
 };
