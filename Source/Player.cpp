@@ -113,11 +113,10 @@ void Player::Init() {
 
     // SB用
     sbSpeed = 5.0f;
-    sbSpace = 7.0f;
+    sbSpace = 5.0f;
     sbhit = false;
     sbdir = { 0,0,0 };
     sbPos = { 0,0,0 };
-    sbStartPos = { 0,0,0 };
     sbEraseLen = 2500.0f;// SBが消える距離（Sq）60
     sbHitEmy = -1;
     invincible = false;
@@ -783,8 +782,6 @@ void Player::TransitionSBState() {
     clock = true;
     // 無敵
     invincible = true;
-    // スタート位置記録
-    sbStartPos = position;
     blurPower = 3.0f;
 }
 void Player::UpdateSBState(float elapsedTime) {
@@ -795,22 +792,45 @@ void Player::UpdateSBState(float elapsedTime) {
     }
     // スロー
     InputSlow(elapsedTime);
-    // 移動＋レイキャスト
-    if(Raycast(sbdir * sbSpeed)) {
-        sbPos = { 0,0,0 };
-        sbdir = { 0,0,0 };
-        TransitionFinisherState();
-    }
     // ブラー
     blurPower += elapsedTime * blur;
     blurPower = min(blurPower, blurMax);
-    // 弾に到達したらSB攻撃ステートへ
-    if (VecMath::LengthVec3(sbPos - position) <= sbSpace) {
-        position = sbPos;
+
+    // 敵と一定距離近づいていたら
+    float len = VecMath::LengthVec3(sbPos - position);
+    if (len <= sbSpace) {
+        // そのままフィニッシャーステートへ
         sbPos = { 0,0,0 };
         sbdir = { 0,0,0 };
         TransitionFinisherState();
     }
+    // 移動後のほうが離れてる = 通り過ぎた
+    else {
+        // 移動＋レイキャスト
+        if (Raycast(sbdir * sbSpeed)) {
+            sbPos = { 0,0,0 };
+            sbdir = { 0,0,0 };
+            TransitionFinisherState();
+        }
+
+        // 弾に到達したらSB攻撃ステートへ
+        if (VecMath::LengthVec3(sbPos - position) <= sbSpace) {
+            position = sbPos;
+            sbPos = { 0,0,0 };
+            sbdir = { 0,0,0 };
+            TransitionFinisherState();
+        }
+    }
+
+    //// フィニッシャー距離より遠いときは
+    //else if (sbSpace < len) {
+    //    // 敵方向に、フィニッシャー距離まで移動
+    //    position = sbdir * (len - sbSpace);
+    //}
+
+
+
+
 }
 
 void Player::TransitionFinisherState() {
@@ -860,8 +880,6 @@ void Player::UpdateFinisherState(float elapsedTime) {
         atk = false;
         // 無敵解除
         invincible = false;
-        // Dest位置リセット
-        sbStartPos = { 0,0,0 };
         // カメラシェイク（簡素）おわり
         CameraManager& cameraMgr = CameraManager::Instance();
         cameraMgr.SetShakeFlag(false);
