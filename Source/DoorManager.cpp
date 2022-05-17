@@ -19,9 +19,10 @@ void DoorManager::Render(ID3D11DeviceContext* dc, float elapsedTime)
 
 void DoorManager::RenderGui()
 {
+#ifdef USE_IMGUI
     ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);    
-
+#endif
     for (Door* door : doors) door->RenderGui();
 }
 

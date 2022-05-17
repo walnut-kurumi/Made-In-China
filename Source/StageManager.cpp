@@ -62,4 +62,5 @@ bool StageManager::CollisionPlayerVsNextStagePos(Vec3 playerPos, float playerRad
             return stage->CollisionPlayerVsNextStagePos(playerPos, playerRadius);
         }
     }
+    return false;
 }
