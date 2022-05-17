@@ -159,7 +159,7 @@ void Player::Update(float elapsedTime) {
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
     // 残像マネージャー更新
-    if (slow) {
+    if (slowAlpha > 0.0f) {
         AfterimageManager::Instance().SetParentData(
             model->GetSkinnedMeshs()->GetMeshs(),
             model->GetSkinnedMeshs()->GetMaterial(),
@@ -243,7 +243,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     dc->GSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
 
 
-    if (slow) {
+    if(slowAlpha > 0.0f) {
         model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
         AfterimageManager::Instance().Render(dc);
     }
