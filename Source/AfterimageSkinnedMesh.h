@@ -34,7 +34,9 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer;
 
     // c‘œ‚Ì¶‘¶ŠÔ
-    float afterImageLifeTime = 0.1f;
+    float afterImageLifeTime = 0.06f;
+    // ™X‚É“§–¾“x‚ğã‚°‚Ä‚ä‚­
+    float alpha = 1.0f;
 
 };
 
