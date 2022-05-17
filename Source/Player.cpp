@@ -112,8 +112,8 @@ void Player::Init() {
     reset = false;
 
     // SB用
-    sbSpeed = 3.0f;
-    sbSpace = 4.0f;
+    sbSpeed = 5.0f;
+    sbSpace = 7.0f;
     sbhit = false;
     sbdir = { 0,0,0 };
     sbPos = { 0,0,0 };
@@ -156,14 +156,16 @@ void Player::Update(float elapsedTime) {
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
     // 残像マネージャー更新
-    AfterimageManager::Instance().SetParentData(
-        model->GetSkinnedMeshs()->GetMeshs(),
-        model->GetSkinnedMeshs()->GetMaterial(),
-        model->GetSkinnedMeshs()->GetCb(),
-        transform
-    );
+    if (slow) {
+        AfterimageManager::Instance().SetParentData(
+            model->GetSkinnedMeshs()->GetMeshs(),
+            model->GetSkinnedMeshs()->GetMaterial(),
+            model->GetSkinnedMeshs()->GetCb(),
+            transform
+        );
+        AfterimageManager::Instance().Update(elapsedTime);
+    }
 
-    AfterimageManager::Instance().Update(elapsedTime);
 
     UpdateSpeed(elapsedTime);
 
@@ -237,9 +239,11 @@ void Player::Render(ID3D11DeviceContext* dc) {
     dc->GSSetConstantBuffers(9, 1,destructionCb.GetAddressOf());
 
 
+    if (slow) {
+        model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
+        AfterimageManager::Instance().Render(dc);
+    }
     model->Begin(dc, Shaders::Ins()->GetDestructionShader());
-    //model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
-    AfterimageManager::Instance().Render(dc);
     model->Render(dc);
 
     // 弾丸描画処理

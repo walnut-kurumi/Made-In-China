@@ -19,6 +19,7 @@ void AfterimageSkinnedMesh::Init() {
 void AfterimageSkinnedMesh::Update(float elapsedTime) {
 	timer += elapsedTime;
 
+	// 一定時間過ぎたら消す
 	if (timer >= afterImageLifeTime) {
 		exists = false;
 	}
@@ -30,6 +31,8 @@ void AfterimageSkinnedMesh::Render(ID3D11DeviceContext* dc) {
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	cb.world = transform;
+	// 位置をずらして無理やりプレイヤーにかぶらないようにする
+	cb.world._43 = -3;
 
 	for (const SkinnedMesh::Mesh& mesh : meshes) {
 		uint32_t stride = sizeof(SkinnedMesh::Vertex);
