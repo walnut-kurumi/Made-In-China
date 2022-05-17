@@ -203,7 +203,8 @@ void Player::Update(float elapsedTime) {
         if (angle.y > 0)efcDir = 1;
         else efcDir = 0;
         float radian = DirectX::XMConvertToRadians(180 * efcDir);
-        handle = attackEffect->PlayDirection(centerPosition, 2.0f, radian);
+        attackEffect->SetPlaySpeed(handle, 1.5f);
+        handle = attackEffect->PlayDirection(centerPosition, 1.6f, radian);
     }
 
     atkTimer -= elapsedTime;
@@ -433,7 +434,7 @@ void Player::InputSlow(float elapsedTime) {
 
 bool Player::InputSB() {
     // ‘€ì•s‰Â‚È‚çƒŠƒ^[ƒ“
-    if (!canAttack) if (!isControl)return false;
+    if (!isControl)return false;
 
     GamePad& gamePad = Input::Instance().GetGamePad();
     ID3D11Device* device = Graphics::Ins().GetDevice();
@@ -806,6 +807,7 @@ void Player::TransitionFinisherState() {
     Vec3 front = VecMath::Normalize({ transform._31,transform._32,transform._33 });
     atkPos = { front.x,0,0 };
     atkPos = VecMath::Normalize(atkPos) * 3;
+    atk = true;
 }
 void Player::UpdateFinisherState(float elapsedTime) {
     // €‚ñ‚¾‚ç

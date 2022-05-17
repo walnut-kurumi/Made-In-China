@@ -91,5 +91,6 @@ private:
 
 	ConstantBuffer<Radial_Blur> CBBlur;
 
-
+	// Ÿ‚ÌƒV[ƒ“‚ÖˆÚ‚é
+	bool changeScene = false;
 };
