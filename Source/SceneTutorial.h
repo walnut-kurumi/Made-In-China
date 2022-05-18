@@ -63,9 +63,20 @@ private:
 	Sprite* Bar{};
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
-	Sprite* keybord{};
-	Sprite* controller{};
 	Sprite* fade{};
+	//操作説明
+	Sprite* KeyA{};
+	Sprite* KeyD{};
+	Sprite* KeySPACE{};
+	Sprite* KeySHIFT{};
+	Sprite* LeftClick{};
+	Sprite* RightClick{};
+
+	Sprite* ButtonA{};
+	Sprite* ButtonX{};
+	Sprite* Stick{};
+	Sprite* ButtonLT{};
+	Sprite* ButtonRT{};	
 
 	// Sprite用変数
 	float radian = 0.0f;
@@ -73,6 +84,12 @@ private:
 	int stickAnim = 0;	// アニメーション	
 	bool isKeybord = false;
 	float tick = 0.0f;
+
+	bool renderSlow = false;
+	bool renderAttack = false;
+	bool renderMove = false;
+	bool renderJump = false;
+	bool renderSB = false;
 
 
 	Effect* hitEffect = nullptr;

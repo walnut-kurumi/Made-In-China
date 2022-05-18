@@ -95,9 +95,21 @@ void SceneTutorial::Initialize()
     Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
     LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
-    keybord = new Sprite(device, L"./Data/Sprites/UI/Keybord.png");
-    controller = new Sprite(device, L"./Data/Sprites/UI/Controller.png");
     fade = new Sprite(device, L"./Data/Sprites/scene/black.png");
+
+    KeyA        = new Sprite(device, L"./Data/Sprites/UI/Keybord/KeyA.png");
+    KeyD        = new Sprite(device, L"./Data/Sprites/UI/Keybord/KeyD.png");
+    KeySPACE    = new Sprite(device, L"./Data/Sprites/UI/Keybord/KeySPACE.png");
+    KeySHIFT    = new Sprite(device, L"./Data/Sprites/UI/Keybord/KeySHIFT.png");
+    LeftClick   = new Sprite(device, L"./Data/Sprites/UI/Keybord/MouseLClick.png");
+    RightClick  = new Sprite(device, L"./Data/Sprites/UI/Keybord/MouseRClick.png");
+
+    ButtonA     = new Sprite(device, L"./Data/Sprites/UI/Controller/ButtonA.png");
+    ButtonX     = new Sprite(device, L"./Data/Sprites/UI/Controller/ButtonX.png");
+    Stick       = new Sprite(device, L"./Data/Sprites/UI/Controller/Stick.png");
+    ButtonLT    = new Sprite(device, L"./Data/Sprites/UI/Controller/ButtonLT.png");
+    ButtonRT    = new Sprite(device, L"./Data/Sprites/UI/Controller/ButtonRT.png");
+
 
     Menu::Instance().Initialize();
 
@@ -135,6 +147,12 @@ void SceneTutorial::Initialize()
     stickAnim = 0;	// アニメーション
     isKeybord = false;
 
+    renderSlow = false;
+    renderAttack = false;
+    renderMove = false;
+    renderJump = false;
+    renderSB = false;
+
     // 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける   
     player->SetIsControl(false);
     player->SetCanSlow(false);
@@ -158,8 +176,18 @@ void SceneTutorial::Finalize()
     CameraManager& cameraMgr = CameraManager::Instance();
     cameraMgr.SetShakeFlag(false);
 
-    delete keybord;
-    delete controller;
+    delete KeyA;
+    delete KeyD;
+    delete KeySPACE;
+    delete KeySHIFT;
+    delete LeftClick;
+    delete RightClick;
+    delete ButtonA;
+    delete ButtonX;
+    delete Stick;
+    delete ButtonLT;
+    delete ButtonRT;
+
     delete enemyattack;
     delete LoadBar;
     delete Bar;
@@ -195,12 +223,15 @@ void SceneTutorial::Update(float elapsedTime)
             {
                 isPause = true;                
                 player->SetCanSlow(true);
+
+                // 操作説明：スロー
+                renderSlow = true;
             }
             // スロー入力したらそのままスロー
             if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER && isTutorial)
             {
                 isSlow = true;
-                isPause = false;
+                isPause = false;                
             }
             if (isSlow && isTutorial)slowElapsedTime = elapsedTime * 0.25f;
 
@@ -213,8 +244,35 @@ void SceneTutorial::Update(float elapsedTime)
                     EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(false);
                     isPause = true;
                     player->SetCanAttack(true);
+                    
+                    renderSlow = false;
+                    // 操作説明：攻撃
+                    renderAttack = true;
                 }
             }
+
+            // 穴に落ちたら
+            if (player->GetPosition().y < -15.0f && renderMove)
+            {
+                renderMove = false;
+                // 操作説明：ジャンプ
+                renderJump = true;
+            }
+            else if (player->GetPosition().y > 0.0f && renderJump)
+            {
+                renderJump = false;
+            }
+            // SB位置についたら
+            if (player->GetPosition().x < -85.0f && player->GetPosition().x > -140.0f && !renderSB)
+            {                
+                // 操作説明：SB
+                renderSB = true;
+            }
+            else if((player->GetPosition().x > -85.0f || player->GetPosition().x < -140.0f ))
+            {                
+                renderMove = false;
+                renderSB = false;
+            }            
         }
 
         // ステージ
@@ -233,16 +291,23 @@ void SceneTutorial::Update(float elapsedTime)
                 isTutorial = false;
                 isPause = false;
                 isSlow = false;
+
                 // カメラのターゲット変える
                 cameraTargetChange = true;
+
                 // 操作可能
                 player->SetIsControl(true);
                 player->SetSlowFixation(isSlow);
+
                 // 弾動かす
                 for (int i = 0; i < EnemyBulletManager::Instance().GetProjectileCount(); i++)
                 {
                     EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(true);
-                }                
+                }
+
+                renderAttack = false;
+                // 操作説明：移動
+                renderMove = true;
             }
         }
 
@@ -306,6 +371,9 @@ void SceneTutorial::Update(float elapsedTime)
     // 現在のステージの死んでるエネミーの数が０の場合
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
+        // 全滅させてる場合操作説明ださない
+        renderSB = false;
+
         // ゴールと判定とる         
         if (StageManager::Instance().CollisionPlayerVsNextStagePos(player->GetCenterPosition(), player->GetRadius()))
         {
@@ -339,14 +407,7 @@ void SceneTutorial::Render(float elapsedTime)
     dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     // 通常レンダリング
-    dc->OMSetRenderTargets(1, &rtv, dsv);
-
-    // モデル描画
-    //DirectX::XMFLOAT4X4 data{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
-
-    //// TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.
-    //dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
-    //dc->VSSetConstantBuffers(3, 1, &constant_buffer);
+    dc->OMSetRenderTargets(1, &rtv, dsv);      
 
     framebuffer[0]->clear(dc, 1.0f, 1.0f, 1.0f, 0.0f);
     framebuffer[0]->activate(dc);
@@ -438,25 +499,13 @@ void SceneTutorial::Render(float elapsedTime)
 
 #ifdef USE_IMGUI   
 
-
     ImGui::Begin("ImGUI");
     
     ImGui::SliderFloat("elapsedTime", &et, 0.0f, 1.0f);
     ImGui::SliderInt("Tick", &tutorialTick, 0.0f, 1.0f);    
     ImGui::SliderFloat("Tick", &tick, 0.0f, 1.0f);
 
-    ImGui::End();
-
-    /* ImGui::SetNextWindowPos(ImVec2(0, 10), ImGuiCond_FirstUseEver);
-     ImGui::SetNextWindowSize(ImVec2(30, 30), ImGuiCond_FirstUseEver);
-
-     if (ImGui::Begin("SRV", nullptr, ImGuiWindowFlags_None))
-     {
-         ImGui::Image(shaderResourceViews[0], { 320, 180 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
-         ImGui::Image(shaderResourceViews[1], { 320, 180 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
-         ImGui::Image(shaderResourceViews[2], { 320, 180 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
-     }
-     ImGui::End();*/
+    ImGui::End();   
 #endif
 
 }
@@ -470,6 +519,18 @@ void SceneTutorial::Reset()
     camTargetPos = { -19,5,0 };
     cameraTargetChange = false;
     isSlow = false;
+ 
+    radian = 0.0f;
+    tutorialTick = 0;	// アニメーション用チック	
+    stickAnim = 0;	// アニメーション
+    isKeybord = false;
+
+    renderSlow = false;
+    renderAttack = false;
+    renderMove = false;
+    renderJump = false;
+    renderSB = false;
+
 
     // たまなし
     EnemyBulletManager::Instance().Clear();
@@ -622,12 +683,28 @@ void SceneTutorial::RenderEnemyAttack()
 void SceneTutorial::RenderTutorial()
 {
     // チック
+    float tutorialTick2 = 0.0f;
+    int oldTick = tutorialTick;
+
     radian += 0.1f;
     if (radian > 3.1415f) radian = 0.0f;
     // アニメーション用１か０か
     tick = sin(radian);
-    if (tick >= 0.5f)tutorialTick = 1;
-    else tutorialTick = 0;
+    if (tick >= 0.5f)
+    {
+        tutorialTick = 1;
+        tutorialTick2 = 0;        
+    }
+    else
+    {
+        tutorialTick = 0;
+        tutorialTick2 = 1;       
+    }
+    if (oldTick != tutorialTick)
+    {
+        stickAnim++;
+        if (stickAnim >= 4)stickAnim = 0;
+    }
 
     ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();
     // ビューポート
@@ -659,11 +736,41 @@ void SceneTutorial::RenderTutorial()
     DirectX::XMFLOAT2 screenPosition;
     DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
 
-    if (isTutorial)
+    if (renderSlow)
     {
-        // 攻撃予兆描画        
-        keybord->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
-      
+        if (isKeybord) KeySHIFT->render(dc, screenPosition.x - 64, screenPosition.y - 32, 128, 64, 1, 1, 1, 1, 0, 400 * tutorialTick, 0, 400, 200);
+        else ButtonLT->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+    }
+    if (renderAttack)
+    {
+        if (isKeybord) LeftClick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+        else
+        {
+            Stick->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * 3, 0, 200, 200);
+            ButtonX->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+        }
+    }
+    if (renderMove)
+    {
+        if (isKeybord) {
+            KeyA->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+            KeyD->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick2, 0, 200, 200);
+        }
+        else Stick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * stickAnim, 0, 200, 200);
+    }
+    if (renderJump)
+    {
+        if (isKeybord) KeySPACE->render(dc, screenPosition.x - 64, screenPosition.y - 32, 128, 64, 1, 1, 1, 1, 0, 400 * tutorialTick, 0, 400, 200);
+        else ButtonA->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+    }
+    if(renderSB)
+    {
+        if (isKeybord) RightClick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+        else
+        {
+            Stick->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * 1, 0, 200, 200);
+            ButtonRT->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+        }
     }
 
 }
