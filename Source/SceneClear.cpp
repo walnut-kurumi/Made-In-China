@@ -9,10 +9,10 @@
 void SceneClear::Initialize()
 {
     ID3D11Device* device = Graphics::Ins().GetDevice();
-    clearSprite = new Sprite(device, L"./Data/Sprites//clear.png");
-    cursorSprite = new Sprite(device, L"./Data/Sprites//cursor.png");
-    gameStart = new Sprite(device, L"./Data/Sprites/scene//retry.png");
-    gameEnd = new Sprite(device, L"./Data/Sprites/scene//end.png");
+    clearSprite = new Sprite(device, L"./Data/Sprites/title.png");
+    cursorSprite = new Sprite(device, L"./Data/Sprites/cursor.png");
+    gameStart = new Sprite(device, L"./Data/Sprites/scene/retry.png");
+    gameEnd = new Sprite(device, L"./Data/Sprites/scene/end.png");
   
     start = true;
     end = false;

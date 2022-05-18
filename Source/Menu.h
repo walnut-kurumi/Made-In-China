@@ -2,7 +2,8 @@
 
 #include "Graphics/Graphics.h"
 #include "Graphics/Sprite.h"
-
+#include "audio/AudioResource.h"
+#include "audio/Audio.h"
 
 class Menu
 {
@@ -59,4 +60,7 @@ private:
 
 	DirectX::XMFLOAT2 mousepos = {};
 
+	std::unique_ptr<AudioSource> SEMenu;
+	std::unique_ptr<AudioSource> SEDecision;
+	std::unique_ptr<AudioSource> SECancellation;
 };

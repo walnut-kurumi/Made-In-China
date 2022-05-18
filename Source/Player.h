@@ -8,6 +8,8 @@
 #include "Effect.h"
 
 #include "AfterimageManager.h"
+#include "audio/AudioResource.h"
+#include "audio/Audio.h"
 
 class Player : public Character
 {
@@ -222,4 +224,16 @@ private:
 
 	// 残像
 	AfterimageManager* afterimageManager{};
+
+	//audio
+	bool deathse = false;
+	bool slowse = false;
+	std::unique_ptr<AudioSource> SEDeath;
+	std::unique_ptr<AudioSource> SEJump;
+	std::unique_ptr<AudioSource> SEAttack;
+	std::unique_ptr<AudioSource> SEReflect;
+	std::unique_ptr<AudioSource> SESBstart;
+	std::unique_ptr<AudioSource> SEMove;
+	std::unique_ptr<AudioSource> SESlowStart;
+
 };

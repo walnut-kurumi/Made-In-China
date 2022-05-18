@@ -49,7 +49,7 @@ Player::Player(ID3D11Device* device) {
     HRESULT hr = destructionCb.initialize(device, Graphics::Ins().GetDeviceContext());
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
    
-
+    //effect
     attackEffect = new Effect("Data/Effect/playerAttack.efk");
     hitEffect = new Effect("Data/Effect/playerHit.efk");
 
@@ -150,6 +150,9 @@ void Player::Init() {
 
     // 地面貫通するか否か
     penetrate = false;
+
+    deathse = false;
+    slowse = false;
 }
 #include <Xinput.h>
 void Player::Update(float elapsedTime) {
@@ -210,6 +213,8 @@ void Player::Update(float elapsedTime) {
         float radian = DirectX::XMConvertToRadians(180 * efcDir);
         attackEffect->SetPlaySpeed(handle, 1.5f);
         handle = attackEffect->PlayDirection(centerPosition, 1.6f, radian);
+        SEAttack = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Playerattack.wav", false);
+        SEAttack.get()->Play(0.5f);
     }
 
     atkTimer -= elapsedTime;
@@ -228,7 +233,18 @@ void Player::Update(float elapsedTime) {
     }    
 
     // 死んだら
-    if (health <= 0)isDead = true;
+    if (health <= 0)
+    {
+        if (deathse == false)
+        {
+            SEDeath = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Dead候補1.wav", false);
+            //SEDeath = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Dead候補2.wav", false);
+            //SEDeath = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Dead候補3.wav", false);
+            SEDeath.get()->Play(0.5f);
+            deathse = true;
+        }
+        isDead = true;
+    }
 }
 
 
@@ -379,6 +395,7 @@ Vec3 Player::GetMoveVec() const {
 }
 
 bool Player::InputMove(float elapsedTime) {
+    GamePad& gamePad = Input::Instance().GetGamePad();
     if (deathFlag) return false;
 
     // 操作不可ならリターン
@@ -389,6 +406,16 @@ bool Player::InputMove(float elapsedTime) {
 
     // 移動処理
     Move(moveVec.x, moveVec.z, moveSpeed);
+    if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT || gamePad.GetButtonDown() & GamePad::BTN_LEFT)
+    {
+        SEMove = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Movestart.wav", false);
+        SEMove.get()->Play(1.0f);
+    }
+    if (gamePad.GetButtonDown() & GamePad::BTN_AA || gamePad.GetButtonDown() & GamePad::BTN_DD)
+    {
+        SEMove = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Movestart.wav", false);
+        SEMove.get()->Play(1.0f);
+    }
 
     // 進行ベクトルがゼロベクトルでない場合は入力された
     return moveVec.x || moveVec.y || moveVec.z;
@@ -410,6 +437,8 @@ bool Player::InputJump() {
         else jumpCount += 1;
         
         if (jumpCount <= jumpLimit) {
+            SEJump = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Jump.wav", false);
+            SEJump.get()->Play(0.2f);
             Jump(jumpSpeed);
 
             return true;
@@ -426,12 +455,22 @@ void Player::InputSlow(float elapsedTime) {
     // 押してる間 且 コストがある間
     if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER
         && cost.Approval(elapsedTime)) {
+        if (!slowse)
+        {
+            SESlowStart = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Slowstart.wav", false);
+            SESlowStart.get()->Play(0.2f);
+            slowse = true;
+        }
         cost.Trg(true);
         slow = true;
         // アルファ値を1/10秒で最大に
         slowAlpha += elapsedTime * 10;
         slowAlpha = min(0.98f, slowAlpha);
-    }    
+    }
+    else if (gamePad.GetButtonUp() & GamePad::BTN_LEFT_TRIGGER)
+    {
+            slowse = false;
+    }
     else if (!slowFixation) {
         cost.Trg(false);
         slow = false;
@@ -471,6 +510,8 @@ bool Player::InputSB() {
             if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
             // コスト
             cost.Consume(sbCost);
+            SESBstart = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\SBstart.wav", false);
+            SESBstart.get()->Play(0.2f);
             return true;
         }
         // 武器を持っていない
@@ -521,6 +562,8 @@ bool Player::InputSB() {
             sbdir = atkPos;
             // コスト
             cost.Consume(sbCost);
+            SESBstart = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\SBstart.wav", false);
+            SESBstart.get()->Play(0.2f);
             return true;
         }
         // 武器を持っていない
@@ -1089,6 +1132,8 @@ void Player::CollisionPanchiVsProjectile() {
             enemyBullet->SetReflectionFlag(true);
             // ヒットストップ
             if (!slow)hitstop = true;
+            SEReflect = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Reflect.wav", false);
+            SEReflect.get()->Play(0.5f);
             // カメラシェイク（簡素）
             CameraManager& cameraMgr = CameraManager::Instance();
             if (!cameraMgr.GetShakeFlag()) {
