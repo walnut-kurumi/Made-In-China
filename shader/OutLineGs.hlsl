@@ -36,8 +36,7 @@ void main(
 
         // 最後に、修正した頂点位置を射影変換しレンダリング用に変換します。
         o.position = mul(v.position, viewProjection);
-        o.color = v.color;
-        //o.color.a *= 1.0 - destruction * _AlphaFactor;
+        o.color = v.color;        
         o.texcoord = v.texcoord;
         
         output.Append(o);

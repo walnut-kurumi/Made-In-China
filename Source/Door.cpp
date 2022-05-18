@@ -12,8 +12,12 @@ Door::Door(ID3D11Device* device)
 
     isOpen = false;
     radius = 4.0f;
+    radian = 0.0f;
+    isBlinking = false;
+    backModelAlpha = 0.0f;
+    modelAlpha = 1.0f;
 
-	//debugRenderer = std::make_unique<DebugRenderer>(device);
+	debugRenderer = std::make_unique<DebugRenderer>(device);
 }
 
 Door::~Door()
@@ -29,6 +33,10 @@ void Door::Init()
 
     isOpen = false;
     radius = 4.0f;
+    radian = 0.0f;
+    isBlinking = false;
+    backModelAlpha = 0.0f;
+    modelAlpha = 1.0f;
 
     centerPos = position;
     centerPos.y = position.y + 5.0f;
@@ -49,21 +57,44 @@ void Door::Update(float elapsedTime)
 
     // プレイヤーの攻撃とドアの当たり判定
     CollisionPlayerAtkVsDoor();
-
+    // プレイヤーとドア
+    CollisionPlayerVsDoor();
     // ドア開ける
     OpenTheDoor();
+
+    // 点滅
+    if (!isOpen)
+    {
+        radian += 0.05f;
+        if (radian > 3.1415f) radian = 0.0f;
+        if (isBlinking)
+        {
+            backModelAlpha = sinf(radian);
+            modelAlpha = sinf(radian);
+            if (modelAlpha < 0.7f)modelAlpha = 0.7f;
+        }
+        backModelColor.w = backModelAlpha;
+    }
+    if (!isBlinking)
+    {
+        backModelColor.w = 1.0f;
+        modelAlpha = 1.0f;
+    }
 }
 
 void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
 {
-    backModel->Begin(dc, Shaders::Ins()->GetOutlineShader(),true);
-    backModel->Render(dc, backModelColor);
+    if (!isOpen && isBlinking)
+    {
+        backModel->Begin(dc, Shaders::Ins()->GetOutlineShader(), true);        
+        backModel->Render(dc, backModelColor);
+    }
     model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
-    model->Render(dc, Vec4{ 0.564f,0.42f,0.1f,1.0f });
+    model->Render(dc, Vec4{ 0.564f,0.42f,0.1f,modelAlpha });
 	// 必要なったら追加
-    //debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(collisionPos, radius, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
+    debugRenderer.get()->DrawSphere(centerPos, backModelRadius, Vec4(0.3f, 1, 0, 1));    
+    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 }
 
 void Door::RenderGui()
@@ -73,10 +104,13 @@ void Door::RenderGui()
         // トランスフォーム
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::SliderFloat3("Pos", &position.x, -200, 200);            
-            ImGui::SliderFloat3("Angle", &angle.x, 0, 3.14f);
+            ImGui::SliderFloat3("Angle", &angle.x, 0, 3.14f);            
+            ImGui::SliderFloat4("sinf", &backModelColor.x,0.0f,1.0f);
         }
         unsigned int flag = static_cast<int>(isOpen);
+        unsigned int flag2 = static_cast<int>(isBlinking);
         ImGui::CheckboxFlags("IsOpen", &flag, 1);      
+        ImGui::CheckboxFlags("IsBlink", &flag2, 1);      
     }
     ImGui::End();
 #endif
@@ -115,6 +149,8 @@ void Door::OpenTheDoor()
 
         // 敵とドアの判定
         CollisionEnemyVsDoor();
+
+        modelAlpha = 1.0f;
     }
 }
 
@@ -130,6 +166,18 @@ void Door::CollisionPlayerAtkVsDoor()
         }
     }
 
+}
+
+// 自機とドア
+void Door::CollisionPlayerVsDoor()
+{
+    if (isOpen) return;
+    if (Collision::SphereVsSphere(centerPos, player->GetCenterPosition(), backModelRadius, player->GetRadius()))
+    {
+        // 点滅する
+        isBlinking = true;
+    }
+    else isBlinking = false;
 }
 
 // ドアを開けたときに敵が重なっていたら倒す

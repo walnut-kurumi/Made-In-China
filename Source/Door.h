@@ -33,6 +33,7 @@ public:
 
 	// ドアとの当たり判定
 	void CollisionPlayerAtkVsDoor();
+	void CollisionPlayerVsDoor();
 	void CollisionEnemyVsDoor();
 
 	void PlayerData(Player* p) { player = p; }
@@ -69,7 +70,12 @@ protected:
 	float radius = 0.0f;
 
 	// プレイヤーが近づいたら透明度上げ下げする
-	Vec4 backModelColor = { 0.1,0.1,0.7,1.0 };
+	Vec4 backModelColor = { 0.75f,0.35f,0.95f,1.0 };
+	float backModelRadius = 30.0f;
+	float backModelAlpha = 1.0f;
+	float modelAlpha = 1.0f;
+	float radian = 0.0f;
+	bool isBlinking = false;
 
-		//std::unique_ptr<DebugRenderer> debugRenderer;
+	std::unique_ptr<DebugRenderer> debugRenderer;
 };
