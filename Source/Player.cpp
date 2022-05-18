@@ -62,6 +62,7 @@ Player::~Player() {
     delete attackEffect;
     delete hitEffect;
     delete model;
+    AfterimageManager::Instance().Destroy();
 }
 
 void Player::Init() {

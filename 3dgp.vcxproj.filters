@@ -321,6 +321,10 @@
     <ClCompile Include="Source\FullScreenQuad.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Trail.cpp" />
+    <ClCompile Include="Source\SwordTrail.cpp">
+      <Filter>Source\TrailRenderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -571,6 +575,9 @@
     <ClInclude Include="Source\FullScreenQuad.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Source\SwordTrail.h">
+      <Filter>Source\TrailRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\debug.hlsli">
@@ -682,6 +689,9 @@
     </Filter>
     <Filter Include="Source\Afterimage">
       <UniqueIdentifier>{168e5c0c-dc7f-46a0-b279-ff35e0737c6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\TrailRenderer">
+      <UniqueIdentifier>{eb8ba728-d7e2-489b-afe3-99796b146c4a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
