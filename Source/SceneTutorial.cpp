@@ -95,6 +95,8 @@ void SceneTutorial::Initialize()
     Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
     LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
+    keybord = new Sprite(device, L"./Data/Sprites/UI/Keybord.png");
+    controller = new Sprite(device, L"./Data/Sprites/UI/Controller.png");
     fade = new Sprite(device, L"./Data/Sprites/scene/black.png");
 
     Menu::Instance().Initialize();
@@ -128,6 +130,11 @@ void SceneTutorial::Initialize()
     isSlow = false;    
     changeScene = false;
 
+    radian = 0.0f;
+    tutorialTick = 0;	// アニメーション用チック	
+    stickAnim = 0;	// アニメーション
+    isKeybord = false;
+
     // 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける   
     player->SetIsControl(false);
     player->SetCanSlow(false);
@@ -151,6 +158,8 @@ void SceneTutorial::Finalize()
     CameraManager& cameraMgr = CameraManager::Instance();
     cameraMgr.SetShakeFlag(false);
 
+    delete keybord;
+    delete controller;
     delete enemyattack;
     delete LoadBar;
     delete Bar;
@@ -233,7 +242,7 @@ void SceneTutorial::Update(float elapsedTime)
                 for (int i = 0; i < EnemyBulletManager::Instance().GetProjectileCount(); i++)
                 {
                     EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(true);
-                }
+                }                
             }
         }
 
@@ -411,6 +420,9 @@ void SceneTutorial::Render(float elapsedTime)
         // 攻撃予兆描画
         RenderEnemyAttack();
 
+        // 操作説明用
+        RenderTutorial();
+
         // UI
         Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
@@ -428,26 +440,10 @@ void SceneTutorial::Render(float elapsedTime)
 
 
     ImGui::Begin("ImGUI");
-
-    // CAMERA_SHAKE
-    // TODO:07 Adjust the maximum amount of rotation(max_skew) and movement(max_sway) of the camera.
-    ImGui::SliderFloat("max_sway [pixel]", &max_sway, 0.0f, 64.0f);
-    ImGui::SliderFloat("max_skew [degree]", &max_skew, 0.0f, 10.0f);
-    // TODO:12 Defines the amount of seed shifting factor for perlin noise.
-    ImGui::SliderFloat("seed_shifting_factor", &seed_shifting_factor, 0.0f, 10.0f);
-
+    
     ImGui::SliderFloat("elapsedTime", &et, 0.0f, 1.0f);
-
-    bool sh = cameraMgr.GetShakeFlag();
-    ImGui::Checkbox("shakeFlag", &sh);
-
-    ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
-    ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
-    ImGui::SliderFloat("expo", &exp, 0, 10);
-
-    ImGui::SliderFloat("LEx", &LErgb.x, 0, 1);
-    ImGui::SliderFloat("LEy", &LErgb.y, 0, 1);
-    ImGui::SliderFloat("LEz", &LErgb.z, 0, 1);
+    ImGui::SliderInt("Tick", &tutorialTick, 0.0f, 1.0f);    
+    ImGui::SliderFloat("Tick", &tick, 0.0f, 1.0f);
 
     ImGui::End();
 
@@ -620,4 +616,54 @@ void SceneTutorial::RenderEnemyAttack()
             enemyattack->render(dc, screenPosition.x - 32, screenPosition.y - 64, 64, 64, 1, 1, 1, 1, 0);
         }
     }
+}
+
+// チュートリアル画像描画
+void SceneTutorial::RenderTutorial()
+{
+    // チック
+    radian += 0.1f;
+    if (radian > 3.1415f) radian = 0.0f;
+    // アニメーション用１か０か
+    tick = sin(radian);
+    if (tick >= 0.5f)tutorialTick = 1;
+    else tutorialTick = 0;
+
+    ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();
+    // ビューポート
+    D3D11_VIEWPORT viewport;
+    UINT numViewports = 1;
+    dc->RSGetViewports(&numViewports, &viewport);
+    // 変換行列
+    DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&CameraManager::Instance().GetView());
+    DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&CameraManager::Instance().GetProjection());
+    DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+    // プレイヤーの頭上に表示   
+    DirectX::XMFLOAT3 worldPosition = player->GetCenterPosition();
+    worldPosition.y += player->GetHeight();
+    DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
+    // ワールド座標からスクリーン座標へ変換
+    DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
+        WorldPosition,
+        viewport.TopLeftX,
+        viewport.TopLeftY,
+        viewport.Width,
+        viewport.Height,
+        viewport.MinDepth,
+        viewport.MaxDepth,
+        Projection,
+        View,
+        World
+    );
+    // スクリーン座標
+    DirectX::XMFLOAT2 screenPosition;
+    DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
+
+    if (isTutorial)
+    {
+        // 攻撃予兆描画        
+        keybord->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+      
+    }
+
 }

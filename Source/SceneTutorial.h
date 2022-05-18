@@ -46,6 +46,9 @@ public:
 	// 敵の攻撃予兆
 	void RenderEnemyAttack();
 
+	// チュートリアル画像描画
+	void RenderTutorial();
+
 private:
 	std::unique_ptr<Player> player{};
 
@@ -56,12 +59,21 @@ private:
 	bool enemyWalk[ENEMY_MAX] = {};
 	bool enemyDirection[ENEMY_MAX] = {};
 
-	Sprite* Bar{};
 
+	Sprite* Bar{};
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};
-
+	Sprite* keybord{};
+	Sprite* controller{};
 	Sprite* fade{};
+
+	// Sprite用変数
+	float radian = 0.0f;
+	int tutorialTick = 0;	// アニメーション用チック	
+	int stickAnim = 0;	// アニメーション	
+	bool isKeybord = false;
+	float tick = 0.0f;
+
 
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
