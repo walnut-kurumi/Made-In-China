@@ -310,6 +310,7 @@ void SceneTutorial::Update(float elapsedTime)
     {
         // 次のステージへ移る処理
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
     }
 }
 

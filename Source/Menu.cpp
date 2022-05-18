@@ -32,8 +32,18 @@ void Menu::Update(float elapsedTime)
     //ポーズメニュー
     if (gamePad.GetButtonDown() & GamePad::BTN_START)
     {
-        if (!menuflag) menuflag = true;
-        else menuflag = false;
+        if (!menuflag)
+        {
+            SEMenu = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Menu.wav", false);
+            SEMenu.get()->Play(0.5f);
+            menuflag = true;
+        }
+        else
+        {
+            SECancellation = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Cancellation.wav", false);
+            SECancellation.get()->Play(0.5f);
+            menuflag = false;
+        }
     }
     if (menuflag == true)
     {
@@ -77,10 +87,14 @@ void Menu::menu()
 
     if (retry && (mouse.GetButtonDown() & mouseClick))
     {
+        SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
+        SEDecision.get()->Play(0.5f);
         //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
     }
     else if (end && (mouse.GetButtonDown() & mouseClick))
     {
+        SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
+        SEDecision.get()->Play(0.5f);
         DestroyWindow(GetActiveWindow());
     }
  
