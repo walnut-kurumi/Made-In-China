@@ -265,6 +265,8 @@
     <ClCompile Include="Source\StagePenetrate1.cpp" />
     <ClCompile Include="Source\StagePenetrate2.cpp" />
     <ClCompile Include="Source\StageSkybox.cpp" />
+    <ClCompile Include="Source\SwordTrail.cpp" />
+    <ClCompile Include="Source\Trail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\AfterimageBase.h" />
@@ -355,6 +357,7 @@
     <ClInclude Include="Source\StagePenetrate2.h" />
     <ClInclude Include="Source\StageSkybox.h" />
     <ClInclude Include="Source\EnemyGunner.h" />
+    <ClInclude Include="Source\SwordTrail.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\Constants.hlsli" />
