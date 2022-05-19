@@ -42,6 +42,8 @@ void SceneTutorial::Initialize()
 
     // プレイヤー
     player = std::make_unique<Player>(device);
+    // チュートリアルだお
+    player->SetIsTutorial(true);
     player->Init();
     player->SetPosition(Vec3(-19, 40, 0));
 
@@ -163,7 +165,6 @@ void SceneTutorial::Initialize()
     player->SetIsControl(false);
     player->SetCanSlow(false);
     player->SetCanAttack(false);
-
 }
 
 // 終了化
