@@ -140,7 +140,7 @@ void Door::OpenTheDoor()
         if (!sedoor)
         {
             SEDoorB = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Doorbreak.wav", false);
-            SEDoorB.get()->Play(0.5f);
+            SEDoorB.get()->Play(0.8f);
             sedoor = true;
         }
         Vec3 p = player->GetPosition();
