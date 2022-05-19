@@ -155,7 +155,19 @@ void EnemyManager::GroupAttack()
 					enemy2->SetIsSearch(true);
 				}
 			}
-
+		}
+		// Ž€‚ñ‚Å‚é
+		else if (enemy->GetHealth() <= 0)
+		{
+			for (Enemy* enemy2 : enemies)
+			{
+				// “¯‚¶ƒOƒ‹[ƒv‚È‚ç
+				if (enemy->GetGroupNum() == enemy2->GetGroupNum())
+				{
+					// Œ©‚Â‚¯‚é
+					enemy2->SetIsSearch(true);
+				}
+			}
 		}
 	}
 }

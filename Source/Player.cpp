@@ -20,7 +20,7 @@ Player::Player(ID3D11Device* device) {
     const char* jump = "Data/Models/Player/Animations/ver13/Jump.fbx";
     const char* attack = "Data/Models/Player/Animations/ver13/Attack.fbx";
 
-    model = new Model(device, "Data/Models/Player/T13.fbx", true, 0);
+    model = new Model(device, "Data/Models/Player/Player.fbx", true, 0);
 
     model->LoadAnimation(idle, 0, static_cast<int>(AnimeState::Idle));
     model->LoadAnimation(run, 0, static_cast<int>(AnimeState::Run));
