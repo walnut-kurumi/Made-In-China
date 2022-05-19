@@ -318,7 +318,7 @@ void EnemyGunner::MoveAttack(float cooldown)
 
     if (attackCooldown > 0.0f)
     {       
-        isAttack = false;
+        isAttack = true;
         return;
     }
     // UŒ‚‚Ó‚ç‚®
@@ -350,9 +350,7 @@ void EnemyGunner::MoveAttack(float cooldown)
 
         // ”­ŽË
         EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
-        bullet->Launch(pe, e);        
-            
-        isAttack = false;
+        bullet->Launch(pe, e);                            
     }
 }
 

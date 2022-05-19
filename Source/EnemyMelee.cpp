@@ -113,7 +113,7 @@ void EnemyMelee::Update(float elapsedTime)
         UpdateInvincibleTimer(elapsedTime);
 
         // 索敵エリア更新
-        UpdateSearchArea();
+        UpdateSearchArea();      
     }
     // 速度更新
     UpdateSpeed(elapsedTime);
@@ -303,37 +303,26 @@ bool EnemyMelee::CheckAttackRange()
 // 攻撃
 void EnemyMelee::MoveAttack(float cooldown)
 {
-    if (attackCooldown > 0.0f)
-    {
-        isAttack = true;
-        return;
-    }
+    if (attackCooldown > 0.0f) return;    
     // 攻撃ふらぐ
     isAttack = true;
 
-    // 攻撃する向きをプレイヤーの方向へ
-    if (player->GetCenterPosition().x > position.x)direction = false;
-    else if (player->GetCenterPosition().x < position.x) direction = true;
-
     //  近接攻撃  
-    {
+    {                
         // 体の向き
         float vx;
         (direction ? vx = -1 : vx = 1);
-        if (!isAttack) angle.y = DirectX::XMConvertToRadians(90 * vx);
-               
+        angle.y = DirectX::XMConvertToRadians(90 * vx);
         // 攻撃する向き               
         attackPos = centerPosition;
         attackPos.x = centerPosition.x + (3.0f * vx);
-        
+
         // 攻撃アニメーション再生
         model->PlayAnimation(static_cast<int>(state), false);
     }
 
     // クールダウン設定
     attackCooldown = cooldown;
-                  
-    isAttack = false;
 }
 
 // 吹っ飛ぶ
@@ -527,6 +516,21 @@ void EnemyMelee::UpdateAttackState(float elapsedTime)
     if (health <= 0) {
         isAttack = false;
         TransitionBlowState();
+    }
+
+    // 攻撃中は更新しない
+    if (!isAttack && attackCooldown < 0.0f)
+    {
+        // 攻撃する向きをプレイヤーの方向へ
+        if (player->GetCenterPosition().x > position.x) direction = false;
+        else if (player->GetCenterPosition().x < position.x) direction = true;
+        // 体の向き
+        float vx;
+        (direction ? vx = -1 : vx = 1);
+        angle.y = DirectX::XMConvertToRadians(90 * vx);
+        // 攻撃する向き               
+        attackPos = centerPosition;
+        attackPos.x = centerPosition.x + (3.0f * vx);
     }
 
     // 止まる
