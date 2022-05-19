@@ -15,10 +15,10 @@
 Player::Player(ID3D11Device* device) {
     ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();
 
-    const char* idle = "Data/Models/Player/Animations/ver13/Idle.fbx";
-    const char* run = "Data/Models/Player/Animations/ver13/Run.fbx";
-    const char* jump = "Data/Models/Player/Animations/ver13/Jump.fbx";
-    const char* attack = "Data/Models/Player/Animations/ver13/Attack.fbx";
+    const char* idle = "Data/Models/Player/Animations/Idle.fbx";
+    const char* run = "Data/Models/Player/Animations/Run.fbx";
+    const char* jump = "Data/Models/Player/Animations/Jump.fbx";
+    const char* attack = "Data/Models/Player/Animations/Attack.fbx";
 
     model = new Model(device, "Data/Models/Player/Player.fbx", true, 0);
 

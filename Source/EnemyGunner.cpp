@@ -19,7 +19,7 @@ EnemyGunner::EnemyGunner(ID3D11Device* device)
     const char* blow = "Data/Models/Enemy/GunnerAnimation/GetHit.fbx";
     const char* death = "Data/Models/Enemy/GunnerAnimation/Death.fbx";
 
-    model = new Model(device, "Data/Models/Enemy/Gunner2.fbx", true);
+    model = new Model(device, "Data/Models/Enemy/Gunner.fbx", true);
 
 
     model->LoadAnimation(idle, 0, static_cast<int>(State::Idle));

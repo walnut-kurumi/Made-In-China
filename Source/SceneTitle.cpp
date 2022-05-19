@@ -95,8 +95,8 @@ void SceneTitle::Update(float elapsedTime)
         // フェードアウト終わったら
         if (Fade::Instance().GetFadeOutFinish())
         {
-           //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
-           SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGameSt2));
+           SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
+           //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGameSt2));
         }
     }
     // おわる
