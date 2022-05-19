@@ -979,12 +979,19 @@ bool Player::Raycast(Vec3 move) {
         // レイキャストによる地面判定
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit)) {
-            // 地面に接地している
-            position.y = hit.position.y;
-            // 着地した
-            if (!isGround) OnLanding();
-            isGround = true;
-            result = true;
+            if (hit.penetrate) {
+                // 空中に浮いてる
+                position += move;
+                isGround = false;
+            }
+            else {
+                // 地面に接地している
+                position.y = hit.position.y;
+                // 着地した
+                if (!isGround) OnLanding();
+                isGround = true;
+                result = true;
+            }
         }
         else {
             // 空中に浮いてる
@@ -1001,9 +1008,15 @@ bool Player::Raycast(Vec3 move) {
         // レイキャストによる天井判定
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit)) {
-            // 天井に接している
-            position.y = hit.position.y - headPos.y;
-            result = true;
+            if (hit.penetrate) {
+                // 空中に浮いてる
+                position += move;
+            }
+            else {
+                // 天井に接している
+                position.y = hit.position.y - headPos.y;
+                result = true;
+            }
         }
         else {
             // 空中に浮いてる
@@ -1193,6 +1206,7 @@ void Player::CollisionSBVsStage() {
         HitResult hit;
         // ステージとの判定
         if (StageManager::Instance().RayCast(pos, pos + VecMath::Normalize(dir) * speed, hit)) {
+            if (hit.penetrate) return;
             // 向きを設定
             direction = VecMath::sign(hit.position.x - position.x);
             // 旋回処理
