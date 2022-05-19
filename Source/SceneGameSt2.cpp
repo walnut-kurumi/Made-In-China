@@ -34,7 +34,7 @@ void SceneGameSt2::Initialize()
 {
     // ロード％初期化    
     SetLoadPercent(0.0f);
-
+    BGM = Audio::Instance().LoadAudioSource("Data\\Audio\\BGM\\GameBGM3.wav", true);
     HRESULT hr{ S_OK };
 
     ID3D11Device* device = Graphics::Ins().GetDevice();
@@ -176,6 +176,7 @@ void SceneGameSt2::Finalize()
 // 更新処理
 void SceneGameSt2::Update(float elapsedTime)
 {
+    BGM.get()->Play(1.0f);
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
 
@@ -282,6 +283,7 @@ void SceneGameSt2::Update(float elapsedTime)
     // フェードアウトおわったら次のシーンにいける
     if (changeScene && Fade::Instance().GetFadeOutFinish())
     {
+        BGM.get()->Stop();
         // 次のステージへ移る処理
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
     }

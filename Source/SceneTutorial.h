@@ -17,6 +17,8 @@
 #include "framebuffer.h"
 #include "RadialBlur.h"
 #include "FullScreenQuad.h"
+#include "audio/AudioResource.h"
+#include "audio/Audio.h"
 
 class SceneTutorial : public Scene
 {
@@ -135,7 +137,7 @@ private:
 
 	ConstantBuffer<Radial_Blur> CBBlur;
 
-
+	std::unique_ptr<AudioSource> BGM;
 
 	// チュートリアル用変数
 	// チュートリアル中か

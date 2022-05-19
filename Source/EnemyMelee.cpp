@@ -320,7 +320,7 @@ void EnemyMelee::MoveAttack(float cooldown)
         // 体の向き
         float vx;
         (direction ? vx = -1 : vx = 1);
-        angle.y = DirectX::XMConvertToRadians(90 * vx);
+        if (!isAttack) angle.y = DirectX::XMConvertToRadians(90 * vx);
                
         // 攻撃する向き               
         attackPos = centerPosition;
@@ -477,7 +477,7 @@ void EnemyMelee::WalkTimerUpdate(float elapsedTime)
 void EnemyMelee::TransitionRunState()
 {
     state = State::Run;
-    moveSpeed = 50;
+    moveSpeed = 40;
     model->PlayAnimation(static_cast<int>(state), true);
 
     // ターゲット切れるまで
@@ -532,9 +532,14 @@ void EnemyMelee::UpdateAttackState(float elapsedTime)
     // 止まる
     Move(0.0f, 0.0f, moveSpeed);
     // 攻撃      
-    MoveAttack(1.5f);
+    MoveAttack(0.8f);
     // 攻撃クールダウン更新
     AttackCooldownUpdate(elapsedTime);
+
+    if (!model->IsPlayAnimatimon())
+    {        
+        isAttack = false;
+    }
 
     // 射程距離外 もしくは、射線が通っていないなら走るステートへ
     if (!model->IsPlayAnimatimon() && (!CheckAttackRange() || AttackRayCheck()))

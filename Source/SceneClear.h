@@ -51,4 +51,5 @@ private:
 	DirectX::XMFLOAT2 mousepos = {};
 
 	std::unique_ptr<AudioSource> SEDecision;
+	std::unique_ptr<AudioSource> BGM;
 };

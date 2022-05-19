@@ -15,6 +15,8 @@
 #include "framebuffer.h"
 #include "RadialBlur.h"
 #include "FullScreenQuad.h"
+#include "audio/AudioResource.h"
+#include "audio/Audio.h"
 
 class SceneGameSt2 : public Scene
 {
@@ -95,6 +97,7 @@ private:
 	std::unique_ptr<FullScreenQuad> fullScreen;
 
 	ConstantBuffer<Radial_Blur> CBBlur;
+	std::unique_ptr<AudioSource> BGM;
 
 	// Ÿ‚ÌƒV[ƒ“‚ÖˆÚ‚é
 	bool changeScene = false;
