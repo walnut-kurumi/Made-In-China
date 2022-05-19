@@ -133,6 +133,10 @@ void Player::Init() {
     health = 1;
     oldHealth = 0;
 
+
+    cost.SetTutorial(isTutorial);
+    cost.Reset();
+
     // 操作可能か
     isControl = true;
     canSlow = true;
@@ -143,8 +147,6 @@ void Player::Init() {
     gravFlag = true;
     // 中心座標更新
     UpdateCenterPosition();
-
-    cost.Reset();
 
     // 地面貫通するか否か
     penetrate = false;
@@ -479,7 +481,7 @@ void Player::InputSlow(float elapsedTime) {
             slowAlpha += elapsedTime * 10;
             slowAlpha = min(0.98f, slowAlpha);
         }
-        // ディレイ期間中
+        // コスト枯渇ディレイ期間中
         else if (!cost.Approval(0.5f)) {
             cost.Trg(false);
             slow = false;
