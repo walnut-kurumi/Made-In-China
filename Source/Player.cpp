@@ -259,6 +259,9 @@ void Player::Update(float elapsedTime) {
         }
         isDead = true;
     }
+
+
+    position.x = max(position.x, -200);
 }
 
 
