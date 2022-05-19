@@ -7,6 +7,7 @@
 // ‰Šú‰»
 void Menu::Initialize()
 {    
+    //SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
     ID3D11Device* device = Graphics::Ins().GetDevice();
 
     gameRetry = new Sprite(device, L"./Data/Sprites/scene/retry.png");
@@ -14,6 +15,8 @@ void Menu::Initialize()
 
     retry = true;
     end = false;   
+    change = false;
+    menuflag = false;
 }
 
 // I—¹‰»
@@ -85,11 +88,12 @@ void Menu::menu()
     GamePad& gamePad = Input::Instance().GetGamePad();
 
 
-    if (retry && (mouse.GetButtonDown() & mouseClick))
+    if (retry && (mouse.GetButtonUp() & mouseClick))
     {
         SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
         SEDecision.get()->Play(0.5f);
-        //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+        change = true;
     }
     else if (end && (mouse.GetButtonDown() & mouseClick))
     {
