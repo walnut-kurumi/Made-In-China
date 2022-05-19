@@ -36,7 +36,6 @@ void StagePenetrate1::Render(ID3D11DeviceContext* deviceContext, float elapsedTi
 }
 
 bool StagePenetrate1::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& end, HitResult& hit)
-{
-    //return false;
+{    
     return Collision::RayVsModel(start, end, model->GetSkinnedMeshs(), transform, hit);
 }

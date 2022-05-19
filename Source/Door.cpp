@@ -94,7 +94,9 @@ void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
         backModel->Render(dc, backModelColor);
     }
     model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
+    // ’ƒF
     Vec4 color = { 0.564f,0.42f,0.1f,modelAlpha };    
+    //Vec4 color = { 1.0f,1.0f,1.0f,modelAlpha };    
     model->Render(dc,color);
 	
 
