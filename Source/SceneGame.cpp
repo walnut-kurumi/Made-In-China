@@ -535,7 +535,7 @@ void SceneGame::EnemyPositionSetting()
    
     enemyDirection[0] = false;
     enemyDirection[1] = true;
-    enemyDirection[2] = true;
+    enemyDirection[2] = false;
 }
 
 

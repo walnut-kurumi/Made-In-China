@@ -315,6 +315,9 @@ void EnemyGunner::MoveAttack(float cooldown)
     // UŒ‚‚Ó‚ç‚®
     isAttack = true;       
 
+
+    if (player->GetCenterPosition().x > position.x)direction = false;
+    else if (player->GetCenterPosition().x < position.x) direction = true;
     // ‘Ì‚ÌŒü‚«
     float vx;
     (direction ? vx = -1 : vx = 1);
