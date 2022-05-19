@@ -53,6 +53,8 @@ public:
 	
 	float GetStepOffset() const { return stepOffset; }
 
+	void SetDirection(int i) { direction = i; }
+
 private:
 	// ‚’¼‘¬—ÍXVˆ—
 	void UpdateVerticalVelocitiy(float elapsedFrame);

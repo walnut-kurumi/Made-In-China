@@ -28,6 +28,7 @@ void EnemyBullet::CollisionVsStage()
 
 	if (StageManager::Instance().RayCast(start, end, hit)) 
 	{
+		if (hit.penetrate) return;
 		Destroy();		
 	}
 }

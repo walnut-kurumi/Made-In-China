@@ -234,9 +234,9 @@ void SceneTutorial::Update(float elapsedTime)
 
                 // 操作説明：スロー
                 renderSlow = true;
-            }
+            }            
             // スロー入力したらそのままスロー
-            if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER && isTutorial)
+            if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER && isTutorial && player->GetCanSlow())
             {
                 isSlow = true;
                 isPause = false;                
@@ -255,7 +255,7 @@ void SceneTutorial::Update(float elapsedTime)
                     
                     renderSlow = false;
                     // 操作説明：攻撃
-                    renderAttack = true;
+                    renderAttack = true;                   
                 }
             }
 
@@ -286,15 +286,17 @@ void SceneTutorial::Update(float elapsedTime)
         StageManager::Instance().Update(slowElapsedTime);
 
         // プレイヤー
-        {
+        {            
             player->Update(slowElapsedTime);
             player->SetSlowFixation(isSlow);
+            player->SetIsTutorial(isTutorial);
             // シフトブレイク更新処理
             SBManager::Instance().Update(slowElapsedTime);
 
+            
             // チュートリアル終わり
             if (player->GetIsAtk() && isTutorial) 
-            {
+            {                
                 isTutorial = false;
                 isPause = false;
                 isSlow = false;
