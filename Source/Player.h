@@ -159,8 +159,10 @@ private:
 
 	// 攻撃判定用 体の位置
 	Vec3 atkPos{};
+	Vec3 swordPos{};
 	Vec3 waistPos{};
 	Vec3 headPos{};
+	Vec3 sbLaunchPos{};
 
 	float moveSpeed = 0.0f;
 	float turnSpeed = DirectX::XMConvertToRadians(3600);
@@ -210,11 +212,9 @@ private:
 
 
 	// 攻撃えふぇくと
-	Effect* attackEffect = nullptr;
 	Effect* hitEffect = nullptr;
 	Effekseer::Handle handle = 0;
-	int efcDir = 0;
-
+	
 	// チュートリアル用変数
 	bool isControl = true;
 	bool canSlow = true;

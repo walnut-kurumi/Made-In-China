@@ -28,7 +28,7 @@ private:
     // 事前生成数
     int preLoadCount = 10;
     // 残像の生成間隔
-    float createIntervalTime = 0.02f;
+    float createIntervalTime = 0.01f;
     // 生成タイマー
     float createTimer = 0.0f;
 
