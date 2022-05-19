@@ -317,6 +317,9 @@ void EnemyMelee::MoveAttack(float cooldown)
         attackPos = centerPosition;
         attackPos.x = centerPosition.x + (3.0f * vx);
 
+        SEEPunch = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\EnemyPunch.wav", false);
+        SEEPunch.get()->Play(0.8f);
+
         // 攻撃アニメーション再生
         model->PlayAnimation(static_cast<int>(state), false);
     }

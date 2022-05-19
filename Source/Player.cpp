@@ -452,7 +452,7 @@ bool Player::InputJump() {
         
         if (jumpCount <= jumpLimit) {
             SEJump = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Jump3.wav", false);
-            SEJump.get()->Play(0.6f);
+            SEJump.get()->Play(0.3f);
             Jump(jumpSpeed);
 
             return true;
