@@ -159,28 +159,39 @@ void SceneTitle::SceneSelect()
     mousepos.x = screenPosition.x;
     mousepos.y = screenPosition.y;
 
-    const GamePadButton up =
+    const GamePadButton Left =
         GamePad::BTN_LEFT;
-    const GamePadButton down =
+    const GamePadButton Right =
         GamePad::BTN_RIGHT;
 
-    if (screenPosition.x >= startpos.x && screenPosition.x < startpos.x + startsize.x)
+    if (screenPosition.y >= startpos.y && screenPosition.y < startpos.y + startsize.y)
     {
-        if (screenPosition.y >= startpos.y && screenPosition.y <= startpos.y + startsize.y)
+        if (screenPosition.x >= startpos.x && screenPosition.x <= startpos.x + startsize.x)
         {
             start = true;
             end = false;
         }
-        if (screenPosition.y >= endpos.y && screenPosition.y <= endpos.y + endsize.y)
+        if (screenPosition.x >= endpos.x && screenPosition.x <= endpos.x + endsize.x)
         {
             start = false;
             end = true;
         }
     }
-    if (gamePad.GetButtonDown() & up || gamePad.GetButtonDown() & down)
+    if (gamePad.GetButtonDown() & Left || gamePad.GetButtonDown() & Right)
     {
         start = !start;
         end = !end;
+    }
+
+    if (gamePad.GetAxisLX() > 0.0f )
+    {
+        start = false;
+        end = true;
+    }
+    if (gamePad.GetAxisLX() < 0.0f)
+    {
+        start = true;
+        end = false;
     }
 
     if (start)
