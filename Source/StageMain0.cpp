@@ -18,7 +18,7 @@ StageMain0::StageMain0(ID3D11Device* device)
 
     bgpos = { -100, -600 };
 
-    NextStagePos = { -168.0f,10.5f,0.0f };
+    NextStagePos = { -168.0f,15.5f,0.0f };
 
     type = Type::Main;
     debugRenderer = std::make_unique<DebugRenderer>(device);

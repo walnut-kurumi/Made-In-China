@@ -14,7 +14,7 @@ public:
 	float GetCost() { return costTimer; }
 
 private:
-	const float MAX_COST = 100.0f; // 2”{‚ÌŽžŠÔ‚É‚È‚é
+	const float MAX_COST = 2.5f; // 2”{‚ÌŽžŠÔ‚É‚È‚é
 	const float MAX_CT = 2.0f;
 	
 	float costTimer = MAX_COST;
