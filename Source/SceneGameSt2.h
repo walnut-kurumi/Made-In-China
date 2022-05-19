@@ -101,4 +101,6 @@ private:
 
 	// Ÿ‚ÌƒV[ƒ“‚ÖˆÚ‚é
 	bool changeScene = false;
+
+	Sprite* fade{};
 };

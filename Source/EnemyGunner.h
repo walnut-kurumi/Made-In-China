@@ -3,6 +3,8 @@
 #include "Model.h"
 #include "Enemy.h"
 #include "Graphics/Sprite.h"
+#include "audio/AudioResource.h"
+#include "audio/Audio.h"
 
 // Gunner
 class EnemyGunner : public Enemy
@@ -132,4 +134,5 @@ private:
 
 	// タゲ切るタイマー	
 	float targetTimer = 0.0f;	
+	std::unique_ptr<AudioSource> SEGun;
 };

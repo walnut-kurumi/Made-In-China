@@ -348,6 +348,10 @@ void EnemyGunner::MoveAttack(float cooldown)
         Vec3 pe = { p - e };
         pe =  VecMath::Normalize(pe);
 
+        SEGun = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\EnemybulletŒó•â1.wav", false);
+        //SEGun = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\EnemybulletŒó•â2.wav", false);
+        SEGun.get()->Play(1.0f);
+
         // ”­ŽË
         EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
         bullet->Launch(pe, e);                            

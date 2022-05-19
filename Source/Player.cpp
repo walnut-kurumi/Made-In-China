@@ -133,6 +133,12 @@ void Player::Init() {
     health = 1;
     oldHealth = 0;
 
+    // コスト初期化
+    if (isTutorial) {
+        cost.SetTutorial(isTutorial);
+    }
+    cost.Reset();
+
     // 操作可能か
     isControl = true;
     canSlow = true;
@@ -143,8 +149,6 @@ void Player::Init() {
     gravFlag = true;
     // 中心座標更新
     UpdateCenterPosition();
-
-    cost.Reset();
 
     // 地面貫通するか否か
     penetrate = false;
@@ -300,7 +304,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     if (atk) debugRenderer.get()->DrawSphere(swordPos, 4, Vec4(1, 0, 0, 1));
 
     
-    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    // debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 
 #endif
 }
@@ -464,20 +468,31 @@ void Player::InputSlow(float elapsedTime) {
     // 押してる間 且 コストがある間
     if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER
         && cost.Approval(elapsedTime)) {
-        if (!slowse)
-        {
+
+        if (!slowse) {
             SESlowStart = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Slowstart.wav", false);
             SESlowStart.get()->Play(0.2f);
             slowse = true;
         }
-        cost.Trg(true);
-        slow = true;
-        // アルファ値を1/10秒で最大に
-        slowAlpha += elapsedTime * 10;
-        slowAlpha = min(0.98f, slowAlpha);
+        if (cost.Approval(0.5f)) {
+            cost.Trg(true);
+            slow = true;
+        }
+        if (cost.GetTrg()) {
+            // アルファ値を1/10秒で最大に
+            slowAlpha += elapsedTime * 10;
+            slowAlpha = min(0.98f, slowAlpha);
+        }
+        // コスト枯渇ディレイ期間中
+        else if (!cost.Approval(0.5f)) {
+            cost.Trg(false);
+            slow = false;
+            // アルファ値を1/10秒で最小に
+            slowAlpha -= elapsedTime * 10;
+            slowAlpha = max(0.0f, slowAlpha);
+        }
     }
-    else if (gamePad.GetButtonUp() & GamePad::BTN_LEFT_TRIGGER)
-    {
+    else if (gamePad.GetButtonUp() & GamePad::BTN_LEFT_TRIGGER) {
             slowse = false;
     }
     else if (!slowFixation) {
@@ -488,8 +503,8 @@ void Player::InputSlow(float elapsedTime) {
         slowAlpha = max(0.0f, slowAlpha);
     }
     // スロー固定にしてるとき
-    if (slowFixation)
-    { // アルファ値を1/10秒で最大に
+    if (slowFixation) {
+        // アルファ値を1/10秒で最大に
         slowAlpha += elapsedTime * 10;
         slowAlpha = min(0.95f, slowAlpha);
     }

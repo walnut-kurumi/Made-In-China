@@ -39,12 +39,16 @@ public:
 	// メニューフラグ取得
 	bool GetMenuFlag() { return menuflag; }
 
+	bool GetChangeFlag() { return change; }
+
 private:
 	
 	bool menuflag = false;
 
 	bool retry = false;
 	bool end = false;
+
+	bool change = false;
 
 	float retryAlpha = 1.0f;
 	float endAlpha = 1.0f;

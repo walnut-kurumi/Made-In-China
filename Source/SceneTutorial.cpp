@@ -11,6 +11,7 @@
 #include "SceneGame.h"
 #include "SceneLoading.h"
 #include "SceneClear.h"
+#include "SceneTitle.h"
 
 #include "Menu.h"
 
@@ -41,6 +42,8 @@ void SceneTutorial::Initialize()
 
     // プレイヤー
     player = std::make_unique<Player>(device);
+    // チュートリアルだお
+    player->SetIsTutorial(true);
     player->Init();
     player->SetPosition(Vec3(-19, 40, 0));
 
@@ -162,7 +165,6 @@ void SceneTutorial::Initialize()
     player->SetIsControl(false);
     player->SetCanSlow(false);
     player->SetCanAttack(false);
-
 }
 
 // 終了化
@@ -380,6 +382,7 @@ void SceneTutorial::Update(float elapsedTime)
     Goal::Instance().SetPlayerPos(player->GetCenterPosition());
     Goal::Instance().Update(elapsedTime);
 
+
     // 現在のステージの死んでるエネミーの数が０の場合
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
@@ -394,6 +397,10 @@ void SceneTutorial::Update(float elapsedTime)
             // フェードアウト
             if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);            
         }
+    }
+    if(Menu::Instance().GetChangeFlag())
+    {
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
     }
     // フェードアウトおわったら次のシーンにいける
     if (changeScene && Fade::Instance().GetFadeOutFinish())

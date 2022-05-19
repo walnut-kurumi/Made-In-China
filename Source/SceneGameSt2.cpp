@@ -11,6 +11,7 @@
 
 #include"SceneLoading.h"
 #include"SceneClear.h"
+#include "SceneTitle.h"
 
 #include "Menu.h"
 
@@ -115,6 +116,8 @@ void SceneGameSt2::Initialize()
     Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
     LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
+    fade = new Sprite(device, L"./Data/Sprites/scene/black.png");
+
 
     Menu::Instance().Initialize();
 
@@ -169,6 +172,7 @@ void SceneGameSt2::Finalize()
     delete enemyattack;
     delete LoadBar;
     delete Bar;
+    delete fade;
     //デバッグ
    // delete hitEffect;
 }
@@ -280,6 +284,10 @@ void SceneGameSt2::Update(float elapsedTime)
             if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
         }
     }
+    if (Menu::Instance().GetChangeFlag())
+    {
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
+    }
     // フェードアウトおわったら次のシーンにいける
     if (changeScene && Fade::Instance().GetFadeOutFinish())
     {
@@ -323,6 +331,8 @@ void SceneGameSt2::Render(float elapsedTime)
             StageManager::Instance().Render(dc, elapsedTime);
             // ドア描画
             DoorManager::Instance().Render(dc, elapsedTime);
+            // スロー演出、敵や自機など重要なオブジェクト以外を暗くする
+            fade->render(dc, 0, 0, 1920, 1080, 1, 1, 1, player->GetSlowAlpha(), 0);
             // プレイヤー描画
             player->Render(dc);
             // エネミー描画
