@@ -103,6 +103,12 @@
     <FxCompile Include="shader\RadialBlurPs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="shader\trailVs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\trailPs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Framework.cpp" />
@@ -629,6 +635,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\RadialBlur.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="shader\trail.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

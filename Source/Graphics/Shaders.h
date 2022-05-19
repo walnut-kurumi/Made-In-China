@@ -24,6 +24,8 @@ private:
 	Shader luminanceShader;	
 
 	Shader uvscrollShader;
+
+	Shader trailShader;
 	
 public:
 	static Shaders* Ins() {
@@ -46,4 +48,7 @@ public:
 	Shader GetLuminanceShader() { return luminanceShader; }	
 
 	Shader GetUvScrollShader() { return uvscrollShader; }
+
+
+	Shader GetTrailShader() { return trailShader; }
 };
