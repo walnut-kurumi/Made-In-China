@@ -67,8 +67,10 @@ public:
 
 	void SetIsControl(bool b) { isControl = b; }
 	void SetCanSlow(bool b) { canSlow = b; }
+	bool GetCanSlow() { return canSlow; }
 	void SetCanAttack(bool b) { canAttack = b; }
 	void SetSlowFixation(bool b) { slowFixation = b; }
+	void SetIsTutorial(bool b) { isTutorial = b; }
 
 	void CollisionPanchiVsEnemies();
 	void CollisionPanchiVsProjectile();
@@ -218,6 +220,7 @@ private:
 	bool canSlow = true;
 	bool canAttack = true;
 	bool slowFixation = false;	// スロー固定
+	bool isTutorial = false;
 
 	Cost cost;
 

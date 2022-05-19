@@ -143,6 +143,7 @@ void Player::Init() {
     canSlow = true;
     canAttack = true;
     slowFixation = false;
+    isTutorial = false;
 
     gravFlag = true;
     // 中心座標更新
@@ -318,6 +319,8 @@ void Player::DrawDebugGUI() {
             ImGui::SliderFloat("Position X", &position.x, -300, 300);
             ImGui::SliderFloat("Position Y", &position.y, -200, 200);
             ImGui::SliderFloat("Position Z", &position.z, -300, 300);
+
+            ImGui::SliderFloat3("atkPos", &atkPos.x, -300, 300);
 
             ImGui::InputFloat3("Angle", &angle.x);
             ImGui::InputInt("Direction", &direction);
@@ -618,6 +621,9 @@ bool Player::InputAttack() {
             else atkPos = { front.x,0,0 };
             atkPos = VecMath::Normalize(atkPos) * 3;
 
+            // チュートリアル
+            if (isTutorial) atkPos = { 4.9f,1.0,0.0 };
+
             // 向きを設定
             direction = VecMath::sign(atkPos.x);
             // 旋回処理
@@ -640,6 +646,9 @@ bool Player::InputAttack() {
             
             atkPos = playerScreenPos - cursor;
             atkPos = VecMath::Normalize(atkPos) * 5;
+
+            // チュートリアル
+            if (isTutorial) atkPos = { 4.9f,1.0,0.0 };
 
             // 向きを設定
             direction = VecMath::sign(atkPos.x);

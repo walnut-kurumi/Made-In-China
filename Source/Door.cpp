@@ -74,8 +74,7 @@ void Door::Update(float elapsedTime)
         if (isBlinking)
         {
             backModelAlpha = sinf(radian);
-            modelAlpha = sinf(radian2);
-            //if (modelAlpha < 0.8f)modelAlpha = 0.8f;
+            modelAlpha = sinf(radian2);            
         }
         backModelColor.w = backModelAlpha;
     }
@@ -96,10 +95,15 @@ void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
     model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
     Vec4 color = { 0.564f,0.42f,0.1f,modelAlpha };    
     model->Render(dc,color);
-	// •K—v‚È‚Á‚½‚ç’Ç‰Á
+	
+
+#ifdef _DEBUG
     debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
     debugRenderer.get()->DrawSphere(centerPos, backModelRadius, Vec4(0.3f, 1, 0, 1));    
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+
+#endif // _DEBUG
+
 }
 
 void Door::RenderGui()
