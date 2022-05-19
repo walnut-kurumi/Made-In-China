@@ -51,8 +51,7 @@ Player::Player(ID3D11Device* device) {
     HRESULT hr = destructionCb.initialize(device, dc);
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
    
-    //effect
-    attackEffect = new Effect("Data/Effect/playerAttack.efk");
+    // effect
     hitEffect = new Effect("Data/Effect/playerHit.efk");
 
     debugRenderer = std::make_unique<DebugRenderer>(device);
@@ -61,7 +60,6 @@ Player::Player(ID3D11Device* device) {
 }
 
 Player::~Player() {
-    delete attackEffect;
     delete hitEffect;
     delete model;
     AfterimageManager::Instance().Destroy();
@@ -209,14 +207,9 @@ void Player::Update(float elapsedTime) {
     if (atk) CollisionPanchiVsEnemies();
     if (atk) CollisionPanchiVsProjectile();
     
-    // Effect
+    // SE
     if (atk) 
     {                             
-        if (angle.y > 0)efcDir = 1;
-        else efcDir = 0;
-        //float radian = DirectX::XMConvertToRadians(180 * efcDir);
-        Vec3 radian = Vec3(DirectX::XMConvertToRadians(120), DirectX::XMConvertToRadians(180 * efcDir), 0);
-        attackEffect->SetPlaySpeed(handle, 1.5f);
         SEAttack = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Playerattack.wav", false);
         SEAttack.get()->Play(0.5f);
     }
@@ -324,7 +317,6 @@ void Player::DrawDebugGUI() {
 
             ImGui::InputFloat3("Angle", &angle.x);
             ImGui::InputInt("Direction", &direction);
-            ImGui::InputInt("efcDirection", &efcDir);
 
             ImGui::SliderFloat("blurPower", &blurPower, 0,150);
 
@@ -1102,7 +1094,7 @@ void Player::Launch(const Vec3& direction) {
     // 発射
     SBNormal* sb = new SBNormal(device, &SBManager::Instance());
     // 向き、　発射地点
-    sb->Launch(VecMath::Normalize(direction), position + waistPos);
+    sb->Launch(VecMath::Normalize(direction), swordPos);
 }
 
 void Player::OnLanding() {
