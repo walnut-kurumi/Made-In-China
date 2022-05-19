@@ -383,8 +383,14 @@ bool EnemyGunner::AttackRayCheck()
     // プレイヤー方向へレイキャスト
     HitResult hit;
 
-    return StageManager::Instance().RayCast(e, p, hit);
-   
+    if (StageManager::Instance().RayCast(e, p, hit))
+    {
+        if (hit.penetrate) return false;
+
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -490,7 +496,7 @@ void EnemyGunner::TransitionRunState()
     model->PlayAnimation(static_cast<int>(state), true);
 
     // ターゲット切れるまで
-    targetTimer = 4.0f;
+    targetTimer = 0.5f;
 }
 
 //走るステート更新処理

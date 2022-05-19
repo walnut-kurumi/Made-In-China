@@ -363,8 +363,19 @@ bool EnemyMelee::AttackRayCheck()
     // プレイヤー方向へレイキャスト
     HitResult hit;
 
-    return StageManager::Instance().RayCast(e, p, hit);
+    if (StageManager::Instance().RayCast(e, p, hit))
+    {
+        if (hit.penetrate)
+        {
+            penetrate = true;
+            return false;
+        }
+        else penetrate = false;
+        
+        return true;
+    }
 
+    return false;
 }
 
 
@@ -470,7 +481,7 @@ void EnemyMelee::TransitionRunState()
     model->PlayAnimation(static_cast<int>(state), true);
 
     // ターゲット切れるまで
-    targetTimer = 4.0f;
+    targetTimer = 2.0f;
 }
 
 //走るステート更新処理
