@@ -21,6 +21,9 @@ public:
 	// ƒƒbƒVƒ…ì¬
 	void CreateMesh(ID3D11Device* device);
 
+	// ‰½‚à‚µ‚Ä‚È‚¢
+	void Carefree();
+
 private:
 	struct TrailBuffer
 	{

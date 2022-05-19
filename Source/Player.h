@@ -11,8 +11,6 @@
 #include "audio/AudioResource.h"
 #include "audio/Audio.h"
 
-#include "SwordTrail.h"
-
 class Player : public Character
 {
 private:
@@ -105,8 +103,6 @@ private:
 	void UpdateCenterPosition();
 	// SB投げる処理
 	void Launch(const Vec3& direction);
-	// トレイル位置セット
-	void SetTrailPos();
 
 protected:
 	void OnLanding() override;
@@ -238,7 +234,4 @@ private:
 	std::unique_ptr<AudioSource> SESBstart;
 	std::unique_ptr<AudioSource> SEMove;
 	std::unique_ptr<AudioSource> SESlowStart;
-
-
-	SwordTrail* trail{};
 };
