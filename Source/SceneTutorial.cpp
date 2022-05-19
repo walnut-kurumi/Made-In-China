@@ -11,6 +11,7 @@
 #include "SceneGame.h"
 #include "SceneLoading.h"
 #include "SceneClear.h"
+#include "SceneTitle.h"
 
 #include "Menu.h"
 
@@ -380,6 +381,7 @@ void SceneTutorial::Update(float elapsedTime)
     Goal::Instance().SetPlayerPos(player->GetCenterPosition());
     Goal::Instance().Update(elapsedTime);
 
+
     // 現在のステージの死んでるエネミーの数が０の場合
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
@@ -394,6 +396,10 @@ void SceneTutorial::Update(float elapsedTime)
             // フェードアウト
             if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);            
         }
+    }
+    if(Menu::Instance().GetChangeFlag())
+    {
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
     }
     // フェードアウトおわったら次のシーンにいける
     if (changeScene && Fade::Instance().GetFadeOutFinish())

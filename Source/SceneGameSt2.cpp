@@ -11,6 +11,7 @@
 
 #include"SceneLoading.h"
 #include"SceneClear.h"
+#include "SceneTitle.h"
 
 #include "Menu.h"
 
@@ -279,6 +280,10 @@ void SceneGameSt2::Update(float elapsedTime)
             // フェードアウト
             if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
         }
+    }
+    if (Menu::Instance().GetChangeFlag())
+    {
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
     }
     // フェードアウトおわったら次のシーンにいける
     if (changeScene && Fade::Instance().GetFadeOutFinish())
