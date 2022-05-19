@@ -1,6 +1,7 @@
 #include "SwordTrail.h"
 #include "Graphics/Misc.h"
 #include "Graphics/Shaders.h"
+#include "Graphics/Graphics.h"
 
 SwordTrail::SwordTrail(ID3D11Device* device, ID3D11DeviceContext* dc) {
 	// 定数バッファ
@@ -135,5 +136,15 @@ void SwordTrail::CreateMesh(ID3D11Device* device) {
 		}
 		HRESULT hr = device->CreateBuffer(&desc, &subresourceData, trailVertexBuffer.GetAddressOf());
 		_ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
+	}
+}
+
+void SwordTrail::Carefree() {
+	if (!posArray.empty()) {
+		CreateMesh(Graphics::Ins().GetDevice());
+		// 最初の要素を削除
+		posArray.erase(posArray.begin());
+		// 頂点数取得
+		vertexCount = posArray.size() * 2;
 	}
 }
