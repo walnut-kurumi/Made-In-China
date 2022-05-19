@@ -134,7 +134,9 @@ void Player::Init() {
     oldHealth = 0;
 
     // コスト初期化
-    cost.SetTutorial(isTutorial);
+    if (isTutorial) {
+        cost.SetTutorial(isTutorial);
+    }
     cost.Reset();
 
     // 操作可能か
