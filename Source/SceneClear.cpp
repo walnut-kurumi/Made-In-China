@@ -43,7 +43,7 @@ void SceneClear::Finalize()
 // 更新処理
 void SceneClear::Update(float elapsedTime)
 {
-    BGM.get()->Play(1.0f);
+    BGM.get()->Play(0.6f);
     GamePad& gamePad = Input::Instance().GetGamePad();
     // なにかボタンを押したらゲームシーン切り替え
     const GamePadButton anyButton =

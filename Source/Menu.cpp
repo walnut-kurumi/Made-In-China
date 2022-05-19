@@ -88,14 +88,14 @@ void Menu::menu()
     GamePad& gamePad = Input::Instance().GetGamePad();
 
 
-    if (retry && (mouse.GetButtonUp() & mouseClick))
+    if (retry && (gamePad.GetButtonUp() & GamePad::BTN_A || mouse.GetButtonUp() & mouseClick))
     {
         SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
         SEDecision.get()->Play(0.5f);
         //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
         change = true;
     }
-    else if (end && (mouse.GetButtonDown() & mouseClick))
+    else if (end && (gamePad.GetButtonUp() & GamePad::BTN_A || mouse.GetButtonDown() & mouseClick))
     {
         SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
         SEDecision.get()->Play(0.5f);
