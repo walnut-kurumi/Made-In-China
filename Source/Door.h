@@ -5,6 +5,8 @@
 #include "DebugRenderer.h"
 #include "Framework.h"
 #include "Player.h"
+#include "audio/AudioResource.h"
+#include "audio/Audio.h"
 
 class Door
 {
@@ -79,4 +81,6 @@ protected:
 	bool isBlinking = false;
 
 	std::unique_ptr<DebugRenderer> debugRenderer;
+	bool sedoor = false;
+	std::unique_ptr<AudioSource> SEDoorB;
 };

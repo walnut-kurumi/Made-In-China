@@ -43,6 +43,7 @@ void Door::Init()
     centerPos = position;
     centerPos.y = position.y + 5.0f;
     centerPos.z = 0.0f;
+    sedoor = false;
 }
 
 void Door::Update(float elapsedTime)
@@ -136,6 +137,12 @@ void Door::OpenTheDoor()
 {
     if (isOpen && (angle.y <= 3.14 && angle.y >= 0))
     {
+        if (!sedoor)
+        {
+            SEDoorB = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Doorbreak.wav", false);
+            SEDoorB.get()->Play(0.5f);
+            sedoor = true;
+        }
         Vec3 p = player->GetPosition();
         Vec3 d = centerPos;
         Vec3 pd = VecMath::Normalize(d - p);
