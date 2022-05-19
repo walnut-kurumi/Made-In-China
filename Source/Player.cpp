@@ -18,6 +18,8 @@
 
 
 Player::Player(ID3D11Device* device) {
+    ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();
+
     const char* idle = "Data/Models/Player/Animations/ver13/Idle.fbx";
     const char* run = "Data/Models/Player/Animations/ver13/Run.fbx";
     const char* jump = "Data/Models/Player/Animations/ver13/Jump.fbx";
@@ -46,7 +48,7 @@ Player::Player(ID3D11Device* device) {
 
     TransitionIdleState();
 
-    HRESULT hr = destructionCb.initialize(device, Graphics::Ins().GetDeviceContext());
+    HRESULT hr = destructionCb.initialize(device, dc);
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
    
     //effect
@@ -56,12 +58,15 @@ Player::Player(ID3D11Device* device) {
     debugRenderer = std::make_unique<DebugRenderer>(device);
 
     AfterimageManager::Instance().Initialise();
+
+    trail = new SwordTrail(device, dc);
 }
 
 Player::~Player() {
     delete attackEffect;
     delete hitEffect;
     delete model;
+    delete trail;
     AfterimageManager::Instance().Destroy();
 }
 
@@ -156,6 +161,7 @@ void Player::Init() {
 }
 #include <Xinput.h>
 void Player::Update(float elapsedTime) {
+    ID3D11Device* device = Graphics::Ins().GetDevice();
     // スロー中なら、スピードをちょっと上げる
     if(slow) elapsedTime *= 1.3f;
 
@@ -210,14 +216,17 @@ void Player::Update(float elapsedTime) {
     {                             
         if (angle.y > 0)efcDir = 1;
         else efcDir = 0;
-        float radian = DirectX::XMConvertToRadians(180 * efcDir);
+        //float radian = DirectX::XMConvertToRadians(180 * efcDir);
+        Vec3 radian = Vec3(DirectX::XMConvertToRadians(120), DirectX::XMConvertToRadians(180 * efcDir), 0);
         attackEffect->SetPlaySpeed(handle, 1.5f);
-        handle = attackEffect->PlayDirection(centerPosition, 1.6f, radian);
         SEAttack = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Playerattack.wav", false);
         SEAttack.get()->Play(0.5f);
     }
 
     atkTimer -= elapsedTime;
+
+
+
 
     //オブジェクト行列更新
     UpdateTransform();
@@ -225,6 +234,11 @@ void Player::Update(float elapsedTime) {
     model->UpdateAnimation(elapsedTime);
     //モデル行列更新
     model->UpdateTransform(transform);
+
+    // トレイル更新処理
+    SetTrailPos();
+    trail->Update();
+    trail->CreateMesh(device);
 
     if (isHit)
     {
@@ -265,6 +279,9 @@ void Player::Render(ID3D11DeviceContext* dc) {
     }
     model->Begin(dc, Shaders::Ins()->GetDestructionShader());
     model->Render(dc);
+
+    // トレイル描画処理
+    trail->Render(dc, CameraManager::Instance().GetViewProjection());
 
     // 弾丸描画処理
     SBManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
@@ -1094,6 +1111,26 @@ void Player::Launch(const Vec3& direction) {
     SBNormal* sb = new SBNormal(device, &SBManager::Instance());
     // 向き、　発射地点
     sb->Launch(VecMath::Normalize(direction), position + waistPos);
+}
+
+void Player::SetTrailPos() {
+    using namespace DirectX;
+    // 剣の位置
+    SkinnedMesh::Animation::Keyframe::Node* t = model->FindNode("joint45");
+    SkinnedMesh::Animation::Keyframe::Node* b = model->FindNode("joint43");
+    DirectX::XMFLOAT4X4 p;
+    XMStoreFloat4x4(
+        &p,
+        XMLoadFloat4x4(&t->globalTransform) * XMLoadFloat4x4(&transform)
+    );
+    Vec3 top = Vec3(p._41, p._42, p._43);
+    XMStoreFloat4x4(
+        &p,
+        XMLoadFloat4x4(&b->globalTransform) * XMLoadFloat4x4(&transform)
+    );
+    Vec3 bottom = Vec3(p._41, p._42, p._43);
+
+    trail->SetSwordPos(top, bottom);
 }
 
 void Player::OnLanding() {

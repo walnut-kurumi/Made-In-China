@@ -12,7 +12,7 @@ public:
 
 	//çƒê∂
 	Effekseer::Handle Play(const DirectX::XMFLOAT3& position, float scale = 1.0f);
-	Effekseer::Handle PlayDirection(const DirectX::XMFLOAT3& position, float scale = 1.0f, float radian = 0.0f);
+	Effekseer::Handle PlayDirection(const DirectX::XMFLOAT3& position, float scale = 1.0f, DirectX::XMFLOAT3 radian = { 0,0,0 });
 
 	//í‚é~
 	void Stop(Effekseer::Handle handle);

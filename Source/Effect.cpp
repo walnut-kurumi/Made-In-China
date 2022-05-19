@@ -44,13 +44,13 @@ Effekseer::Handle Effect::Play(const DirectX::XMFLOAT3& position, float scale)
 }
 
 //Ä¶
-Effekseer::Handle Effect::PlayDirection(const DirectX::XMFLOAT3& position, float scale, float radian)
+Effekseer::Handle Effect::PlayDirection(const DirectX::XMFLOAT3& position, float scale, DirectX::XMFLOAT3 radian)
 {
 	Effekseer::ManagerRef effekseerManager = EffectManager::Instance().GetEffekseerManager();
 	
 	Effekseer::Handle handle = effekseerManager->Play(effekseerEffect, position.x, position.y, position.z);
 	
-	effekseerManager->SetRotation(handle, 0.0f,radian,0.0f);
+	effekseerManager->SetRotation(handle, radian.x,radian.y, radian.z);
 	effekseerManager->SetScale(handle, scale, scale, scale);
 	return handle;
 }

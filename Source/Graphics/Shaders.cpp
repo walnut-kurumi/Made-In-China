@@ -144,14 +144,25 @@ void Shaders::Init(ID3D11Device* device)
 	}
 	//UVScrollShader
 	{
-		D3D11_INPUT_ELEMENT_DESC input_element_desc[]
+		D3D11_INPUT_ELEMENT_DESC inputElementDesc[]
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
-		uvscrollShader.InitCSO(device, input_element_desc, ARRAYSIZE(input_element_desc),
+		uvscrollShader.InitCSO(device, inputElementDesc, ARRAYSIZE(inputElementDesc),
 			"shader\\obj\\UVScroll_vs.cso", "shader\\obj\\UVScroll_ps.cso"
+		);
+	}
+
+	//trailShader
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElementDesc[]
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		};
+		trailShader.InitCSO(device, inputElementDesc, ARRAYSIZE(inputElementDesc),
+			"shader\\obj\\trailVs.cso", "shader\\obj\\trailPs.cso"
 		);
 	}
 }

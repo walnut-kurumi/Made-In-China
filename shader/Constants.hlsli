@@ -38,7 +38,6 @@ cbuffer ColorCb : register(b5)
     float3 rgb;
 };
 
-
 cbuffer RADIAL_BLUR_CONSTANT : register(b8)
 {
     float TU;
