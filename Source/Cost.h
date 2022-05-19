@@ -10,7 +10,7 @@ public:
 	void Trg(bool t) { trg = t; }
 	bool Approval(float time) { return costTimer >= time ? true : false; }// ‹–‰Â
 
-	float GetMaxCost() { return tutorial ? TUTORIAL_COST : MAX_COST;; }
+	float GetMaxCost() { return tutorial ? TUTORIAL_COST : MAX_COST; }
 	float GetCost() { return costTimer; }
 	bool GetTrg() { return trg; }
 	void SetTutorial(bool b) { tutorial = b; }

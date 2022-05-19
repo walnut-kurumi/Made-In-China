@@ -93,12 +93,13 @@ void Player::Init() {
     jumpSpeed = 110.0f;
     jumpCount = 0;
 
-    // スローモーション関連
+    // スローモーション関連    
     playbackSpeed = 1.0f;
     slowSpeed = 0.6f;
     slowAlpha = 0.0f;
 
     // ヒットストップ
+    hitstop = false;
     hitstopSpeed = 0.6f;
 
     moveVecX = 0.0f;
@@ -133,8 +134,10 @@ void Player::Init() {
     health = 1;
     oldHealth = 0;
 
-
-    cost.SetTutorial(isTutorial);
+    // コスト初期化
+    if (isTutorial) {
+        cost.SetTutorial(isTutorial);
+    }
     cost.Reset();
 
     // 操作可能か
