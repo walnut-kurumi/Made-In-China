@@ -133,7 +133,7 @@ void Player::Init() {
     health = 1;
     oldHealth = 0;
 
-
+    // ƒRƒXƒg‰Šú‰»
     cost.SetTutorial(isTutorial);
     cost.Reset();
 
