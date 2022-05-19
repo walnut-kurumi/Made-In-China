@@ -210,7 +210,7 @@ void Player::Update(float elapsedTime) {
     {                             
         if (angle.y > 0)efcDir = 1;
         else efcDir = 0;
-        float radian = DirectX::XMConvertToRadians(180 * efcDir);
+        float radian = DirectX::XMConvertToRadians(static_cast<float>(180 * efcDir));
         attackEffect->SetPlaySpeed(handle, 1.5f);
         handle = attackEffect->PlayDirection(centerPosition, 1.6f, radian);
         SEAttack = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Playerattack.wav", false);
