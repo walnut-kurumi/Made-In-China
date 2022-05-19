@@ -93,12 +93,13 @@ void Player::Init() {
     jumpSpeed = 110.0f;
     jumpCount = 0;
 
-    // スローモーション関連
+    // スローモーション関連    
     playbackSpeed = 1.0f;
     slowSpeed = 0.6f;
     slowAlpha = 0.0f;
 
     // ヒットストップ
+    hitstop = false;
     hitstopSpeed = 0.6f;
 
     moveVecX = 0.0f;
