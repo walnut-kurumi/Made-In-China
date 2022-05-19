@@ -31,5 +31,5 @@ private:
 	static Input*		ins;
 	GamePad				gamePad;
 	Mouse				mouse;
-	Key                 key;
+	Key                 key;	
 };

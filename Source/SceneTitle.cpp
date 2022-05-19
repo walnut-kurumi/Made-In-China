@@ -74,6 +74,8 @@ void SceneTitle::Update(float elapsedTime)
     const mouseButton mouseClick =
         Mouse::BTN_LEFT;
 
+    if (mouse.GetButtonDown() & mouseClick) gamePad.SetUseKeybord(true);
+
     // scene‘I‘ð
     SceneSelect();
    

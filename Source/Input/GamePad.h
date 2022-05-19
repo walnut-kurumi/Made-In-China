@@ -25,8 +25,8 @@ public:
 	static const GamePadButton BTN_W				= (1 << 16);
 	static const GamePadButton BTN_S				= (1 << 17);
 	static const GamePadButton BTN_Z                = (1 << 18);
-	static const GamePadButton BTN_AA = (1 << 18);
-	static const GamePadButton BTN_DD = (1 << 18);
+	static const GamePadButton BTN_AA				= (1 << 18);
+	static const GamePadButton BTN_DD				= (1 << 18);
 
 public:
 	GamePad() {}
@@ -65,6 +65,10 @@ public:
 	// 右トリガー入力状態の取得
 	float GetTriggerR() const { return triggerR; }
 
+	// キーボード使用状態の取得
+	bool GetUseKeybord() const { return useKeybord; }
+	void SetUseKeybord(bool b) {useKeybord = b; }
+
 private:
 	GamePadButton		buttonState[2]{};
 	GamePadButton		buttonDown = 0;
@@ -76,4 +80,6 @@ private:
 	float				triggerL = 0.0f;
 	float				triggerR = 0.0f;
 	int					slot = 0;
+
+	bool				useKeybord = false;
 };

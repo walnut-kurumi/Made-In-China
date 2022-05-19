@@ -35,6 +35,25 @@ void GamePad::Update() {
 		if (pad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD)	newButtonState |= BTN_LEFT_TRIGGER;
 		if (pad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD)	newButtonState |= BTN_RIGHT_TRIGGER;
 
+		if (pad.wButtons 
+			& XINPUT_GAMEPAD_DPAD_UP
+			& XINPUT_GAMEPAD_DPAD_RIGHT
+			& XINPUT_GAMEPAD_DPAD_DOWN
+			& XINPUT_GAMEPAD_DPAD_LEFT
+			& XINPUT_GAMEPAD_A
+			& XINPUT_GAMEPAD_B
+			& XINPUT_GAMEPAD_X
+			& XINPUT_GAMEPAD_Y
+			& XINPUT_GAMEPAD_START
+			& XINPUT_GAMEPAD_BACK
+			& XINPUT_GAMEPAD_LEFT_THUMB
+			& XINPUT_GAMEPAD_RIGHT_THUMB
+			& XINPUT_GAMEPAD_LEFT_SHOULDER
+			& XINPUT_GAMEPAD_RIGHT_SHOULDER
+			|| pad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD
+			|| pad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) useKeybord = false;
+
+
 		if ((pad.sThumbLX <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE && pad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) 
 			&& (pad.sThumbLY <  XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE && pad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))	{
 			pad.sThumbLX = 0;
@@ -125,30 +144,53 @@ void GamePad::Update() {
 		float ly = 0.0f;
 		float rx = 0.0f;
 		float ry = 0.0f;
-		if (GetAsyncKeyState('W') & 0x8000) ly = 1.0f;
-		if (GetAsyncKeyState('W') & 0x8000) newButtonState |= BTN_W;
-		if (GetAsyncKeyState('A') & 0x8000) lx = -1.0f;
-		if (GetAsyncKeyState('A') & 0x8000) newButtonState |= BTN_AA;
-		if (GetAsyncKeyState('S') & 0x8000) ly = -1.0f;
-		if (GetAsyncKeyState('S') & 0x8000) newButtonState |= BTN_S;
-		if (GetAsyncKeyState('D') & 0x8000) lx = 1.0f;
-		if (GetAsyncKeyState('D') & 0x8000)newButtonState |= BTN_DD;
-		if (GetAsyncKeyState('I') & 0x8000) ry = 1.0f;
-		if (GetAsyncKeyState('J') & 0x8000) rx = -1.0f;
-		if (GetAsyncKeyState('K') & 0x8000) ry = -1.0f;
-		if (GetAsyncKeyState('L') & 0x8000) rx = 1.0f;
-		if (GetAsyncKeyState('Z') & 0x8000) newButtonState |= BTN_Z;
-		if (GetAsyncKeyState('X') & 0x8000) newButtonState |= BTN_B;
-		if (GetAsyncKeyState('C') & 0x8000) newButtonState |= BTN_X;
-		if (GetAsyncKeyState('V') & 0x8000) newButtonState |= BTN_Y;
-		if (GetAsyncKeyState(VK_UP) & 0x8000)	newButtonState |= BTN_UP;
-		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)	newButtonState |= BTN_RIGHT;
-		if (GetAsyncKeyState(VK_DOWN) & 0x8000)	newButtonState |= BTN_DOWN;
-		if (GetAsyncKeyState(VK_LEFT) & 0x8000)	newButtonState |= BTN_LEFT;
-		if (GetAsyncKeyState(VK_SPACE) & 0x8000)	newButtonState |= BTN_A;
-		if (GetAsyncKeyState(VK_RETURN) & 0x8000)	newButtonState |= BTN_START;
-		if (GetAsyncKeyState(VK_SHIFT) & 0x8000) newButtonState |= BTN_LEFT_TRIGGER;
+		if (GetAsyncKeyState('W') & 0x8000)				ly = 1.0f;
+		if (GetAsyncKeyState('W') & 0x8000)				newButtonState |= BTN_W;
+		if (GetAsyncKeyState('A') & 0x8000)				lx = -1.0f;
+		if (GetAsyncKeyState('A') & 0x8000)				newButtonState |= BTN_AA;
+		if (GetAsyncKeyState('S') & 0x8000)				ly = -1.0f;
+		if (GetAsyncKeyState('S') & 0x8000)				newButtonState |= BTN_S;
+		if (GetAsyncKeyState('D') & 0x8000)				lx = 1.0f;
+		if (GetAsyncKeyState('D') & 0x8000)				newButtonState |= BTN_DD;
+		if (GetAsyncKeyState('I') & 0x8000)				ry = 1.0f;
+		if (GetAsyncKeyState('J') & 0x8000)				rx = -1.0f;
+		if (GetAsyncKeyState('K') & 0x8000)				ry = -1.0f;
+		if (GetAsyncKeyState('L') & 0x8000)				rx = 1.0f;
+		if (GetAsyncKeyState('Z') & 0x8000)				newButtonState |= BTN_Z;
+		if (GetAsyncKeyState('X') & 0x8000)				newButtonState |= BTN_B;
+		if (GetAsyncKeyState('C') & 0x8000)				newButtonState |= BTN_X;
+		if (GetAsyncKeyState('V') & 0x8000)				newButtonState |= BTN_Y;
+		if (GetAsyncKeyState(VK_UP) & 0x8000)			newButtonState |= BTN_UP;
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)		newButtonState |= BTN_RIGHT;
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000)			newButtonState |= BTN_DOWN;
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)			newButtonState |= BTN_LEFT;
+		if (GetAsyncKeyState(VK_SPACE) & 0x8000)		newButtonState |= BTN_A;
+		if (GetAsyncKeyState(VK_RETURN) & 0x8000)		newButtonState |= BTN_START;
+		if (GetAsyncKeyState(VK_SHIFT) & 0x8000)		newButtonState |= BTN_LEFT_TRIGGER;
 
+		if (GetAsyncKeyState('W') & 0x8000
+			|| GetAsyncKeyState('W') & 0x8000
+			|| GetAsyncKeyState('A') & 0x8000
+			|| GetAsyncKeyState('A') & 0x8000
+			|| GetAsyncKeyState('S') & 0x8000
+			|| GetAsyncKeyState('S') & 0x8000
+			|| GetAsyncKeyState('D') & 0x8000
+			|| GetAsyncKeyState('D') & 0x8000
+			|| GetAsyncKeyState('I') & 0x8000
+			|| GetAsyncKeyState('J') & 0x8000
+			|| GetAsyncKeyState('K') & 0x8000
+			|| GetAsyncKeyState('L') & 0x8000
+			|| GetAsyncKeyState('Z') & 0x8000
+			|| GetAsyncKeyState('X') & 0x8000
+			|| GetAsyncKeyState('C') & 0x8000
+			|| GetAsyncKeyState('V') & 0x8000
+			|| GetAsyncKeyState(VK_UP) & 0x8000
+			|| GetAsyncKeyState(VK_RIGHT) & 0x8000
+			|| GetAsyncKeyState(VK_DOWN) & 0x8000
+			|| GetAsyncKeyState(VK_LEFT) & 0x8000
+			|| GetAsyncKeyState(VK_SPACE) & 0x8000
+			|| GetAsyncKeyState(VK_RETURN) & 0x8000
+			|| GetAsyncKeyState(VK_SHIFT) & 0x8000) useKeybord = true;
 #if 1
 		if (newButtonState & BTN_UP)    ly = 1.0f;
 		if (newButtonState & BTN_RIGHT) lx = 1.0f;

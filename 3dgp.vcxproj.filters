@@ -103,6 +103,12 @@
     <FxCompile Include="shader\RadialBlurPs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="shader\trailVs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\trailPs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Framework.cpp" />
@@ -324,6 +330,9 @@
     <ClCompile Include="Source\Trail.cpp" />
     <ClCompile Include="Source\SwordTrail.cpp">
       <Filter>Source\TrailRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Goal.cpp">
+      <Filter>Source\Stages</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -578,6 +587,9 @@
     <ClInclude Include="Source\SwordTrail.h">
       <Filter>Source\TrailRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Goal.h">
+      <Filter>Source\Stages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\debug.hlsli">
@@ -623,6 +635,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\RadialBlur.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="shader\trail.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

@@ -26,6 +26,8 @@
 #include "Graphics/Texture.h"
 
 
+
+
 // 初期化
 void SceneTutorial::Initialize()
 {
@@ -46,7 +48,7 @@ void SceneTutorial::Initialize()
     AddLoadPercent(1.0f);
 
     // ステージ
-    {
+    
         StageManager::Create();
         StageManager::Instance().Init();
 
@@ -60,7 +62,7 @@ void SceneTutorial::Initialize()
         StageManager::Instance().Register(stageCollision);
         StageSkybox* skybox = new StageSkybox(device);
         StageManager::Instance().Register(skybox);
-    }
+    
     
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -92,10 +94,10 @@ void SceneTutorial::Initialize()
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
 
-    Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
-    LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
+    Bar         = new Sprite(device, L"./Data/Sprites/UI/slow.png");
+    LoadBar     = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
-    fade = new Sprite(device, L"./Data/Sprites/scene/black.png");
+    fade        = new Sprite(device, L"./Data/Sprites/scene/black.png");
 
     KeyA        = new Sprite(device, L"./Data/Sprites/UI/Keybord/KeyA.png");
     KeyD        = new Sprite(device, L"./Data/Sprites/UI/Keybord/KeyD.png");
@@ -117,6 +119,9 @@ void SceneTutorial::Initialize()
     AddLoadPercent(1.0f);
 
     Fade::Instance().Initialize();
+
+    Goal::Instance().Init(device);
+    Goal::Instance().SetGoalPos(stageMain->GetGoalPos());
 
     //デバッグ
     //hitEffect = new Effect("Data/Effect/player_hit.efk");
@@ -192,8 +197,7 @@ void SceneTutorial::Finalize()
     delete LoadBar;
     delete Bar;
     delete fade;
-    //デバッグ
-   // delete hitEffect;
+ 
 }
 
 // 更新処理
@@ -201,6 +205,10 @@ void SceneTutorial::Update(float elapsedTime)
 {
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
+
+    // キーボード使用状態の取得
+    if (mouse.GetButtonDown() & Mouse::BTN_LEFT || mouse.GetButtonDown() & Mouse::BTN_RIGHT)gamePad.SetUseKeybord(true);
+    isKeybord = gamePad.GetUseKeybord();
 
     if (Menu::Instance().GetMenuFlag() == false)
     {
@@ -252,13 +260,13 @@ void SceneTutorial::Update(float elapsedTime)
             }
 
             // 穴に落ちたら
-            if (player->GetPosition().y < -15.0f && renderMove)
+            if (player->GetPosition().x < -30.0f && renderMove)
             {
                 renderMove = false;
                 // 操作説明：ジャンプ
                 renderJump = true;
             }
-            else if (player->GetPosition().y > 0.0f && renderJump)
+            else if (player->GetPosition().x < -60.0f && renderJump)
             {
                 renderJump = false;
             }
@@ -269,8 +277,7 @@ void SceneTutorial::Update(float elapsedTime)
                 renderSB = true;
             }
             else if((player->GetPosition().x > -85.0f || player->GetPosition().x < -140.0f ))
-            {                
-                renderMove = false;
+            {                                
                 renderSB = false;
             }            
         }
@@ -366,13 +373,16 @@ void SceneTutorial::Update(float elapsedTime)
     Menu::Instance().Update(elapsedTime);
     // Fade
     Fade::Instance().Update(elapsedTime);
-
+    // Goal
+    Goal::Instance().SetPlayerPos(player->GetCenterPosition());
+    Goal::Instance().Update(elapsedTime);
 
     // 現在のステージの死んでるエネミーの数が０の場合
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
         // 全滅させてる場合操作説明ださない
         renderSB = false;
+        Goal::Instance().SetCanGoal(true);
 
         // ゴールと判定とる         
         if (StageManager::Instance().CollisionPlayerVsNextStagePos(player->GetCenterPosition(), player->GetRadius()))
@@ -387,7 +397,6 @@ void SceneTutorial::Update(float elapsedTime)
     {
         // 次のステージへ移る処理
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
-        //SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
     }
 }
 
@@ -489,6 +498,9 @@ void SceneTutorial::Render(float elapsedTime)
         Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
+        // Goal
+        Goal::Instance().Render(dc);
+
         // メニュー
         Menu::Instance().Render(elapsedTime);
 
@@ -503,8 +515,9 @@ void SceneTutorial::Render(float elapsedTime)
     ImGui::Begin("ImGUI");
     
     ImGui::SliderFloat("elapsedTime", &et, 0.0f, 1.0f);
-    ImGui::SliderInt("Tick", &tutorialTick, 0.0f, 1.0f);    
+    ImGui::SliderInt("Tick", &tutorialTick, 0, 1);    
     ImGui::SliderFloat("Tick", &tick, 0.0f, 1.0f);
+    ImGui::Checkbox("usekey", &isKeybord);
 
     ImGui::End();   
 #endif
@@ -737,40 +750,42 @@ void SceneTutorial::RenderTutorial()
     DirectX::XMFLOAT2 screenPosition;
     DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
 
+    // 操作説明の画像描画
+
     if (renderSlow)
     {
-        if (isKeybord) KeySHIFT->render(dc, screenPosition.x - 64, screenPosition.y - 32, 128, 64, 1, 1, 1, 1, 0, 400 * tutorialTick, 0, 400, 200);
-        else ButtonLT->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+        if (isKeybord) KeySHIFT->render(dc, screenPosition.x - 64, screenPosition.y - 32, 128, 64, 1, 1, 1, 1, 0, static_cast<float>(400 * tutorialTick), 0, 400, 200);
+        else ButtonLT->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
     }
     if (renderAttack)
     {
-        if (isKeybord) LeftClick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+        if (isKeybord) LeftClick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
         else
         {
-            Stick->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * 3, 0, 200, 200);
-            ButtonX->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+            Stick->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * 3), 0, 200, 200);
+            ButtonX->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
         }
     }
     if (renderMove)
     {
         if (isKeybord) {
-            KeyA->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
-            KeyD->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick2, 0, 200, 200);
+            KeyA->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
+            KeyD->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick2), 0, 200, 200);
         }
-        else Stick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * stickAnim, 0, 200, 200);
+        else Stick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * stickAnim), 0, 200, 200);
     }
     if (renderJump)
     {
-        if (isKeybord) KeySPACE->render(dc, screenPosition.x - 64, screenPosition.y - 32, 128, 64, 1, 1, 1, 1, 0, 400 * tutorialTick, 0, 400, 200);
-        else ButtonA->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+        if (isKeybord) KeySPACE->render(dc, screenPosition.x - 64, screenPosition.y - 32, 128, 64, 1, 1, 1, 1, 0, static_cast<float>(400 * tutorialTick), 0, 400, 200);
+        else ButtonA->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
     }
     if(renderSB)
     {
-        if (isKeybord) RightClick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+        if (isKeybord) RightClick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
         else
         {
-            Stick->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * 1, 0, 200, 200);
-            ButtonRT->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, 200 * tutorialTick, 0, 200, 200);
+            Stick->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * 1), 0, 200, 200);
+            ButtonRT->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
         }
     }
 
