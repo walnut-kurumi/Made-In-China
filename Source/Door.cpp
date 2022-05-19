@@ -13,6 +13,7 @@ Door::Door(ID3D11Device* device)
     isOpen = false;
     radius = 4.0f;
     radian = 0.0f;
+    radian2 = 3.1415f * 0.5f;
     isBlinking = false;
     backModelAlpha = 0.0f;
     modelAlpha = 1.0f;
@@ -34,6 +35,7 @@ void Door::Init()
     isOpen = false;
     radius = 4.0f;
     radian = 0.0f;
+    radian2 = 3.1415f * 0.5f;
     isBlinking = false;
     backModelAlpha = 0.0f;
     modelAlpha = 1.0f;
@@ -66,12 +68,14 @@ void Door::Update(float elapsedTime)
     if (!isOpen)
     {
         radian += 0.05f;
+        radian2+= 0.05f;
         if (radian > 3.1415f) radian = 0.0f;
+        if (radian2 > 3.1415f) radian2 = 0.0f;
         if (isBlinking)
         {
             backModelAlpha = sinf(radian);
-            modelAlpha = sinf(radian);
-            if (modelAlpha < 0.8f)modelAlpha = 0.8f;
+            modelAlpha = sinf(radian2);
+            //if (modelAlpha < 0.8f)modelAlpha = 0.8f;
         }
         backModelColor.w = backModelAlpha;
     }
@@ -90,8 +94,7 @@ void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
         backModel->Render(dc, backModelColor);
     }
     model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
-    Vec4 color = { 0.564f,backModelColor.w,0.1f,modelAlpha };
-    if (isOpen || !isBlinking) color.y = 0.42f;
+    Vec4 color = { 0.564f,0.42f,0.1f,modelAlpha };    
     model->Render(dc,color);
 	// •K—v‚È‚Á‚½‚ç’Ç‰Á
     debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
@@ -107,7 +110,8 @@ void Door::RenderGui()
         if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::SliderFloat3("Pos", &position.x, -200, 200);            
             ImGui::SliderFloat3("Angle", &angle.x, 0, 3.14f);            
-            ImGui::SliderFloat4("sinf", &backModelColor.x,0.0f,1.0f);
+            ImGui::SliderFloat4("backmdl", &backModelColor.x,0.0f,1.0f);
+            ImGui::SliderFloat("mdl", &modelAlpha,0.0f,1.0f);
         }
         unsigned int flag = static_cast<int>(isOpen);
         unsigned int flag2 = static_cast<int>(isBlinking);
