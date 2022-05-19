@@ -14,10 +14,11 @@ void SceneLoading::Initialize()
 {
 	ID3D11Device* device = Graphics::Ins().GetDevice();
 	// スプライト初期化	
+	//clearSprite = new Sprite(device, L"./Data/Sprites/title.png");
 	backSprite = new Sprite(device, L"./Data/Sprites/scene/black.png");
 	loadSprite = new Sprite(device, L"./Data/Sprites//loading.png");
-	Bar = new Sprite(device, L"./Data/Sprites/Load/Bar.png");
-	LoadBar = new Sprite(device, L"./Data/Sprites/Load/LoadBar.png");
+	Bar = new Sprite(device, L"./Data/Sprites//Load//Bar.png");
+	LoadBar = new Sprite(device, L"./Data/Sprites//Load//LoadBar.png");
 	
 	// スレッド開始
 	std::thread thread(LoadingThread, this);

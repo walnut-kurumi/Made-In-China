@@ -198,7 +198,7 @@ void EnemyMelee::CollisionPanchiVsPlayer()
         // 無敵じゃない時ダメージ与える
         if (!player->GetInvincible())
         {
-            player->ApplyDamage(1, 0.8f);
+            player->ApplyDamage(1, 3.0f);
             player->SetIsHit(true);
         }
         else player->SetIsHit(false);
@@ -466,7 +466,7 @@ void EnemyMelee::WalkTimerUpdate(float elapsedTime)
 void EnemyMelee::TransitionRunState()
 {
     state = State::Run;
-    moveSpeed = 60;
+    moveSpeed = 50;
     model->PlayAnimation(static_cast<int>(state), true);
 
     // ターゲット切れるまで
@@ -526,7 +526,7 @@ void EnemyMelee::UpdateAttackState(float elapsedTime)
     AttackCooldownUpdate(elapsedTime);
 
     // 射程距離外 もしくは、射線が通っていないなら走るステートへ
-    if (!CheckAttackRange() || AttackRayCheck())
+    if (!model->IsPlayAnimatimon() && (!CheckAttackRange() || AttackRayCheck()))
     {
         isAttack = false;
         TransitionRunState();

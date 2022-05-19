@@ -5,6 +5,7 @@
 #include "Graphics/Graphics.h"
 #include "Graphics/Sprite.h"
 #include "Fade.h"
+#include "Goal.h"
 
 // ÉVÅ[Éì
 class Scene

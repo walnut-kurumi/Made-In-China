@@ -48,23 +48,23 @@ void SceneGameSt2::Initialize()
     AddLoadPercent(1.0f);
 
     // ステージ
-    {
-        StageManager::Create();
-        StageManager::Instance().Init();
 
-        // ロード％更新
-        AddLoadPercent(1.0f);
+    StageManager::Create();
+    StageManager::Instance().Init();
 
-        StageMain2* stageMain = new StageMain2(device);
-        stageMain->PlayerData(player.get());
-        StageManager::Instance().Register(stageMain);
-        StageCollision2* stageCollision = new StageCollision2(device);
-        StageManager::Instance().Register(stageCollision);
-        StagePenetrate2* stagePenetrate = new StagePenetrate2(device);
-        StageManager::Instance().Register(stagePenetrate);
-        StageSkybox* skybox = new StageSkybox(device);
-        StageManager::Instance().Register(skybox);
-    }
+    // ロード％更新
+    AddLoadPercent(1.0f);
+
+    StageMain2* stageMain = new StageMain2(device);
+    stageMain->PlayerData(player.get());
+    StageManager::Instance().Register(stageMain);
+    StageCollision2* stageCollision = new StageCollision2(device);
+    StageManager::Instance().Register(stageCollision);
+    StagePenetrate2* stagePenetrate = new StagePenetrate2(device);
+    StageManager::Instance().Register(stagePenetrate);
+    StageSkybox* skybox = new StageSkybox(device);
+    StageManager::Instance().Register(skybox);
+
     // ドア
     {
         DoorManager::Instance().Init();
@@ -122,6 +122,10 @@ void SceneGameSt2::Initialize()
     AddLoadPercent(1.0f);
 
     Fade::Instance().Initialize();
+
+    Goal::Instance().Init(device);
+    Goal::Instance().SetGoalPos(stageMain->GetGoalPos());
+
 
     //デバッグ
     //hitEffect = new Effect("Data/Effect/player_hit.efk");
@@ -259,11 +263,14 @@ void SceneGameSt2::Update(float elapsedTime)
     Menu::Instance().Update(elapsedTime);
     // Fade
     Fade::Instance().Update(elapsedTime);
-
+    // Goal
+    Goal::Instance().SetPlayerPos(player->GetCenterPosition());
+    Goal::Instance().Update(elapsedTime);
    
     // 現在のステージの死んでるエネミーの数が０の場合
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
+        Goal::Instance().SetCanGoal(true);
         // ゴールと判定とる         
         if (StageManager::Instance().CollisionPlayerVsNextStagePos(player->GetCenterPosition(), player->GetRadius()))
         {
@@ -376,6 +383,9 @@ void SceneGameSt2::Render(float elapsedTime)
         // UI
         Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+
+        // Goal
+        Goal::Instance().Render(dc);
 
         // メニュー
         Menu::Instance().Render(elapsedTime);

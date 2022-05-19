@@ -3,6 +3,7 @@
 #include "SceneLoading.h"
 #include "SceneTutorial.h"
 #include "Graphics/Graphics.h"
+#include "SceneTitle.h"
 
 
 // 初期化
@@ -80,19 +81,23 @@ void SceneClear::Update(float elapsedTime)
     {
         if (start && (gamePad.GetButtonUp() & anyButton || mouse.GetButtonUp() & mouseClick))
         {
+            SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
+            SEDecision.get()->Play(0.5f);
             // フェードアウトする
             Fade::Instance().SetFadeOutFlag(true);
         }
         // フェードアウト終わったら
         if (Fade::Instance().GetFadeOutFinish())
         {
-            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTutorial));
+            SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
         }
     }
     // おわる
     {
         if (end && (gamePad.GetButtonUp() & anyButton || mouse.GetButtonUp() & mouseClick))
         {
+            SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
+            SEDecision.get()->Play(0.5f);
             DestroyWindow(GetActiveWindow());
         }
     }

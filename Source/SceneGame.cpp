@@ -42,37 +42,37 @@ void SceneGame::Initialize()
 
     // プレイヤー
     player = std::make_unique<Player>(device);
-    player->Init(); 
+    player->Init();
 
     // ロード％更新
     AddLoadPercent(1.0f);
 
     // ステージ
-    {
-        StageManager::Create();
-        StageManager::Instance().Init();
 
-        // ロード％更新
-        AddLoadPercent(1.0f);
+    StageManager::Create();
+    StageManager::Instance().Init();
 
-        StageMain1* stageMain = new StageMain1(device);
-        stageMain->PlayerData(player.get());
-        StageManager::Instance().Register(stageMain);
-        StageCollision1* stageCollision = new StageCollision1(device);
-        StageManager::Instance().Register(stageCollision);
-        StagePenetrate1* stagePenetrate = new StagePenetrate1(device);
-        StageManager::Instance().Register(stagePenetrate);
-        StageSkybox* skybox = new StageSkybox(device);
-        StageManager::Instance().Register(skybox);
-    }
+    // ロード％更新
+    AddLoadPercent(1.0f);
+
+    StageMain1* stageMain = new StageMain1(device);
+    stageMain->PlayerData(player.get());
+    StageManager::Instance().Register(stageMain);
+    StageCollision1* stageCollision = new StageCollision1(device);
+    StageManager::Instance().Register(stageCollision);
+    StagePenetrate1* stagePenetrate = new StagePenetrate1(device);
+    StageManager::Instance().Register(stagePenetrate);
+    StageSkybox* skybox = new StageSkybox(device);
+    StageManager::Instance().Register(skybox);
+
     // ドア
-    {        
+    {
         DoorManager::Instance().Init();
 
         Door* door = new Door(device);
-        door->SetPos(Vec3(-54.0f, 29.6f , -3.5f));
-        door->PlayerData(player.get());        
-        DoorManager::Instance().Register(door);            
+        door->SetPos(Vec3(-54.0f, 29.6f, -3.5f));
+        door->PlayerData(player.get());
+        DoorManager::Instance().Register(door);
     }
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -105,7 +105,7 @@ void SceneGame::Initialize()
 
 
     Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
-    LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");   
+    LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
     fade = new Sprite(device, L"./Data/Sprites/scene/black.png");
 
@@ -115,6 +115,9 @@ void SceneGame::Initialize()
     AddLoadPercent(1.0f);
 
     Fade::Instance().Initialize();
+    //goal
+    Goal::Instance().Init(device);
+    Goal::Instance().SetGoalPos(stageMain->GetGoalPos());
 
     //デバッグ
     //hitEffect = new Effect("Data/Effect/player_hit.efk");
@@ -123,7 +126,7 @@ void SceneGame::Initialize()
 
     framebuffer[0] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
     framebuffer[1] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth(), gfx.GetScreenHeight());
-    framebuffer[2] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth()/2, gfx.GetScreenHeight()/2);
+    framebuffer[2] = std::make_unique<Framebuffer>(device, gfx.GetScreenWidth() / 2, gfx.GetScreenHeight() / 2);
     fullScreen = std::make_unique<FullScreenQuad>(device);
     radialBlur = std::make_unique<RadialBlur>(device);
     CBBlur.initialize(device, gfx.GetDeviceContext());
@@ -252,11 +255,14 @@ void SceneGame::Update(float elapsedTime)
     Menu::Instance().Update(elapsedTime);
     // Fade
     Fade::Instance().Update(elapsedTime);
-    
+    // Goal
+    Goal::Instance().SetPlayerPos(player->GetCenterPosition());
+    Goal::Instance().Update(elapsedTime);
 
     // 現在のステージの死んでるエネミーの数が０の場合
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
+        Goal::Instance().SetCanGoal(true);
         // ゴールと判定とる         
         if (StageManager::Instance().CollisionPlayerVsNextStagePos(player->GetCenterPosition(), player->GetRadius()))
         {
@@ -375,6 +381,9 @@ void SceneGame::Render(float elapsedTime)
         // UI
         Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+
+        // Goal
+        Goal::Instance().Render(dc);
 
         // メニュー
         Menu::Instance().Render(elapsedTime);
