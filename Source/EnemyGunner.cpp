@@ -310,26 +310,16 @@ bool EnemyGunner::CheckAttackRange()
 
 // 攻撃
 void EnemyGunner::MoveAttack(float cooldown)
-{
+{   
+    if (attackCooldown > 0.0f) return;
+    // 攻撃ふらぐ
+    isAttack = true;       
+
     // 体の向き
     float vx;
     (direction ? vx = -1 : vx = 1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
 
-    if (attackCooldown > 0.0f)
-    {       
-        isAttack = true;
-        return;
-    }
-    // 攻撃ふらぐ
-    isAttack = true;
-
-    // 攻撃する向きをプレイヤーの方向へ
-    if (player->GetCenterPosition().x > position.x)direction = false;
-    else if (player->GetCenterPosition().x < position.x) direction = true;
-
-    // クールダウン設定
-    attackCooldown = cooldown;
 
     ID3D11Device* device = Graphics::Ins().GetDevice();          
 
@@ -354,8 +344,11 @@ void EnemyGunner::MoveAttack(float cooldown)
 
         // 発射
         EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
-        bullet->Launch(pe, e);                            
+        bullet->Launch(pe, e);                    
     }
+
+    // クールダウン設定
+    attackCooldown = cooldown;
 }
 
 // 吹っ飛ぶ

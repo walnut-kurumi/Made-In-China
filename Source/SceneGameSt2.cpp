@@ -329,10 +329,10 @@ void SceneGameSt2::Render(float elapsedTime)
         {
             // ステージ描画
             StageManager::Instance().Render(dc, elapsedTime);
-            // ドア描画
-            DoorManager::Instance().Render(dc, elapsedTime);
             // スロー演出、敵や自機など重要なオブジェクト以外を暗くする
             fade->render(dc, 0, 0, 1920, 1080, 1, 1, 1, player->GetSlowAlpha(), 0);
+            // ドア描画
+            DoorManager::Instance().Render(dc, elapsedTime);
             // プレイヤー描画
             player->Render(dc);
             // エネミー描画
