@@ -1,6 +1,5 @@
 #include "Player.h"
 #include "Framework.h"
-#include "Graphics/Shaders.h"
 #include "Input/Input.h"
 #include "Camera/CameraManager.h"
 
@@ -12,10 +11,6 @@
 
 #include "SBManager.h"
 #include "SBNormal.h"
-
-#include "HitManager.h"
-
-
 
 Player::Player(ID3D11Device* device) {
     ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();
@@ -88,6 +83,7 @@ void Player::Init() {
     swordPos = { 0,0,0 };
     headPos = { 0,7.5f,0 };
     atkPos = { 0,0,0 };    // 攻撃の位置は攻撃時に設定
+    sbLaunchPos = { 0,0,0 };
     // 攻撃
     atkRadius = 3.5f;
     atkTimer = 0.0f;
@@ -161,6 +157,8 @@ void Player::Update(float elapsedTime) {
     // スロー中なら、スピードをちょっと上げる
     if(slow) elapsedTime *= 1.3f;
 
+    atkTimer -= elapsedTime;
+
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
     // 残像マネージャー更新
@@ -208,16 +206,10 @@ void Player::Update(float elapsedTime) {
     if (atk) CollisionPanchiVsProjectile();
     
     // SE
-    if (atk) 
-    {                             
+    if (atk) {                             
         SEAttack = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Playerattack.wav", false);
         SEAttack.get()->Play(0.5f);
     }
-
-    atkTimer -= elapsedTime;
-
-
-
 
     //オブジェクト行列更新
     UpdateTransform();
@@ -236,6 +228,16 @@ void Player::Update(float elapsedTime) {
         XMLoadFloat4x4(&left->globalTransform) * XMLoadFloat4x4(&transform)
     );
     swordPos = { p2._41, p2._42 - 1.9f, p2._43 };
+
+    // 手の位置
+    SkinnedMesh::Animation::Keyframe::Node* sholder = model->FindNode("joint42");
+    p = sholder->globalTransform;
+    using namespace DirectX;
+    XMStoreFloat4x4(
+        &p2,
+        XMLoadFloat4x4(&sholder->globalTransform) * XMLoadFloat4x4(&transform)
+    );
+    sbLaunchPos = { p2._41, p2._42, p2._43 };
 
 
     if (isHit)
@@ -1094,7 +1096,7 @@ void Player::Launch(const Vec3& direction) {
     // 発射
     SBNormal* sb = new SBNormal(device, &SBManager::Instance());
     // 向き、　発射地点
-    sb->Launch(VecMath::Normalize(direction), swordPos);
+    sb->Launch(VecMath::Normalize(direction), sbLaunchPos);
 }
 
 void Player::OnLanding() {
