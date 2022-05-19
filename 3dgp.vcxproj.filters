@@ -116,15 +116,6 @@
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Mathf.cpp" />
     <ClCompile Include="Source\Graphics\Vec.cpp" />
-    <ClCompile Include="Source\audio\Audio.cpp">
-      <Filter>Source\Audio</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\audio\AudioResource.cpp">
-      <Filter>Source\Audio</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\audio\AudioSource.cpp">
-      <Filter>Source\Audio</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Camera\Camera.cpp">
       <Filter>Source\Camera</Filter>
     </ClCompile>
@@ -334,6 +325,15 @@
     <ClCompile Include="Source\Goal.cpp">
       <Filter>Source\Stages</Filter>
     </ClCompile>
+    <ClCompile Include="Source\audio\Audio.cpp">
+      <Filter>Source\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\audio\AudioResource.cpp">
+      <Filter>Source\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\audio\AudioSource.cpp">
+      <Filter>Source\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -343,15 +343,6 @@
     <ClInclude Include="Source\interval.h" />
     <ClInclude Include="Source\Mathf.h" />
     <ClInclude Include="Source\Graphics\Vec.h" />
-    <ClInclude Include="Source\audio\Audio.h">
-      <Filter>Source\Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\audio\AudioResource.h">
-      <Filter>Source\Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\audio\AudioSource.h">
-      <Filter>Source\Audio</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Camera\Camera.h">
       <Filter>Source\Camera</Filter>
     </ClInclude>
@@ -589,6 +580,15 @@
     </ClInclude>
     <ClInclude Include="Source\Goal.h">
       <Filter>Source\Stages</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\audio\Audio.h">
+      <Filter>Source\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\audio\AudioResource.h">
+      <Filter>Source\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\audio\AudioSource.h">
+      <Filter>Source\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

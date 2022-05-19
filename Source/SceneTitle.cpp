@@ -9,6 +9,8 @@
 // 初期化
 void SceneTitle::Initialize()
 {
+    SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
+    BGM = Audio::Instance().LoadAudioSource("Data\\Audio\\BGM\\title.wav", true);
     ID3D11Device* device = Graphics::Ins().GetDevice();
     titleSprite = new Sprite(device, L"./Data/Sprites/title.png");
     cursorSprite = new Sprite(device, L"./Data/Sprites/cursor.png");
@@ -29,7 +31,6 @@ void SceneTitle::Initialize()
     Input::Instance().GetMouse().SetMoveCursor(true);
 
     Fade::Instance().Initialize();
-    BGM = Audio::Instance().LoadAudioSource("Data\\Audio\\BGM\\title.wav", true);
 }
 
 // 終了化
@@ -46,7 +47,7 @@ void SceneTitle::Finalize()
 // 更新処理
 void SceneTitle::Update(float elapsedTime)
 {
-    //BGM.get()->Play(0.05f);
+    BGM.get()->Play(1.0f);
 
     GamePad& gamePad = Input::Instance().GetGamePad();    
     // なにかボタンを押したらゲームシーン切り替え
@@ -86,9 +87,9 @@ void SceneTitle::Update(float elapsedTime)
     {
         if (start && (gamePad.GetButtonUp() & anyButton || mouse.GetButtonUp() & mouseClick))
         {
-           /* SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
-            SEDecision->Play(0.5f);*/
-            //BGM.get()->Stop();
+            
+            SEDecision->Play(0.5f);
+            BGM.get()->Stop();
             // フェードアウトする
             Fade::Instance().SetFadeOutFlag(true);
         }
@@ -103,9 +104,9 @@ void SceneTitle::Update(float elapsedTime)
     {
         if (end && (gamePad.GetButtonUp() & anyButton || mouse.GetButtonUp() & mouseClick))
         {
-            //BGM.get()->Stop();
-            /*SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
-            SEDecision.get()->Play(0.5f);*/
+            BGM.get()->Stop();
+            //SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
+            SEDecision.get()->Play(0.5f);
             DestroyWindow(GetActiveWindow());
         }
     }
