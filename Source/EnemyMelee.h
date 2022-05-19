@@ -3,6 +3,8 @@
 #include "Model.h"
 #include "Enemy.h"
 #include "Graphics/Sprite.h"
+#include "audio/AudioResource.h"
+#include "audio/Audio.h"
 
 // Melee
 class EnemyMelee : public Enemy
@@ -129,7 +131,7 @@ private:
 	// 吹っ飛ばす時間
 	float blowTimer = 0;
 
-	
+	std::unique_ptr<AudioSource> SEEPunch;
 
 	// タゲ切るタイマー	
 	float targetTimer = 0.0f;

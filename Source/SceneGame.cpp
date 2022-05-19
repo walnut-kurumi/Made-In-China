@@ -171,7 +171,7 @@ void SceneGame::Finalize()
 // XVˆ—
 void SceneGame::Update(float elapsedTime)
 {
-    BGM.get()->Play(1.0f);
+    BGM.get()->Play(0.6f);
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
 

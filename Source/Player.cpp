@@ -420,15 +420,15 @@ bool Player::InputMove(float elapsedTime) {
 
     // 移動処理
     Move(moveVec.x, moveVec.z, moveSpeed);
-    if (gamePad.GetButtonDown() & GamePad::BTN_RIGHT || gamePad.GetButtonDown() & GamePad::BTN_LEFT)
+    if ((gamePad.GetButtonDown() & GamePad::BTN_RIGHT || gamePad.GetButtonDown() & GamePad::BTN_LEFT) && isGround)
     {
-        SEMove = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Movestart.wav", false);
-        SEMove.get()->Play(1.0f);
+        SEMove = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Movestart2.wav", false);
+        SEMove.get()->Play(0.5f);
     }
-    if (gamePad.GetButtonDown() & GamePad::BTN_AA || gamePad.GetButtonDown() & GamePad::BTN_DD)
+    if ((gamePad.GetButtonDown() & GamePad::BTN_AA || gamePad.GetButtonDown() & GamePad::BTN_DD)&&isGround)
     {
-        SEMove = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Movestart.wav", false);
-        SEMove.get()->Play(1.0f);
+        SEMove = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Movestart2.wav", false);
+        SEMove.get()->Play(0.5f);
     }
 
     // 進行ベクトルがゼロベクトルでない場合は入力された
@@ -451,8 +451,8 @@ bool Player::InputJump() {
         else jumpCount += 1;
         
         if (jumpCount <= jumpLimit) {
-            SEJump = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Jump.wav", false);
-            SEJump.get()->Play(0.2f);
+            SEJump = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Jump3.wav", false);
+            SEJump.get()->Play(0.3f);
             Jump(jumpSpeed);
 
             return true;
@@ -472,7 +472,7 @@ void Player::InputSlow(float elapsedTime) {
 
         if (!slowse) {
             SESlowStart = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Slowstart.wav", false);
-            SESlowStart.get()->Play(0.2f);
+            SESlowStart.get()->Play(1.0f);
             slowse = true;
         }
         if (cost.Approval(0.5f)) {
@@ -536,7 +536,7 @@ bool Player::InputSB() {
             // コスト
             cost.Consume(sbCost);
             SESBstart = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\SBstart.wav", false);
-            SESBstart.get()->Play(0.2f);
+            SESBstart.get()->Play(0.8f);
             return true;
         }
         // 武器を持っていない
@@ -588,7 +588,7 @@ bool Player::InputSB() {
             // コスト
             cost.Consume(sbCost);
             SESBstart = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\SBstart.wav", false);
-            SESBstart.get()->Play(0.2f);
+            SESBstart.get()->Play(0.8f);
             return true;
         }
         // 武器を持っていない
@@ -1177,7 +1177,7 @@ void Player::CollisionPanchiVsProjectile() {
             // ヒットストップ
             if (!slow)hitstop = true;
             SEReflect = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Reflect.wav", false);
-            SEReflect.get()->Play(0.5f);
+            SEReflect.get()->Play(0.8f);
             // カメラシェイク（簡素）
             CameraManager& cameraMgr = CameraManager::Instance();
             if (!cameraMgr.GetShakeFlag()) {
