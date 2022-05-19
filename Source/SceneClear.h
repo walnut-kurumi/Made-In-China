@@ -5,7 +5,8 @@
 #include "Graphics/Graphics.h"
 #include "Player.h"
 #include "Input/Input.h"
-
+#include "audio/AudioResource.h"
+#include "audio/Audio.h"
 
 
 // タイトルシーン
@@ -48,4 +49,6 @@ private:
 	DirectX::XMFLOAT2 endpos = { startpos.x,startpos.y + endsize.y * 1.2f };
 
 	DirectX::XMFLOAT2 mousepos = {};
+
+	std::unique_ptr<AudioSource> SEDecision;
 };
