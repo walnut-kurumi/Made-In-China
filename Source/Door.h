@@ -75,6 +75,7 @@ protected:
 	float backModelAlpha = 1.0f;
 	float modelAlpha = 1.0f;
 	float radian = 0.0f;
+	float radian2 = 0.0f;
 	bool isBlinking = false;
 
 	std::unique_ptr<DebugRenderer> debugRenderer;

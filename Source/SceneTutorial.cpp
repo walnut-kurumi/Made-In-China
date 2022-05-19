@@ -203,7 +203,7 @@ void SceneTutorial::Update(float elapsedTime)
 
     // キーボード使用状態の取得
     if (mouse.GetButtonDown() & Mouse::BTN_LEFT || mouse.GetButtonDown() & Mouse::BTN_RIGHT)gamePad.SetUseKeybord(true);
-    isKeybord = !gamePad.GetUseKeybord();
+    isKeybord = gamePad.GetUseKeybord();
 
     if (Menu::Instance().GetMenuFlag() == false)
     {
