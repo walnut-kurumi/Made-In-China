@@ -87,10 +87,11 @@ void Player::Init() {
     weapon = true;
     // 判定用 体の位置
     waistPos = { 0,3,0 };
-    headPos = { 0,6,0 };
+    swordPos = { 0,0,0 };
+    headPos = { 0,7.5f,0 };
     atkPos = { 0,0,0 };    // 攻撃の位置は攻撃時に設定
     // 攻撃
-    atkRadius = 2;
+    atkRadius = 3.5f;
     atkTimer = 0.0f;
     atkPower = 5.0f;
 
@@ -232,6 +233,18 @@ void Player::Update(float elapsedTime) {
     //モデル行列更新
     model->UpdateTransform(transform);
 
+    // 手の位置
+    SkinnedMesh::Animation::Keyframe::Node* left = model->FindNode("joint45");
+    DirectX::XMFLOAT4X4 p = left->globalTransform;
+    DirectX::XMFLOAT4X4 p2;
+    using namespace DirectX;
+    XMStoreFloat4x4(
+        &p2,
+        XMLoadFloat4x4(&left->globalTransform) * XMLoadFloat4x4(&transform)
+    );
+    swordPos = { p2._41, p2._42 - 1.9f, p2._43 };
+
+
     if (isHit)
     {
         handle = hitEffect->Play(centerPosition, 1.0f);
@@ -282,23 +295,13 @@ void Player::Render(ID3D11DeviceContext* dc) {
     debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
     debugRenderer.get()->DrawSphere(centerPosition, 1, Vec4(0.5f, 1, 0.5f, 1));
 
-    // 必要なったら追加
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(sbPos, 1, Vec4(1, 1, 0, 1));
-    if (atk) debugRenderer.get()->DrawSphere(atkPos + position + waistPos, atkRadius, Vec4(1, 1, 0, 1));
-    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
-
 
     // 剣根本
-    SkinnedMesh::Animation::Keyframe::Node* left = model->FindNode("joint45");
-    DirectX::XMFLOAT4X4 p = left->globalTransform;
-    DirectX::XMFLOAT4X4 p2;
-    using namespace DirectX;
-    XMStoreFloat4x4(
-        &p2,
-        XMLoadFloat4x4(&left->globalTransform) * XMLoadFloat4x4(&transform)
-    );
-    debugRenderer.get()->DrawSphere(DirectX::XMFLOAT3(p2._41,p2._42,p2._43), 2, Vec4(1, 0, 0, 1));
+    if (atk) debugRenderer.get()->DrawSphere(swordPos, 4, Vec4(1, 0, 0, 1));
+
+    
+    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 
 #endif
 }
@@ -813,7 +816,7 @@ void Player::UpdateSBThrowState(float elapsedTime) {
     }
     // 投げる途中でアニメーション停止
     float animationTime = model->GetCurrentAnimationSeconds();
-    if (!model->GetPlay() && animationTime > 0.15f) {
+    if (!model->GetPlay() && animationTime > 0.10f) {
         model->AnimationStop(true);
         Launch(sbdir);
     }
@@ -998,14 +1001,14 @@ bool Player::Raycast(Vec3 move) {
     // 上昇中
     else if (my > 0.0f) {
         // レイの開始位置は頭
-        DirectX::XMFLOAT3 start = { position.x, position.y + waistPos.y, position.z };
+        DirectX::XMFLOAT3 start = { position.x, position.y + headPos.y, position.z };
         // レイの終点位置は移動後の位置
-        DirectX::XMFLOAT3 end = { position.x, position.y + waistPos.y + my, position.z };
+        DirectX::XMFLOAT3 end = { position.x, position.y + headPos.y + my, position.z };
         // レイキャストによる天井判定
         HitResult hit;
         if (StageManager::Instance().RayCast(start, end, hit)) {
             // 天井に接している
-            position.y = hit.position.y - waistPos.y;
+            position.y = hit.position.y - headPos.y;
             result = true;
         }
         else {
@@ -1113,7 +1116,7 @@ void Player::CollisionPanchiVsEnemies() {
     for (int i = 0; i < enemyCount; ++i) {
         Enemy* enemy = enemyManager.GetEnemy(i);
         // 衝突処理
-        if (Collision::SphereVsSphere(enemy->GetPosition(), atkPos + position + waistPos, enemy->GetRadius(), atkRadius)) {        
+        if (Collision::SphereVsSphere(enemy->GetPosition(), swordPos, enemy->GetRadius(), atkRadius)) {        
             if (enemy->GetHealth() > 0) {
                 enemy->ApplyDamage(1, 0);
                 // ヒットストップ
@@ -1133,7 +1136,7 @@ void Player::CollisionPanchiVsProjectile() {
     for (int i = 0; i < enemyBCount; ++i) {
         EnemyBullet* enemyBullet = enemyBManager.GetProjectile(i);
         // 衝突処理
-        if (Collision::SphereVsSphere(enemyBullet->GetPosition(), atkPos + position + waistPos, enemyBullet->GetRadius(), atkRadius)) {
+        if (Collision::SphereVsSphere(enemyBullet->GetPosition(), swordPos, enemyBullet->GetRadius(), atkRadius)) {
             if(!enemyBullet->GetReflectionFlag()) enemyBullet->SetDirection(-enemyBullet->GetDirection());
             enemyBullet->SetReflectionFlag(true);
             // ヒットストップ

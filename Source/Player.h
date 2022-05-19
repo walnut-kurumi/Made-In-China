@@ -157,6 +157,7 @@ private:
 
 	// 攻撃判定用 体の位置
 	Vec3 atkPos{};
+	Vec3 swordPos{};
 	Vec3 waistPos{};
 	Vec3 headPos{};
 

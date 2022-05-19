@@ -29,7 +29,7 @@ void SceneTitle::Initialize()
     Input::Instance().GetMouse().SetMoveCursor(true);
 
     Fade::Instance().Initialize();
-    BGM = Audio::Instance().LoadAudioSource("Data\\Audio\\BGM\\title.wav", true);
+    //BGM = Audio::Instance().LoadAudioSource("Data\\Audio\\BGM\\title.wav", true);
 }
 
 // èIóπâª
