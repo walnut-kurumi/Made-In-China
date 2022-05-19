@@ -325,6 +325,9 @@
     <ClCompile Include="Source\SwordTrail.cpp">
       <Filter>Source\TrailRenderer</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Goal.cpp">
+      <Filter>Source\Stages</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -577,6 +580,9 @@
     </ClInclude>
     <ClInclude Include="Source\SwordTrail.h">
       <Filter>Source\TrailRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Goal.h">
+      <Filter>Source\Stages</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

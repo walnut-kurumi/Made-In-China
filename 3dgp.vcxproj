@@ -221,6 +221,7 @@
     <ClCompile Include="Source\framebuffer.cpp" />
     <ClCompile Include="Source\Framework.cpp" />
     <ClCompile Include="Source\FullScreenQuad.cpp" />
+    <ClCompile Include="Source\Goal.cpp" />
     <ClCompile Include="Source\Graphics\GeometricPrimitive.cpp" />
     <ClCompile Include="Source\Graphics\Graphics.cpp" />
     <ClCompile Include="Source\HitManager.cpp" />
@@ -303,6 +304,7 @@
     <ClInclude Include="Source\Fade.h" />
     <ClInclude Include="Source\framebuffer.h" />
     <ClInclude Include="Source\FullScreenQuad.h" />
+    <ClInclude Include="Source\Goal.h" />
     <ClInclude Include="Source\Graphics\Blender.h" />
     <ClInclude Include="Source\Graphics\ConstantBuffer.h" />
     <ClInclude Include="Source\Graphics\ConstantBufferTypes.h" />

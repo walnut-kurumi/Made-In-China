@@ -38,6 +38,9 @@ public:
 	Type GetType() { return type; }
 	void SetType(Type ty) { type = ty; }
 
+
+	const Vec3& GetGoalPos() const { return NextStagePos; }
+
 	// プレイヤーと次のステージへ移るときの場所で判定
 	bool CollisionPlayerVsNextStagePos(Vec3 palyerPos, float playerRadius);
 
