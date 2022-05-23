@@ -549,7 +549,7 @@ void SceneGameSt2::EnemyStatusSetting()
     enemyGroup[1] = 0;
     enemyGroup[2] = 1;
     enemyGroup[3] = 2;
-    enemyGroup[4] = 3;
+    enemyGroup[4] = 1;
     enemyGroup[5] = 4;
     enemyGroup[6] = 4;
     enemyGroup[7] = 4;

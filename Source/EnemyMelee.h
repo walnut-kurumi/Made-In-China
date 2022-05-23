@@ -126,6 +126,8 @@ private:
 	float attackRange = 10.0f;
 	// UŒ‚CD
 	float attackCooldown = 0;
+	// UŒ‚”»’èƒtƒ‰ƒO
+	bool atk = false;
 
 
 	// ‚Á”ò‚Î‚·ŠÔ

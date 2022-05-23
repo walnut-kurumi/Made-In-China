@@ -339,9 +339,7 @@ void SceneTutorial::Update(float elapsedTime)
         // エネミー
         if (!player->GetClock())
         {
-            EnemyManager::Instance().SetPlayer(player.get());
-            // ソート
-            EnemyManager::Instance().SortLengthSq(player->GetPosition());
+            EnemyManager::Instance().SetPlayer(player.get());           
             // エネミー更新処理
             EnemyManager::Instance().Update(slowElapsedTime);
             // 弾丸更新処理
@@ -561,8 +559,7 @@ void SceneTutorial::Reset()
  
     radian = 0.0f;
     tutorialTick = 0;	// アニメーション用チック	
-    stickAnim = 0;	// アニメーション
-    isKeybord = false;
+    stickAnim = 0;	// アニメーション    
 
     renderSlow = false;
     renderAttack = false;

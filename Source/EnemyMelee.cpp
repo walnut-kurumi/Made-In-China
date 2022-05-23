@@ -84,6 +84,8 @@ void EnemyMelee::Init()
     isAttack = false;
     isSearch = false;
 
+    atk = false;
+
     // 索敵エリア更新
     UpdateSearchArea();
 
@@ -106,7 +108,7 @@ void EnemyMelee::Update(float elapsedTime)
         // 反射した弾丸との衝突判定
         CollisionProjectileVsEnemies();
         // 攻撃とプレイヤーの判定
-        if (isAttack)CollisionPanchiVsPlayer();
+        if (atk)CollisionPanchiVsPlayer();
 
        
         // 無敵時間更新
@@ -145,7 +147,7 @@ void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
         heightPos.y += height;
 
         // DEBUG        
-        if(isAttack)debugRenderer.get()->DrawSphere(attackPos, attackRadius, Vec4(0.5f, 1, 0.5f, 1));
+        if(atk)debugRenderer.get()->DrawSphere(attackPos, attackRadius, Vec4(0.5f, 1, 0.5f, 1));
 
         debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
         debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
@@ -304,7 +306,7 @@ void EnemyMelee::MoveAttack(float cooldown)
 {
     if (attackCooldown > 0.0f) return;    
     // 攻撃ふらぐ
-    isAttack = true;
+    isAttack = true;   
 
     //  近接攻撃  
     {                
@@ -523,8 +525,12 @@ void EnemyMelee::UpdateAttackState(float elapsedTime)
         TransitionBlowState();
     }
 
+    // 任意のアニメーション再生区間でのみ衝突判定処理をする
+    float animationTime = model->GetCurrentAnimationSeconds();
+    atk = animationTime >= 0.19f && animationTime <= 0.30f;
+
     // 攻撃中は更新しない
-    if (!isAttack && attackCooldown < 0.0f)
+    if (!atk && attackCooldown < 0.0f)
     {
         // 攻撃する向きをプレイヤーの方向へ
         if (player->GetCenterPosition().x > position.x) this->direction = false;
@@ -546,12 +552,14 @@ void EnemyMelee::UpdateAttackState(float elapsedTime)
     if (!model->IsPlayAnimatimon())
     {        
         isAttack = false;
+        atk = false;
     }
 
     // 射程距離外 もしくは、射線が通っていないなら走るステートへ
     if (!model->IsPlayAnimatimon() && (!CheckAttackRange() || AttackRayCheck()))
     {
         isAttack = false;
+        atk = false;
         TransitionRunState();
     }
 }
