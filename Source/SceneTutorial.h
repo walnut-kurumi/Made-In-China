@@ -44,7 +44,7 @@ public:
 	// “G‚Ì‰Šú‰»
 	void EnemyInitialize(ID3D11Device* device);
 	// “G‚ÌÀ•WƒZƒbƒg
-	void EnemyPositionSetting();
+	void EnemyStatusSetting();
 	// “G‚ÌUŒ‚—\’›
 	void RenderEnemyAttack();
 

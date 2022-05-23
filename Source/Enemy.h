@@ -65,7 +65,7 @@ public:
 
 	// Å‰‚ÌŒü‚« ©¶true@false‰E¨
 	void SetInitialDirection(bool b) { initialDirection = b; }
-	void DirectionInitialize() { direction = initialDirection; }
+	void DirectionInitialize() { this->direction = initialDirection; }
 
 	// µÁÀ×¼Ç
 	void FallIsDead();

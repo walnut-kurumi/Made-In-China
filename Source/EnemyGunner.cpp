@@ -134,6 +134,9 @@ void EnemyGunner::Update(float elapsedTime)
 // 描画処理
 void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
 {      
+    if (direction)materialColor = { 1,0,0,1 };
+    else materialColor = { 0,1,0,1 };
+
         model->Begin(dc, *shader);
         model->Render(dc, materialColor);
      
@@ -226,7 +229,7 @@ void EnemyGunner::MoveWalk(bool direction)
 // 索敵エリア更新
 void EnemyGunner::UpdateSearchArea()
 {    
-    if (direction)
+    if (this->direction)
     {        
         searchAreaPos = { position.x - 10, position.y };        
         searchAreaScale = { 45, height + 5.0f };
@@ -270,8 +273,8 @@ bool EnemyGunner::Search()
         // ドアとレイキャストして当たっていたら見つけてないのでfalse
         if (DoorManager::Instance().RayCast(e, p, hit)) return false;        
 
-        if (player->GetCenterPosition().x > position.x)direction = false;
-        else if (player->GetCenterPosition().x < position.x) direction = true;
+        if (player->GetCenterPosition().x > position.x)this->direction = false;
+        else if (player->GetCenterPosition().x < position.x) this->direction = true;
       
         isSearch = true;
 
@@ -316,11 +319,11 @@ void EnemyGunner::MoveAttack(float cooldown)
     isAttack = true;       
 
 
-    if (player->GetCenterPosition().x > position.x)direction = false;
-    else if (player->GetCenterPosition().x < position.x) direction = true;
+    if (player->GetCenterPosition().x > position.x)this->direction = false;
+    else if (player->GetCenterPosition().x < position.x) this->direction = true;
     // 体の向き
     float vx;
-    (direction ? vx = -1 : vx = 1);
+    (this->direction ? vx = -1 : vx = 1);
     angle.y = DirectX::XMConvertToRadians(90 * vx);
 
 
@@ -417,7 +420,7 @@ void EnemyGunner::UpdateIdleState(float elapsedTime)
     if (walkFlag)
     {
         // 数カウントしてから向きを変えて移動ステートへ
-        direction = !direction;
+        this->direction = !this->direction;
         // 歩きステートへ移動
         TransitionWalkState();
     }
@@ -461,7 +464,7 @@ void EnemyGunner::UpdateWalkState(float elapsedTime)
     // 徘徊
     if (walkFlag)
     {
-        MoveWalk(direction);
+        MoveWalk(this->direction);
         WalkTimerUpdate(elapsedTime);
     }
 
@@ -521,7 +524,7 @@ void EnemyGunner::UpdateRunState(float elapsedTime)
     }
 
     // 射程距離入るまでプレイヤーに向かって走り続ける
-    MoveRun(direction);
+    MoveRun(this->direction);
 }
 
 

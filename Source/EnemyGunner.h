@@ -126,10 +126,7 @@ private:
 	
 
 	// 吹っ飛ばす時間
-	float blowTimer = 0;	
-
-	// 移動する向き ←左true　false右→
-	bool direction = false;
+	float blowTimer = 0;
 
 
 	// タゲ切るタイマー	

@@ -89,7 +89,7 @@ void SceneGameSt2::Initialize()
     // エネミー
     {
         // エネミー座標設定
-        EnemyPositionSetting();
+        EnemyStatusSetting();
         // エネミー初期化			    
         EnemyInitialize(device);
     }
@@ -523,7 +523,7 @@ void SceneGameSt2::EnemyInitialize(ID3D11Device* device)
 }
 
 // エネミー座標設定
-void SceneGameSt2::EnemyPositionSetting()
+void SceneGameSt2::EnemyStatusSetting()
 {
 
     enemyPos[0] = { -73.0f,0.5f };

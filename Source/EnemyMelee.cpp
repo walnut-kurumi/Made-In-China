@@ -133,6 +133,8 @@ void EnemyMelee::Update(float elapsedTime)
 // 描画処理
 void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
 {
+    if (direction)materialColor = { 1,0,0,1 };
+    else materialColor = { 0,1,0,1 };
 
         model->Begin(dc, *shader);
         model->Render(dc, materialColor);
@@ -262,8 +264,8 @@ bool EnemyMelee::Search()
         // ドアとレイキャストして当たっていたら見つけてないのでfalse
         if (DoorManager::Instance().RayCast(e, p, hit)) return false;
 
-        if (player->GetCenterPosition().x > position.x)direction = false;
-        else if (player->GetCenterPosition().x < position.x) direction = true;
+        if (player->GetCenterPosition().x > position.x)this->direction = false;
+        else if (player->GetCenterPosition().x < position.x) this->direction = true;
         
         isSearch = true;
 
@@ -311,7 +313,7 @@ void EnemyMelee::MoveAttack(float cooldown)
     {                
         // 体の向き
         float vx;
-        (direction ? vx = -1 : vx = 1);
+        (this->direction ? vx = -1 : vx = 1);
         angle.y = DirectX::XMConvertToRadians(90 * vx);
         // 攻撃する向き               
         attackPos = centerPosition;
@@ -396,7 +398,7 @@ void EnemyMelee::UpdateIdleState(float elapsedTime)
     if (walkFlag)
     {
         // 数カウントしてから向きを変えて移動ステートへ
-        direction = !direction;
+        this->direction = !this->direction;
         // 歩きステートへ移動
         TransitionWalkState();
     }
@@ -440,7 +442,7 @@ void EnemyMelee::UpdateWalkState(float elapsedTime)
     // 徘徊
     if (walkFlag)
     {
-        MoveWalk(direction);
+        MoveWalk(this->direction);
         WalkTimerUpdate(elapsedTime);
     }
 
@@ -469,7 +471,7 @@ void EnemyMelee::WalkTimerUpdate(float elapsedTime)
 void EnemyMelee::TransitionRunState()
 {
     state = State::Run;
-    moveSpeed = 45;
+    moveSpeed = 55;
     model->PlayAnimation(static_cast<int>(state), true);
 
     // ターゲット切れるまで
@@ -500,7 +502,7 @@ void EnemyMelee::UpdateRunState(float elapsedTime)
     }
 
     // 射程距離入るまでプレイヤーに向かって走り続ける
-    MoveRun(direction);
+    MoveRun(this->direction);
 }
 
 
@@ -525,11 +527,11 @@ void EnemyMelee::UpdateAttackState(float elapsedTime)
     if (!isAttack && attackCooldown < 0.0f)
     {
         // 攻撃する向きをプレイヤーの方向へ
-        if (player->GetCenterPosition().x > position.x) direction = false;
-        else if (player->GetCenterPosition().x < position.x) direction = true;
+        if (player->GetCenterPosition().x > position.x) this->direction = false;
+        else if (player->GetCenterPosition().x < position.x) this->direction = true;
         // 体の向き
         float vx;
-        (direction ? vx = -1 : vx = 1);
+        (this->direction ? vx = -1 : vx = 1);
         angle.y = DirectX::XMConvertToRadians(90 * vx);
         // 攻撃する向き               
         attackPos = centerPosition;
