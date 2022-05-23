@@ -62,6 +62,8 @@ private:
 	bool enemyDirection[ENEMY_MAX] = {};
 
 
+
+	Sprite* cursorSprite{};
 	Sprite* Bar{};
 	Sprite* LoadBar{};
 	Sprite* enemyattack{};

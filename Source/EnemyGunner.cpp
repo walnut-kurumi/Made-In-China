@@ -133,10 +133,7 @@ void EnemyGunner::Update(float elapsedTime)
 
 // •`‰æˆ—
 void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
-{      
-    if (direction)materialColor = { 1,0,0,1 };
-    else materialColor = { 0,1,0,1 };
-
+{        
         model->Begin(dc, *shader);
         model->Render(dc, materialColor);
      
