@@ -218,10 +218,10 @@ void SceneTutorial::Update(float elapsedTime)
         float slowElapsedTime = 0;
         if (!isPause) {
             slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
-            // ヒットストップ
-            slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
-            // スローモーション
-            slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
+            //// ヒットストップ
+            //slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
+            //// スローモーション
+            //slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
         }
         DirectX::XMFLOAT3 screenPosition;
         screenPosition.x = static_cast<float>(mouse.GetPositionX());
