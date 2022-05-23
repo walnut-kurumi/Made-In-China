@@ -530,6 +530,14 @@ void SceneTutorial::Render(float elapsedTime)
     ImGui::SliderFloat("Tick", &tick, 0.0f, 1.0f);
     ImGui::Checkbox("usekey", &isKeybord);
 
+    ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
+    ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
+    ImGui::SliderFloat("expo", &exp, 0, 10);
+    ImGui::SliderFloat("LEx", &LErgb.x, 0, 1);
+    ImGui::SliderFloat("LEy", &LErgb.y, 0, 1);
+    ImGui::SliderFloat("LEz", &LErgb.z, 0, 1);
+
+
     ImGui::End();   
 #endif
 

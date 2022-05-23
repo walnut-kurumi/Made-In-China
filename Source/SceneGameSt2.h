@@ -88,10 +88,10 @@ private:
 	ConstantBuffer<scene_blur> SBBlur;
 	Shader LumiShader;
 	ConstantBuffer<scene_col> LEcol;
-	float sigma = 1.0f;
-	float intensity = 0.07f;
-	float exp = 1.3f;
-	DirectX::XMFLOAT3 LErgb = {};
+	float sigma = 0.7f;
+	float intensity = 0.127f;
+	float exp = 1.5f;
+	DirectX::XMFLOAT3 LErgb = {0.4f,0.6f,0.2f};
 	std::unique_ptr<Framebuffer> framebuffer[8];
 	std::unique_ptr<RadialBlur> radialBlur;
 	std::unique_ptr<FullScreenQuad> fullScreen;
