@@ -95,7 +95,7 @@ void Player::Init() {
 
     // スローモーション関連    
     playbackSpeed = 1.0f;
-    slowSpeed = 0.4f;
+    slowSpeed = 0.5f;
     slowAlpha = 0.0f;
 
     // ヒットストップ
@@ -161,7 +161,10 @@ void Player::Init() {
 void Player::Update(float elapsedTime) {
     ID3D11Device* device = Graphics::Ins().GetDevice();
     // スロー中なら、スピードをちょっと上げる
-    if(slow) elapsedTime *= 1.2f;
+    float modelTime = elapsedTime;
+    if (slow && (state == AnimeState::Attack || state == AnimeState::Finisher)) 
+        modelTime = elapsedTime / slowSpeed;
+    //if (slow) elapsedTime *= 1.2f;
 
     atkTimer -= elapsedTime;
 
@@ -221,7 +224,7 @@ void Player::Update(float elapsedTime) {
     //オブジェクト行列更新
     UpdateTransform();
     // モデルアニメーション更新処理
-    model->UpdateAnimation(elapsedTime);
+    model->UpdateAnimation(modelTime);
     //モデル行列更新
     model->UpdateTransform(transform);
 
@@ -306,7 +309,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     if (atk) debugRenderer.get()->DrawSphere(swordPos, 4, Vec4(1, 0, 0, 1));
 
     
-    // debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 
 #endif
 }
@@ -406,13 +409,11 @@ bool Player::InputMove(float elapsedTime) {
 
     // 移動処理
     Move(moveVec.x, moveVec.z, moveSpeed);
-    if ((gamePad.GetButtonDown() & GamePad::BTN_RIGHT || gamePad.GetButtonDown() & GamePad::BTN_LEFT) && isGround)
-    {
+    if ((gamePad.GetButtonDown() & GamePad::BTN_RIGHT || gamePad.GetButtonDown() & GamePad::BTN_LEFT) && isGround) {
         SEMove = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Movestart2.wav", false);
         SEMove.get()->Play(0.5f);
     }
-    if ((gamePad.GetButtonDown() & GamePad::BTN_AA || gamePad.GetButtonDown() & GamePad::BTN_DD)&&isGround)
-    {
+    if ((gamePad.GetButtonDown() & GamePad::BTN_AA || gamePad.GetButtonDown() & GamePad::BTN_DD)&&isGround) {
         SEMove = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Movestart2.wav", false);
         SEMove.get()->Play(0.5f);
     }
@@ -499,7 +500,7 @@ void Player::InputSlow(float elapsedTime) {
 
 bool Player::InputSB() {
     // 操作不可ならリターン
-    if (!isControl)return false;
+    if (!isControl) return false;
 
     GamePad& gamePad = Input::Instance().GetGamePad();
     ID3D11Device* device = Graphics::Ins().GetDevice();
@@ -526,7 +527,7 @@ bool Player::InputSB() {
             return true;
         }
         // 武器を持っていない
-        else if(!weapon) {
+        else if (!weapon) {
             // SB探索
             SBManager& sbManager = SBManager::Instance();
             int sbCount = sbManager.GetProjectileCount();
@@ -558,12 +559,41 @@ bool Player::InputSB() {
             cursor.y = static_cast<float>(mouse.GetPositionY());
             cursor.z = 0.0f;
             // player pos
+            ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();
+            // ビューポート
+            D3D11_VIEWPORT viewport;
+            UINT numViewports = 1;
+            dc->RSGetViewports(&numViewports, &viewport);
+            // 変換行列
+            DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&CameraManager::Instance().GetView());
+            DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&CameraManager::Instance().GetProjection());
+            DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+            // プレイヤーの頭上に表示   
+            DirectX::XMFLOAT3 worldPosition = centerPosition;
+
+            DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
+            // ワールド座標からスクリーン座標へ変換
+            DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
+                WorldPosition,
+                viewport.TopLeftX,
+                viewport.TopLeftY,
+                viewport.Width,
+                viewport.Height,
+                viewport.MinDepth,
+                viewport.MaxDepth,
+                Projection,
+                View,
+                World
+            );
+            // スクリーン座標
+            Vec2 screenPosition;
+            DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
             Vec3 playerScreenPos;
-            playerScreenPos = { Graphics::Ins().GetScreenWidth() * 0.5f, Graphics::Ins().GetScreenHeight() * 0.5f + 3.0f, 0.0f };
+            playerScreenPos = { screenPosition.x, screenPosition.y, 0.0f };
 
             // 向き
             Vec3 atkPos = playerScreenPos - cursor;
-            atkPos = VecMath::Normalize(atkPos);          
+            atkPos = VecMath::Normalize(atkPos);
 
             // 向きを設定
             direction = VecMath::sign(atkPos.x);
@@ -780,7 +810,7 @@ void Player::UpdateAttackState(float elapsedTime) {
 
     // 任意のアニメーション再生区間でのみ衝突判定処理をする
     float animationTime = model->GetCurrentAnimationSeconds();
-    atk = animationTime >= 0.01f && animationTime <= 0.20f;
+    atk = animationTime >= 0.05f && animationTime <= 0.15f;
     
     // アニメーションが終わった最後の処理
     if (!model->IsPlayAnimatimon()) {
