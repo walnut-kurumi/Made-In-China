@@ -82,6 +82,12 @@ public:
 	float GetAtkRadius() const { return atkRadius; }
 	float GetSlowAlpha() const { return slowAlpha; }	
 
+
+	bool GetIsControl() const { return isControl; }
+	bool GetCanSlow() const { return canSlow; }
+	bool GetCanAttack() const { return canAttack; }	
+	bool GetisTutorial() const { return isTutorial; }
+
 private:
 
 	// 移動入力処理

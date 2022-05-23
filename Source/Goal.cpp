@@ -35,18 +35,18 @@ void Goal::Update(float elapsedTime)
 
 void Goal::Render(ID3D11DeviceContext* dc)
 {
-#ifdef USE_IMGUI   
-    if (ImGui::Begin("Goal", nullptr, ImGuiWindowFlags_None)) {
-
-
-        ImGui::InputFloat3("goal", &goalPos.x);
-        ImGui::InputFloat3("player", &playerPos.x);
-        ImGui::SliderFloat("Angle", &arrowAngle, 0, 3.14f);
-        ImGui::Checkbox("canGoal", &canGoal);
-
-    }
-    ImGui::End();
-#endif
+//#ifdef USE_IMGUI   
+//    if (ImGui::Begin("Goal", nullptr, ImGuiWindowFlags_None)) {
+//
+//
+//        ImGui::InputFloat3("goal", &goalPos.x);
+//        ImGui::InputFloat3("player", &playerPos.x);
+//        ImGui::SliderFloat("Angle", &arrowAngle, 0, 3.14f);
+//        ImGui::Checkbox("canGoal", &canGoal);
+//
+//    }
+//    ImGui::End();
+//#endif
     if (canGoal)
     {
         ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();

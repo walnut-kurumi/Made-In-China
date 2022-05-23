@@ -418,6 +418,12 @@ void EnemyMelee::UpdateIdleState(float elapsedTime)
     // プレイヤー発見したら走る
     if (Search())
     {
+        // 射程距離内かつ射線が通っているなら攻撃ステートへ
+        if (CheckAttackRange() && !AttackRayCheck())
+        {
+            TransitionAttackState();
+        }
+
         TransitionRunState();
     }
 }
@@ -467,6 +473,12 @@ void EnemyMelee::UpdateWalkState(float elapsedTime)
     // プレイヤー発見したら走る
     if (Search())
     {
+        // 射程距離内かつ射線が通っているなら攻撃ステートへ
+        if (CheckAttackRange() && !AttackRayCheck())
+        {
+            TransitionAttackState();
+        }
+
         TransitionRunState();
     }
 }

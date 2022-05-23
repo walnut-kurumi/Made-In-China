@@ -148,8 +148,10 @@ void Player::Init() {
     canAttack = true;
     slowFixation = false;
     isTutorial = false;
-
+        
     gravFlag = true;
+    gravity = -3.0f;
+
     // 中心座標更新
     UpdateCenterPosition();
 
@@ -158,6 +160,8 @@ void Player::Init() {
 
     deathse = false;
     slowse = false;
+
+    isGround = false;
 }
 #include <Xinput.h>
 void Player::Update(float elapsedTime) {

@@ -45,7 +45,7 @@ void SceneTutorial::Initialize()
     // チュートリアルだお
     player->SetIsTutorial(true);
     player->Init();
-    player->SetPosition(Vec3(-19, 40, 0));
+    player->SetPosition(Vec3(-19, 35, 0));
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -231,7 +231,7 @@ void SceneTutorial::Update(float elapsedTime)
         // チュートリアル
         {
             // 着地したらスローできる
-            if (player->GetPosition().y < 0.1f && isTutorial)
+            if (player->Ground() && isTutorial)
             {
                 isPause = true;                
                 player->SetCanSlow(true);
@@ -528,11 +528,22 @@ void SceneTutorial::Render(float elapsedTime)
 #ifdef USE_IMGUI   
 
     ImGui::Begin("ImGUI");
-    
-    ImGui::SliderFloat("elapsedTime", &et, 0.0f, 1.0f);
-    ImGui::SliderInt("Tick", &tutorialTick, 0, 1);    
-    ImGui::SliderFloat("Tick", &tick, 0.0f, 1.0f);
-    ImGui::Checkbox("usekey", &isKeybord);
+       
+    ImGui::Checkbox("useKeybord", &isKeybord);
+    ImGui::Checkbox("isTutorial", &isTutorial);
+    ImGui::Checkbox("isPause", &isPause);
+    ImGui::Checkbox("isSlow", &isSlow);
+
+    bool a, b, c, d;
+    a = player->GetIsControl();
+    b = player->GetCanSlow();
+    c = player->GetCanAttack();
+    d = player->GetisTutorial();
+    ImGui::Checkbox("isControl", &a);
+    ImGui::Checkbox("canSlow", &b);
+    ImGui::Checkbox("canAttack", &c);
+    ImGui::Checkbox("isTutorial", &d);
+   
 
     ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
     ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
@@ -550,13 +561,27 @@ void SceneTutorial::Render(float elapsedTime)
 // playerが死んだとき 等のリセット用
 void SceneTutorial::Reset()
 {
+    // プレイヤー蘇生 ポジションリセット    
+    player->Init();
+    player->SetPosition(Vec3(-19, 35.0f, 0));    
+  
+    // ゴール不可
+    Goal::Instance().SetCanGoal(false);
+
+    // たまなし
+    EnemyBulletManager::Instance().Clear();
+    SBManager::Instance().Clear();
+    // 敵蘇生 ポジションリセット
+    EnemyManager::Instance().Init();
+    EnemyManager::Instance().EnemyReset();  
+
     // 変数初期化
     isTutorial = true;
     isPause = false;
     camTargetPos = { -19,5,0 };
     cameraTargetChange = false;
     isSlow = false;
- 
+
     radian = 0.0f;
     tutorialTick = 0;	// アニメーション用チック	
     stickAnim = 0;	// アニメーション    
@@ -567,26 +592,12 @@ void SceneTutorial::Reset()
     renderJump = false;
     renderSB = false;
 
-    // ゴール不可
-    Goal::Instance().SetCanGoal(false);
 
-    // たまなし
-    EnemyBulletManager::Instance().Clear();
-    SBManager::Instance().Clear();
-    // 敵蘇生 ポジションリセット
-    EnemyManager::Instance().Init();
-    EnemyManager::Instance().EnemyReset();
-
-    // ドアリセット
-    DoorManager::Instance().Init();
-
-    // プレイヤー蘇生 ポジションリセット    
-    player->Init();
-    player->SetPosition(Vec3(-19, 35, 0));
     // 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける   
     player->SetIsControl(false);
     player->SetCanSlow(false);
     player->SetCanAttack(false);
+    player->SetIsTutorial(isTutorial);
 }
 
 // 敵の初期化
