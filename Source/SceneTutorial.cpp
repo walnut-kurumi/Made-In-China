@@ -580,10 +580,9 @@ void SceneTutorial::Reset()
     // ドアリセット
     DoorManager::Instance().Init();
 
-    // プレイヤー蘇生 ポジションリセット
+    // プレイヤー蘇生 ポジションリセット    
     player->Init();
-    player->SetPosition(Vec3(-19, 40, 0));
-
+    player->SetPosition(Vec3(-19, 35, 0));
     // 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける   
     player->SetIsControl(false);
     player->SetCanSlow(false);

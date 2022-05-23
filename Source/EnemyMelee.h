@@ -121,7 +121,7 @@ private:
 	// UŒ‚À•W
 	Vec3 attackPos = {};
 	// UŒ‚”ÍˆÍ
-	float attackRadius = 3.0f;
+	float attackRadius = 4.5f;
 	// Ë’ö‹——£
 	float attackRange = 10.0f;
 	// UŒ‚CD

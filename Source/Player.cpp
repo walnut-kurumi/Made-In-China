@@ -78,6 +78,8 @@ void Player::Init() {
     angle.y = DirectX::XMConvertToRadians(90) * direction;
     // 武器を持つ
     weapon = true;
+    // 判定用　半径
+    radius = 2.0f;
     // 判定用 体の位置
     waistPos = { 0,3,0 };
     swordPos = { 0,0,0 };
@@ -301,7 +303,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     Vec3 heightPos = position;
     heightPos.y += height;
     debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
-    debugRenderer.get()->DrawSphere(centerPosition, 1, Vec4(0.5f, 1, 0.5f, 1));
+    debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(0.5f, 1, 0.5f, 1));
 
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
 

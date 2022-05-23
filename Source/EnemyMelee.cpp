@@ -147,7 +147,8 @@ void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
         heightPos.y += height;
 
         // DEBUG        
-        if(atk)debugRenderer.get()->DrawSphere(attackPos, attackRadius, Vec4(0.5f, 1, 0.5f, 1));
+        debugRenderer.get()->DrawSphere(attackPos, attackRadius, Vec4(0.5f, 1, 0.5f, 1));
+        if(atk)debugRenderer.get()->DrawSphere(attackPos, attackRadius, Vec4(1.0f, 0, 0.5f, 1));
 
         debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
         debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
@@ -318,8 +319,17 @@ void EnemyMelee::MoveAttack(float cooldown)
         (this->direction ? vx = -1 : vx = 1);
         angle.y = DirectX::XMConvertToRadians(90 * vx);
         // 攻撃する向き               
-        attackPos = centerPosition;
-        attackPos.x = centerPosition.x + (3.0f * vx);
+        /*attackPos = centerPosition;
+        attackPos.x = centerPosition.x + (3.0f * vx);*/
+
+        // 手の位置
+        SkinnedMesh::Animation::Keyframe::Node * rightHand = model->FindNode("joint19");
+        DirectX::XMFLOAT4X4 p = rightHand->globalTransform;
+        DirectX::XMFLOAT4X4 p2;
+        using namespace DirectX;
+        XMStoreFloat4x4(&p2, XMLoadFloat4x4(&rightHand->globalTransform) * XMLoadFloat4x4(&transform));
+        attackPos = { p2._41, p2._42, p2._43 };
+
 
         SEEPunch = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\EnemyPunch.wav", false);
         SEEPunch.get()->Play(0.8f);
@@ -527,7 +537,15 @@ void EnemyMelee::UpdateAttackState(float elapsedTime)
 
     // 任意のアニメーション再生区間でのみ衝突判定処理をする
     float animationTime = model->GetCurrentAnimationSeconds();
-    atk = animationTime >= 0.19f && animationTime <= 0.30f;
+    atk = animationTime >= 0.19f && animationTime <= 0.40f;
+
+    // 手の位置
+    SkinnedMesh::Animation::Keyframe::Node* rightHand = model->FindNode("joint19");
+    DirectX::XMFLOAT4X4 p = rightHand->globalTransform;
+    DirectX::XMFLOAT4X4 p2;
+    using namespace DirectX;
+    XMStoreFloat4x4(&p2, XMLoadFloat4x4(&rightHand->globalTransform) * XMLoadFloat4x4(&transform));
+    attackPos = { p2._41, p2._42, p2._43 };
 
     // 攻撃中は更新しない
     if (!atk && attackCooldown < 0.0f)
@@ -538,10 +556,7 @@ void EnemyMelee::UpdateAttackState(float elapsedTime)
         // 体の向き
         float vx;
         (this->direction ? vx = -1 : vx = 1);
-        angle.y = DirectX::XMConvertToRadians(90 * vx);
-        // 攻撃する向き               
-        attackPos = centerPosition;
-        attackPos.x = centerPosition.x + (4.0f * vx);
+        angle.y = DirectX::XMConvertToRadians(90 * vx);       
     }
     
     // 攻撃      
