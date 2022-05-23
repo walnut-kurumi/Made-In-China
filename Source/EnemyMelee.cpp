@@ -469,7 +469,7 @@ void EnemyMelee::WalkTimerUpdate(float elapsedTime)
 void EnemyMelee::TransitionRunState()
 {
     state = State::Run;
-    moveSpeed = 40;
+    moveSpeed = 45;
     model->PlayAnimation(static_cast<int>(state), true);
 
     // ターゲット切れるまで
@@ -509,7 +509,7 @@ void EnemyMelee::TransitionAttackState()
 {
     state = State::Attack;
     moveSpeed = 0;
-    attackCooldown = 0.25f;
+    attackCooldown = 0.05f;
 }
 
 //攻撃ステート更新処理
@@ -533,7 +533,7 @@ void EnemyMelee::UpdateAttackState(float elapsedTime)
         angle.y = DirectX::XMConvertToRadians(90 * vx);
         // 攻撃する向き               
         attackPos = centerPosition;
-        attackPos.x = centerPosition.x + (3.0f * vx);
+        attackPos.x = centerPosition.x + (4.0f * vx);
     }
 
     // 止まる

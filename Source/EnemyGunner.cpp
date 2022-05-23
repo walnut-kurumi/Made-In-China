@@ -530,7 +530,7 @@ void EnemyGunner::TransitionAttackState()
 {
     state = State::Attack;
     moveSpeed = 0;
-    attackCooldown = 0.45f;        
+    attackCooldown = 0.25f;        
 }
 
 //攻撃ステート更新処理
