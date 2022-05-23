@@ -16,9 +16,9 @@ public:
 	void SetTutorial(bool b) { tutorial = b; }
 
 private:
-	const float MAX_COST = 3.0f; // 2倍の時間になる
-	const float TUTORIAL_COST = 20.0f; // チュートリアル用コスト
-	const float MAX_CT = 2.0f;
+	const float MAX_COST = 1.5f; // 2倍の時間になる
+	const float TUTORIAL_COST = 7.5f; // チュートリアル用コスト
+	const float MAX_CT = 1.5f;
 	
 	float costTimer = MAX_COST;
 	float ctTimer = MAX_CT;

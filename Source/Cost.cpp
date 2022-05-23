@@ -17,11 +17,11 @@ void Cost::Update(float elapsedTime) {
 		}
 		else {
 			if (ctTimer >= 0.0f && ct && trg) {
-				ctTimer -= elapsedTime * 0.35f;
+				ctTimer -= elapsedTime * 0.30f;
 			}
 			else {
 				if (costTimer < TUTORIAL_COST) {
-					costTimer += elapsedTime * 0.35f;
+					costTimer += elapsedTime * 0.30f;
 				}
 				else {
 					costTimer = TUTORIAL_COST;
@@ -38,11 +38,11 @@ void Cost::Update(float elapsedTime) {
 		}
 		else {
 			if (ctTimer >= 0.0f && ct && trg) {
-				ctTimer -= elapsedTime * 0.35f;
+				ctTimer -= elapsedTime * 0.05f;
 			}
 			else {
 				if (costTimer < MAX_COST) {
-					costTimer += elapsedTime * 0.35f;
+					costTimer += elapsedTime * 0.30f;
 				}
 				else {
 					costTimer = MAX_COST;

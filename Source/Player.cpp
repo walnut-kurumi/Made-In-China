@@ -87,15 +87,15 @@ void Player::Init() {
     // 攻撃
     atkRadius = 3.5f;
     atkTimer = 0.0f;
-    atkPower = 5.0f;
+    atkPower = 8.8f;
 
     // ジャンプ関連
-    jumpSpeed = 110.0f;
+    jumpSpeed = 105.0f;
     jumpCount = 0;
 
     // スローモーション関連    
     playbackSpeed = 1.0f;
-    slowSpeed = 0.6f;
+    slowSpeed = 0.4f;
     slowAlpha = 0.0f;
 
     // ヒットストップ
@@ -116,7 +116,7 @@ void Player::Init() {
     sbhit = false;
     sbdir = { 0,0,0 };
     sbPos = { 0,0,0 };
-    sbEraseLen = 2500.0f;// SBが消える距離（Sq）60
+    sbEraseLen = 3000.0f;// SBが消える距離（Sq）60
     sbHitEmy = -1;
     invincible = false;
     blurPower = 0.0f;
@@ -161,7 +161,7 @@ void Player::Init() {
 void Player::Update(float elapsedTime) {
     ID3D11Device* device = Graphics::Ins().GetDevice();
     // スロー中なら、スピードをちょっと上げる
-    if(slow) elapsedTime *= 1.3f;
+    if(slow) elapsedTime *= 1.2f;
 
     atkTimer -= elapsedTime;
 
@@ -326,36 +326,21 @@ void Player::DrawDebugGUI() {
             ImGui::SliderFloat("Position Y", &position.y, -200, 200);
             ImGui::SliderFloat("Position Z", &position.z, -300, 300);
 
-            ImGui::SliderFloat3("atkPos", &atkPos.x, -300, 300);
-
-            ImGui::InputFloat3("Angle", &angle.x);
-            ImGui::InputInt("Direction", &direction);
+            ImGui::SliderFloat("atkPower", &atkPower, 0.0f, 20.0f);
 
             ImGui::SliderFloat("blurPower", &blurPower, 0,150);
+            ImGui::SliderFloat("Height", &height, 0, 10.0f);
 
-            int a = static_cast<int>(state);
-            ImGui::SliderInt("State", &a, 0, static_cast<int>(AnimeState::End));
-        }
-        // トランスフォーム
-        if (ImGui::CollapsingHeader("Destruction", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::SliderFloat("dest", &dest.destruction, 0, 5.0f);
-            ImGui::SliderFloat("pos", &dest.positionFactor, 0, 1.0f);
-            ImGui::SliderFloat("rot", &dest.rotationFactor, 0, 1.0f);
-            ImGui::SliderFloat("sca", &dest.scaleFactor, 0, 1.0f);
+            ImGui::SliderFloat("maxMove", &moveSpeed, 0, 100.0f);
+            ImGui::SliderFloat("slowSpeed", &slowSpeed, 0, 1.0f);
         }
 
-        ImGui::RadioButton("death", deathFlag);
-        ImGui::SliderFloat("Height", &height, 0, 10.0f);
-
-        ImGui::SliderFloat("maxMove", &moveSpeed, 0, 100.0f);
 
         Mouse& mouse = Input::Instance().GetMouse();
         float mpx = static_cast<float>(mouse.GetPositionX());
         float mpy = static_cast<float>(mouse.GetPositionY());        
         ImGui::SliderFloat("MousePosX", &mpx, -300, 300);
         ImGui::SliderFloat("MousePosY", &mpy, -200, 200);
-
-
     }
     ImGui::End();
 #endif
@@ -770,7 +755,7 @@ void Player::UpdateAttackState(float elapsedTime) {
     static bool first = false;
     if (!first) {
         // 攻撃の向き指定
-        Vec3 atkMove = atkPos * atkPower;
+        Vec3 atkMove = { velocity.x * atkPower,0,0 };
         if (!Ground()) {
             // 空中にいるときの攻撃は上に飛ばない
             atkMove.y = 0;
@@ -790,7 +775,7 @@ void Player::UpdateAttackState(float elapsedTime) {
         first = true;
     }
 
-    if (Ground()) velocity.x = 0;
+    //if (Ground()) velocity.x = 0;
 
     // 任意のアニメーション再生区間でのみ衝突判定処理をする
     float animationTime = model->GetCurrentAnimationSeconds();
