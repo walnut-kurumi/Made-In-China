@@ -180,9 +180,9 @@ void SceneGame::Update(float elapsedTime)
 
         float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
         // ヒットストップ
-        slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
+        //slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
         // スローモーション
-        slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
+        //slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
 
 
 

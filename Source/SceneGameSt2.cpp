@@ -189,11 +189,11 @@ void SceneGameSt2::Update(float elapsedTime)
     {
 
         float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
-        //TODO: 敵の数増えるとelapsedTime　おかしくなる
-        // ヒットストップ
-        slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
-        // スローモーション
-        slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
+        ////TODO: 敵の数増えるとelapsedTime　おかしくなる
+        //// ヒットストップ
+        //slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
+        //// スローモーション
+        //slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
 
 
 

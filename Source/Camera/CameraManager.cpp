@@ -106,7 +106,7 @@ void CameraManager::Update(float elapsedTime){
 			UpdateShakeTimer(elapsedTime);
      	}
 	
-		range += static_cast<float>(mouse.GetWheel()) * 0.05f;
+		//range += static_cast<float>(mouse.GetWheel()) * 0.05f;
 		if (range <= 0)range = 1.0f;
 
 		//ƒJƒƒ‰‚ÌŽ‹“_‚Æ’Ž‹“_‚ðÝ’è
