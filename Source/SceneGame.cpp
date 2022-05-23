@@ -105,7 +105,7 @@ void SceneGame::Initialize()
     hr = device->CreateBuffer(&buffer_desc3, nullptr, constant_buffer.GetAddressOf());
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
-
+    cursorSprite = new Sprite(device, L"./Data/Sprites/UI/mouseTarget.png");
     Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
     LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
@@ -383,12 +383,18 @@ void SceneGame::Render(float elapsedTime)
         { framebuffer[1]->shaderResourceViews[0].Get(), framebuffer[2]->shaderResourceViews[0].Get() };
     radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
 
+    // É}ÉEÉXà íu
+    Mouse& mouse = Input::Instance().GetMouse();
+    Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
+
+
     // 2Dï`âÊ
     {
         // çUåÇó\íõï`âÊ
         RenderEnemyAttack();
 
         // UI
+        if (Input::Instance().GetGamePad().GetUseKeybord())cursorSprite->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64);
         Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 

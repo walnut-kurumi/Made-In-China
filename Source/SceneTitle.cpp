@@ -135,7 +135,7 @@ void SceneTitle::Render(float elapsedTime)
         titleSprite->render(dc, 0, 0, gfx.GetScreenWidth(), gfx.GetScreenHeight());        
         gameStart->render(dc, startpos.x, startpos.y, startsize.x, startsize.y, 1, 1, 1, startAlpha, 0);
         gameEnd->render(dc, endpos.x, endpos.y, endsize.x, endsize.y, 1, 1, 1, endAlpha, 0);
-        //cursorSprite->render(dc, mousepos.x-12, mousepos.y-12, 23, 24, 1, 1, 1, 1, 0);
+        cursorSprite->render(dc, mousepos.x-12, mousepos.y-12, 23, 24, 1, 1, 1, 1, 0);
 
         Fade::Instance().Render(elapsedTime);
     }

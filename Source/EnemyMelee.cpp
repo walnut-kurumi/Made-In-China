@@ -132,10 +132,7 @@ void EnemyMelee::Update(float elapsedTime)
 
 // •`‰æˆ—
 void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
-{
-    if (direction)materialColor = { 1,0,0,1 };
-    else materialColor = { 0,1,0,1 };
-
+{   
         model->Begin(dc, *shader);
         model->Render(dc, materialColor);
 
@@ -311,6 +308,9 @@ void EnemyMelee::MoveAttack(float cooldown)
 
     //  ‹ßÚUŒ‚  
     {                
+        // ~‚Ü‚é
+        Move(0.0f, 0.0f, moveSpeed);
+
         // ‘Ì‚ÌŒü‚«
         float vx;
         (this->direction ? vx = -1 : vx = 1);
@@ -537,11 +537,9 @@ void EnemyMelee::UpdateAttackState(float elapsedTime)
         attackPos = centerPosition;
         attackPos.x = centerPosition.x + (4.0f * vx);
     }
-
-    // ~‚Ü‚é
-    Move(0.0f, 0.0f, moveSpeed);
+    
     // UŒ‚      
-    MoveAttack(0.8f);
+    MoveAttack(1.0f);
     // UŒ‚ƒN[ƒ‹ƒ_ƒEƒ“XV
     AttackCooldownUpdate(elapsedTime);
 
