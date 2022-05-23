@@ -564,6 +564,8 @@ void SceneTutorial::Reset()
     renderJump = false;
     renderSB = false;
 
+    // ƒS[ƒ‹•s‰Â
+    Goal::Instance().SetCanGoal(false);
 
     // ‚½‚Ü‚È‚µ
     EnemyBulletManager::Instance().Clear();

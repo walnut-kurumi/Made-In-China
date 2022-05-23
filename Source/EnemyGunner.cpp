@@ -232,18 +232,18 @@ void EnemyGunner::UpdateSearchArea()
     if (this->direction)
     {        
         searchAreaPos = { position.x - 10, position.y };        
-        searchAreaScale = { 45, height + 5.0f };
+        searchAreaScale = { 50, height + 5.0f };
     }
     else
     {        
         searchAreaPos = { position.x - 35, position.y };        
-        searchAreaScale = { 45, height + 5.0f };
+        searchAreaScale = { 50, height + 5.0f };
     }    
     // 止まっているときは両方みれる
     if (!walk)
     {
-        searchAreaPos = { position.x - 25, position.y };
-        searchAreaScale = { 50, height + 5.0f };
+        searchAreaPos = { position.x - 30, position.y };
+        searchAreaScale = { 60, height + 5.0f };
     }
 }
 
@@ -533,7 +533,7 @@ void EnemyGunner::TransitionAttackState()
 {
     state = State::Attack;
     moveSpeed = 0;
-    attackCooldown = 0.25f;        
+    attackCooldown = 0.3f;        
 }
 
 //攻撃ステート更新処理

@@ -451,6 +451,9 @@ void SceneGameSt2::Render(float elapsedTime)
 // playerが死んだとき 等のリセット用
 void SceneGameSt2::Reset()
 {
+    // ゴール不可
+    Goal::Instance().SetCanGoal(false);
+
     // たまなし
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
@@ -478,7 +481,7 @@ void SceneGameSt2::EnemyInitialize(ID3D11Device* device)
         }
 
         // 近接
-        if (i < 3 || i == 4 || i == 5)
+        if (i < 2 || i == 5 || i == 6)
         {
             EnemyMelee* melee = new EnemyMelee(device);
 
@@ -526,37 +529,41 @@ void SceneGameSt2::EnemyInitialize(ID3D11Device* device)
 void SceneGameSt2::EnemyStatusSetting()
 {
 
-    enemyPos[0] = { -73.0f,0.5f };
+    enemyPos[0] = { -70.0f,0.5f };
     enemyPos[1] = { -83.0f,0.5f };
-    enemyPos[2] = { -150.0f,34.0f };
-    enemyPos[3] = { -14.0f,67.0f };
-    enemyPos[4] = { -91.0f,67.0f };
-    enemyPos[5] = { -120.0f,67.0f };
-    enemyPos[6] = { -160.0f,67.0f };
+    enemyPos[2] = { -70.0f,34.0f };
+    enemyPos[3] = { -150.0f,34.0f };
+    enemyPos[4] = { -14.0f,67.0f };
+    enemyPos[5] = { -91.0f,67.0f };
+    enemyPos[6] = { -120.0f,67.0f };
+    enemyPos[7] = { -150.0f,67.0f };
 
     enemyGroup[0] = 0;
     enemyGroup[1] = 0;
     enemyGroup[2] = 1;
-    enemyGroup[3] = 3;
-    enemyGroup[4] = 4;
+    enemyGroup[3] = 2;
+    enemyGroup[4] = 3;
     enemyGroup[5] = 4;
-    enemyGroup[6] = 5;
+    enemyGroup[6] = 4;
+    enemyGroup[7] = 4;
 
-    enemyWalk[0] = true;
+    enemyWalk[0] = false;
     enemyWalk[1] = true;
     enemyWalk[2] = false;
-    enemyWalk[3] = true;
-    enemyWalk[4] = false;
-    enemyWalk[5] = true;
-    enemyWalk[6] = false;
+    enemyWalk[3] = false;
+    enemyWalk[4] = true;
+    enemyWalk[5] = false;
+    enemyWalk[6] = true;
+    enemyWalk[7] = false;
 
     enemyDirection[0] = false;
     enemyDirection[1] = false;
     enemyDirection[2] = true;
-    enemyDirection[3] = false;
-    enemyDirection[4] = true;
+    enemyDirection[3] = true;
+    enemyDirection[4] = false;
     enemyDirection[5] = true;
     enemyDirection[6] = true;
+    enemyDirection[7] = true;
 
 }
 

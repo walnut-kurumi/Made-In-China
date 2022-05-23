@@ -223,18 +223,18 @@ void EnemyMelee::UpdateSearchArea()
     if (direction)
     {
         searchAreaPos = { position.x - 10, position.y };
-        searchAreaScale = { 45, height + 5.0f };
+        searchAreaScale = { 50, height + 5.0f };
     }
     else
     {
         searchAreaPos = { position.x - 35, position.y };
-        searchAreaScale = { 45, height + 5.0f };
+        searchAreaScale = { 50, height + 5.0f };
     }
     // Ž~‚Ü‚Á‚Ä‚¢‚é‚Æ‚«‚Í—¼•û‚Ý‚ê‚é
     if (!walk)
     {
-        searchAreaPos = { position.x - 25, position.y };
-        searchAreaScale = { 50, height + 5.0f };
+        searchAreaPos = { position.x - 30, position.y };
+        searchAreaScale = { 60, height + 5.0f };
     }
 }
 

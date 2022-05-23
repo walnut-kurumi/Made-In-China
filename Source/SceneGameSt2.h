@@ -50,7 +50,7 @@ private:
 	std::unique_ptr<Player> player{};
 
 
-	static const int ENEMY_MAX = 7;
+	static const int ENEMY_MAX = 8;
 	Vec2 enemyPos[ENEMY_MAX] = {};
 	int enemyGroup[ENEMY_MAX] = {};
 	bool enemyWalk[ENEMY_MAX] = {};

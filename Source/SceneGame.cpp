@@ -446,6 +446,9 @@ void SceneGame::Render(float elapsedTime)
 // playerが死んだとき 等のリセット用
 void SceneGame::Reset()
 {
+    // ゴール不可
+    Goal::Instance().SetCanGoal(false);
+
     // たまなし
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
