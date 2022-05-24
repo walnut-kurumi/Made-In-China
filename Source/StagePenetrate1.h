@@ -10,8 +10,7 @@ class StagePenetrate1 : public Stage
 {
 public:
 	StagePenetrate1(ID3D11Device* device);
-	~StagePenetrate1();
-
+	~StagePenetrate1() override;
 	void Update(float elapsedTime) override;
 
 	void Render(ID3D11DeviceContext* deviceContext, float elapsedTime) override;

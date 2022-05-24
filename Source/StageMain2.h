@@ -11,7 +11,7 @@ class StageMain2 : public Stage
 {
 public:
 	StageMain2(ID3D11Device* device);
-	~StageMain2();
+	~StageMain2() override;
 
 	void Update(float elapsedTime) override;
 

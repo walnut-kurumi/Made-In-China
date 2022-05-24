@@ -16,7 +16,7 @@ public:
 
 public:
 	Stage() {}
-	~Stage() {}
+	virtual ~Stage() {}
 
 	virtual void Update(float elapsedTime) = 0;
 

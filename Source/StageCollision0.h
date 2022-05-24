@@ -11,7 +11,7 @@ class StageCollision0 : public Stage
 {
 public:
 	StageCollision0(ID3D11Device* device);
-	~StageCollision0();
+	~StageCollision0() override;
 
 	void Update(float elapsedTime) override;
 

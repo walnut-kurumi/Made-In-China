@@ -6,7 +6,7 @@ class StageSkybox : public Stage
 {
 public:
 	StageSkybox(ID3D11Device* device);
-	~StageSkybox();
+	~StageSkybox() override;
 
 	void Update(float elapsedTime) override;
 
