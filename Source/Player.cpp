@@ -162,6 +162,7 @@ void Player::Init() {
     slowse = false;
 
     isGround = false;
+    isHit = false;
 }
 #include <Xinput.h>
 void Player::Update(float elapsedTime) {
@@ -255,13 +256,6 @@ void Player::Update(float elapsedTime) {
     );
     sbLaunchPos = { p2._41, p2._42, p2._43 };
 
-
-    if (isHit)
-    {
-        handle = hitEffect->Play(centerPosition, 1.0f);
-        isHit = false;
-    }    
-
     // 死んだら
     if (health <= 0)
     {
@@ -274,6 +268,12 @@ void Player::Update(float elapsedTime) {
             deathse = true;
         }
         isDead = true;
+    }
+    // 生きてるときに当たったら
+    if (isHit && !isDead)
+    {
+        handle = hitEffect->Play(centerPosition, 1.0f);
+        isHit = false;
     }
 
 
@@ -995,6 +995,8 @@ void Player::TransitionDeathState() {
     gravFlag = false;
     // 最後のアニメーション状態で止める
     model->AnimationStop(true);
+    // 動かさない
+    velocity = { 0,0,0 };
 }
 void Player::UpdateDeathState(float elapsedTime) {
     dest.destruction += elapsedTime * 10.0f;
