@@ -6,13 +6,11 @@
 Texture2D myTexture : register(t0);
 SamplerState mySampler : register(s0);
 SamplerState linearSamplerState : register(s1);
-Texture2D rampMap : register(t9);
 
 
-PS_OUT main(VS_OUT pin) : SV_TARGET
+float4 main(VS_OUT pin) : SV_TARGET
 {                
-    PS_OUT pout;
-    
+   
     float4 diffuse2  = { 0.8f, 0.8f, 0.8f, 1.0f };
     float4 specular2 = { 0.8f, 0.8f, 0.8f, 1.0f };    
     float4 ambient = { ambientColor.rgb * ka.rgb, ambientColor.a };
@@ -59,16 +57,14 @@ PS_OUT main(VS_OUT pin) : SV_TARGET
         
   
     float3 halfD = ClacHalfLambert(N, L, lightDirectionColor.rgb, kd.rgb);
-    float3 directionalDiffuse = CalcRampShading(rampMap, mySampler, N, L, lightDirectionColor.rgb, kd.rgb);
+    //float3 directionalDiffuse = CalcRampShading(rampMap, mySampler, N, L, lightDirectionColor.rgb, kd.rgb);
     //float3 directionalSpecular = CalcPhongSpecular(N, L, E, lightDirectionColor.rgb, ks.rgb);
                              
-    radiance += color.rgb * directionalDiffuse + halfD;
+    radiance += color.rgb/* * directionalDiffuse*/ + halfD;
 		                     
     //return float4(radiance, alpha) * pin.color;    
-    //return float4(radiance + directionalDiffuse, alpha) * pin.color;
-    pout.color0 = float4(radiance, alpha) * pin.color;
-    pout.color1 = float4(pin.worldNormal.rgb * 0.5f, 1.0f);
+    //return float4(radiance + directionalDiffuse, alpha) * pin.color;    
     
-    return pout;
+    return float4(radiance, alpha) * pin.color;
       
 }
