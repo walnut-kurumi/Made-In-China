@@ -334,6 +334,9 @@
     <ClCompile Include="Source\audio\AudioSource.cpp">
       <Filter>Source\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EnemyShotGunner.cpp">
+      <Filter>Source\Character\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -589,6 +592,9 @@
     </ClInclude>
     <ClInclude Include="Source\audio\AudioSource.h">
       <Filter>Source\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyShotGunner.h">
+      <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

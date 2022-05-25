@@ -5,6 +5,7 @@
 
 #include "EnemyManager.h"
 #include "EnemyGunner.h"
+#include "EnemyShotGunner.h"
 #include "EnemyMelee.h"
 
 #include "SceneManager.h"

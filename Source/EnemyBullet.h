@@ -29,8 +29,10 @@ public:
 	const Vec3& GetDirection() const { return direction; }
 	// スケール取得
 	const Vec3& GetScale() const { return scale; }
+	void SetScale(Vec3 s) { scale = s; };
 	// 半径取得
 	float GetRadius() const { return radius; }
+	void SetRadius(float s) { radius = s; };
 	// パリィフラグ設定
 	void SetReflectionFlag(bool r) { reflectionFlag = r; }
 	// パリィフラグ取得
@@ -38,6 +40,8 @@ public:
 
 	// 動かすかどうか
 	void SetIsMove(bool b) { isMove = b; }
+
+	
 
 	// 破棄
 	void Destroy();

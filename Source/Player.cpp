@@ -84,9 +84,10 @@ void Player::Init() {
     waistPos = { 0,3,0 };
     swordPos = { 0,0,0 };
     headPos = { 0,7.5f,0 };
-    atkPos = { 0,0,0 };    // UŒ‚‚ÌˆÊ’u‚ÍUŒ‚‚Éİ’è
+    atkPos = { 0,100,0 };    // UŒ‚‚ÌˆÊ’u‚ÍUŒ‚‚Éİ’è
     sbLaunchPos = { 0,0,0 };
     // UŒ‚
+    atk = false;
     atkRadius = 3.5f;
     atkTimer = 0.0f;
     atkPower = 8.8f;

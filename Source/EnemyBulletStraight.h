@@ -18,6 +18,9 @@ public:
 	// 発射
 	void Launch(const DirectX::XMFLOAT3& direction, const DirectX::XMFLOAT3& position);
 
+	// スピード設定
+	void SetSpeed(float s) { speed = s; }
+
 private:
 	std::unique_ptr<Model> model = nullptr;
 	float lifeTimer = 20.0f;

@@ -6,8 +6,8 @@
 #include "audio/AudioResource.h"
 #include "audio/Audio.h"
 
-// Melee
-class EnemyMelee : public Enemy
+// ShotGunner
+class EnemyShotGunner : public Enemy
 {
 private:
 	enum class State
@@ -23,8 +23,8 @@ private:
 
 
 public:
-	EnemyMelee(ID3D11Device* device);
-	~EnemyMelee()override;
+	EnemyShotGunner(ID3D11Device* device);
+	~EnemyShotGunner()override;
 
 	void Init();
 	void Update(float elapsedTime);
@@ -35,8 +35,9 @@ public:
 
 	// 弾丸との衝突判定
 	void CollisionProjectileVsEnemies();
-	// 攻撃とプレイヤーの判定
-	void CollisionPanchiVsPlayer();
+	// 弾丸とプレイヤーの衝突判定
+	void CollisionProjectileVsPlayer();
+
 
 private:
 	// 徘徊  ←左true　false右→
@@ -51,7 +52,7 @@ private:
 	void MoveRun(bool direction);
 	// 射程距離チェック 射程距離内ならtrue返して攻撃
 	bool CheckAttackRange();
-	// 攻撃
+	// 射撃攻撃
 	void MoveAttack(float cooldown);
 	// 吹っ飛び プレイヤー攻撃の方向に吹っ飛ぶ
 	void MoveBlow();
@@ -96,7 +97,7 @@ protected:
 private:
 	template<class Type, typename Return, typename ...Args>
 	using Temp = Return(Type::*)(Args...);
-	Temp<EnemyMelee, void, float> UpdateState[static_cast<int>(State::End)];
+	Temp<EnemyShotGunner, void, float> UpdateState[static_cast<int>(State::End)];
 
 	State state = State::Idle;
 
@@ -118,24 +119,18 @@ private:
 	Vec2 searchAreaPos = {};
 	Vec2 searchAreaScale = {};
 
-	// 攻撃座標
-	Vec3 attackPos = {};
 	// 攻撃範囲
-	float attackRadius = 3.5f;
-	// 射程距離
-	float attackRange = 10.0f;
+	float attackRange = 25.0f;
 	// 攻撃CD
 	float attackCooldown = 0;
-	// 攻撃判定フラグ
-	bool atk = false;
 
 
 	// 吹っ飛ばす時間
 	float blowTimer = 0;
 
-	std::unique_ptr<AudioSource> SEEPunch;
 
 	// タゲ切るタイマー	
 	float targetTimer = 0.0f;
+	std::unique_ptr<AudioSource> SEGun;
 };
 #pragma once
