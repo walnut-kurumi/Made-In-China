@@ -336,10 +336,9 @@ void EnemyShotGunner::MoveAttack(float cooldown)
         // 体の向き
         float vx;
         (this->direction ? vx = -1 : vx = 1);
-        angle.y = DirectX::XMConvertToRadians(90 * vx);
-
-        isAttack = false;        
+        angle.y = DirectX::XMConvertToRadians(90 * vx);       
     }
+    if (attackCooldown < 1.0f)isAttack = false;
     // クールダウン残ってるならreturn
     if (attackCooldown > 0.0f) return;
     
