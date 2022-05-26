@@ -46,7 +46,7 @@ void SceneTutorial::Initialize()
     // チュートリアルだお
     player->SetIsTutorial(true);
     player->Init();
-    player->SetPosition(Vec3(-19, 35, 0));
+    player->SetPosition(Vec3(-19, 25, 0));
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -247,16 +247,24 @@ void SceneTutorial::Update(float elapsedTime)
             // 弾止める
             for (int i = 0; i < EnemyBulletManager::Instance().GetProjectileCount(); i++)
             {
-                float posX = EnemyBulletManager::Instance().GetProjectile(i)->GetPosition().x;
-                if (posX <= -14.0f && isTutorial)
+                if (isTutorial)
                 {
-                    EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(false);
-                    isPause = true;
-                    player->SetCanAttack(true);
-                    
-                    renderSlow = false;
-                    // 操作説明：攻撃
-                    renderAttack = true;                   
+                    float posY = EnemyBulletManager::Instance().GetProjectile(i)->GetPosition().y;
+                    Vec3 direction = EnemyBulletManager::Instance().GetProjectile(i)->GetDirection();
+                    direction.y = 0.0f;
+                    EnemyBulletManager::Instance().GetProjectile(i)->SetDirection(direction);
+
+                    float posX = EnemyBulletManager::Instance().GetProjectile(i)->GetPosition().x;
+                    if (posX <= -14.0f)
+                    {
+                        EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(false);
+                        isPause = true;
+                        player->SetCanAttack(true);
+
+                        renderSlow = false;
+                        // 操作説明：攻撃
+                        renderAttack = true;
+                    }
                 }
             }
 
@@ -517,8 +525,8 @@ void SceneTutorial::Render(float elapsedTime)
         Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
         if (Input::Instance().GetGamePad().GetUseKeybord())cursorSprite->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64);
         // UI
-        Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
-        LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        Bar->render(dc, 400, 500, 500, 225, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        LoadBar->render(dc, 570, 578.75f, 290 * w, 58.5f, 1.0f, 1.0f, 1.0f, 0.8f, 0);
 
         // Goal
         Goal::Instance().Render(dc);
@@ -554,7 +562,7 @@ void SceneTutorial::Reset()
 {
     // プレイヤー蘇生 ポジションリセット    
     player->Init();
-    player->SetPosition(Vec3(-19, 35.0f, 0));    
+    player->SetPosition(Vec3(-19, 25.0f, 0));    
   
     // ゴール不可
     Goal::Instance().SetCanGoal(false);
@@ -711,7 +719,7 @@ void SceneTutorial::RenderEnemyAttack()
         DirectX::XMFLOAT2 screenPosition;
         DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
 
-        if (enemy->GetIsAttack() && enemy->GetHealth() > 0)
+        if (enemy->GetIsSearch() && !enemy->GetIsAttack() && enemy->GetHealth() > 0)
         {
             // 攻撃予兆描画
             enemyattack->render(dc, screenPosition.x - 32, screenPosition.y - 64, 64, 64, 1, 1, 1, 1, 0);

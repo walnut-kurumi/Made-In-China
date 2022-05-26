@@ -73,8 +73,8 @@ void SceneGameSt2::Initialize()
         static const int DOOR_MAX = 3;
         Vec3 doorPos[DOOR_MAX] = {};
         doorPos[0] = { -64.0f,0,-3.5f };
-        doorPos[1] = { -144.5f,34.0f,-3.5f };
-        doorPos[2] = { -85.0f,67.0f,-3.5f };
+        doorPos[1] = { -144.5f,23.8f,-3.5f };
+        doorPos[2] = { -85.0f,46.9f,-3.5f };
 
         for (int i = 0; i < DOOR_MAX; i++)
         {
@@ -413,8 +413,8 @@ void SceneGameSt2::Render(float elapsedTime)
         Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
         if (Input::Instance().GetGamePad().GetUseKeybord())cursorSprite->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64);
         // UI
-        Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
-        LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        Bar->render(dc, 400, 500, 500, 225, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        LoadBar->render(dc, 570, 578.75f, 290 * w, 58.5f, 1.0f, 1.0f, 1.0f, 0.8f, 0);
 
         // Goal
         Goal::Instance().Render(dc);
@@ -485,7 +485,7 @@ void SceneGameSt2::Reset()
 
     // プレイヤー蘇生 ポジションリセット
     player->Init();
-    Menu::Instance().Initialize();
+    Menu::Instance().Initialize(); 
 
 
 }
@@ -648,7 +648,7 @@ void SceneGameSt2::RenderEnemyAttack()
         DirectX::XMFLOAT2 screenPosition;
         DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
 
-        if (enemy->GetIsAttack() && enemy->GetHealth() > 0)
+        if (enemy->GetIsSearch() && !enemy->GetIsAttack() && enemy->GetHealth() > 0)
         {
             // 攻撃予兆描画
             enemyattack->render(dc, screenPosition.x - 32, screenPosition.y - 64, 64, 64, 1, 1, 1, 1, 0);
