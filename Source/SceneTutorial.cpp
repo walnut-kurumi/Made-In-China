@@ -201,7 +201,7 @@ void SceneTutorial::Finalize()
     delete LoadBar;
     delete Bar;
     delete fade;
- 
+    delete cursorSprite;
 }
 
 // XVˆ—
