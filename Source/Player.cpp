@@ -189,15 +189,13 @@ void Player::Update(float elapsedTime) {
 
 
     // 残像マネージャー更新
-    if (slowAlpha > 0.0f) {
-        AfterimageManager::Instance().SetParentData(
-            model->GetSkinnedMeshs()->GetMeshs(),
-            model->GetSkinnedMeshs()->GetMaterial(),
-            model->GetSkinnedMeshs()->GetCb(),
-            transform
-        );
-        AfterimageManager::Instance().Update(elapsedTime);
-    }
+    AfterimageManager::Instance().SetParentData(
+        model->GetSkinnedMeshs()->GetMeshs(),
+        model->GetSkinnedMeshs()->GetMaterial(),
+        model->GetSkinnedMeshs()->GetCb(),
+        transform
+    );
+    AfterimageManager::Instance().Update(elapsedTime);
 
 
     UpdateSpeed(elapsedTime);
