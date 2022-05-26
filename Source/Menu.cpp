@@ -12,6 +12,7 @@ void Menu::Initialize()
 
     gameRetry = new Sprite(device, L"./Data/Sprites/scene/retry.png");
     gameEnd = new Sprite(device, L"./Data/Sprites/scene/end.png");    
+    gameMenu = new Sprite(device, L"./Data/Sprites/scene/menu.png");
 
     retry = true;
     end = false;   
@@ -24,6 +25,7 @@ void Menu::Finalize()
 {   
     delete gameEnd;
     delete gameRetry;
+    delete gameMenu;
 }
 
 // XVˆ—
@@ -65,6 +67,7 @@ void Menu::Render(float elapsedTime)
     {       
         if (menuflag == true)
         {
+            gameMenu->render(dc, 0, 0, gfx.GetScreenWidth(), gfx.GetScreenHeight());
             gameRetry->render(dc, retrypos.x, retrypos.y, retrysize.x, retrysize.y, 1, 1, 1, retryAlpha, 0);
             gameEnd->render(dc, endpos.x, endpos.y, endsize.x, endsize.y, 1, 1, 1, endAlpha, 0);
         }        
