@@ -611,6 +611,7 @@ void SkinnedMesh::fetchAnimations(FbxScene* fbxScene,
 		const FbxTime stopTime = takeInfo->mLocalTimeSpan.GetStop();
 		static bool b = false;
 		int startFrame = 0;
+		int startSecond = 0;
 		for (FbxTime time = startTime; time < stopTime; time += samplingInterval) {
 			Animation::Keyframe& keyframe = animation.sequence.emplace_back();
 
@@ -622,9 +623,10 @@ void SkinnedMesh::fetchAnimations(FbxScene* fbxScene,
 			if (!b) {
 				b = true;
 				startFrame = frame;
+				startSecond = second;
 			}
 			// アニメーション時間取得
-			keyframe.seconds = ((frame / animation.samplingRate) + second) - (startFrame / animation.samplingRate);
+			keyframe.seconds = ((frame / animation.samplingRate) + second * animation.samplingRate) - ((startFrame / animation.samplingRate) + startSecond * animation.samplingRate);
 			for (size_t nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
 				//スキンのクラスターのリンク名から、スケルトンノードを検索
 				FbxNode* fbxNode = fbxScene->FindNodeByName(sceneView.nodes.at(nodeIndex).name.c_str());
