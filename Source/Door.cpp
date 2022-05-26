@@ -6,14 +6,13 @@ Door::Door(ID3D11Device* device)
 {
 	model = new Model(device, "./Data/Models/Stage/StageDoor.fbx", true, 0);
     backModel = new Model(device, "./Data/Models/Stage/StageDoor.fbx", true, 0);
-	
-    scale.x = scale.y = scale.z = 0.05f;
-    scale.y *= 0.7f;
 
+	scale.x = scale.y = scale.z = 0.05f;
     angle = { 0, DirectX::XMConvertToRadians(90), 0 };
 
     isOpen = false;
-    radius = 4.0f;
+    radius = 2.5f;
+    attackRadius = 4.0f;
     radian = 0.0f;
     radian2 = 3.1415f * 0.5f;
     isBlinking = false;
@@ -35,7 +34,8 @@ void Door::Init()
     angle = { 0, DirectX::XMConvertToRadians(90), 0 };
 
     isOpen = false;
-    radius = 4.0f;
+    radius = 2.5f;
+    attackRadius = 4.0f;
     radian = 0.0f;
     radian2 = 3.1415f * 0.5f;
     isBlinking = false;
@@ -103,9 +103,8 @@ void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
 	
 
 #ifdef _DEBUG
-    //debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
-    //debugRenderer.get()->DrawSphere(centerPos, backModelRadius, Vec4(0.3f, 1, 0, 1));    
-    //debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));       
+    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 
 #endif // _DEBUG
 
@@ -213,7 +212,7 @@ void Door::CollisionEnemyVsDoor()
         if (enemy->GetHealth() <= 0) return;
 
         // 衝突処理
-        if (Collision::SphereVsSphere(enemy->GetPosition(), collisionPos, enemy->GetRadius(), radius))
+        if (Collision::SphereVsSphere(enemy->GetPosition(), collisionPos, enemy->GetRadius(), attackRadius))
         {
             enemy->ApplyDamage(1, 0);
             // ヒットストップ

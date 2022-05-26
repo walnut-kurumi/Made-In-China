@@ -119,6 +119,8 @@ private:
 	Vec2 searchAreaPos	 = {};
 	Vec2 searchAreaScale = {};
 
+	// UŒ‚Œü‚«
+	Vec3 attackDirection = { 0,0,0 };
 	// UŒ‚”ÍˆÍ
 	float attackRange = 55.0f;
 	// UŒ‚CD

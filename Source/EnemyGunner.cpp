@@ -86,6 +86,9 @@ void EnemyGunner::Init()
     isAttack = false;
     isSearch = false;
 
+    // 攻撃向き
+    attackDirection = { 0,0,0 };
+
     // 索敵エリア更新
     UpdateSearchArea();
 
@@ -148,6 +151,7 @@ void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
         // DEBUG        
         debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
         debugRenderer.get()->DrawSphere(centerPosition, radius, Vec4(1, 0, 0, 1));
+        debugRenderer.get()->DrawSphere(attackDirection * 3.5f + centerPosition, radius, Vec4(0, 0.5f, 0.5f, 1));
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x + searchAreaScale.x, searchAreaPos.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
         debugRenderer.get()->DrawSphere(Vec3(searchAreaPos.x, searchAreaPos.y + searchAreaScale.y, 6.0), 1.0f, Vec4(0, 0.5f, 1, 1));
@@ -311,35 +315,44 @@ bool EnemyGunner::CheckAttackRange()
 // 攻撃
 void EnemyGunner::MoveAttack(float cooldown)
 {   
+   
+    // プレイヤーの中心座標
+    const Vec3& p = { player->GetCenterPosition() };
+    // エネミーの中心座標
+    const Vec3& e = { centerPosition.x,centerPosition.y + 2.0f,0.0f };
+
+    // クールダウン中に発射向き決定
+    if (attackCooldown > 0.5f)
+    {
+        // 発射する向き       
+        // プレイヤーに向かって
+        // 攻撃向き
+        attackDirection = { p - e };
+        // 攻撃向き
+        attackDirection = VecMath::Normalize(attackDirection);
+
+        // プレイヤーの方向に向く
+        if (player->GetCenterPosition().x > position.x)this->direction = false;
+        else if (player->GetCenterPosition().x < position.x) this->direction = true;
+        // 体の向き
+        float vx;
+        (this->direction ? vx = -1 : vx = 1);
+        angle.y = DirectX::XMConvertToRadians(90 * vx);
+
+        isAttack = false;
+    }
+    // クールダウン残ってるならreturn
     if (attackCooldown > 0.0f) return;
+    
     // 攻撃ふらぐ
-    isAttack = true;       
+    isAttack = true;
 
-
-    if (player->GetCenterPosition().x > position.x)this->direction = false;
-    else if (player->GetCenterPosition().x < position.x) this->direction = true;
-    // 体の向き
-    float vx;
-    (this->direction ? vx = -1 : vx = 1);
-    angle.y = DirectX::XMConvertToRadians(90 * vx);
-
-
-    ID3D11Device* device = Graphics::Ins().GetDevice();          
+    ID3D11Device* device = Graphics::Ins().GetDevice();
 
     // 直進弾丸発射   
     {
         // 攻撃アニメーション再生
         model->PlayAnimation(static_cast<int>(state), false);
-
-        // プレイヤーの中心座標
-        const Vec3& p = { player->GetCenterPosition() };
-        // エネミーの中心座標
-        const Vec3& e = { centerPosition.x,centerPosition.y + 2.0f,0.0f };
-
-        // 発射する向き       
-        // プレイヤーに向かって
-        Vec3 pe = { p - e };
-        pe =  VecMath::Normalize(pe);
 
         SEGun = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Enemybullet候補1.wav", false);
         //SEGun = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Enemybullet候補2.wav", false);
@@ -347,7 +360,7 @@ void EnemyGunner::MoveAttack(float cooldown)
 
         // 発射
         EnemyBulletStraight* bullet = new EnemyBulletStraight(device, &EnemyBulletManager::Instance());
-        bullet->Launch(pe, e);                    
+        bullet->Launch(attackDirection, e);
     }
 
     // クールダウン設定
@@ -383,7 +396,12 @@ bool EnemyGunner::AttackRayCheck()
 
     if (StageManager::Instance().RayCast(e, p, hit))
     {
-        if (hit.penetrate) return false;
+        if (hit.penetrate)
+        {
+            penetrate = true;
+            return false;
+        }
+        else penetrate = false;
 
         return true;
     }
@@ -542,7 +560,16 @@ void EnemyGunner::TransitionAttackState()
 {
     state = State::Attack;
     moveSpeed = 0;
-    attackCooldown = 0.3f;        
+    attackCooldown = 0.3f; 
+
+    // プレイヤーの中心座標
+    const Vec3& p = { player->GetCenterPosition() };
+    // エネミーの中心座標
+    const Vec3& e = { centerPosition.x,centerPosition.y + 2.0f,0.0f };
+    // 発射する向き       
+    // プレイヤーに向かって
+    attackDirection = { p - e };
+    attackDirection = VecMath::Normalize(attackDirection);
 }
 
 //攻撃ステート更新処理
@@ -572,6 +599,9 @@ void EnemyGunner::UpdateAttackState(float elapsedTime)
 // 攻撃クールダウン更新
 void EnemyGunner::AttackCooldownUpdate(float elapsedTime)
 {
+    // アニメーション終わるまで更新しない
+    if (model->IsPlayAnimatimon() && isAttack)return;
+
     if (attackCooldown > 0.0f)attackCooldown -= elapsedTime;
 }
 
