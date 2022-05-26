@@ -219,11 +219,7 @@ void SceneTutorial::Update(float elapsedTime)
     {
         float slowElapsedTime = 0;
         if (!isPause) {
-            slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
-            //// ヒットストップ
-            //slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
-            //// スローモーション
-            //slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
+            slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();            
         }
         DirectX::XMFLOAT3 screenPosition;
         screenPosition.x = static_cast<float>(mouse.GetPositionX());
@@ -528,23 +524,7 @@ void SceneTutorial::Render(float elapsedTime)
 
 #ifdef USE_IMGUI   
 
-    ImGui::Begin("ImGUI");    
-
-    ImGui::Checkbox("useKeybord", &isKeybord);
-    ImGui::Checkbox("isTutorial", &isTutorial);
-    ImGui::Checkbox("isPause", &isPause);
-    ImGui::Checkbox("isSlow", &isSlow);
-
-    bool a, b, c, d;
-    a = player->GetIsControl();
-    b = player->GetCanSlow();
-    c = player->GetCanAttack();
-    d = player->GetisTutorial();
-    ImGui::Checkbox("isControl", &a);
-    ImGui::Checkbox("canSlow", &b);
-    ImGui::Checkbox("canAttack", &c);
-    ImGui::Checkbox("isTutorial", &d);
-   
+    ImGui::Begin("ImGUI");          
 
     ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
     ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
