@@ -562,7 +562,7 @@ void SceneTutorial::Reset()
 {
     // プレイヤー蘇生 ポジションリセット    
     player->Init();
-    player->SetPosition(Vec3(-19, 35.0f, 0));    
+    player->SetPosition(Vec3(-19, 25.0f, 0));    
   
     // ゴール不可
     Goal::Instance().SetCanGoal(false);
