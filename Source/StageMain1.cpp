@@ -13,12 +13,13 @@ StageMain1::StageMain1(ID3D11Device* device)
    
     scale.x = scale.y = scale.z = 0.05f;
     scale.x *= -1;
+    scale.y *= 0.7f;
 
     angle.y = DirectX::XMConvertToRadians(-90);
 
     bgpos = { -200, -600 };
 
-    NextStagePos = { -168.0f,35.5f,0.0f };
+    NextStagePos = { -168.0f,24.85f,0.0f };
 
     type = Type::Main;
     debugRenderer = std::make_unique<DebugRenderer>(device);

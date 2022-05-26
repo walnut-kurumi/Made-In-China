@@ -247,16 +247,24 @@ void SceneTutorial::Update(float elapsedTime)
             // íeé~ÇﬂÇÈ
             for (int i = 0; i < EnemyBulletManager::Instance().GetProjectileCount(); i++)
             {
-                float posX = EnemyBulletManager::Instance().GetProjectile(i)->GetPosition().x;
-                if (posX <= -14.0f && isTutorial)
+                if (isTutorial)
                 {
-                    EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(false);
-                    isPause = true;
-                    player->SetCanAttack(true);
-                    
-                    renderSlow = false;
-                    // ëÄçÏê‡ñæÅFçUåÇ
-                    renderAttack = true;                   
+                    float posY = EnemyBulletManager::Instance().GetProjectile(i)->GetPosition().y;
+                    Vec3 direction = EnemyBulletManager::Instance().GetProjectile(i)->GetDirection();
+                    direction.y = 0.0f;
+                    EnemyBulletManager::Instance().GetProjectile(i)->SetDirection(direction);
+
+                    float posX = EnemyBulletManager::Instance().GetProjectile(i)->GetPosition().x;
+                    if (posX <= -14.0f)
+                    {
+                        EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(false);
+                        isPause = true;
+                        player->SetCanAttack(true);
+
+                        renderSlow = false;
+                        // ëÄçÏê‡ñæÅFçUåÇ
+                        renderAttack = true;
+                    }
                 }
             }
 

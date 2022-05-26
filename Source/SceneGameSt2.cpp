@@ -73,8 +73,8 @@ void SceneGameSt2::Initialize()
         static const int DOOR_MAX = 3;
         Vec3 doorPos[DOOR_MAX] = {};
         doorPos[0] = { -64.0f,0,-3.5f };
-        doorPos[1] = { -144.5f,34.0f,-3.5f };
-        doorPos[2] = { -85.0f,67.0f,-3.5f };
+        doorPos[1] = { -144.5f,23.8f,-3.5f };
+        doorPos[2] = { -85.0f,46.9f,-3.5f };
 
         for (int i = 0; i < DOOR_MAX; i++)
         {

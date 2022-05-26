@@ -73,7 +73,7 @@ void SceneGame::Initialize()
         DoorManager::Instance().Init();
 
         Door* door = new Door(device);
-        door->SetPos(Vec3(-54.0f, 29.6f, -3.5f));
+        door->SetPos(Vec3(-54.0f, 20.72f, -3.5f));
         door->PlayerData(player.get());
         DoorManager::Instance().Register(door);
     }

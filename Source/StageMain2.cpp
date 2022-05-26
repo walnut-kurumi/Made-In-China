@@ -12,12 +12,12 @@ StageMain2::StageMain2(ID3D11Device* device)
     model = new Model(device, ".\\Data\\Models\\Stage\\Stage2.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
     scale.x *= -1;
-
+    scale.y *= 0.7f;
     angle.y = DirectX::XMConvertToRadians(-90);
 
     bgpos = { -200, -600 };
 
-    NextStagePos = { -176.0f,71.5f,0.0f };
+    NextStagePos = { -176.0f,50.05f,0.0f };
 
     type = Type::Main;
     debugRenderer = std::make_unique<DebugRenderer>(device);
