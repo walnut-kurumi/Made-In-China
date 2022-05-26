@@ -8,7 +8,7 @@ Door::Door(ID3D11Device* device)
     backModel = new Model(device, "./Data/Models/Stage/StageDoor.fbx", true, 0);
 
     scale.x = scale.y = scale.z = 0.05f;    
-    scale.y *= 0.7f;
+    scale.y = scale.z *= 0.7f;    
 
     angle = { 0, DirectX::XMConvertToRadians(90), 0 };
 
@@ -33,6 +33,7 @@ Door::~Door()
 void Door::Init()
 {    
     scale.x = scale.y = scale.z = 0.05f;
+    scale *= 0.7f;
     angle = { 0, DirectX::XMConvertToRadians(90), 0 };
 
     isOpen = false;
@@ -66,6 +67,12 @@ void Door::Update(float elapsedTime)
     CollisionPlayerAtkVsDoor();
     // プレイヤーとドア
     CollisionPlayerVsDoor();
+    // 敵とドアの判定
+    if(isOpen && (angle.y <= 3.14 && angle.y >= 0))CollisionEnemyVsDoor();
+    // 当たり判定用の座標更新
+    UpdateCollisionPos();
+
+
     // ドア開ける
     OpenTheDoor();
 
@@ -106,6 +113,7 @@ void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
 
 #ifdef _DEBUG
     debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));       
+    debugRenderer.get()->DrawSphere(collisionPos, attackRadius, Vec4(1, 0, 0, 1));       
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 
 #endif // _DEBUG
@@ -167,12 +175,29 @@ void Door::OpenTheDoor()
 
             collisionPos = centerPos;
             collisionPos.x = centerPos.x - 4.0f;
-        }
-
-        // 敵とドアの判定
-        CollisionEnemyVsDoor();
+        }    
 
         modelAlpha = 1.0f;
+    }
+}
+
+void Door::UpdateCollisionPos()
+{
+    Vec3 p = player->GetPosition();
+    Vec3 d = centerPos;
+    Vec3 pd = VecMath::Normalize(d - p);
+
+    // Right
+    if (pd.x > 0)
+    {        
+        collisionPos = centerPos;
+        collisionPos.x = centerPos.x + 4.0f;
+    }
+    // Left
+    else
+    {       
+        collisionPos = centerPos;
+        collisionPos.x = centerPos.x - 4.0f;
     }
 }
 
@@ -214,7 +239,7 @@ void Door::CollisionEnemyVsDoor()
         if (enemy->GetHealth() <= 0) return;
 
         // 衝突処理
-        if (Collision::SphereVsSphere(enemy->GetPosition(), collisionPos, enemy->GetRadius(), attackRadius))
+        if (Collision::SphereVsSphere(enemy->GetCenterPosition(), collisionPos, enemy->GetRadius(), attackRadius))
         {
             enemy->ApplyDamage(1, 0);
             // ヒットストップ
