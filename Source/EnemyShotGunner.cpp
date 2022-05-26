@@ -239,8 +239,8 @@ void EnemyShotGunner::UpdateSearchArea()
     // Ž~‚Ü‚Á‚Ä‚¢‚é‚Æ‚«‚Í—¼•û‚Ý‚ê‚é
     if (!walk)
     {
-        searchAreaPos = { position.x - 30, position.y };
-        searchAreaScale = { 60, height + 5.0f };
+        searchAreaPos = { position.x - 40, position.y };
+        searchAreaScale = { 80, height + 5.0f };
     }
 }
 

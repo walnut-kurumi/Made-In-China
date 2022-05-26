@@ -171,10 +171,11 @@ void SceneGameSt2::Finalize()
     CameraManager& cameraMgr = CameraManager::Instance();
     cameraMgr.SetShakeFlag(false);
 
+    delete fade;
     delete enemyattack;
     delete LoadBar;
     delete Bar;
-    delete fade;
+    delete cursorSprite;   
     //デバッグ
    // delete hitEffect;
 }
