@@ -37,6 +37,7 @@ EnemyMelee::EnemyMelee(ID3D11Device* device)
     position = { 0.0f, 0.0f, 0.0f };
 
     scale = { 0.05f, 0.05f, 0.05f };
+    TransitionIdleState();
 
     // ‚¦‚Ó‚¥‚­‚Æ
     deadEffect = new Effect("Data/Effect/enemyDead.efk");

@@ -53,13 +53,14 @@ private:
 	float retryAlpha = 1.0f;
 	float endAlpha = 1.0f;
 
+	Sprite* gameMenu{};
 	Sprite* gameRetry{};
 	Sprite* gameEnd{};
 
 	DirectX::XMFLOAT2 retrysize = { 320,180 };
 	DirectX::XMFLOAT2 endsize = { 320,180 };
 
-	DirectX::XMFLOAT2 retrypos = { Graphics::Ins().GetScreenWidth() / 2 - retrysize.x / 2,Graphics::Ins().GetScreenHeight() / 2 - retrysize.y / 2 + 60 };
+	DirectX::XMFLOAT2 retrypos = { Graphics::Ins().GetScreenWidth() / 2 - retrysize.x / 2 + 300,Graphics::Ins().GetScreenHeight() / 2 - retrysize.y / 2 + 60 };
 	DirectX::XMFLOAT2 endpos = { retrypos.x,retrypos.y + endsize.y * 1.2f };
 
 	DirectX::XMFLOAT2 mousepos = {};

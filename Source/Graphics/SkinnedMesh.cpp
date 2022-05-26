@@ -203,7 +203,13 @@ void SkinnedMesh::traverse(FbxNode* fbxNode) {
 			: FbxNodeAttribute::EType::eUnknown;
 		node.name = fbxNode->GetName();
 		node.uniqueId = fbxNode->GetUniqueID();
-		node.parentIndex = sceneView.indexof(fbxNode->GetParent() ? fbxNode->GetParent()->GetUniqueID() : 0);
+		node.parentIndex = sceneView.Indexof(fbxNode->GetParent() ? fbxNode->GetParent()->GetUniqueID() : 0);
+
+		// 親のローカル座標系に関するノードの変換行列
+		const FbxAMatrix& localTransform = fbxNode->EvaluateLocalTransform(0);
+		node.scaling = to_xmfloat3(localTransform.GetS());
+		node.rotation = to_xmfloat4(localTransform.GetQ());
+		node.translation = to_xmfloat3(localTransform.GetT());
 	}
 	for (int childIndex = 0; childIndex < fbxNode->GetChildCount(); ++childIndex) {
 		//再帰部分
@@ -347,7 +353,7 @@ void SkinnedMesh::fetchMeshes(FbxScene* fbxScene/*, std::vector<Mesh>& meshes*/)
 		Mesh& mesh = meshes.emplace_back();
 		mesh.uniqueId = fbxMesh->GetNode()->GetUniqueID();
 		mesh.name = fbxMesh->GetNode()->GetName();
-		mesh.nodeIndex = sceneView.indexof(mesh.uniqueId);
+		mesh.nodeIndex = sceneView.Indexof(mesh.uniqueId);
 		mesh.defaultGlobalTransform = to_xmfloat4x4(fbxMesh->GetNode()->EvaluateGlobalTransform());
 
 		std::vector<std::vector<BoneInfluence>> boneInfluences;
@@ -549,7 +555,7 @@ void SkinnedMesh::fetchSkeleton(FbxMesh* fbxMesh, Skeleton& bindPose) {
 			bone.name = cluster->GetLink()->GetName();
 			bone.uniqueId = cluster->GetLink()->GetUniqueID();
 			bone.parentIndex = bindPose.indexof(cluster->GetLink()->GetParent()->GetUniqueID());
-			bone.nodeIndex = sceneView.indexof(bone.uniqueId);
+			bone.nodeIndex = sceneView.Indexof(bone.uniqueId);
 
 			//'referenceGlobalInitPosition'はmodel（mesh）のローカル空間からシーンのグローバルスペースに変換するために使用			
 			FbxAMatrix referenceGlobalInitPosition;
@@ -603,11 +609,24 @@ void SkinnedMesh::fetchAnimations(FbxScene* fbxScene,
 		const FbxTakeInfo* takeInfo = fbxScene->GetTakeInfo(animation.name.c_str());
 		const FbxTime startTime = takeInfo->mLocalTimeSpan.GetStart();
 		const FbxTime stopTime = takeInfo->mLocalTimeSpan.GetStop();
+		static bool b = false;
+		int startFrame = 0;
+		int startSecond = 0;
 		for (FbxTime time = startTime; time < stopTime; time += samplingInterval) {
 			Animation::Keyframe& keyframe = animation.sequence.emplace_back();
 
 			const size_t nodeCount = sceneView.nodes.size();
 			keyframe.nodes.resize(nodeCount);
+
+			int hour, minute, second, frame, field, residual;
+			time.GetTime(hour, minute, second, frame, field, residual, timeMode);
+			if (!b) {
+				b = true;
+				startFrame = frame;
+				startSecond = second;
+			}
+			// アニメーション時間取得
+			keyframe.seconds = ((frame / animation.samplingRate) + second * animation.samplingRate) - ((startFrame / animation.samplingRate) + startSecond * animation.samplingRate);
 			for (size_t nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
 				//スキンのクラスターのリンク名から、スケルトンノードを検索
 				FbxNode* fbxNode = fbxScene->FindNodeByName(sceneView.nodes.at(nodeIndex).name.c_str());
@@ -620,18 +639,14 @@ void SkinnedMesh::fetchAnimations(FbxScene* fbxScene,
 					node.scaling = to_xmfloat3(localTransform.GetS());
 					node.rotation = to_xmfloat4(localTransform.GetQ());
 					node.translation = to_xmfloat3(localTransform.GetT());
-					int hour, minute, second, frame, field, residual;
-					time.GetTime(hour, minute, second, frame, field, residual, FbxTime::eFrames1000);
-					keyframe.seconds = frame / 1000.0f;
-
 					node.name = fbxNode->GetName();
 				}
 			}
 		}
-
 		// アニメーションの長さを取得
-		animation.secondsLength =( animation.sequence.size() - 1) / animation.samplingRate;
+		animation.secondsLength = (animation.sequence.size() - 1) / animation.samplingRate;
 		animationClips.emplace(index, std::move(animation));
+		b = false;
 	}
 	//削除～
 	for (int animationStackIndex = 0; animationStackIndex < animationStackCount; ++animationStackIndex) {

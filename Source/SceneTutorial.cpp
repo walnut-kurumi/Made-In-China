@@ -367,12 +367,26 @@ void SceneTutorial::Update(float elapsedTime)
             Fade::Instance().SetFadeInFlag(true);
         }
     }
-    // フェードイン終わったら初期化
-    if (Fade::Instance().GetFadeInFinish()) Fade::Instance().Initialize();
-
     // Menu
     Menu::Instance().Update(elapsedTime);
     // Fade
+    if(Menu::Instance().GetChangeFlag())
+    {
+        // フェードアウト
+        if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
+
+        // フェードアウトおわったら
+        if (Fade::Instance().GetFadeOutFinish()) {
+            // リセット
+            Reset();
+
+            // フェードイン
+            Fade::Instance().SetFadeInFlag(true);
+        }
+    }
+    // フェードイン終わったら初期化
+    if (Fade::Instance().GetFadeInFinish()) Fade::Instance().Initialize();
+
     Fade::Instance().Update(elapsedTime);
     // Goal
     Goal::Instance().SetPlayerPos(player->GetCenterPosition());
@@ -393,10 +407,6 @@ void SceneTutorial::Update(float elapsedTime)
             // フェードアウト
             if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);            
         }
-    }
-    if(Menu::Instance().GetChangeFlag())
-    {
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
     }
     // フェードアウトおわったら次のシーンにいける
     if (changeScene && Fade::Instance().GetFadeOutFinish())
@@ -573,6 +583,7 @@ void SceneTutorial::Reset()
     renderJump = false;
     renderSB = false;
 
+    Menu::Instance().Initialize();
 
     // 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける   
     player->SetIsControl(false);
