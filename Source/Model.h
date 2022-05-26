@@ -13,14 +13,13 @@ public:
 	Model(ID3D11Device* device, const char* fbxFilename, bool triangulate = false, float samplingRate = 0, BOOL frontCounterClockwise = true);
 	~Model();
 
-	// 行列計算
-	void UpdateTransform(const DirectX::XMFLOAT4X4& transform);
-
 	// アニメーション再生
 	void PlayAnimation(int index, bool loop);
 
 	// アニメーション更新
 	void UpdateAnimation(float elapsedTime);
+	// 更新したNodeを計算
+	void UpdateTransform(const DirectX::XMFLOAT4X4& transform);
 
 	// アニメーション読み込み格納
 	void LoadAnimation(const char* fbxFilename, float samplingRate, int index);

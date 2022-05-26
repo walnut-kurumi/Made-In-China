@@ -166,8 +166,6 @@ void SceneGame::Finalize()
     delete LoadBar;
     delete Bar;
     delete cursorSprite;
-    //デバッグ
-   // delete hitEffect;
 }
 
 // 更新処理
@@ -181,13 +179,7 @@ void SceneGame::Update(float elapsedTime)
     {
 
         float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
-        // ヒットストップ
-        //slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
-        // スローモーション
-        //slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
-
-
-
+      
         DirectX::XMFLOAT3 screenPosition;
         screenPosition.x = static_cast<float>(mouse.GetPositionX());
         screenPosition.y = static_cast<float>(mouse.GetPositionY());
@@ -319,13 +311,7 @@ void SceneGame::Render(float elapsedTime)
 
     // 通常レンダリング
     dc->OMSetRenderTargets(1, &rtv, dsv);
-
-    //DirectX::XMFLOAT4X4 data{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
   
-    //// TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.
-    //dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
-    //dc->VSSetConstantBuffers(3, 1, &constant_buffer); 
-
     framebuffer[0]->clear(dc,1.0f,1.0f,1.0f,0.0f);
     framebuffer[0]->activate(dc);
     {
@@ -432,8 +418,6 @@ void SceneGame::Render(float elapsedTime)
     ImGui::SliderFloat("max_skew [degree]", &max_skew, 0.0f, 10.0f);
     // TODO:12 Defines the amount of seed shifting factor for perlin noise.
     ImGui::SliderFloat("seed_shifting_factor", &seed_shifting_factor, 0.0f, 10.0f);
-
-    ImGui::SliderFloat("elapsedTime", &et, 0.0f, 1.0f);
     
     bool sh = cameraMgr.GetShakeFlag();
     ImGui::Checkbox("shakeFlag", &sh);
