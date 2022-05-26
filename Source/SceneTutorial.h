@@ -129,7 +129,7 @@ private:
 	ConstantBuffer<scene_blur> SBBlur;
 	Shader LumiShader;
 	ConstantBuffer<scene_col> LEcol;
-	float sigma = 1.27f;
+	float sigma = 0.16f;
 	float intensity = 0.09f;
 	float exp = 1.1f;
 	DirectX::XMFLOAT3 LErgb = { 0.2f,0.6f,0.5f };

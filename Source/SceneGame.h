@@ -91,7 +91,7 @@ private:
 	ConstantBuffer<scene_col> LEcol;
 	float sigma = 0.5f;
 	float intensity = 0.271f;
-	float exp = 1.3f;
+	float exp = 0.6f;
 	DirectX::XMFLOAT3 LErgb = {0.6f,0.7f,0.88f};
 	std::unique_ptr<Framebuffer> framebuffer[8];
 	std::unique_ptr<RadialBlur> radialBlur;

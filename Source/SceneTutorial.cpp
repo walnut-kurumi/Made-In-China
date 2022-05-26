@@ -46,7 +46,7 @@ void SceneTutorial::Initialize()
     // チュートリアルだお
     player->SetIsTutorial(true);
     player->Init();
-    player->SetPosition(Vec3(-19, 35, 0));
+    player->SetPosition(Vec3(-19, 25, 0));
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -517,8 +517,8 @@ void SceneTutorial::Render(float elapsedTime)
         Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
         if (Input::Instance().GetGamePad().GetUseKeybord())cursorSprite->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64);
         // UI
-        Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
-        LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        Bar->render(dc, 400, 500, 500, 225, 1.0f, 1.0f, 1.0f, 1.0f, 0);
+        LoadBar->render(dc, 570, 578.75f, 290 * w, 58.5f, 1.0f, 1.0f, 1.0f, 0.8f, 0);
 
         // Goal
         Goal::Instance().Render(dc);
