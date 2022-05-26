@@ -7,6 +7,7 @@
 
 #include "EnemyManager.h"
 #include "EnemyGunner.h"
+#include "EnemyShotGunner.h"
 #include "EnemyMelee.h"
 
 #include"SceneLoading.h"
@@ -506,6 +507,25 @@ void SceneGameSt2::EnemyInitialize(ID3D11Device* device)
             melee->DirectionInitialize();
 
             EnemyManager::Instance().Register(melee);
+        }
+        else if (i == 2)
+        {
+            EnemyShotGunner* gunner = new EnemyShotGunner(device);
+
+            // 座標セット
+            gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
+            gunner->PositionInitialize();
+            //歩き回るかどうか
+            gunner->SetInitialWalk(enemyWalk[i]);
+            gunner->WalkFlagInitialize();
+            // グループ番号セット
+            gunner->SetInitialGroupNum(enemyGroup[i]);
+            gunner->GroupNumInitialize();
+            // 向きセット
+            gunner->SetInitialDirection(enemyDirection[i]);
+            gunner->DirectionInitialize();
+
+            EnemyManager::Instance().Register(gunner);
         }
         else
         {

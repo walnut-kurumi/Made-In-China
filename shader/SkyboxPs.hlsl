@@ -6,7 +6,7 @@ SamplerState mySampler : register(s0);
 Texture2D skyMap : register(t10);
 
 [earlydepthstencil]
-PS_OUT main(VS_OUT pin) : SV_TARGET
+float4 main(VS_OUT pin) : SV_TARGET
 {
     float4 diffuse = { 1.0f, 1.0f, 1.0f, 1.0f };
     
@@ -19,9 +19,5 @@ PS_OUT main(VS_OUT pin) : SV_TARGET
 
     const float intensity = 0.8;
 
-    PS_OUT pout;
-    pout.color0 = float4(diffuseReflection.rgb * intensity * lightDirectionColor.rgb * lightDirectionColor.w, alpha);
-    //pout.color1 = float4(diffuseReflection.rgb * intensity * lightDirectionColor.rgb * lightDirectionColor.w, alpha);
-    pout.color1 = float4(pin.worldNormal.rgb * 0.5f, 1.0f);
-    return pout;
+    return float4(diffuseReflection.rgb * intensity * lightDirectionColor.rgb * lightDirectionColor.w, alpha);
 }
