@@ -235,20 +235,22 @@ void Door::CollisionEnemyVsDoor()
     for (int i = 0; i < enemyCount; ++i)
     {
         Enemy* enemy = enemyManager.GetEnemy(i);
-        // 死んでたらリターン
-        if (enemy->GetHealth() <= 0) return;
 
-        // 衝突処理
-        if (Collision::SphereVsSphere(enemy->GetCenterPosition(), collisionPos, enemy->GetRadius(), attackRadius))
+        // 生きてる
+        if (enemy->GetHealth() > 0)
         {
-            enemy->ApplyDamage(1, 0);
-            // ヒットストップ
-            if (!player->GetSlowFlag())player->SetHitstop(true);
-            // カメラシェイク（簡素）
-            CameraManager& cameraMgr = CameraManager::Instance();
-            if (!cameraMgr.GetShakeFlag())
+            // 衝突処理
+            if (Collision::SphereVsSphere(enemy->GetCenterPosition(), collisionPos, enemy->GetRadius(), attackRadius))
             {
-                cameraMgr.SetShakeFlag(true);;
+                enemy->ApplyDamage(1, 0);
+                // ヒットストップ
+                if (!player->GetSlowFlag())player->SetHitstop(true);
+                // カメラシェイク（簡素）
+                CameraManager& cameraMgr = CameraManager::Instance();
+                if (!cameraMgr.GetShakeFlag())
+                {
+                    cameraMgr.SetShakeFlag(true);;
+                }
             }
         }
     }
