@@ -610,7 +610,7 @@ void SceneGame::RenderEnemyAttack()
         DirectX::XMFLOAT2 screenPosition;
         DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);                
 
-        if (enemy->GetIsAttack() && enemy->GetHealth() > 0)
+        if (enemy->GetIsSearch() && !enemy->GetIsAttack() && enemy->GetHealth() > 0)
         {
             // UŒ‚—\’›•`‰æ
             enemyattack->render(dc, screenPosition.x - 32, screenPosition.y - 64, 64, 64, 1, 1, 1, 1, 0);
