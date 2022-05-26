@@ -36,7 +36,7 @@ void Model::PlayAnimation(int index, bool loop) {
 	animationEndFlag = false;
 	animationSeconds = 0.0f;
 	animationBlendTime = 0.0f;
-	animationBlendSeconds = 0.2f;
+	animationBlendSeconds = 0.3f;
 	stopAnimation = false;
 }
 

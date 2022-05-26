@@ -70,6 +70,7 @@ protected:
 	// ドアの中心座標
 	Vec3 centerPos = { 0,0,0 };
 	float radius = 0.0f;
+	float attackRadius = 0.0f;
 
 	// プレイヤーが近づいたら透明度上げ下げする
 	Vec4 backModelColor = { 0.75f,0.35f,0.95f,1.0 };

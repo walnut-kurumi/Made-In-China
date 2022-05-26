@@ -303,7 +303,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
 
 
     if (slowAlpha > 0.0f) {
-        model->Begin(dc, Shaders::Ins()->GetSkinnedMeshShader());
+        model->Begin(dc, Shaders::Ins()->GetDestructionShader());
         AfterimageManager::Instance().Render(dc);
     }
     model->Begin(dc, Shaders::Ins()->GetDestructionShader());
@@ -718,6 +718,8 @@ void Player::TransitionIdleState() {
 }
 // 待機ステート更新処理
 void Player::UpdateIdleState(float elapsedTime) {
+    // スロー
+    InputSlow(elapsedTime);
     // 死んだら
     if (isDead) {
         TransitionDeathState();
@@ -725,8 +727,6 @@ void Player::UpdateIdleState(float elapsedTime) {
     }
     //  移動入力処理
     if (InputMove(elapsedTime)) TransitionRunState();
-    // スロー
-    InputSlow(elapsedTime);
     // ジャンプ入力処理
     if (InputJump()) TransitionJumpState();
     // 攻撃入力処理
@@ -742,6 +742,8 @@ void Player::TransitionRunState() {
 }
 //走るステート更新処理
 void Player::UpdateRunState(float elapsedTime) {
+    // スロー
+    InputSlow(elapsedTime);
     // 死んだら
     if (isDead) {
         TransitionDeathState();
@@ -749,8 +751,6 @@ void Player::UpdateRunState(float elapsedTime) {
     }
     //  移動入力処理
     if (!InputMove(elapsedTime)) TransitionIdleState();
-    // スロー
-    InputSlow(elapsedTime);
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
     // ジャンプ入力処理
@@ -766,6 +766,8 @@ void Player::TransitionJumpState() {
 }
 //ジャンプステート更新処理
 void Player::UpdateJumpState(float elapsedTime) {
+    // スロー
+    InputSlow(elapsedTime);
     // 死んだら
     if (isDead) {
         TransitionDeathState();
@@ -773,8 +775,6 @@ void Player::UpdateJumpState(float elapsedTime) {
     }
     //  移動入力処理
     InputMove(elapsedTime);
-    // スロー
-    InputSlow(elapsedTime);
     // 攻撃入力処理
     if (InputAttack()) TransitionAttackState();
     // ジャンプ入力処理
@@ -792,13 +792,13 @@ void Player::TransitionAttackState() {
     velocity = {0,0,0};
 }
 void Player::UpdateAttackState(float elapsedTime) {
+    // スロー
+    InputSlow(elapsedTime);
     // 死んだら
     if (isDead) {
         TransitionDeathState();
         return;
     }
-    // スロー
-    InputSlow(elapsedTime);
     static bool first = false;
     if (!first) {
         // 攻撃の向き指定
@@ -863,6 +863,8 @@ void Player::TransitionSBThrowState() {
     velocity = { 0,0,0 };
 }
 void Player::UpdateSBThrowState(float elapsedTime) {
+    // スロー
+    InputSlow(elapsedTime);
     // 死んだら
     if (isDead) {
         TransitionDeathState();
@@ -874,8 +876,6 @@ void Player::UpdateSBThrowState(float elapsedTime) {
         model->AnimationStop(true);
         Launch(sbdir);
     }
-    // スロー
-    InputSlow(elapsedTime);
     // SB発動したら次のステートへ
     if (InputSB()) TransitionSBState();
     // 何かに当たったら発動
@@ -892,13 +892,13 @@ void Player::TransitionSBState() {
     blurPower = 3.0f;
 }
 void Player::UpdateSBState(float elapsedTime) {
+    // スロー
+    InputSlow(elapsedTime);
     // 死んだら
     if (isDead) {     
         TransitionDeathState();
         return;
     }
-    // スロー
-    InputSlow(elapsedTime);
     // ブラー
     blurPower += elapsedTime * blur;
     blurPower = min(blurPower, blurMax);
@@ -942,6 +942,8 @@ void Player::TransitionFinisherState() {
     atk = true;
 }
 void Player::UpdateFinisherState(float elapsedTime) {
+    // スロー
+    InputSlow(elapsedTime);
     // 死んだら
     if (isDead) {
         TransitionDeathState();
