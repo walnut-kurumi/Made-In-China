@@ -5,10 +5,25 @@
 
 
 Model::Model(ID3D11Device* device, const char* fbxFilename, bool triangulate, float samplingRate, BOOL frontCounterClockwise) {
-	//skinnedMesh = std::make_unique<SkinnedMesh>(device, fbxFilename, triangulate);
-	//skinnedMesh.get()->Init(device, frontCounterClockwise);
 	skinnedMesh = ResourceManager::Instance().LoadModelResource(fbxFilename, triangulate, frontCounterClockwise);
 	modelFilename = fbxFilename;
+
+	// ノード
+	const std::vector<SkinnedMesh::Scene::Node>& resNodes = skinnedMesh->GetScene().nodes;
+
+	keyframe.nodes.resize(resNodes.size());
+	for (size_t nodeIndex = 0; nodeIndex < keyframe.nodes.size(); ++nodeIndex)
+	{
+		auto&& src = resNodes.at(nodeIndex);
+		auto&& dst = keyframe.nodes.at(nodeIndex);
+
+		dst.name = src.name.c_str();
+		dst.scaling = src.scaling;
+		dst.rotation = src.rotation;
+		dst.translation = src.translation;
+	}
+
+	UpdateTransform(transform);
 }
 
 Model::~Model() {
@@ -21,7 +36,7 @@ void Model::PlayAnimation(int index, bool loop) {
 	animationEndFlag = false;
 	animationSeconds = 0.0f;
 	animationBlendTime = 0.0f;
-	animationBlendSeconds = 0.8f;
+	animationBlendSeconds = 0.2f;
 	stopAnimation = false;
 }
 
@@ -65,74 +80,68 @@ void Model::UpdateAnimation(float elapsedTime) {
 			animationBlendTime = animationBlendSeconds;
 		}
 		blendRate = animationBlendTime / animationBlendSeconds;
-		blendRate *= blendRate;
 	}
 
 	// 指定のアニメーションデータを取得
 	SkinnedMesh::Animation& animation = skinnedMesh.get()->animationClips[animationIndex];
 	std::vector<SkinnedMesh::Animation::Keyframe>& keyframes = animation.sequence;
-	keyframe = keyframes.at(static_cast<int>(animationSeconds * animation.samplingRate));
 
+	// アニメーションデータからキーフレームデータリストを取得
+	int keyCount = static_cast<int>(keyframes.size());
+	for (int keyIndex = 0; keyIndex < keyCount - 1; ++keyIndex) {
+		// 現在の時間がどのキーフレームの間にいるか判定する
+		const SkinnedMesh::Animation::Keyframe& keyframe0 = keyframes.at(keyIndex);
+		const SkinnedMesh::Animation::Keyframe& keyframe1 = keyframes.at(keyIndex + 1);
+		//if (animationSeconds >= keyIndex / animation.samplingRate && animationSeconds < keyIndex / animation.samplingRate + 1) {
+		if (animationSeconds >= keyframe0.seconds && animationSeconds < keyframe1.seconds) {
+			// 再生時間とキーフレームの時間から補完率を算出する
+			float rate = (animationSeconds - keyframe0.seconds) / (keyframe1.seconds - keyframe0.seconds);
+			//float rate = (animationSeconds - keyIndex / animation.samplingRate) / (keyIndex / animation.samplingRate + 1 - keyIndex / animation.samplingRate);
+			int nodeCount = static_cast<int>(keyframe.nodes.size());
+			for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
+				// ２つのキーフレーム間の補完計算
+				const SkinnedMesh::Animation::Keyframe::Node& key0 = keyframe0.nodes.at(nodeIndex);
+				const SkinnedMesh::Animation::Keyframe::Node& key1 = keyframe1.nodes.at(nodeIndex);
+				SkinnedMesh::Animation::Keyframe::Node& node = keyframe.nodes[nodeIndex];
 
-
-	//むりいりりいりい
-
-	//// アニメーションデータからキーフレームデータリストを取得
-	//int keyCount = static_cast<int>(keyframes.size());
-	//for (int keyIndex = 0; keyIndex < keyCount - 1; ++keyIndex) {
-	//	// 現在の時間がどのキーフレームの間にいるか判定する
-	//	const SkinnedMesh::Animation::Keyframe& keyframe0 = keyframes.at(keyIndex);
-	//	const SkinnedMesh::Animation::Keyframe& keyframe1 = keyframes.at(keyIndex + 1);
-	//	if (animationSeconds >= keyIndex / animation.samplingRate && animationSeconds < keyIndex / animation.samplingRate + 1) {
-	//		// 再生時間とキーフレームの時間から補完率を算出する
-	//		float rate = (animationSeconds - keyIndex / animation.samplingRate) / (keyIndex / animation.samplingRate + 1 - keyIndex / animation.samplingRate);
-	//		int nodeCount = static_cast<int>(keyframe.nodes.size());
-	//		for (int nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
-	//			// ２つのキーフレーム間の補完計算
-	//			const SkinnedMesh::Animation::Keyframe::Node& key0 = keyframe0.nodes.at(nodeIndex);
-	//			const SkinnedMesh::Animation::Keyframe::Node& key1 = keyframe1.nodes.at(nodeIndex);
-	//			SkinnedMesh::Animation::Keyframe::Node& node = keyframe.nodes[nodeIndex];
-
-	//			// ブレンド補完処理
-	//			if (blendRate < 1.0f) {
-	//				// 現在の姿勢と次のキーフレームとの姿勢の補完
-	//				DirectX::XMVECTOR S0 = DirectX::XMLoadFloat3(&node.scaling);
-	//				DirectX::XMVECTOR S1 = DirectX::XMLoadFloat3(&key1.scaling);
-	//				DirectX::XMVECTOR R0 = DirectX::XMLoadFloat4(&node.rotation);
-	//				DirectX::XMVECTOR R1 = DirectX::XMLoadFloat4(&key1.rotation);
-	//				DirectX::XMVECTOR T0 = DirectX::XMLoadFloat3(&node.translation);
-	//				DirectX::XMVECTOR T1 = DirectX::XMLoadFloat3(&key1.translation);
-	//				DirectX::XMVECTOR S = DirectX::XMVectorLerp(S0, S1, blendRate);
-	//				DirectX::XMVECTOR R = DirectX::XMQuaternionSlerp(R0, R1, blendRate);
-	//				DirectX::XMVECTOR T = DirectX::XMVectorLerp(T0, T1, blendRate);
-	//				// 計算結果をボーンに格納
-	//				DirectX::XMStoreFloat3(&node.scaling, S);
-	//				DirectX::XMStoreFloat4(&node.rotation, R);
-	//				DirectX::XMStoreFloat3(&node.translation, T);
-	//			}
-	//			//通常の計算
-	//			else {
-	//				// 前のキーフレームと次のキーフレームの姿勢を補完
-	//				DirectX::XMVECTOR S0 = DirectX::XMLoadFloat3(&key0.scaling);
-	//				DirectX::XMVECTOR S1 = DirectX::XMLoadFloat3(&key1.scaling);
-	//				DirectX::XMVECTOR R0 = DirectX::XMLoadFloat4(&key0.rotation);
-	//				DirectX::XMVECTOR R1 = DirectX::XMLoadFloat4(&key1.rotation);
-	//				DirectX::XMVECTOR T0 = DirectX::XMLoadFloat3(&key0.translation);
-	//				DirectX::XMVECTOR T1 = DirectX::XMLoadFloat3(&key1.translation);
-	//				DirectX::XMVECTOR S = DirectX::XMVectorLerp(S0, S1, rate);
-	//				DirectX::XMVECTOR R = DirectX::XMQuaternionSlerp(R0, R1, rate);
-	//				DirectX::XMVECTOR T = DirectX::XMVectorLerp(T0, T1, rate);
-	//				// 計算結果をボーンに格納
-	//				DirectX::XMStoreFloat3(&node.scaling, S);
-	//				DirectX::XMStoreFloat4(&node.rotation, R);
-	//				DirectX::XMStoreFloat3(&node.translation, T);
-	//			}
-	//			keyframe.nodes[nodeIndex] = node;
-	//		}
-	//		break;
-	//	}
-	//}
-
+				// ブレンド補完処理
+				if (blendRate < 1.0f) {
+					// 現在の姿勢と次のキーフレームとの姿勢の補完
+					DirectX::XMVECTOR S0 = DirectX::XMLoadFloat3(&node.scaling);
+					DirectX::XMVECTOR S1 = DirectX::XMLoadFloat3(&key1.scaling);
+					DirectX::XMVECTOR R0 = DirectX::XMLoadFloat4(&node.rotation);
+					DirectX::XMVECTOR R1 = DirectX::XMLoadFloat4(&key1.rotation);
+					DirectX::XMVECTOR T0 = DirectX::XMLoadFloat3(&node.translation);
+					DirectX::XMVECTOR T1 = DirectX::XMLoadFloat3(&key1.translation);
+					DirectX::XMVECTOR S = DirectX::XMVectorLerp(S0, S1, blendRate);
+					DirectX::XMVECTOR R = DirectX::XMQuaternionSlerp(R0, R1, blendRate);
+					DirectX::XMVECTOR T = DirectX::XMVectorLerp(T0, T1, blendRate);
+					// 計算結果をボーンに格納
+					DirectX::XMStoreFloat3(&node.scaling, S);
+					DirectX::XMStoreFloat4(&node.rotation, R);
+					DirectX::XMStoreFloat3(&node.translation, T);
+				}
+				//通常の計算
+				else {
+					// 前のキーフレームと次のキーフレームの姿勢を補完
+					DirectX::XMVECTOR S0 = DirectX::XMLoadFloat3(&key0.scaling);
+					DirectX::XMVECTOR S1 = DirectX::XMLoadFloat3(&key1.scaling);
+					DirectX::XMVECTOR R0 = DirectX::XMLoadFloat4(&key0.rotation);
+					DirectX::XMVECTOR R1 = DirectX::XMLoadFloat4(&key1.rotation);
+					DirectX::XMVECTOR T0 = DirectX::XMLoadFloat3(&key0.translation);
+					DirectX::XMVECTOR T1 = DirectX::XMLoadFloat3(&key1.translation);
+					DirectX::XMVECTOR S = DirectX::XMVectorLerp(S0, S1, rate);
+					DirectX::XMVECTOR R = DirectX::XMQuaternionSlerp(R0, R1, rate);
+					DirectX::XMVECTOR T = DirectX::XMVectorLerp(T0, T1, rate);
+					// 計算結果をボーンに格納
+					DirectX::XMStoreFloat3(&node.scaling, S);
+					DirectX::XMStoreFloat4(&node.rotation, R);
+					DirectX::XMStoreFloat3(&node.translation, T);
+				}
+			}
+			//break;
+		}
+	}
 
 
 
@@ -144,17 +153,14 @@ void Model::UpdateAnimation(float elapsedTime) {
 	if (animationSeconds >= animation.secondsLength) {
 		//ループ再生なら戻す
 		if (animationLoopFlag) {
-			animationSeconds -= animation.secondsLength;
+			animationSeconds = 0.0f;
 		}
 		//再生を終了する
 		else {
 			animationEndFlag = true;
-			animationSeconds = animation.secondsLength;
+			animationSeconds = 0.0f;
 		}
 	}
-
-	// 指定のアニメーションデータを取得
-	/*if (!animationEndFlag)*/ 
 
 	// 最終フレーム処理
 	if (animationEndFlag) {
@@ -165,6 +171,20 @@ void Model::UpdateAnimation(float elapsedTime) {
 }
 
 void Model::UpdateTransform(const DirectX::XMFLOAT4X4& transform) {
+	size_t nodeCount = keyframe.nodes.size();
+	for (size_t nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
+		SkinnedMesh::Animation::Keyframe::Node& node = keyframe.nodes.at(nodeIndex);
+		DirectX::XMMATRIX S = DirectX::XMMatrixScaling(node.scaling.x, node.scaling.y, node.scaling.z);
+		DirectX::XMMATRIX R = DirectX::XMMatrixRotationQuaternion(XMLoadFloat4(&node.rotation));
+		DirectX::XMMATRIX T = DirectX::XMMatrixTranslation(node.translation.x, node.translation.y, node.translation.z);
+
+		int64_t parentIndex = skinnedMesh->GetScene().nodes.at(nodeIndex).parentIndex;
+		DirectX::XMMATRIX P = parentIndex < 0
+			? DirectX::XMMatrixIdentity()
+			: DirectX::XMLoadFloat4x4(&keyframe.nodes.at(parentIndex).globalTransform);
+
+		DirectX::XMStoreFloat4x4(&node.globalTransform, S * R * T * P);
+	}
 	this->transform = transform;
 }
 

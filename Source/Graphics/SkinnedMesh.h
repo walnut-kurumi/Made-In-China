@@ -20,7 +20,7 @@
 #include <unordered_map>
 #include <string>
 #include <fbxsdk.h>
-
+using namespace DirectX;
 
 
 
@@ -148,13 +148,17 @@ public:
 			FbxNodeAttribute::EType attribute = FbxNodeAttribute::EType::eUnknown;
 			int64_t parentIndex = -1;
 
+			XMFLOAT3 scaling = { 1, 1, 1 };
+			XMFLOAT4 rotation = { 0, 0, 0, 1 }; // Rotation quaternion
+			XMFLOAT3 translation = { 0, 0, 0 };
+
 			template<class T>
 			void serialize(T& archive) {
-				archive(uniqueId, name, attribute, parentIndex);
+				archive(uniqueId, name, attribute, parentIndex, scaling, rotation, translation);
 			}
 		};
 		std::vector<Node> nodes;
-		int64_t indexof(uint64_t uniqueId) const {
+		int64_t Indexof(uint64_t uniqueId) const {
 			int64_t index = 0;
 			for (const Node& node : nodes) {
 				if (node.uniqueId == uniqueId) {
