@@ -14,7 +14,7 @@ public:
     // 更新
     void Update(float elapsedTime) override;
     // 描画
-    void Render(ID3D11DeviceContext* dc);
+    void Render(ID3D11DeviceContext* dc) override;
     // 親の描画に必要なデータを取得
     void SetParentData(
         std::vector<SkinnedMesh::Mesh> meshes,
