@@ -1208,6 +1208,8 @@ void Player::CollisionPanchiVsProjectile() {
             if (!cameraMgr.GetShakeFlag()) {
                 cameraMgr.SetShakeFlag(true);
             }
+
+            break;
         }
     }
 }

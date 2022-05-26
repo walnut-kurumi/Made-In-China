@@ -101,9 +101,9 @@ void Door::Render(ID3D11DeviceContext* dc, float elapsedTime)
 	
 
 #ifdef _DEBUG
-    debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
-    debugRenderer.get()->DrawSphere(centerPos, backModelRadius, Vec4(0.3f, 1, 0, 1));    
-    debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
+    //debugRenderer.get()->DrawSphere(centerPos, radius, Vec4(1, 0, 0, 1));
+    //debugRenderer.get()->DrawSphere(centerPos, backModelRadius, Vec4(0.3f, 1, 0, 1));    
+    //debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
 
 #endif // _DEBUG
 

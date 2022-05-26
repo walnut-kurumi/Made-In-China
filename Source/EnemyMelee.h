@@ -123,7 +123,7 @@ private:
 	// UŒ‚”ÍˆÍ
 	float attackRadius = 3.5f;
 	// Ë’ö‹——£
-	float attackRange = 10.0f;
+	float attackRange = 12.0f;
 	// UŒ‚CD
 	float attackCooldown = 0;
 	// UŒ‚”»’èƒtƒ‰ƒO

@@ -219,11 +219,7 @@ void SceneTutorial::Update(float elapsedTime)
     {
         float slowElapsedTime = 0;
         if (!isPause) {
-            slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
-            //// ヒットストップ
-            //slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
-            //// スローモーション
-            //slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
+            slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();            
         }
         DirectX::XMFLOAT3 screenPosition;
         screenPosition.x = static_cast<float>(mouse.GetPositionX());
@@ -496,9 +492,6 @@ void SceneTutorial::Render(float elapsedTime)
     { framebuffer[1]->shaderResourceViews[0].Get(), framebuffer[2]->shaderResourceViews[0].Get() };
     radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
 
-    // マウス位置
-    Mouse& mouse = Input::Instance().GetMouse();
-    Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
     
 
     // 2D描画
@@ -509,8 +502,11 @@ void SceneTutorial::Render(float elapsedTime)
         // 操作説明用
         RenderTutorial();
 
-        // UI
+        // マウス位置
+        Mouse& mouse = Input::Instance().GetMouse();
+        Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
         if (Input::Instance().GetGamePad().GetUseKeybord())cursorSprite->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64);
+        // UI
         Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
@@ -528,23 +524,7 @@ void SceneTutorial::Render(float elapsedTime)
 
 #ifdef USE_IMGUI   
 
-    ImGui::Begin("ImGUI");
-       
-    ImGui::Checkbox("useKeybord", &isKeybord);
-    ImGui::Checkbox("isTutorial", &isTutorial);
-    ImGui::Checkbox("isPause", &isPause);
-    ImGui::Checkbox("isSlow", &isSlow);
-
-    bool a, b, c, d;
-    a = player->GetIsControl();
-    b = player->GetCanSlow();
-    c = player->GetCanAttack();
-    d = player->GetisTutorial();
-    ImGui::Checkbox("isControl", &a);
-    ImGui::Checkbox("canSlow", &b);
-    ImGui::Checkbox("canAttack", &c);
-    ImGui::Checkbox("isTutorial", &d);
-   
+    ImGui::Begin("ImGUI");          
 
     ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
     ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
@@ -573,8 +553,8 @@ void SceneTutorial::Reset()
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
-    EnemyManager::Instance().Init();
     EnemyManager::Instance().EnemyReset();  
+    EnemyManager::Instance().Init();
 
     // 変数初期化
     isTutorial = true;

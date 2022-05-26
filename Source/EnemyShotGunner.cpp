@@ -239,8 +239,8 @@ void EnemyShotGunner::UpdateSearchArea()
     // 止まっているときは両方みれる
     if (!walk)
     {
-        searchAreaPos = { position.x - 30, position.y };
-        searchAreaScale = { 60, height + 5.0f };
+        searchAreaPos = { position.x - 40, position.y };
+        searchAreaScale = { 80, height + 5.0f };
     }
 }
 
@@ -580,7 +580,7 @@ void EnemyShotGunner::UpdateAttackState(float elapsedTime)
     // 止まる
     Move(0.0f, 0.0f, moveSpeed);
     // 攻撃      
-    MoveAttack(1.5f);
+    MoveAttack(2.5f);
     // 攻撃クールダウン更新
     AttackCooldownUpdate(elapsedTime);
 

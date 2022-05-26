@@ -7,6 +7,7 @@
 
 #include "EnemyManager.h"
 #include "EnemyGunner.h"
+#include "EnemyShotGunner.h"
 #include "EnemyMelee.h"
 
 #include"SceneLoading.h"
@@ -160,12 +161,11 @@ void SceneGame::Finalize()
     CameraManager& cameraMgr = CameraManager::Instance();
     cameraMgr.SetShakeFlag(false);
 
+    delete fade;
     delete enemyattack;
     delete LoadBar;
     delete Bar;
-    delete fade;
-    //デバッグ
-   // delete hitEffect;
+    delete cursorSprite;
 }
 
 // 更新処理
@@ -179,13 +179,7 @@ void SceneGame::Update(float elapsedTime)
     {
 
         float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
-        // ヒットストップ
-        //slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
-        // スローモーション
-        //slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
-
-
-
+      
         DirectX::XMFLOAT3 screenPosition;
         screenPosition.x = static_cast<float>(mouse.GetPositionX());
         screenPosition.y = static_cast<float>(mouse.GetPositionY());
@@ -306,13 +300,7 @@ void SceneGame::Render(float elapsedTime)
 
     // 通常レンダリング
     dc->OMSetRenderTargets(1, &rtv, dsv);
-
-    //DirectX::XMFLOAT4X4 data{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
   
-    //// TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.
-    //dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
-    //dc->VSSetConstantBuffers(3, 1, &constant_buffer); 
-
     framebuffer[0]->clear(dc,1.0f,1.0f,1.0f,0.0f);
     framebuffer[0]->activate(dc);
     {
@@ -383,18 +371,17 @@ void SceneGame::Render(float elapsedTime)
         { framebuffer[1]->shaderResourceViews[0].Get(), framebuffer[2]->shaderResourceViews[0].Get() };
     radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
 
-    // マウス位置
-    Mouse& mouse = Input::Instance().GetMouse();
-    Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
-
-
+    
     // 2D描画
     {
         // 攻撃予兆描画
         RenderEnemyAttack();
 
-        // UI
+        // マウス位置
+        Mouse& mouse = Input::Instance().GetMouse();
+        Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
         if (Input::Instance().GetGamePad().GetUseKeybord())cursorSprite->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64);
+        // UI
         Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
@@ -420,8 +407,6 @@ void SceneGame::Render(float elapsedTime)
     ImGui::SliderFloat("max_skew [degree]", &max_skew, 0.0f, 10.0f);
     // TODO:12 Defines the amount of seed shifting factor for perlin noise.
     ImGui::SliderFloat("seed_shifting_factor", &seed_shifting_factor, 0.0f, 10.0f);
-
-    ImGui::SliderFloat("elapsedTime", &et, 0.0f, 1.0f);
     
     bool sh = cameraMgr.GetShakeFlag();
     ImGui::Checkbox("shakeFlag", &sh);
@@ -459,8 +444,8 @@ void SceneGame::Reset()
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
-    EnemyManager::Instance().Init();    
     EnemyManager::Instance().EnemyReset();
+    EnemyManager::Instance().Init();    
     // ドアリセット
     DoorManager::Instance().Init();
 
@@ -501,6 +486,27 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
 
             EnemyManager::Instance().Register(melee);
         }
+        // ショットガン
+        else if(i == 3)
+        {
+            EnemyShotGunner* gunner = new EnemyShotGunner(device);
+
+            // 座標セット
+            gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
+            gunner->PositionInitialize();
+            //歩き回るかどうか
+            gunner->SetInitialWalk(enemyWalk[i]);
+            gunner->WalkFlagInitialize();
+            // グループ番号セット
+            gunner->SetInitialGroupNum(enemyGroup[i]);
+            gunner->GroupNumInitialize();
+            // 向きセット
+            gunner->SetInitialDirection(enemyDirection[i]);
+            gunner->DirectionInitialize();
+
+            EnemyManager::Instance().Register(gunner);
+        }
+        // アサルト
         else
         {
             EnemyGunner* gunner = new EnemyGunner(device);
@@ -533,18 +539,22 @@ void SceneGame::EnemyStatusSetting()
     enemyPos[0] = { -6.5f,29.5f };
     enemyPos[1] = { -48.0f,29.5f };
     enemyPos[2] = { -140.0f,29.5f };
+    enemyPos[3] = { -70.0f,29.5f };
 
     enemyGroup[0] =0;
     enemyGroup[1] =0;
     enemyGroup[2] =1;
+    enemyGroup[3] =1;
     
     enemyWalk[0] = true;
     enemyWalk[1] = false;
     enemyWalk[2] = true;
+    enemyWalk[3] = false;
    
     enemyDirection[0] = false;
     enemyDirection[1] = true;
     enemyDirection[2] = true;
+    enemyDirection[3] = false;
 }
 
 

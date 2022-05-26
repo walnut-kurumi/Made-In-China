@@ -39,11 +39,9 @@ void StageMain0::Update(float elapsedTime)
 
 void StageMain0::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
 {
-    //Scroll.data.scroll_direction;
-    //deviceContext->UpdateSubresource(
     back->render(deviceContext, bgpos.x, -435, 1500, 1150, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
-    model->Begin(deviceContext, Shaders::Ins()->GetRampShader());
+    model->Begin(deviceContext, Shaders::Ins()->GetSkinnedMeshShader());
     model->Render(deviceContext);
     
 #ifdef _DEBUG
