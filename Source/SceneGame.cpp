@@ -460,8 +460,8 @@ void SceneGame::Reset()
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
-    EnemyManager::Instance().Init();    
     EnemyManager::Instance().EnemyReset();
+    EnemyManager::Instance().Init();    
     // ドアリセット
     DoorManager::Instance().Init();
 

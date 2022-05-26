@@ -495,7 +495,7 @@ void EnemyMelee::WalkTimerUpdate(float elapsedTime)
 void EnemyMelee::TransitionRunState()
 {
     state = State::Run;
-    moveSpeed = 55;
+    moveSpeed = 60;
     model->PlayAnimation(static_cast<int>(state), true);
 
     // ターゲット切れるまで
@@ -535,7 +535,8 @@ void EnemyMelee::TransitionAttackState()
 {
     state = State::Attack;
     moveSpeed = 0;
-    attackCooldown = 0.45f;
+    attackCooldown = 0.1f;
+    model->PlayAnimation(static_cast<int>(State::Walk), true);
 }
 
 //攻撃ステート更新処理
@@ -550,7 +551,7 @@ void EnemyMelee::UpdateAttackState(float elapsedTime)
 
     // 任意のアニメーション再生区間でのみ衝突判定処理をする
     float animationTime = model->GetCurrentAnimationSeconds();
-    atk = animationTime >= 0.19f && animationTime <= 0.40f;
+    if(isAttack)atk = animationTime >= 0.19f && animationTime <= 0.40f;
 
     // 手の位置
     SkinnedMesh::Animation::Keyframe::Node* rightHand = model->FindNode("joint19");
