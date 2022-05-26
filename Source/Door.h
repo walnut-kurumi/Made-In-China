@@ -32,6 +32,7 @@ public:
 	void SetScale(const Vec3& scale) { this->scale = scale; }
 
 	void OpenTheDoor();
+	void UpdateCollisionPos();
 
 	// ƒhƒA‚Æ‚Ì“–‚½‚è”»’è
 	void CollisionPlayerAtkVsDoor();

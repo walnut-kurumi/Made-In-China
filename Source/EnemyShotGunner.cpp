@@ -321,7 +321,7 @@ void EnemyShotGunner::MoveAttack(float cooldown)
     const Vec3& e = { centerPosition.x,centerPosition.y + 2.0f,0.0f };
 
     // クールダウン中に発射向き決定
-    if (attackCooldown > 0.5f)
+    if (attackCooldown > 0.1f)
     {
         // 発射する向き       
         // プレイヤーに向かって
@@ -605,7 +605,7 @@ void EnemyShotGunner::UpdateAttackState(float elapsedTime)
     // 止まる
     Move(0.0f, 0.0f, moveSpeed);
     // 攻撃      
-    MoveAttack(2.5f);
+    MoveAttack(1.5f);
     // 攻撃クールダウン更新
     AttackCooldownUpdate(elapsedTime);
 
