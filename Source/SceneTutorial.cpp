@@ -248,7 +248,7 @@ void SceneTutorial::Update(float elapsedTime)
             for (int i = 0; i < EnemyBulletManager::Instance().GetProjectileCount(); i++)
             {
                 float posX = EnemyBulletManager::Instance().GetProjectile(i)->GetPosition().x;
-                if (posX <= -15.0f && isTutorial)
+                if (posX <= -14.0f && isTutorial)
                 {
                     EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(false);
                     isPause = true;
@@ -553,8 +553,8 @@ void SceneTutorial::Reset()
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
-    EnemyManager::Instance().EnemyReset();  
     EnemyManager::Instance().Init();
+    EnemyManager::Instance().EnemyReset();  
 
     // 変数初期化
     isTutorial = true;

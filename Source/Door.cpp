@@ -6,8 +6,10 @@ Door::Door(ID3D11Device* device)
 {
 	model = new Model(device, "./Data/Models/Stage/StageDoor.fbx", true, 0);
     backModel = new Model(device, "./Data/Models/Stage/StageDoor.fbx", true, 0);
+	
+    scale.x = scale.y = scale.z = 0.05f;
+    scale.y *= 0.7f;
 
-	scale.x = scale.y = scale.z = 0.05f;
     angle = { 0, DirectX::XMConvertToRadians(90), 0 };
 
     isOpen = false;

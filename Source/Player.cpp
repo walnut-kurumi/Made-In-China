@@ -176,6 +176,15 @@ void Player::Update(float elapsedTime) {
 
     atkTimer -= elapsedTime;
 
+    /////////////////////////////////////////////////////////
+    //                                                   　//
+    //                    落ちたら死ぬぞ                    //
+    //                                                   　//
+    /////////////////////////////////////////////////////////
+    FallIsDead();
+
+
+
     (this->*UpdateState[static_cast<int>(state)])(elapsedTime);
 
 
@@ -256,7 +265,7 @@ void Player::Update(float elapsedTime) {
         XMLoadFloat4x4(&sholder->globalTransform) * XMLoadFloat4x4(&transform)
     );
     sbLaunchPos = { p2._41, p2._42, p2._43 };
-
+   
     // 死んだら
     if (health <= 0)
     {
@@ -828,7 +837,7 @@ void Player::UpdateAttackState(float elapsedTime) {
         gravFlag = true;
 
         // 攻撃位置リセット
-        atkPos = { 0,0,0 };
+        atkPos = { 0,-100,0 };
         atk = false;
        
         // ヒットストップおわり
@@ -884,7 +893,7 @@ void Player::TransitionSBState() {
 }
 void Player::UpdateSBState(float elapsedTime) {
     // 死んだら
-    if (isDead) {
+    if (isDead) {     
         TransitionDeathState();
         return;
     }
@@ -963,7 +972,7 @@ void Player::UpdateFinisherState(float elapsedTime) {
         // 時間戻す
         clock = false;
         // 攻撃位置リセット
-        atkPos = { 0,0,0 };
+        atkPos = { 0,-100,0 };
         atk = false;
         // 無敵解除
         invincible = false;
@@ -1163,6 +1172,16 @@ void Player::Launch(const Vec3& direction) {
     SBNormal* sb = new SBNormal(device, &SBManager::Instance());
     // 向き、　発射地点
     sb->Launch(VecMath::Normalize(direction), sbLaunchPos);
+}
+
+// 落下死
+void Player::FallIsDead()
+{    
+    // 生きてるとき
+    if (position.y <= -50.0f && !isDead)
+    {
+        ApplyDamage(10,0);
+    }
 }
 
 void Player::OnLanding() {

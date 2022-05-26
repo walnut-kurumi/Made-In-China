@@ -112,6 +112,9 @@ private:
 	// SB投げる処理
 	void Launch(const Vec3& direction);
 
+	// ｵﾁﾀﾗｼﾇ
+	void FallIsDead();
+
 protected:
 	void OnLanding() override;
 

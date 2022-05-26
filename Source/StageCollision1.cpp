@@ -12,6 +12,7 @@ StageCollision1::StageCollision1(ID3D11Device* device)
     
     scale.x = scale.y = scale.z = 0.05f;
     scale.x *= -1;
+    scale.y *= 0.7f;
 
     angle.y = DirectX::XMConvertToRadians(-90);
 
