@@ -496,9 +496,6 @@ void SceneTutorial::Render(float elapsedTime)
     { framebuffer[1]->shaderResourceViews[0].Get(), framebuffer[2]->shaderResourceViews[0].Get() };
     radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
 
-    // マウス位置
-    Mouse& mouse = Input::Instance().GetMouse();
-    Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
     
 
     // 2D描画
@@ -509,8 +506,11 @@ void SceneTutorial::Render(float elapsedTime)
         // 操作説明用
         RenderTutorial();
 
-        // UI
+        // マウス位置
+        Mouse& mouse = Input::Instance().GetMouse();
+        Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
         if (Input::Instance().GetGamePad().GetUseKeybord())cursorSprite->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64);
+        // UI
         Bar->render(dc, 0, 0, 600, 300, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 208, 105, 344 * w, 78, 1.0f, 1.0f, 1.0f, 1.0f, 0);
 
@@ -528,8 +528,8 @@ void SceneTutorial::Render(float elapsedTime)
 
 #ifdef USE_IMGUI   
 
-    ImGui::Begin("ImGUI");
-       
+    ImGui::Begin("ImGUI");    
+
     ImGui::Checkbox("useKeybord", &isKeybord);
     ImGui::Checkbox("isTutorial", &isTutorial);
     ImGui::Checkbox("isPause", &isPause);

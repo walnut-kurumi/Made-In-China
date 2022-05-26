@@ -147,7 +147,7 @@ void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
         heightPos.y += height;
 
         // DEBUG        
-        debugRenderer.get()->DrawSphere(attackPos, attackRadius, Vec4(0.5f, 1, 0.5f, 1));
+        if(isAttack)debugRenderer.get()->DrawSphere(attackPos, attackRadius, Vec4(0.5f, 1, 0.5f, 1));
         if(atk)debugRenderer.get()->DrawSphere(attackPos, attackRadius, Vec4(1.0f, 0, 0.5f, 1));
 
         debugRenderer.get()->DrawSphere(heightPos, 1, Vec4(0.5f, 1, 0, 1));
