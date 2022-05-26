@@ -27,8 +27,7 @@ StageCollision1::~StageCollision1()
 }
 
 void StageCollision1::Update(float elapsedTime)
-{
-    scale.x = scale.y = scale.z = 0.05f;
+{    
     UpdateTransform();
     model->UpdateTransform(transform);
 }

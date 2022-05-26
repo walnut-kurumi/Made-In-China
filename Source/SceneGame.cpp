@@ -7,6 +7,7 @@
 
 #include "EnemyManager.h"
 #include "EnemyGunner.h"
+#include "EnemyShotGunner.h"
 #include "EnemyMelee.h"
 
 #include"SceneLoading.h"
@@ -501,6 +502,27 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
 
             EnemyManager::Instance().Register(melee);
         }
+        // ショットガン
+        else if(i == 3)
+        {
+            EnemyShotGunner* gunner = new EnemyShotGunner(device);
+
+            // 座標セット
+            gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
+            gunner->PositionInitialize();
+            //歩き回るかどうか
+            gunner->SetInitialWalk(enemyWalk[i]);
+            gunner->WalkFlagInitialize();
+            // グループ番号セット
+            gunner->SetInitialGroupNum(enemyGroup[i]);
+            gunner->GroupNumInitialize();
+            // 向きセット
+            gunner->SetInitialDirection(enemyDirection[i]);
+            gunner->DirectionInitialize();
+
+            EnemyManager::Instance().Register(gunner);
+        }
+        // アサルト
         else
         {
             EnemyGunner* gunner = new EnemyGunner(device);
@@ -533,18 +555,22 @@ void SceneGame::EnemyStatusSetting()
     enemyPos[0] = { -6.5f,29.5f };
     enemyPos[1] = { -48.0f,29.5f };
     enemyPos[2] = { -140.0f,29.5f };
+    enemyPos[3] = { -70.0f,29.5f };
 
     enemyGroup[0] =0;
     enemyGroup[1] =0;
     enemyGroup[2] =1;
+    enemyGroup[3] =1;
     
     enemyWalk[0] = true;
     enemyWalk[1] = false;
     enemyWalk[2] = true;
+    enemyWalk[3] = false;
    
     enemyDirection[0] = false;
     enemyDirection[1] = true;
     enemyDirection[2] = true;
+    enemyDirection[3] = false;
 }
 
 

@@ -580,7 +580,7 @@ void EnemyShotGunner::UpdateAttackState(float elapsedTime)
     // 止まる
     Move(0.0f, 0.0f, moveSpeed);
     // 攻撃      
-    MoveAttack(1.5f);
+    MoveAttack(2.5f);
     // 攻撃クールダウン更新
     AttackCooldownUpdate(elapsedTime);
 
