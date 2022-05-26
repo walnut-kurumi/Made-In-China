@@ -16,9 +16,3 @@ struct VS_OUT
     float2 texcoord : TEXCOORD;
     float4 color : COLOR;
 };
-
-struct PS_OUT
-{        
-    float4 color0 : SV_TARGET0;
-    float4 color1 : SV_TARGET1; 
-};

@@ -5,7 +5,8 @@ Texture2D colorMap : register(t0);
 Texture2D normalMap : register(t1);
 SamplerState pointSamplerState : register(s0);
 SamplerState linearSamplerState : register(s1);
-SamplerState anisotropicSamplerState : register(s2);
+//SamplerState anisotropicSamplerState : register(s2);
+SamplerState anisotropicSamplerState : register(s0);
 float4 main(VS_OUT pin) : SV_TARGET
 {
     float4 color = colorMap.Sample(anisotropicSamplerState, pin.texcoord);

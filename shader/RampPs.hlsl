@@ -5,7 +5,6 @@
 
 Texture2D myTexture : register(t0);
 SamplerState mySampler : register(s0);
-SamplerState linearSamplerState : register(s1);
 
 
 float4 main(VS_OUT pin) : SV_TARGET

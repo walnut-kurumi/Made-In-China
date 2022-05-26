@@ -550,7 +550,7 @@ void EnemyGunner::UpdateAttackState(float elapsedTime)
 {   
     // 死んでたら 吹っ飛びステートへ
     if (health <= 0) {
-        isAttack = false;        
+        isAttack = false;     
         TransitionBlowState();
     }
 
