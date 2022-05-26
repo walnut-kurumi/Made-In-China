@@ -264,11 +264,26 @@ void SceneGameSt2::Update(float elapsedTime)
             Fade::Instance().SetFadeInFlag(true);
         }
     }
+    // Menu
+    Menu::Instance().Update(elapsedTime);
+    // Fade
+    if (Menu::Instance().GetChangeFlag())
+    {
+        // フェードアウト
+        if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
+
+        // フェードアウトおわったら
+        if (Fade::Instance().GetFadeOutFinish()) {
+            // リセット
+            Reset();
+
+            // フェードイン
+            Fade::Instance().SetFadeInFlag(true);
+        }
+    }
     // フェードイン終わったら初期化
     if (Fade::Instance().GetFadeInFinish()) Fade::Instance().Initialize();
 
-    // Menu
-    Menu::Instance().Update(elapsedTime);
     // Fade
     Fade::Instance().Update(elapsedTime);
     // Goal
@@ -286,10 +301,6 @@ void SceneGameSt2::Update(float elapsedTime)
             // フェードアウト
             if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
         }
-    }
-    if (Menu::Instance().GetChangeFlag())
-    {
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
     }
     // フェードアウトおわったら次のシーンにいける
     if (changeScene && Fade::Instance().GetFadeOutFinish())
@@ -474,6 +485,7 @@ void SceneGameSt2::Reset()
 
     // プレイヤー蘇生 ポジションリセット
     player->Init();
+    Menu::Instance().Initialize();
 
 
 }
