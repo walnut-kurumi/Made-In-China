@@ -23,8 +23,8 @@ void SceneClear::Initialize()
     endAlpha = 0.4f;
     startsize = { 320,180 };
     endsize = { 320,180 };
-    startpos = { Graphics::Ins().GetScreenWidth() / 2 - startsize.x / 2,Graphics::Ins().GetScreenHeight() / 2 - startsize.y / 2 + 60 };
-    endpos = { startpos.x,startpos.y + endsize.y * 1.2f };
+    startpos = { Graphics::Ins().GetScreenWidth() / 2 - startsize.x / 2 - 300,Graphics::Ins().GetScreenHeight() / 2 - startsize.y / 2 +180};
+    endpos = { startpos.x + 500,startpos.y };
 
     Input::Instance().GetMouse().SetMoveCursor(true);
 
@@ -141,30 +141,39 @@ void SceneClear::SceneSelect()
     mousepos.x = screenPosition.x;
     mousepos.y = screenPosition.y;
 
-    const GamePadButton up =
-        GamePad::BTN_UP
-        | GamePad::BTN_W;
-    const GamePadButton down =
-        GamePad::BTN_DOWN
-        | GamePad::BTN_S;
+    const GamePadButton Left =
+        GamePad::BTN_LEFT;
+    const GamePadButton Right =
+        GamePad::BTN_RIGHT;
 
-    if (screenPosition.x >= startpos.x && screenPosition.x < startpos.x + startsize.x)
+    if (screenPosition.y >= startpos.y && screenPosition.y < startpos.y + startsize.y)
     {
-        if (screenPosition.y >= startpos.y && screenPosition.y <= startpos.y + startsize.y)
+        if (screenPosition.x >= startpos.x && screenPosition.x <= startpos.x + startsize.x)
         {
             start = true;
             end = false;
         }
-        if (screenPosition.y >= endpos.y && screenPosition.y <= endpos.y + endsize.y)
+        if (screenPosition.x >= endpos.x && screenPosition.x <= endpos.x + endsize.x)
         {
             start = false;
             end = true;
         }
     }
-    if (gamePad.GetButtonDown() & up || gamePad.GetButtonDown() & down)
+    if (gamePad.GetButtonDown() & Left || gamePad.GetButtonDown() & Right)
     {
         start = !start;
         end = !end;
+    }
+
+    if (gamePad.GetAxisLX() > 0.0f)
+    {
+        start = false;
+        end = true;
+    }
+    if (gamePad.GetAxisLX() < 0.0f)
+    {
+        start = true;
+        end = false;
     }
 
     if (start)
