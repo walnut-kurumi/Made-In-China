@@ -285,7 +285,7 @@ void Player::Update(float elapsedTime) {
     }
 
 
-    position.x = max(position.x, -200);
+    //position.x = max(position.x, -200);
 }
 
 

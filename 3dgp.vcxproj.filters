@@ -337,6 +337,18 @@
     <ClCompile Include="Source\EnemyShotGunner.cpp">
       <Filter>Source\Character\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SceneGameSt3.cpp">
+      <Filter>Source\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageMain3.cpp">
+      <Filter>Source\Stages\Stage3</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StagePenetrate3.cpp">
+      <Filter>Source\Stages\Stage3</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageCollision3.cpp">
+      <Filter>Source\Stages\Stage3</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -596,6 +608,18 @@
     <ClInclude Include="Source\EnemyShotGunner.h">
       <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Source\SceneGameSt3.h">
+      <Filter>Source\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageMain3.h">
+      <Filter>Source\Stages\Stage3</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StagePenetrate3.h">
+      <Filter>Source\Stages\Stage3</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageCollision3.h">
+      <Filter>Source\Stages\Stage3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\debug.hlsli">
@@ -713,6 +737,9 @@
     </Filter>
     <Filter Include="Source\TrailRenderer">
       <UniqueIdentifier>{eb8ba728-d7e2-489b-afe3-99796b146c4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Stages\Stage3">
+      <UniqueIdentifier>{0efadfb2-713f-47e8-aeb0-75b52569104d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
