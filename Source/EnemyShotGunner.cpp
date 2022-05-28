@@ -189,7 +189,6 @@ void EnemyShotGunner::CollisionProjectileVsEnemies()
                     /*if (player->GetSlowFlag() == false)*/
                     player->SetHitstop(true);
                 }
-
                 enemyBManager.Remove(enemyB);
             }
         }
@@ -218,6 +217,8 @@ void EnemyShotGunner::CollisionProjectileVsPlayer()
                 }
                 else player->SetIsHit(false);
             }
+            // ƒqƒbƒg‚µ‚½‚çÁ‚·
+            enemyB->Destroy();
         }
     }
 }

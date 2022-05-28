@@ -218,6 +218,8 @@ void EnemyGunner::CollisionProjectileVsPlayer()
                 }
                 else player->SetIsHit(false);
             }
+            // ƒqƒbƒg‚µ‚½‚çÁ‚·
+            enemyB->Destroy();
         }
     }
 }
