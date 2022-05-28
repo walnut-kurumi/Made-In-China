@@ -135,10 +135,15 @@ void EnemyGunner::Update(float elapsedTime)
 }
 
 // •`‰æˆ—
-void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader)
+void EnemyGunner::Render(ID3D11DeviceContext* dc,Shader* shader, bool slow)
 {        
-        model->Begin(dc, *shader);
-        model->Render(dc, materialColor);
+    if (slow) {
+        model->Begin(dc, Shaders::Ins()->GetOutline());
+        RenderStateKARI::SetCullMode(RenderStateKARI::CU_BACK);
+        model->Render(dc);
+    }
+    model->Begin(dc, *shader);
+    model->Render(dc, materialColor);
      
 
     if (isDead == false)

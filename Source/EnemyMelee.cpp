@@ -134,10 +134,15 @@ void EnemyMelee::Update(float elapsedTime)
 }
 
 // •`‰æˆ—
-void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader)
+void EnemyMelee::Render(ID3D11DeviceContext* dc, Shader* shader, bool slow)
 {   
-        model->Begin(dc, *shader);
-        model->Render(dc, materialColor);
+    if (slow) {
+        model->Begin(dc, Shaders::Ins()->GetOutline());
+        RenderStateKARI::SetCullMode(RenderStateKARI::CU_BACK);
+        model->Render(dc);
+    }
+    model->Begin(dc, *shader);
+    model->Render(dc, materialColor);
 
       
     if (isDead == false)

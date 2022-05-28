@@ -301,8 +301,14 @@ void Player::Render(ID3D11DeviceContext* dc) {
 
 
     if (slowAlpha > 0.0f) {
-        model->Begin(dc, Shaders::Ins()->GetDestructionShader());
+        model->Begin(dc, Shaders::Ins()->GetAfterimage());
         AfterimageManager::Instance().Render(dc);
+
+        if (!isDead) {
+            model->Begin(dc, Shaders::Ins()->GetOutline());
+            RenderStateKARI::SetCullMode(RenderStateKARI::CU_BACK);
+            model->Render(dc);
+        }
     }
     model->Begin(dc, Shaders::Ins()->GetDestructionShader());
     model->Render(dc);
@@ -508,7 +514,7 @@ void Player::InputSlow(float elapsedTime) {
     if (slowFixation) {
         // アルファ値を1/10秒で最大に
         slowAlpha += elapsedTime * 10;
-        slowAlpha = min(0.95f, slowAlpha);
+        slowAlpha = min(0.97f, slowAlpha);
     }
 }
 

@@ -46,15 +46,6 @@
     <FxCompile Include="shader\LuminanceExtractionPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="shader\OutLineGs.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\OutLinePs.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\OutLineVs.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="shader\RampPs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
@@ -107,6 +98,27 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\trailPs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\OutLineGs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\OutLinePs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\OutLineVs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\OutlineVSS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\OutlinePSS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\AfterimagePS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\AfterimageVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
@@ -336,6 +348,9 @@
     </ClCompile>
     <ClCompile Include="Source\EnemyShotGunner.cpp">
       <Filter>Source\Character\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OutlineFromRasterizer.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -596,6 +611,9 @@
     <ClInclude Include="Source\EnemyShotGunner.h">
       <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Source\OutlineFromRasterizer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\debug.hlsli">
@@ -611,9 +629,6 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\Grass.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="shader\OutLine.hlsli">
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\Ramp.hlsli">
@@ -644,6 +659,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\trail.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="shader\OutLine.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

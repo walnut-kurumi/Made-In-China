@@ -2,7 +2,7 @@
 #include "Shaders.h"
 #include "Misc.h"
 #include "Texture.h"
-
+#include "../OutlineFromRasterizer.h"
 Graphics* Graphics::instance{};
 
 Graphics::Graphics(HWND hwnd) {
@@ -113,6 +113,9 @@ bool Graphics::InitializeDirectX(HWND hwnd) {
 	//ViewportçÏê¨
 	CD3D11_VIEWPORT viewport(0.0f, 0.0f, static_cast<float>(this->windowWidth), static_cast<float>(this->windowHeight));
 	this->deviceContext->RSSetViewports(1, &viewport);
+
+
+	RenderStateKARI::InitializeRasterizer();
 
 	return true;
 }

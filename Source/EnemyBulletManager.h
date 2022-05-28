@@ -20,7 +20,7 @@ public:
 	// XVˆ—
 	void Update(float elapsedTime);
 	// •`‰æˆ—
-	void Render(ID3D11DeviceContext* dc,Shader* shader);
+	void Render(ID3D11DeviceContext* dc,Shader* shader, bool slow);
 	// ’eŠÛ“o˜^
 	void Register(EnemyBullet* projectile);
 	// ’eŠÛ‘Síœ
