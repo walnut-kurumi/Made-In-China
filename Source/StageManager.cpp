@@ -37,19 +37,22 @@ bool StageManager::RayCast(const DirectX::XMFLOAT3& start, const DirectX::XMFLOA
 {
     bool result = false;
     hit.distance = FLT_MAX;
+    bool normal = false;
 
     for (Stage* stage : stages) {
         HitResult tmp;
         if (stage->RayCast(start, end, tmp)) {
             if (tmp.distance < hit.distance) {
-                // タイプが貫通だったら
                 hit = tmp;
-                if (stage->GetType() == Stage::Type::Penetrate) hit.penetrate = true;
+                // タイプが貫通じゃなかったら
+                if (stage->GetType() != Stage::Type::Penetrate) normal = true;
+                // タイプが貫通だったら
+                else hit.penetrate = true;
                 result = true;
             }
         }
     }
-
+    if (normal) hit.penetrate = false;
     return result;
 }
 

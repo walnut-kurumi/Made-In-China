@@ -29,7 +29,7 @@ public:
 	void Init();
 	void Update(float elapsedTime);
 
-	void Render(ID3D11DeviceContext* dc,Shader* shader);	
+	void Render(ID3D11DeviceContext* dc,Shader* shader, bool slow);
 	
 	bool GetDead() { return isDead; }
 	

@@ -26,6 +26,9 @@ private:
 	Shader uvscrollShader;
 
 	Shader trailShader;
+
+	Shader outline;
+	Shader afterimage;
 	
 public:
 	static Shaders* Ins() {
@@ -51,4 +54,6 @@ public:
 
 
 	Shader GetTrailShader() { return trailShader; }
+	Shader GetOutline() { return outline; }
+	Shader GetAfterimage() { return afterimage; }
 };

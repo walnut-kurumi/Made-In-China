@@ -6,6 +6,7 @@
 #include "Graphics/SkinnedMesh.h"
 #include "Graphics/Shader.h"
 #include "Graphics/Vec.h"
+#include "OutlineFromRasterizer.h"
 
 class Model
 {

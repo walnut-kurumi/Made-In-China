@@ -46,15 +46,6 @@
     <FxCompile Include="shader\LuminanceExtractionPS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="shader\OutLineGs.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\OutLinePs.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\OutLineVs.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="shader\RampPs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
@@ -107,6 +98,27 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\trailPs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\OutLineGs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\OutLinePs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\OutLineVs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\OutlineVSS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\OutlinePSS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\AfterimagePS.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\AfterimageVS.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
@@ -337,16 +349,19 @@
     <ClCompile Include="Source\EnemyShotGunner.cpp">
       <Filter>Source\Character\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\OutlineFromRasterizer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
     <ClCompile Include="Source\SceneGameSt3.cpp">
       <Filter>Source\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageCollision3.cpp">
+      <Filter>Source\Stages\Stage3</Filter>
     </ClCompile>
     <ClCompile Include="Source\StageMain3.cpp">
       <Filter>Source\Stages\Stage3</Filter>
     </ClCompile>
     <ClCompile Include="Source\StagePenetrate3.cpp">
-      <Filter>Source\Stages\Stage3</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\StageCollision3.cpp">
       <Filter>Source\Stages\Stage3</Filter>
     </ClCompile>
   </ItemGroup>
@@ -608,16 +623,19 @@
     <ClInclude Include="Source\EnemyShotGunner.h">
       <Filter>Source\Character\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Source\OutlineFromRasterizer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
     <ClInclude Include="Source\SceneGameSt3.h">
       <Filter>Source\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageCollision3.h">
+      <Filter>Source\Stages\Stage3</Filter>
     </ClInclude>
     <ClInclude Include="Source\StageMain3.h">
       <Filter>Source\Stages\Stage3</Filter>
     </ClInclude>
     <ClInclude Include="Source\StagePenetrate3.h">
-      <Filter>Source\Stages\Stage3</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StageCollision3.h">
       <Filter>Source\Stages\Stage3</Filter>
     </ClInclude>
   </ItemGroup>
@@ -635,9 +653,6 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\Grass.hlsli">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="shader\OutLine.hlsli">
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\Ramp.hlsli">
@@ -668,6 +683,9 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="shader\trail.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="shader\OutLine.hlsli">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
@@ -739,7 +757,7 @@
       <UniqueIdentifier>{eb8ba728-d7e2-489b-afe3-99796b146c4a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Stages\Stage3">
-      <UniqueIdentifier>{0efadfb2-713f-47e8-aeb0-75b52569104d}</UniqueIdentifier>
+      <UniqueIdentifier>{cc662da1-73a3-4976-8968-366fe4d48b75}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

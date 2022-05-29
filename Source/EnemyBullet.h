@@ -20,7 +20,7 @@ public:
 	// XVˆ—
 	virtual void Update(float elapsedTime) = 0;
 	// •`‰æˆ—
-	virtual void Render(ID3D11DeviceContext* dc, Shader* shader) = 0;	
+	virtual void Render(ID3D11DeviceContext* dc, Shader* shader, bool slow) = 0;
 	// ˆÊ’uæ“¾
 	const Vec3& GetPosition() const { return position; }
 	// •ûŒüæ“¾

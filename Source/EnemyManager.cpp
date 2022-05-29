@@ -50,11 +50,11 @@ void EnemyManager::Update(float elapsedTime)
 }
 
 // •`‰æˆ—
-void EnemyManager::Render(ID3D11DeviceContext* dc, Shader* shader)
+void EnemyManager::Render(ID3D11DeviceContext* dc, Shader* shader, bool slow)
 {
 	for (Enemy* enemy : enemies)
 	{
-		enemy->Render(dc, shader);
+		enemy->Render(dc, shader, slow);
 	}	
 }
 

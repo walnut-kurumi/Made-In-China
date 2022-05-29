@@ -37,11 +37,11 @@ void EnemyBulletManager::Update(float elapsedTime)
 	removes.clear();
 }
 // •`‰æˆ—
-void EnemyBulletManager::Render(ID3D11DeviceContext* dc, Shader* shader)
+void EnemyBulletManager::Render(ID3D11DeviceContext* dc, Shader* shader, bool slow)
 {
 	for (EnemyBullet* projectile : projectiles)
 	{
-		projectile->Render(dc,shader);
+		projectile->Render(dc,shader, slow);
 	}
 }
 

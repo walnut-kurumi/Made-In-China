@@ -52,8 +52,14 @@ void EnemyBulletStraight::Update(float elapsedTime)
 	CollisionVsStage();
 }
 // •`‰æˆ—
-void EnemyBulletStraight::Render(ID3D11DeviceContext* dc, Shader* shader)
+void EnemyBulletStraight::Render(ID3D11DeviceContext* dc, Shader* shader, bool slow)
 {
+	if (slow) {
+		model->Begin(dc, Shaders::Ins()->GetOutline());
+		RenderStateKARI::SetCullMode(RenderStateKARI::CU_BACK);
+		model->Render(dc);
+	}
+
 	model->Begin(dc, *shader);
 	model->Render(dc);
 

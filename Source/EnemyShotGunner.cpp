@@ -135,8 +135,13 @@ void EnemyShotGunner::Update(float elapsedTime)
 }
 
 // •`‰æˆ—
-void EnemyShotGunner::Render(ID3D11DeviceContext* dc, Shader* shader)
+void EnemyShotGunner::Render(ID3D11DeviceContext* dc, Shader* shader, bool slow)
 {
+    if (slow) {
+        model->Begin(dc, Shaders::Ins()->GetOutline());
+        RenderStateKARI::SetCullMode(RenderStateKARI::CU_BACK);
+        model->Render(dc);
+    }
     model->Begin(dc, *shader);
     model->Render(dc, materialColor);
 
@@ -184,7 +189,6 @@ void EnemyShotGunner::CollisionProjectileVsEnemies()
                     /*if (player->GetSlowFlag() == false)*/
                     player->SetHitstop(true);
                 }
-
                 enemyBManager.Remove(enemyB);
             }
         }
@@ -213,6 +217,8 @@ void EnemyShotGunner::CollisionProjectileVsPlayer()
                 }
                 else player->SetIsHit(false);
             }
+            // ƒqƒbƒg‚µ‚½‚çÁ‚·
+            enemyB->Destroy();
         }
     }
 }

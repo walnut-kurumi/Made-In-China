@@ -350,8 +350,8 @@ void SceneGameSt3::Render(float elapsedTime)
             // プレイヤー描画
             player->Render(dc);
             // エネミー描画
-            EnemyManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
-            EnemyBulletManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader());
+            EnemyManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader(), player->GetSlowFlag() & !player->GetDead());
+            EnemyBulletManager::Instance().Render(dc, &Shaders::Ins()->GetSkinnedMeshShader(), player->GetSlowFlag() & !player->GetDead());
         }
 
         // デバック
