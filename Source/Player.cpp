@@ -207,7 +207,9 @@ void Player::Update(float elapsedTime) {
     SBManagement(elapsedTime);
 
     // コスト更新処理
-    cost.Update(elapsedTime);
+    // シフトブレイク中ならコストを増やさない
+    cost.Update(elapsedTime, !(state == AnimeState::SB || state == AnimeState::Throw || state == AnimeState::Finisher));
+
 
     // 中心座標更新
     UpdateCenterPosition();
@@ -471,7 +473,6 @@ bool Player::InputJump() {
 void Player::InputSlow(float elapsedTime) {
     // 操作不可ならリターン
     if(!canSlow) if (!isControl) return;
-
     GamePad& gamePad = Input::Instance().GetGamePad();
     // 押してる間 且 コストがある間
     if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER

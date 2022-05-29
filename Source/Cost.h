@@ -5,7 +5,7 @@ class Cost
 {
 public:
 	void Reset();
-	void Update(float elapsedTime);
+	void Update(float elapsedTime, bool sb);
 	bool Consume(float time);//Œ¸‚ç‚·
 	void Trg(bool t) { trg = t; }
 	bool Approval(float time) { return costTimer >= time ? true : false; }// ‹–‰Â
