@@ -9,7 +9,7 @@ StageMain3::StageMain3(ID3D11Device* device)
 {
     back = new Sprite(device, L"./Data/Sprites/BackGround.png");
 
-    model = new Model(device, ".\\Data\\Models\\Stage\\Stage3.fbx", true, 0);
+    model = new Model(device, ".\\Data\\Models\\Stage\\Stage3_2.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
     scale.x *= -1;
     scale.y *= 0.7f;
