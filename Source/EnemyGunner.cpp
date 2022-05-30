@@ -280,6 +280,7 @@ bool EnemyGunner::Search()
         HitResult hit = {};
         // ドアとレイキャストして当たっていたら見つけてないのでfalse
         if (DoorManager::Instance().RayCast(e, p, hit)) return false;        
+        if (StageManager::Instance().RayCast(e, p, hit)) return false;
 
         if (player->GetCenterPosition().x > position.x)this->direction = false;
         else if (player->GetCenterPosition().x < position.x) this->direction = true;
