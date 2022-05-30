@@ -1,7 +1,6 @@
 #include "SceneGameSt3.h"
 #include "Camera/CameraManager.h"
 #include "SceneManager.h"
-#include "SceneGame.h"
 #include "Input/Input.h"
 #include "Graphics/Graphics.h"
 
@@ -45,6 +44,7 @@ void SceneGameSt3::Initialize()
     // プレイヤー
     player = std::make_unique<Player>(device);
     player->Init();
+    player->SetSt3(true);
     player->SetPosition(Vec3(40.0f, 0.5f, 0.0f));
 
     // ロード％更新

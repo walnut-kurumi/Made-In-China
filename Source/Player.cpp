@@ -30,6 +30,7 @@ Player::Player(ID3D11Device* device) {
     model->LoadAnimation(attack, 0, static_cast<int>(AnimeState::Finisher));
     model->LoadAnimation(idle, 0, static_cast<int>(AnimeState::Death));
 
+    st3flag = false;
     position = { 0.0f, 0.0f, 0.0f };
     scale = { 0.05f, 0.05f, 0.05f };
     UpdateState[static_cast<int>(AnimeState::Idle)] = &Player::UpdateIdleState;
@@ -286,8 +287,7 @@ void Player::Update(float elapsedTime) {
         isHit = false;
     }
 
-
-    //position.x = max(position.x, -200);
+    if (!st3flag) position.x = max(position.x, -200);
 }
 
 

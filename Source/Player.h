@@ -88,6 +88,9 @@ public:
 	bool GetCanAttack() const { return canAttack; }	
 	bool GetisTutorial() const { return isTutorial; }
 
+	void SetSt3(bool s) { st3flag = s; }
+	bool GetSt3() const { return st3flag; }
+
 private:
 
 	// 移動入力処理
@@ -230,6 +233,9 @@ private:
 	bool canAttack = true;
 	bool slowFixation = false;	// スロー固定
 	bool isTutorial = false;
+
+	//st3かどうか
+	bool st3flag = false;
 
 	Cost cost;
 
