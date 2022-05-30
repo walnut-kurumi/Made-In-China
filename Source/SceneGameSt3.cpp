@@ -45,6 +45,7 @@ void SceneGameSt3::Initialize()
     player = std::make_unique<Player>(device);
     player->Init();
     player->SetSt3(true);
+    player->SetPosition(Vec3(40.0f, 0.5f, 0.0f));
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -69,31 +70,34 @@ void SceneGameSt3::Initialize()
 
     // ドア
     {
-        //DoorManager::Instance().Init();
-        //static const int DOOR_MAX = 3;
-        //Vec3 doorPos[DOOR_MAX] = {};
-        //doorPos[0] = { -64.0f,0,-3.5f };
-        //doorPos[1] = { -144.5f,23.8f,-3.5f };
-        //doorPos[2] = { -85.0f,46.9f,-3.5f };
+        DoorManager::Instance().Init();
+        static const int DOOR_MAX = 6;
+        Vec3 doorPos[DOOR_MAX] = {};
+        doorPos[0] = { 18.0f,0.5f,-3.5f };
+        doorPos[1] = { 18.0f,57.8f,-3.5f };
+        doorPos[2] = { -185.0f,29.5f,-3.5f };
+        doorPos[3] = { -250.0f,29.5f,-3.5f };
+        doorPos[4] = { -220.0f,53.6f ,-3.5f };
+        doorPos[5] = { -224.0f,85.0f,-3.5f };
 
-        //for (int i = 0; i < DOOR_MAX; i++)
-        //{
-        //    Door* door = new Door(device);
-        //    door->SetPos(doorPos[i]);
-        //    door->PlayerData(player.get());
-        //    DoorManager::Instance().Register(door);
-        //}
+        for (int i = 0; i < DOOR_MAX; i++)
+        {
+            Door* door = new Door(device);
+            door->SetPos(doorPos[i]);
+            door->PlayerData(player.get());
+            DoorManager::Instance().Register(door);
+        }
     }
     // ロード％更新
     AddLoadPercent(1.0f);
 
     // エネミー
-   // {
-   //     // エネミー座標設定
-   //     EnemyStatusSetting();
-   //     // エネミー初期化			    
-   //     EnemyInitialize(device);
-   // }
+    {
+        // エネミー座標設定
+        EnemyStatusSetting();
+        // エネミー初期化			    
+        EnemyInitialize(device);
+    }
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -150,6 +154,7 @@ void SceneGameSt3::Initialize()
 
     // 変数初期化
     changeScene = false;
+    ResetPos = { 40,0.5,0 };
 }
 
 // 終了化
@@ -250,6 +255,9 @@ void SceneGameSt3::Update(float elapsedTime)
         et = elapsedTime;
     }
 
+    // リセット座標更新
+    UpdateResetPos();
+
     // リセット
     if (player->GetReset()) {
         // フェードアウト
@@ -274,6 +282,10 @@ void SceneGameSt3::Update(float elapsedTime)
 
         // フェードアウトおわったら
         if (Fade::Instance().GetFadeOutFinish()) {
+
+            // リセット座標をリセット
+            ResetPos = { 40,0.5,0 };
+
             // リセット
             Reset();
 
@@ -309,6 +321,7 @@ void SceneGameSt3::Update(float elapsedTime)
         // 次のステージへ移る処理
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
     }
+    
 }
 
 // 描画処理
@@ -485,7 +498,13 @@ void SceneGameSt3::Reset()
 
     // プレイヤー蘇生 ポジションリセット
     player->Init();
+    player->SetPosition(ResetPos);
     Menu::Instance().Initialize();
+
+    if (ResetPos != Vec3( 40,0.5,0 ))
+    {
+        //EnemyManager::Instance().GetEnemy();        
+    }
 
 
 }
@@ -493,6 +512,8 @@ void SceneGameSt3::Reset()
 // 敵の初期化
 void SceneGameSt3::EnemyInitialize(ID3D11Device* device)
 {
+    bool melee, gunner, shotgunner;
+
     for (int i = 0; i < ENEMY_MAX; i++)
     {
         if (ENEMY_MAX == i)
@@ -500,9 +521,28 @@ void SceneGameSt3::EnemyInitialize(ID3D11Device* device)
             // ロード％更新
             AddLoadPercent(1.0f);
         }
+                
+        // 近接 01347
+        if (i == 0 || i == 1 || i == 3 || i == 5 || i == 7 || i == 10)
+        {
+            melee = true;
+            gunner = shotgunner = false;
+        }
+        // 遠隔 289
+        else if (i == 2 || i == 8 || i == 9)
+        {
+            gunner = true;
+            melee = shotgunner = false;
+        }
+        // 遠隔(散) 56
+        else if (i == 4 || i == 6 )
+        {
+            shotgunner = true;
+            gunner = melee = false;
+        }        
 
         // 近接
-        if (i < 2 || i == 5 || i == 6)
+        if (melee)
         {
             EnemyMelee* melee = new EnemyMelee(device);
 
@@ -521,7 +561,7 @@ void SceneGameSt3::EnemyInitialize(ID3D11Device* device)
 
             EnemyManager::Instance().Register(melee);
         }
-        else if (i == 2)
+        else if (shotgunner)
         {
             EnemyShotGunner* gunner = new EnemyShotGunner(device);
 
@@ -540,7 +580,7 @@ void SceneGameSt3::EnemyInitialize(ID3D11Device* device)
 
             EnemyManager::Instance().Register(gunner);
         }
-        else
+        else if (gunner)
         {
             EnemyGunner* gunner = new EnemyGunner(device);
 
@@ -568,42 +608,53 @@ void SceneGameSt3::EnemyInitialize(ID3D11Device* device)
 // エネミー座標設定
 void SceneGameSt3::EnemyStatusSetting()
 {
-
-    enemyPos[0] = { -70.0f,0.5f };
-    enemyPos[1] = { -83.0f,0.5f };
-    enemyPos[2] = { -70.0f,34.0f };
-    enemyPos[3] = { -150.0f,34.0f };
-    enemyPos[4] = { -14.0f,67.0f };
-    enemyPos[5] = { -91.0f,67.0f };
-    enemyPos[6] = { -120.0f,67.0f };
-    enemyPos[7] = { -150.0f,67.0f };
+    enemyPos[0] = { -53.0f,0.6f };
+    enemyPos[1] = { -197.0f,29.5f };
+    enemyPos[2] = { -242.0,29.0f };
+    enemyPos[3] = { -285.0f,29.0f };
+    enemyPos[4] = { -350.0f,54.0f };
+    enemyPos[5] = { -305.0f,54.0f };
+    enemyPos[6] = { -270.0f,54.0f };
+    enemyPos[7] = { -255.0f,54.0f };
+    enemyPos[8] = { -187.0f,54.0f };
+    enemyPos[9] = { -150.0f,54.0f };
+    enemyPos[10] = { 11.0f,0.5f };
 
     enemyGroup[0] = 0;
-    enemyGroup[1] = 0;
+    enemyGroup[1] = 1;
     enemyGroup[2] = 1;
     enemyGroup[3] = 2;
-    enemyGroup[4] = 1;
-    enemyGroup[5] = 4;
+    enemyGroup[4] = 3;
+    enemyGroup[5] = 3;
     enemyGroup[6] = 4;
     enemyGroup[7] = 4;
+    enemyGroup[8] = 5;
+    enemyGroup[9] = 5;
+    enemyGroup[10] = 6;
 
     enemyWalk[0] = false;
     enemyWalk[1] = true;
     enemyWalk[2] = false;
     enemyWalk[3] = false;
-    enemyWalk[4] = true;
+    enemyWalk[4] = false;
     enemyWalk[5] = false;
-    enemyWalk[6] = true;
+    enemyWalk[6] = false;
     enemyWalk[7] = false;
+    enemyWalk[8] = false;
+    enemyWalk[9] = false;
+    enemyWalk[10] = false;
 
     enemyDirection[0] = false;
     enemyDirection[1] = false;
     enemyDirection[2] = true;
     enemyDirection[3] = true;
-    enemyDirection[4] = false;
-    enemyDirection[5] = true;
+    enemyDirection[4] = true;
+    enemyDirection[5] = false;
     enemyDirection[6] = true;
     enemyDirection[7] = true;
+    enemyDirection[8] = false;
+    enemyDirection[9] = false;
+    enemyDirection[10] = false;
 
 }
 
@@ -654,4 +705,19 @@ void SceneGameSt3::RenderEnemyAttack()
             enemyattack->render(dc, screenPosition.x - 32, screenPosition.y - 64, 64, 64, 1, 1, 1, 1, 0);
         }
     }
+}
+
+// リセット座標更新
+void SceneGameSt3::UpdateResetPos()
+{
+    // プレイヤーの座標によってリセットしたときの座標変える  
+    Vec3 collision = { -125.0f,30.0f,0.0f };
+    // スフィアでコリジョンとる
+    if (Collision::SphereVsSphere(collision, player->GetCenterPosition(), 4.0f, player->GetRadius()))
+    {
+        // 壊れた壁のとこ入ったら更新する
+        ResetPos = { -125.0f,34.0f,0 };
+    }
+
+    // この時点で死んでるエネミーは死んだままにする
 }

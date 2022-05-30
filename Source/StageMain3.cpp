@@ -44,7 +44,10 @@ void StageMain3::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
     model->Render(deviceContext);
 
 #ifdef _DEBUG
+    Vec3 collision = { -125.0f,34.0f,0.0f };
+
     debugRenderer.get()->DrawSphere(NextStagePos, NextStageRadius, Vec4(0, 0.5f, 1, 1));
+    debugRenderer.get()->DrawSphere(collision, 3.0f, Vec4(0, 0.5f, 1, 1));
     debugRenderer.get()->Render(deviceContext, CameraManager::Instance().GetViewProjection());
 #endif
 }
