@@ -69,20 +69,23 @@ void SceneGameSt3::Initialize()
 
     // ドア
     {
-        //DoorManager::Instance().Init();
-        //static const int DOOR_MAX = 3;
-        //Vec3 doorPos[DOOR_MAX] = {};
-        //doorPos[0] = { -64.0f,0,-3.5f };
-        //doorPos[1] = { -144.5f,23.8f,-3.5f };
-        //doorPos[2] = { -85.0f,46.9f,-3.5f };
+        DoorManager::Instance().Init();
+        static const int DOOR_MAX = 6;
+        Vec3 doorPos[DOOR_MAX] = {};
+        doorPos[0] = { 18.0f,0.5f,-3.5f };
+        doorPos[1] = { 18.0f,57.8f,-3.5f };
+        doorPos[2] = { -185.0f,29.5f,-3.5f };
+        doorPos[3] = { -250.0f,29.5f,-3.5f };
+        doorPos[4] = { -220.0f,53.6f ,-3.5f };
+        doorPos[5] = { -224.0f,85.0f,-3.5f };
 
-        //for (int i = 0; i < DOOR_MAX; i++)
-        //{
-        //    Door* door = new Door(device);
-        //    door->SetPos(doorPos[i]);
-        //    door->PlayerData(player.get());
-        //    DoorManager::Instance().Register(door);
-        //}
+        for (int i = 0; i < DOOR_MAX; i++)
+        {
+            Door* door = new Door(device);
+            door->SetPos(doorPos[i]);
+            door->PlayerData(player.get());
+            DoorManager::Instance().Register(door);
+        }
     }
     // ロード％更新
     AddLoadPercent(1.0f);
