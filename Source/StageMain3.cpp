@@ -11,7 +11,7 @@ StageMain3::StageMain3(ID3D11Device* device)
 {
     back = new Sprite(device, L"./Data/Sprites/BackGround.png");
 
-    model = new Model(device, ".\\Data\\Models\\Stage\\Stage3\\Stage3_3.fbx", true, 0);
+    model = new Model(device, ".\\Data\\Models\\Stage\\Stage3\\Stage3_4.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
     scale.x *= -1;
     //scale.y *= 0.7f;
@@ -51,7 +51,7 @@ void StageMain3::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
     Vec3 collision = { -125.0f,34.0f,0.0f };
 
     debugRenderer.get()->DrawSphere(NextStagePos, NextStageRadius, Vec4(0, 0.5f, 1, 1));
-    debugRenderer.get()->DrawSphere(collision, 3.0f, Vec4(0, 0.5f, 1, 1));
+    debugRenderer.get()->DrawSphere(collision, 6.0f, Vec4(0, 0.5f, 1, 1));
     debugRenderer.get()->Render(deviceContext, CameraManager::Instance().GetViewProjection());
 #endif
 }
