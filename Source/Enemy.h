@@ -32,6 +32,7 @@ public:
 	
 	// 死亡した時に呼ばれる
 	void OnDead() override { isDead = true; }
+	bool GetIsDead() { return isDead; }
 	
 	// 攻撃予兆を出すかどうか
 	bool GetIsAttack() { return isAttack; }
@@ -69,6 +70,7 @@ public:
 
 	// ｵﾁﾀﾗｼﾇ
 	void FallIsDead();
+	void Kill(bool kill);
 
 protected:
 	// 自分が何番のグループか

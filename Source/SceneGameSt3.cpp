@@ -156,6 +156,7 @@ void SceneGameSt3::Initialize()
     // 変数初期化
     changeScene = false;
     ResetPos = { 40,0.5,0 };
+    checkPoint = false;
 }
 
 // 終了化
@@ -286,9 +287,11 @@ void SceneGameSt3::Update(float elapsedTime)
 
             // リセット座標をリセット
             ResetPos = { 40,0.5,0 };
+            checkPoint = false;
 
             // リセット
-            Reset();
+            //Reset();
+            Initialize();
 
             // フェードイン
             Fade::Instance().SetFadeInFlag(true);
@@ -492,8 +495,8 @@ void SceneGameSt3::Reset()
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
-    EnemyManager::Instance().EnemyReset();
     EnemyManager::Instance().Init();
+    EnemyManager::Instance().EnemyReset();
     // ドアリセット
     DoorManager::Instance().Init();
 
@@ -502,9 +505,16 @@ void SceneGameSt3::Reset()
     player->SetPosition(ResetPos);
     Menu::Instance().Initialize();
 
-    if (ResetPos != Vec3( 40,0.5,0 ))
+    if (checkPoint)
     {
-        //EnemyManager::Instance().GetEnemy();        
+        for (int i = 0; i < EnemyManager::Instance().GetEnemyCount(); i++)
+        {
+            Enemy* enemy = EnemyManager::Instance().GetEnemy(i);
+            if (enemy->GetPosition().x >= -125)
+            {
+                EnemyManager::Instance().Remove(enemy);
+            }
+        }      
     }
 
 
@@ -717,8 +727,9 @@ void SceneGameSt3::UpdateResetPos()
     if (Collision::SphereVsSphere(collision, player->GetCenterPosition(), 6.0f, player->GetRadius()))
     {
         // 壊れた壁のとこ入ったら更新する
-        ResetPos = { -125.0f,34.0f,0 };
+        ResetPos = { -125.0f,37.0f,0 };
+        checkPoint = true;
     }
 
-    // この時点で死んでるエネミーは死んだままにする
+    // この時点で死んでるエネミーは死んだままにする 
 }

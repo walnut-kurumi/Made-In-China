@@ -630,7 +630,7 @@ void EnemyGunner::TransitionBlowState()
 
 //吹っ飛びステート更新処理
 void EnemyGunner::UpdateBlowState(float elapsedTime)
-{  
+{      
     // 吹き飛ばしタイマー更新
     if (blowTimer > 0.0f)blowTimer -= elapsedTime;    
 
