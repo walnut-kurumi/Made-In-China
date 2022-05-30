@@ -548,8 +548,8 @@ void SceneGame::EnemyInitialize(ID3D11Device* device)
 void SceneGame::EnemyStatusSetting()
 {
 
-    enemyPos[0] = { -6.5f,29.5f };
-    enemyPos[1] = { -50.0f,29.5f };
+    enemyPos[0] = { -25.0f,29.5f };
+    enemyPos[1] = { -4.5f,29.5f };
     enemyPos[2] = { -140.0f,29.5f };
     enemyPos[3] = { -70.0f,29.5f };
 
