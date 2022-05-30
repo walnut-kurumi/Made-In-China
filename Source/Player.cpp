@@ -227,8 +227,8 @@ void Player::Update(float elapsedTime) {
     if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
 
 
-    CollisionSBVsEnemies();
     CollisionSBVsStage();
+    CollisionSBVsEnemies();
     if (atk) CollisionPanchiVsEnemies();
     if (atk) CollisionPanchiVsProjectile();
     
