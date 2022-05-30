@@ -138,6 +138,13 @@ void EnemyManager::EnemyReset()
 	}
 }
 
+void EnemyManager::EnemyKill(int i)
+{	
+	enemies.at(i)->SetHealth(0);
+	enemies.at(i)->OnDead();
+	enemies.at(i)->Kill(true);
+}
+
 // ƒOƒ‹[ƒv‚ÅUŒ‚‚µ‚Ä‚­‚é
 void EnemyManager::GroupAttack()
 {

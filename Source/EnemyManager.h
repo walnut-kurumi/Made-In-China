@@ -53,6 +53,7 @@ public:
 	void SetPosition(int i, DirectX::XMFLOAT3 enemyPos,bool walk);
 
 	void EnemyReset();
+	void EnemyKill(int i);
 
 	// グループ化 一人見つけると同じグループの敵も見つける
 	void GroupAttack();
