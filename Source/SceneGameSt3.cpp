@@ -10,7 +10,7 @@
 #include "EnemyMelee.h"
 
 #include"SceneLoading.h"
-#include"SceneClear.h"
+#include"SceneGameSt4.h"
 #include "SceneTitle.h"
 
 #include "Menu.h"
@@ -323,7 +323,7 @@ void SceneGameSt3::Update(float elapsedTime)
     {
         BGM.get()->Stop();
         // 次のステージへ移る処理
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGameSt4));
     }
     
 }
