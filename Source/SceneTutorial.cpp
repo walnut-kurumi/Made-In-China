@@ -520,10 +520,38 @@ void SceneTutorial::Render(float elapsedTime)
         // 操作説明用
         RenderTutorial();
 
-        // マウス位置
         Mouse& mouse = Input::Instance().GetMouse();
-        Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
-        if (Input::Instance().GetGamePad().GetUseKeybord())cursorSprite->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64);
+        GamePad& pad = Input::Instance().GetGamePad();
+        if (Input::Instance().GetGamePad().GetUseKeybord())
+        {
+            // マウス位置
+            Vec2 screenPosition = { static_cast<float>(mouse.GetPositionX()) ,static_cast<float>(mouse.GetPositionY()) };
+            cursorSprite->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64);
+        }
+        else
+        {
+            // ワープストライク投げる向きを設定
+            Vec3 WSdirection = { -pad.GetAxisLX(), pad.GetAxisLY(), 0 };
+
+            // ビューポート
+            D3D11_VIEWPORT viewport;
+            UINT numViewports = 1;
+            dc->RSGetViewports(&numViewports, &viewport);
+            // 変換行列
+            DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&CameraManager::Instance().GetView());
+            DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&CameraManager::Instance().GetProjection());
+            DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
+            DirectX::XMFLOAT3 worldPosition = player->GetCenterPosition() + (WSdirection * 20.0f);
+            DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
+            // ワールド座標からスクリーン座標へ変換
+            DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(WorldPosition, 
+                viewport.TopLeftX, viewport.TopLeftY, viewport.Width, viewport.Height, viewport.MinDepth, viewport.MaxDepth, Projection, View, World);
+            // スクリーン座標
+            DirectX::XMFLOAT2 screenPosition;
+            DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
+
+            if(WSdirection.x != 0 && WSdirection.y != 0)cursorSprite->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64);
+        }
         // UI
         Bar->render(dc, 400, 500, 500, 225, 1.0f, 1.0f, 1.0f, 1.0f, 0);
         LoadBar->render(dc, 570, 578.75f, 290 * w, 58.5f, 1.0f, 1.0f, 1.0f, 0.8f, 0);

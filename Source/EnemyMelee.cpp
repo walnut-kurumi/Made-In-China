@@ -465,6 +465,7 @@ void EnemyMelee::UpdateWalkState(float elapsedTime)
 
     // 死んでたら 吹っ飛びステートへ
     if (health <= 0) TransitionBlowState();
+    if (isDead) TransitionBlowState();
 
     // 徘徊
     if (walkFlag)
