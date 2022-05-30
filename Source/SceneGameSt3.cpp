@@ -714,7 +714,7 @@ void SceneGameSt3::UpdateResetPos()
     // プレイヤーの座標によってリセットしたときの座標変える  
     Vec3 collision = { -125.0f,30.0f,0.0f };
     // スフィアでコリジョンとる
-    if (Collision::SphereVsSphere(collision, player->GetCenterPosition(), 4.0f, player->GetRadius()))
+    if (Collision::SphereVsSphere(collision, player->GetCenterPosition(), 6.0f, player->GetRadius()))
     {
         // 壊れた壁のとこ入ったら更新する
         ResetPos = { -125.0f,34.0f,0 };
