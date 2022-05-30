@@ -489,7 +489,7 @@ void Player::InputSlow(float elapsedTime) {
         if (cost.GetTrg()) {
             // アルファ値を1/10秒で最大に
             slowAlpha += elapsedTime * 10;
-            slowAlpha = min(0.9875f, slowAlpha);
+            slowAlpha = min(0.98f, slowAlpha);
         }
         // コスト枯渇ディレイ期間中
         else if (!cost.Approval(0.5f)) {
@@ -514,7 +514,7 @@ void Player::InputSlow(float elapsedTime) {
     if (slowFixation) {
         // アルファ値を1/10秒で最大に
         slowAlpha += elapsedTime * 10;
-        slowAlpha = min(0.9875f, slowAlpha);
+        slowAlpha = min(0.98f, slowAlpha);
     }
 }
 
