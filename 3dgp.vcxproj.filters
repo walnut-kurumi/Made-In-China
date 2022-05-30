@@ -364,6 +364,18 @@
     <ClCompile Include="Source\StagePenetrate3.cpp">
       <Filter>Source\Stages\Stage3</Filter>
     </ClCompile>
+    <ClCompile Include="Source\StageMain4.cpp">
+      <Filter>Source\Stages\Stage4</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StageCollision4.cpp">
+      <Filter>Source\Stages\Stage4</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StagePenetrate4.cpp">
+      <Filter>Source\Stages\Stage4</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneGameSt4.cpp">
+      <Filter>Source\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Framework.h" />
@@ -638,6 +650,18 @@
     <ClInclude Include="Source\StagePenetrate3.h">
       <Filter>Source\Stages\Stage3</Filter>
     </ClInclude>
+    <ClInclude Include="Source\StageMain4.h">
+      <Filter>Source\Stages\Stage4</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StageCollision4.h">
+      <Filter>Source\Stages\Stage4</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StagePenetrate4.h">
+      <Filter>Source\Stages\Stage4</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneGameSt4.h">
+      <Filter>Source\Scenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader\debug.hlsli">
@@ -758,6 +782,9 @@
     </Filter>
     <Filter Include="Source\Stages\Stage3">
       <UniqueIdentifier>{cc662da1-73a3-4976-8968-366fe4d48b75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Stages\Stage4">
+      <UniqueIdentifier>{af04c5ce-b473-48ac-8a0d-d1ce2482b96e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
