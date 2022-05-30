@@ -84,6 +84,4 @@ void EnemyBulletStraight::Launch(const DirectX::XMFLOAT3& direction, const Direc
 	if (direction.x > 0)angle = -90;
 	else angle = 90;
 	float radian = DirectX::XMConvertToRadians(angle);
-	//handle = ballisticEffect->PlayDirection(position, 1.0f, radian);
-	//ballisticEffect->SetPlaySpeed(handle, 1.0f);
 }

@@ -2,6 +2,7 @@
 #include "EnemyBulletManager.h"
 #include "Graphics/Graphics.h"
 #include "StageManager.h"
+#include "DoorManager.h"
 
 EnemyBullet::EnemyBullet(EnemyBulletManager* manager) :manager(manager)
 {
@@ -30,6 +31,11 @@ void EnemyBullet::CollisionVsStage()
 	{
 		if (hit.penetrate) return;
 		Destroy();		
+	}
+	if (DoorManager::Instance().RayCast(start, end, hit))
+	{
+		if (hit.penetrate) return;
+		Destroy();
 	}
 }
 
