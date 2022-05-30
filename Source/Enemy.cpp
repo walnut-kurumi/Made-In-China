@@ -18,3 +18,12 @@ void Enemy::FallIsDead()
 		isDead = true;
 	}
 }
+
+void Enemy::Kill(bool kill)
+{
+	if (kill)
+	{
+		health = 0;
+		isDead = true;
+	}
+}

@@ -662,7 +662,7 @@ void SceneTutorial::EnemyStatusSetting()
 
     enemyPos[0] = { -2.0f,0.5f };
     enemyPos[1] = { -70.0f,0.5f };
-    enemyPos[2] = { -150.0f,10.5f };
+    enemyPos[2] = { -160.0f,10.5f };
 
     enemyGroup[0] = 0;
     enemyGroup[1] = 1;

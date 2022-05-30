@@ -54,6 +54,7 @@ private:
 
 	// リセット用のポジション
 	Vec3 ResetPos{ 0,0,0 };
+	bool checkPoint = false;
 
 	static const int ENEMY_MAX = 11;
 	Vec2 enemyPos[ENEMY_MAX] = {};
