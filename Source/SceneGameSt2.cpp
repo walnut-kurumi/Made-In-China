@@ -44,6 +44,7 @@ void SceneGameSt2::Initialize()
     // プレイヤー
     player = std::make_unique<Player>(device);
     player->Init();
+    player->SetSt3(false);
 
     // ロード％更新
     AddLoadPercent(1.0f);

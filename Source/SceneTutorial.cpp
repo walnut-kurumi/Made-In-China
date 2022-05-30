@@ -46,6 +46,7 @@ void SceneTutorial::Initialize()
     // チュートリアルだお
     player->SetIsTutorial(true);
     player->Init();
+    player->SetSt3(false);
     player->SetPosition(Vec3(-19, 25, 0));
 
     // ロード％更新
