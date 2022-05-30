@@ -5,6 +5,8 @@
 #include "Input/GamePad.h"
 #include "Input/input.h"
 
+#include "Framework.h"
+
 StageMain3::StageMain3(ID3D11Device* device)
 {
     back = new Sprite(device, L"./Data/Sprites/BackGround.png");
@@ -17,7 +19,7 @@ StageMain3::StageMain3(ID3D11Device* device)
 
     bgpos = { -200, -600 };
 
-    NextStagePos = { -176.0f,50.05f,0.0f };
+    NextStagePos = { -164.0f,60.05f,0.0f };
 
     type = Type::Main;
     debugRenderer = std::make_unique<DebugRenderer>(device);
@@ -42,6 +44,8 @@ void StageMain3::Render(ID3D11DeviceContext* deviceContext, float elapsedTime)
 
     model->Begin(deviceContext, Shaders::Ins()->GetSkinnedMeshShader());
     model->Render(deviceContext);
+
+
 
 #ifdef _DEBUG
     Vec3 collision = { -125.0f,34.0f,0.0f };
