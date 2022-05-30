@@ -61,7 +61,7 @@ void EnemyBulletStraight::Render(ID3D11DeviceContext* dc, Shader* shader, bool s
 	}
 
 	model->Begin(dc, *shader);
-	model->Render(dc);
+	model->Render(dc, Vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 
 #ifdef _DEBUG
