@@ -88,9 +88,9 @@ void Player::Init() {
     sbLaunchPos = { 0,0,0 };
     // UŒ‚
     atk = false;
-    atkRadius = 3.0f;
+    atkRadius = 4.0f;
     atkTimer = 0.0f;
-    atkPower = 8.8f;
+    atkPower = 7.5f;
 
     // ƒWƒƒƒ“ƒvŠÖ˜A
     jumpSpeed = 105.0f;
@@ -303,10 +303,9 @@ void Player::Render(ID3D11DeviceContext* dc) {
 
 
     if (slowAlpha > 0.0f) {
-        model->Begin(dc, Shaders::Ins()->GetAfterimage());
-        AfterimageManager::Instance().Render(dc);
-
         if (!isDead) {
+            model->Begin(dc, Shaders::Ins()->GetAfterimage());
+            AfterimageManager::Instance().Render(dc);
             model->Begin(dc, Shaders::Ins()->GetOutline());
             RenderStateKARI::SetCullMode(RenderStateKARI::CU_BACK);
             model->Render(dc);
