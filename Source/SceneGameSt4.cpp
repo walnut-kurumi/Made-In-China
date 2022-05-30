@@ -1,5 +1,6 @@
-#include "SceneTutorial.h"
+#include "SceneGameSt4.h"
 #include "Camera/CameraManager.h"
+#include "SceneManager.h"
 #include "Input/Input.h"
 #include "Graphics/Graphics.h"
 
@@ -8,34 +9,33 @@
 #include "EnemyShotGunner.h"
 #include "EnemyMelee.h"
 
-#include "SceneManager.h"
-#include "SceneGame.h"
-#include "SceneLoading.h"
-#include "SceneClear.h"
+#include"SceneLoading.h"
+#include"SceneClear.h"
 #include "SceneTitle.h"
 
 #include "Menu.h"
 
 #include "StageManager.h"
 #include "StageSkybox.h"
-#include "StageMain0.h"
-#include "StageCollision0.h"
+#include "StageMain4.h"
+#include "StageCollision4.h"
+#include "StagePenetrate4.h"
 
+#include "DoorManager.h"
+#include "Door.h"
 
 #include "Framework.h"
 
-#include "EffectManager.h"
-#include "Graphics/Texture.h"
-
-
+#include"EffectManager.h"
+#include"Graphics/Texture.h"
 
 
 // 初期化
-void SceneTutorial::Initialize()
+void SceneGameSt4::Initialize()
 {
     // ロード％初期化    
     SetLoadPercent(0.0f);
-    BGM = Audio::Instance().LoadAudioSource("Data\\Audio\\BGM\\GameBGM1.wav", true);
+    BGM = Audio::Instance().LoadAudioSource("Data\\Audio\\BGM\\GameBGM3.wav", true);
     HRESULT hr{ S_OK };
 
     ID3D11Device* device = Graphics::Ins().GetDevice();
@@ -43,31 +43,51 @@ void SceneTutorial::Initialize()
 
     // プレイヤー
     player = std::make_unique<Player>(device);
-    // チュートリアルだお
-    player->SetIsTutorial(true);
     player->Init();
-    player->SetPosition(Vec3(-19, 25, 0));
+    player->SetSt3(true);
+    player->SetPosition(Vec3(40.0f, 0.5f, 0.0f));
 
     // ロード％更新
     AddLoadPercent(1.0f);
 
     // ステージ
-    
-        StageManager::Create();
-        StageManager::Instance().Init();
 
-        // ロード％更新
-        AddLoadPercent(1.0f);
+    StageManager::Create();
+    StageManager::Instance().Init();
 
-        StageMain0* stageMain = new StageMain0(device);
-        stageMain->PlayerData(player.get());
-        StageManager::Instance().Register(stageMain);
-        StageCollision0* stageCollision = new StageCollision0(device);
-        StageManager::Instance().Register(stageCollision);
-        StageSkybox* skybox = new StageSkybox(device);
-        StageManager::Instance().Register(skybox);
-    
-    
+    // ロード％更新
+    AddLoadPercent(1.0f);
+
+    StageMain4* stageMain = new StageMain4(device);
+    stageMain->PlayerData(player.get());
+    StageManager::Instance().Register(stageMain);
+    StageCollision4* stageCollision = new StageCollision4(device);
+    StageManager::Instance().Register(stageCollision);
+    StagePenetrate4* stagePenetrate = new StagePenetrate4(device);
+    StageManager::Instance().Register(stagePenetrate);
+    StageSkybox* skybox = new StageSkybox(device);
+    StageManager::Instance().Register(skybox);
+
+    // ドア
+    {
+        DoorManager::Instance().Init();
+        static const int DOOR_MAX = 6;
+        Vec3 doorPos[DOOR_MAX] = {};
+        doorPos[0] = { 18.0f,0.5f,-3.5f };
+        doorPos[1] = { 18.0f,57.8f,-3.5f };
+        doorPos[2] = { -185.0f,29.5f,-3.5f };
+        doorPos[3] = { -250.0f,29.5f,-3.5f };
+        doorPos[4] = { -220.0f,53.6f ,-3.5f };
+        doorPos[5] = { -224.0f,85.0f,-3.5f };
+
+        for (int i = 0; i < DOOR_MAX; i++)
+        {
+            Door* door = new Door(device);
+            door->SetPos(doorPos[i]);
+            door->PlayerData(player.get());
+            DoorManager::Instance().Register(door);
+        }
+    }
     // ロード％更新
     AddLoadPercent(1.0f);
 
@@ -98,24 +118,11 @@ void SceneTutorial::Initialize()
     _ASSERT_EXPR(SUCCEEDED(hr), HrTrace(hr));
 
 
-    cursorSprite= new Sprite(device, L"./Data/Sprites/UI/mouseTarget.png");
-    Bar         = new Sprite(device, L"./Data/Sprites/UI/slow.png");
-    LoadBar     = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
+    cursorSprite = new Sprite(device, L"./Data/Sprites/UI/mouseTarget.png");
+    Bar = new Sprite(device, L"./Data/Sprites/UI/slow.png");
+    LoadBar = new Sprite(device, L"./Data/Sprites/UI/gauge.png");
     enemyattack = new Sprite(device, L"./Data/Sprites/enemyattack.png");
-    fade        = new Sprite(device, L"./Data/Sprites/scene/black.png");
-
-    KeyA        = new Sprite(device, L"./Data/Sprites/UI/Keybord/KeyA.png");
-    KeyD        = new Sprite(device, L"./Data/Sprites/UI/Keybord/KeyD.png");
-    KeySPACE    = new Sprite(device, L"./Data/Sprites/UI/Keybord/KeySPACE.png");
-    KeySHIFT    = new Sprite(device, L"./Data/Sprites/UI/Keybord/KeySHIFT.png");
-    LeftClick   = new Sprite(device, L"./Data/Sprites/UI/Keybord/MouseLClick.png");
-    RightClick  = new Sprite(device, L"./Data/Sprites/UI/Keybord/MouseRClick.png");
-
-    ButtonA     = new Sprite(device, L"./Data/Sprites/UI/Controller/ButtonA.png");
-    ButtonX     = new Sprite(device, L"./Data/Sprites/UI/Controller/ButtonX.png");
-    Stick       = new Sprite(device, L"./Data/Sprites/UI/Controller/Stick.png");
-    ButtonLT    = new Sprite(device, L"./Data/Sprites/UI/Controller/ButtonLT.png");
-    ButtonRT    = new Sprite(device, L"./Data/Sprites/UI/Controller/ButtonRT.png");
+    fade = new Sprite(device, L"./Data/Sprites/scene/black.png");
 
 
     Menu::Instance().Initialize();
@@ -127,6 +134,7 @@ void SceneTutorial::Initialize()
 
     Goal::Instance().Init(device);
     Goal::Instance().SetGoalPos(stageMain->GetGoalPos());
+
 
     //デバッグ
     //hitEffect = new Effect("Data/Effect/player_hit.efk");
@@ -141,40 +149,24 @@ void SceneTutorial::Initialize()
     CBBlur.initialize(device, gfx.GetDeviceContext());
     SBBlur.initialize(device, gfx.GetDeviceContext());
     LEcol.initialize(device, gfx.GetDeviceContext());
+
     // ロード％ 100%
     SetLoadPercent(10.0f);
 
     // 変数初期化
-    isTutorial = true;
-    isPause = false;
-    camTargetPos = { -19,5,0 };
-    cameraTargetChange = false;    
-    isSlow = false;    
     changeScene = false;
-
-    radian = 0.0f;
-    tutorialTick = 0;	// アニメーション用チック	
-    stickAnim = 0;	// アニメーション
-    isKeybord = false;
-
-    renderSlow = false;
-    renderAttack = false;
-    renderMove = false;
-    renderJump = false;
-    renderSB = false;
-
-    // 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける   
-    player->SetIsControl(false);
-    player->SetCanSlow(false);
-    player->SetCanAttack(false);
+    ResetPos = { 40,0.5,0 };
 }
 
 // 終了化
-void SceneTutorial::Finalize()
+void SceneGameSt4::Finalize()
 {
     // エネミー終了処理	
     EnemyManager::Instance().Clear();
-   
+
+    // ドア終了処理
+    DoorManager::Instance().Clear();
+
     // ステージ終了処理
     StageManager::Instance().Clear();
     StageManager::Destory();
@@ -185,148 +177,50 @@ void SceneTutorial::Finalize()
     CameraManager& cameraMgr = CameraManager::Instance();
     cameraMgr.SetShakeFlag(false);
 
-    delete KeyA;
-    delete KeyD;
-    delete KeySPACE;
-    delete KeySHIFT;
-    delete LeftClick;
-    delete RightClick;
-    delete ButtonA;
-    delete ButtonX;
-    delete Stick;
-    delete ButtonLT;
-    delete ButtonRT;
-
+    delete fade;
     delete enemyattack;
     delete LoadBar;
     delete Bar;
-    delete fade;
     delete cursorSprite;
+    //デバッグ
+   // delete hitEffect;
 }
 
 // 更新処理
-void SceneTutorial::Update(float elapsedTime)
+void SceneGameSt4::Update(float elapsedTime)
 {
-    BGM.get()->Play(0.5f);
+    BGM.get()->Play(0.6f);
     GamePad& gamePad = Input::Instance().GetGamePad();
     Mouse& mouse = Input::Instance().GetMouse();
 
-    // キーボード使用状態の取得
-    if (mouse.GetButtonDown() & Mouse::BTN_LEFT || mouse.GetButtonDown() & Mouse::BTN_RIGHT)gamePad.SetUseKeybord(true);
-    isKeybord = gamePad.GetUseKeybord();
-
     if (Menu::Instance().GetMenuFlag() == false)
     {
-        float slowElapsedTime = 0;
-        if (!isPause) {
-            slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();            
-        }
+
+        float slowElapsedTime = elapsedTime * player->GetPlaybackSpeed();
+        ////TODO: 敵の数増えるとelapsedTime　おかしくなる
+        //// ヒットストップ
+        //slowElapsedTime = slowElapsedTime * player->GetHitStopSpeed();
+        //// スローモーション
+        //slowElapsedTime = slowElapsedTime * player->GetPlaybackSpeed();
+
+
+
         DirectX::XMFLOAT3 screenPosition;
         screenPosition.x = static_cast<float>(mouse.GetPositionX());
         screenPosition.y = static_cast<float>(mouse.GetPositionY());
 
-        // チュートリアル
-        {
-            // 着地したらスローできる
-            if (player->Ground() && isTutorial)
-            {
-                isPause = true;                
-                player->SetCanSlow(true);
-
-                // 操作説明：スロー
-                renderSlow = true;
-            }            
-            // スロー入力したらそのままスロー
-            if (gamePad.GetButton() & GamePad::BTN_LEFT_TRIGGER && isTutorial && player->GetCanSlow())
-            {
-                isSlow = true;
-                isPause = false;                
-            }
-            if (isSlow && isTutorial)slowElapsedTime = elapsedTime * 0.25f;
-
-            // 弾止める
-            for (int i = 0; i < EnemyBulletManager::Instance().GetProjectileCount(); i++)
-            {
-                if (isTutorial)
-                {
-                    float posY = EnemyBulletManager::Instance().GetProjectile(i)->GetPosition().y;
-                    Vec3 direction = EnemyBulletManager::Instance().GetProjectile(i)->GetDirection();
-                    direction.y = 0.0f;
-                    EnemyBulletManager::Instance().GetProjectile(i)->SetDirection(direction);
-
-                    float posX = EnemyBulletManager::Instance().GetProjectile(i)->GetPosition().x;
-                    if (posX <= -14.0f)
-                    {
-                        EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(false);
-                        isPause = true;
-                        player->SetCanAttack(true);
-
-                        renderSlow = false;
-                        // 操作説明：攻撃
-                        renderAttack = true;
-                    }
-                }
-            }
-
-            // 穴に落ちたら
-            if (player->GetPosition().x < -30.0f && renderMove)
-            {
-                renderMove = false;
-                // 操作説明：ジャンプ
-                renderJump = true;
-            }
-            else if (player->GetPosition().x < -60.0f && renderJump)
-            {
-                renderJump = false;
-            }
-            // SB位置についたら
-            if (player->GetPosition().x < -85.0f && player->GetPosition().x > -140.0f && !renderSB)
-            {                
-                // 操作説明：SB
-                renderSB = true;
-            }
-            else if((player->GetPosition().x > -85.0f || player->GetPosition().x < -140.0f ))
-            {                                
-                renderSB = false;
-            }            
-        }
 
         // ステージ
         StageManager::Instance().Update(slowElapsedTime);
 
+        // ドア
+        DoorManager::Instance().Update(elapsedTime);
+
         // プレイヤー
-        {            
+        {
             player->Update(slowElapsedTime);
-            player->SetSlowFixation(isSlow);
-            player->SetIsTutorial(isTutorial);
             // シフトブレイク更新処理
             SBManager::Instance().Update(slowElapsedTime);
-
-            
-            // チュートリアル終わり
-            if (player->GetIsAtk() && isTutorial) 
-            {                
-                isTutorial = false;
-                isPause = false;
-                isSlow = false;
-
-                // カメラのターゲット変える
-                cameraTargetChange = true;
-
-                // 操作可能
-                player->SetIsControl(true);
-                player->SetSlowFixation(isSlow);
-
-                // 弾動かす
-                for (int i = 0; i < EnemyBulletManager::Instance().GetProjectileCount(); i++)
-                {
-                    EnemyBulletManager::Instance().GetProjectile(i)->SetIsMove(true);
-                }
-
-                renderAttack = false;
-                // 操作説明：移動
-                renderMove = true;
-            }
         }
 
         // カメラ
@@ -336,15 +230,16 @@ void SceneTutorial::Update(float elapsedTime)
             cameraMgr.Update(slowElapsedTime);
 
             Vec3 target = player->GetPosition() + VecMath::Normalize(Vec3(player->GetTransform()._21, player->GetTransform()._22, player->GetTransform()._23)) * 7.5f;
-            if(cameraTargetChange) CameraManager::Instance().SetGoal(target);
-            else CameraManager::Instance().SetGoal(camTargetPos);
+            CameraManager::Instance().SetGoal(target);
         }
 
 
         // エネミー
         if (!player->GetClock())
         {
-            EnemyManager::Instance().SetPlayer(player.get());           
+            EnemyManager::Instance().SetPlayer(player.get());
+            // ソート
+            EnemyManager::Instance().SortLengthSq(player->GetPosition());
             // エネミー更新処理
             EnemyManager::Instance().Update(slowElapsedTime);
             // 弾丸更新処理
@@ -360,6 +255,9 @@ void SceneTutorial::Update(float elapsedTime)
         w = player->GetSlowTimer() / player->GetSlowMax();
         et = elapsedTime;
     }
+
+    // リセット座標更新
+    UpdateResetPos();
 
     // リセット
     if (player->GetReset()) {
@@ -378,13 +276,17 @@ void SceneTutorial::Update(float elapsedTime)
     // Menu
     Menu::Instance().Update(elapsedTime);
     // Fade
-    if(Menu::Instance().GetChangeFlag())
+    if (Menu::Instance().GetChangeFlag())
     {
         // フェードアウト
         if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
 
         // フェードアウトおわったら
         if (Fade::Instance().GetFadeOutFinish()) {
+
+            // リセット座標をリセット
+            ResetPos = { 40,0.5,0 };
+
             // リセット
             Reset();
 
@@ -395,25 +297,22 @@ void SceneTutorial::Update(float elapsedTime)
     // フェードイン終わったら初期化
     if (Fade::Instance().GetFadeInFinish()) Fade::Instance().Initialize();
 
+    // Fade
     Fade::Instance().Update(elapsedTime);
     // Goal
     Goal::Instance().SetPlayerPos(player->GetCenterPosition());
     Goal::Instance().Update(elapsedTime);
 
-
     // 現在のステージの死んでるエネミーの数が０の場合
     if (EnemyManager::Instance().GetDeadEnemyCount() >= EnemyManager::Instance().GetEnemyCount())
     {
-        // 全滅させてる場合操作説明ださない
-        renderSB = false;
         Goal::Instance().SetCanGoal(true);
-
         // ゴールと判定とる         
         if (StageManager::Instance().CollisionPlayerVsNextStagePos(player->GetCenterPosition(), player->GetRadius()))
         {
             changeScene = true;
             // フェードアウト
-            if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);            
+            if (!Fade::Instance().GetFadeOutFinish())Fade::Instance().SetFadeOutFlag(true);
         }
     }
     // フェードアウトおわったら次のシーンにいける
@@ -421,12 +320,13 @@ void SceneTutorial::Update(float elapsedTime)
     {
         BGM.get()->Stop();
         // 次のステージへ移る処理
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGame));
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
     }
+
 }
 
 // 描画処理
-void SceneTutorial::Render(float elapsedTime)
+void SceneGameSt4::Render(float elapsedTime)
 {
     Graphics& gfx = Graphics::Ins();
     ID3D11Device* device = gfx.GetDevice();
@@ -442,7 +342,13 @@ void SceneTutorial::Render(float elapsedTime)
     dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     // 通常レンダリング
-    dc->OMSetRenderTargets(1, &rtv, dsv);      
+    dc->OMSetRenderTargets(1, &rtv, dsv);
+
+    //DirectX::XMFLOAT4X4 data{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+
+    //// TODO:05 Bind the transformation matrix data to the vertex shader at register number 0.
+    //dc->UpdateSubresource(constant_buffer, 0, 0, &data, 0, 0);
+    //dc->VSSetConstantBuffers(3, 1, &constant_buffer);
 
     framebuffer[0]->clear(dc, 1.0f, 1.0f, 1.0f, 0.0f);
     framebuffer[0]->activate(dc);
@@ -450,11 +356,11 @@ void SceneTutorial::Render(float elapsedTime)
         // モデル描画
         {
             // ステージ描画
-            StageManager::Instance().Render(dc, elapsedTime);           
-
+            StageManager::Instance().Render(dc, elapsedTime);
             // スロー演出、敵や自機など重要なオブジェクト以外を暗くする
             fade->render(dc, 0, 0, 1920, 1080, 1, 1, 1, player->GetSlowAlpha(), 0);
-
+            // ドア描画
+            DoorManager::Instance().Render(dc, elapsedTime);
             // プレイヤー描画
             player->Render(dc);
             // エネミー描画
@@ -510,15 +416,11 @@ void SceneTutorial::Render(float elapsedTime)
     { framebuffer[1]->shaderResourceViews[0].Get(), framebuffer[2]->shaderResourceViews[0].Get() };
     radialBlur->blit(dc, shader_resource_views->GetAddressOf(), 0, 2, BluShader.GetPixelShader().Get());
 
-    
 
     // 2D描画
     {
         // 攻撃予兆描画
         RenderEnemyAttack();
-
-        // 操作説明用
-        RenderTutorial();
 
         // マウス位置
         Mouse& mouse = Input::Instance().GetMouse();
@@ -542,7 +444,20 @@ void SceneTutorial::Render(float elapsedTime)
 
 #ifdef USE_IMGUI   
 
-    ImGui::Begin("ImGUI");          
+
+    ImGui::Begin("ImGUI");
+
+    // CAMERA_SHAKE
+    // TODO:07 Adjust the maximum amount of rotation(max_skew) and movement(max_sway) of the camera.
+    ImGui::SliderFloat("max_sway [pixel]", &max_sway, 0.0f, 64.0f);
+    ImGui::SliderFloat("max_skew [degree]", &max_skew, 0.0f, 10.0f);
+    // TODO:12 Defines the amount of seed shifting factor for perlin noise.
+    ImGui::SliderFloat("seed_shifting_factor", &seed_shifting_factor, 0.0f, 10.0f);
+
+    ImGui::SliderFloat("elapsedTime", &et, 0.0f, 1.0f);
+
+    bool sh = cameraMgr.GetShakeFlag();
+    ImGui::Checkbox("shakeFlag", &sh);
 
     ImGui::SliderFloat("gaussian_sigma", &sigma, 0, 2);
     ImGui::SliderFloat("bloom_intensity", &intensity, 0, 0.5f);
@@ -551,19 +466,25 @@ void SceneTutorial::Render(float elapsedTime)
     ImGui::SliderFloat("LEy", &LErgb.y, 0, 1);
     ImGui::SliderFloat("LEz", &LErgb.z, 0, 1);
 
+    ImGui::End();
 
-    ImGui::End();   
+    /* ImGui::SetNextWindowPos(ImVec2(0, 10), ImGuiCond_FirstUseEver);
+     ImGui::SetNextWindowSize(ImVec2(30, 30), ImGuiCond_FirstUseEver);
+
+     if (ImGui::Begin("SRV", nullptr, ImGuiWindowFlags_None))
+     {
+         ImGui::Image(shaderResourceViews[0], { 320, 180 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+         ImGui::Image(shaderResourceViews[1], { 320, 180 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+         ImGui::Image(shaderResourceViews[2], { 320, 180 }, { 0, 0 }, { 1, 1 }, { 1, 1, 1, 1 });
+     }
+     ImGui::End();*/
 #endif
 
 }
 
 // playerが死んだとき 等のリセット用
-void SceneTutorial::Reset()
+void SceneGameSt4::Reset()
 {
-    // プレイヤー蘇生 ポジションリセット    
-    player->Init();
-    player->SetPosition(Vec3(-19, 25.0f, 0));    
-  
     // ゴール不可
     Goal::Instance().SetCanGoal(false);
 
@@ -571,38 +492,29 @@ void SceneTutorial::Reset()
     EnemyBulletManager::Instance().Clear();
     SBManager::Instance().Clear();
     // 敵蘇生 ポジションリセット
+    EnemyManager::Instance().EnemyReset();
     EnemyManager::Instance().Init();
-    EnemyManager::Instance().EnemyReset();  
+    // ドアリセット
+    DoorManager::Instance().Init();
 
-    // 変数初期化
-    isTutorial = true;
-    isPause = false;
-    camTargetPos = { -19,5,0 };
-    cameraTargetChange = false;
-    isSlow = false;
-
-    radian = 0.0f;
-    tutorialTick = 0;	// アニメーション用チック	
-    stickAnim = 0;	// アニメーション    
-
-    renderSlow = false;
-    renderAttack = false;
-    renderMove = false;
-    renderJump = false;
-    renderSB = false;
-
+    // プレイヤー蘇生 ポジションリセット
+    player->Init();
+    player->SetPosition(ResetPos);
     Menu::Instance().Initialize();
 
-    // 最初はプレイヤー操作不可 スロー入力して弾き返してから動ける   
-    player->SetIsControl(false);
-    player->SetCanSlow(false);
-    player->SetCanAttack(false);
-    player->SetIsTutorial(isTutorial);
+    if (ResetPos != Vec3(40, 0.5, 0))
+    {
+        //EnemyManager::Instance().GetEnemy();        
+    }
+
+
 }
 
 // 敵の初期化
-void SceneTutorial::EnemyInitialize(ID3D11Device* device)
+void SceneGameSt4::EnemyInitialize(ID3D11Device* device)
 {
+    bool melee, gunner, shotgunner;
+
     for (int i = 0; i < ENEMY_MAX; i++)
     {
         if (ENEMY_MAX == i)
@@ -611,8 +523,27 @@ void SceneTutorial::EnemyInitialize(ID3D11Device* device)
             AddLoadPercent(1.0f);
         }
 
+        // 近接 01347
+        if (i == 0 || i == 1 || i == 3 || i == 5 || i == 7 || i == 10)
+        {
+            melee = true;
+            gunner = shotgunner = false;
+        }
+        // 遠隔 289
+        else if (i == 2 || i == 8 || i == 9)
+        {
+            gunner = true;
+            melee = shotgunner = false;
+        }
+        // 遠隔(散) 56
+        else if (i == 4 || i == 6)
+        {
+            shotgunner = true;
+            gunner = melee = false;
+        }
+
         // 近接
-        if (i == 1)
+        if (melee)
         {
             EnemyMelee* melee = new EnemyMelee(device);
 
@@ -631,7 +562,26 @@ void SceneTutorial::EnemyInitialize(ID3D11Device* device)
 
             EnemyManager::Instance().Register(melee);
         }
-        else
+        else if (shotgunner)
+        {
+            EnemyShotGunner* gunner = new EnemyShotGunner(device);
+
+            // 座標セット
+            gunner->SetInitialPos(Vec3(enemyPos[i].x, enemyPos[i].y, 0));
+            gunner->PositionInitialize();
+            //歩き回るかどうか
+            gunner->SetInitialWalk(enemyWalk[i]);
+            gunner->WalkFlagInitialize();
+            // グループ番号セット
+            gunner->SetInitialGroupNum(enemyGroup[i]);
+            gunner->GroupNumInitialize();
+            // 向きセット
+            gunner->SetInitialDirection(enemyDirection[i]);
+            gunner->DirectionInitialize();
+
+            EnemyManager::Instance().Register(gunner);
+        }
+        else if (gunner)
         {
             EnemyGunner* gunner = new EnemyGunner(device);
 
@@ -657,30 +607,61 @@ void SceneTutorial::EnemyInitialize(ID3D11Device* device)
 }
 
 // エネミー座標設定
-void SceneTutorial::EnemyStatusSetting()
+void SceneGameSt4::EnemyStatusSetting()
 {
-
-    enemyPos[0] = { -2.0f,0.5f };
-    enemyPos[1] = { -70.0f,0.5f };
-    enemyPos[2] = { -160.0f,10.5f };
+    enemyPos[0] = { -53.0f,0.6f };
+    enemyPos[1] = { -197.0f,29.5f };
+    enemyPos[2] = { -242.0,29.0f };
+    enemyPos[3] = { -285.0f,29.0f };
+    enemyPos[4] = { -350.0f,54.0f };
+    enemyPos[5] = { -305.0f,54.0f };
+    enemyPos[6] = { -270.0f,54.0f };
+    enemyPos[7] = { -255.0f,54.0f };
+    enemyPos[8] = { -187.0f,54.0f };
+    enemyPos[9] = { -150.0f,54.0f };
+    enemyPos[10] = { 11.0f,0.5f };
 
     enemyGroup[0] = 0;
     enemyGroup[1] = 1;
-    enemyGroup[2] = 2;
+    enemyGroup[2] = 1;
+    enemyGroup[3] = 2;
+    enemyGroup[4] = 3;
+    enemyGroup[5] = 3;
+    enemyGroup[6] = 4;
+    enemyGroup[7] = 4;
+    enemyGroup[8] = 5;
+    enemyGroup[9] = 5;
+    enemyGroup[10] = 6;
 
     enemyWalk[0] = false;
-    enemyWalk[1] = false;
+    enemyWalk[1] = true;
     enemyWalk[2] = false;
-    
+    enemyWalk[3] = false;
+    enemyWalk[4] = false;
+    enemyWalk[5] = false;
+    enemyWalk[6] = false;
+    enemyWalk[7] = false;
+    enemyWalk[8] = false;
+    enemyWalk[9] = false;
+    enemyWalk[10] = false;
+
     enemyDirection[0] = false;
-    enemyDirection[1] = true;
+    enemyDirection[1] = false;
     enemyDirection[2] = true;
+    enemyDirection[3] = true;
+    enemyDirection[4] = true;
+    enemyDirection[5] = false;
+    enemyDirection[6] = true;
+    enemyDirection[7] = true;
+    enemyDirection[8] = false;
+    enemyDirection[9] = false;
+    enemyDirection[10] = false;
 
 }
 
 
 // エネミー攻撃予兆描画
-void SceneTutorial::RenderEnemyAttack()
+void SceneGameSt4::RenderEnemyAttack()
 {
 
     ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();
@@ -715,7 +696,7 @@ void SceneTutorial::RenderEnemyAttack()
             View,
             World
         );
-        // スクリーン座標
+        // スクリーン座3
         DirectX::XMFLOAT2 screenPosition;
         DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
 
@@ -727,100 +708,17 @@ void SceneTutorial::RenderEnemyAttack()
     }
 }
 
-// チュートリアル画像描画
-void SceneTutorial::RenderTutorial()
+// リセット座標更新
+void SceneGameSt4::UpdateResetPos()
 {
-    // チック
-    float tutorialTick2 = 0.0f;
-    int oldTick = tutorialTick;
-
-    radian += 0.1f;
-    if (radian > 3.1415f) radian = 0.0f;
-    // アニメーション用１か０か
-    tick = sin(radian);
-    if (tick >= 0.5f)
+    // プレイヤーの座標によってリセットしたときの座標変える  
+    Vec3 collision = { -125.0f,30.0f,0.0f };
+    // スフィアでコリジョンとる
+    if (Collision::SphereVsSphere(collision, player->GetCenterPosition(), 4.0f, player->GetRadius()))
     {
-        tutorialTick = 1;
-        tutorialTick2 = 0;        
-    }
-    else
-    {
-        tutorialTick = 0;
-        tutorialTick2 = 1;       
-    }
-    if (oldTick != tutorialTick)
-    {
-        stickAnim++;
-        if (stickAnim >= 4)stickAnim = 0;
+        // 壊れた壁のとこ入ったら更新する
+        ResetPos = { -125.0f,34.0f,0 };
     }
 
-    ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();
-    // ビューポート
-    D3D11_VIEWPORT viewport;
-    UINT numViewports = 1;
-    dc->RSGetViewports(&numViewports, &viewport);
-    // 変換行列
-    DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&CameraManager::Instance().GetView());
-    DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&CameraManager::Instance().GetProjection());
-    DirectX::XMMATRIX World = DirectX::XMMatrixIdentity();
-    // プレイヤーの頭上に表示   
-    DirectX::XMFLOAT3 worldPosition = player->GetCenterPosition();
-    worldPosition.y += player->GetHeight();
-    DirectX::XMVECTOR WorldPosition = DirectX::XMLoadFloat3(&worldPosition);
-    // ワールド座標からスクリーン座標へ変換
-    DirectX::XMVECTOR ScreenPosition = DirectX::XMVector3Project(
-        WorldPosition,
-        viewport.TopLeftX,
-        viewport.TopLeftY,
-        viewport.Width,
-        viewport.Height,
-        viewport.MinDepth,
-        viewport.MaxDepth,
-        Projection,
-        View,
-        World
-    );
-    // スクリーン座標
-    DirectX::XMFLOAT2 screenPosition;
-    DirectX::XMStoreFloat2(&screenPosition, ScreenPosition);
-
-    // 操作説明の画像描画
-
-    if (renderSlow)
-    {
-        if (isKeybord) KeySHIFT->render(dc, screenPosition.x - 64, screenPosition.y - 32, 128, 64, 1, 1, 1, 1, 0, static_cast<float>(400 * tutorialTick), 0, 400, 200);
-        else ButtonLT->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
-    }
-    if (renderAttack)
-    {
-        if (isKeybord) LeftClick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
-        else
-        {
-            Stick->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * 3), 0, 200, 200);
-            ButtonX->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
-        }
-    }
-    if (renderMove)
-    {
-        if (isKeybord) {
-            KeyA->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
-            KeyD->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick2), 0, 200, 200);
-        }
-        else Stick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * stickAnim), 0, 200, 200);
-    }
-    if (renderJump)
-    {
-        if (isKeybord) KeySPACE->render(dc, screenPosition.x - 64, screenPosition.y - 32, 128, 64, 1, 1, 1, 1, 0, static_cast<float>(400 * tutorialTick), 0, 400, 200);
-        else ButtonA->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
-    }
-    if(renderSB)
-    {
-        if (isKeybord) RightClick->render(dc, screenPosition.x - 32, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
-        else
-        {
-            Stick->render(dc, screenPosition.x - 64, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * 1), 0, 200, 200);
-            ButtonRT->render(dc, screenPosition.x, screenPosition.y - 32, 64, 64, 1, 1, 1, 1, 0, static_cast<float>(200 * tutorialTick), 0, 200, 200);
-        }
-    }
-
+    // この時点で死んでるエネミーは死んだままにする
 }

@@ -88,7 +88,7 @@ void Player::Init() {
     sbLaunchPos = { 0,0,0 };
     // 攻撃
     atk = false;
-    atkRadius = 3.5f;
+    atkRadius = 3.0f;
     atkTimer = 0.0f;
     atkPower = 8.8f;
 
@@ -254,7 +254,7 @@ void Player::Update(float elapsedTime) {
         &p2,
         XMLoadFloat4x4(&left->globalTransform) * XMLoadFloat4x4(&transform)
     );
-    swordPos = { p2._41, p2._42 - 1.9f, p2._43 };
+    swordPos = { p2._41, p2._42 - 1.5f, p2._43 };
 
     // 手の位置
     SkinnedMesh::Animation::Keyframe::Node* sholder = model->FindNode("joint42");
@@ -328,7 +328,7 @@ void Player::Render(ID3D11DeviceContext* dc) {
     debugRenderer.get()->DrawSphere(position, 1, Vec4(1, 0, 0, 1));
 
     // 剣根本
-    if (atk) debugRenderer.get()->DrawSphere(swordPos, 4, Vec4(1, 0, 0, 1));
+    if (atk) debugRenderer.get()->DrawSphere(swordPos, atkRadius, Vec4(1, 0, 0, 1));
 
     
     debugRenderer.get()->Render(dc, CameraManager::Instance().GetViewProjection());
@@ -1202,7 +1202,7 @@ void Player::CollisionPanchiVsEnemies() {
     for (int i = 0; i < enemyCount; ++i) {
         Enemy* enemy = enemyManager.GetEnemy(i);
         // 衝突処理
-        if (Collision::SphereVsSphere(enemy->GetPosition(), swordPos, enemy->GetRadius(), atkRadius)) {        
+        if (Collision::SphereVsSphere(enemy->GetCenterPosition(), swordPos + Vec3(0, -1.5f, 0), enemy->GetRadius(), atkRadius)) {
             if (enemy->GetHealth() > 0) {
                 enemy->ApplyDamage(1, 0);
                 // ヒットストップ
@@ -1241,34 +1241,36 @@ void Player::CollisionPanchiVsProjectile() {
 }
 void Player::CollisionSBVsEnemies() {
     // 敵探索
-    EnemyManager& enemyManager = EnemyManager::Instance();
-    int enemyCount = enemyManager.GetEnemyCount();
-    for (int i = 0; i < enemyCount; ++i) {
-        Enemy* enemy = enemyManager.GetEnemy(i);
-        // SB探索
-        SBManager& sbManager = SBManager::Instance();
-        int enemyBCount = sbManager.GetProjectileCount();
-        for (int j = 0; j < enemyBCount; ++j) {
-            SB* sb = sbManager.GetProjectile(j);
-            // 衝突処理
-            if (Collision::SphereVsSphere(enemy->GetPosition(), sb->GetPosition(), enemy->GetRadius(), atkRadius)) {
-                if (enemy->GetHealth() > 0) {
-                    // 向きを設定
-                    direction = VecMath::sign(enemy->GetPosition().x - position.x);
-                    // 旋回処理
-                    if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
-                    // 敵とSBヒット
-                    sbhit = true;
-                    // 自分を敵の近くへ
-                    // 自機と敵の位置から左右判定　のちそこから一定距離にワープ　そして殺す
-                    sbdir = VecMath::Normalize(VecMath::Subtract(enemy->GetPosition(), position));
-                    // 到達地点
-                    // 敵の、自分方面に一定距離
-                    sbPos = enemy->GetPosition();
-                    sbPos.x += -(VecMath::sign(enemy->GetPosition().x - position.x)) * sbSpace;
-                    // 武器を壊す
-                    sb->Destroy();
-                    sbHitEmy = i;
+    if (!sbhit) {
+        EnemyManager& enemyManager = EnemyManager::Instance();
+        int enemyCount = enemyManager.GetEnemyCount();
+        for (int i = 0; i < enemyCount; ++i) {
+            Enemy* enemy = enemyManager.GetEnemy(i);
+            // SB探索
+            SBManager& sbManager = SBManager::Instance();
+            int enemyBCount = sbManager.GetProjectileCount();
+            for (int j = 0; j < enemyBCount; ++j) {
+                SB* sb = sbManager.GetProjectile(j);
+                // 衝突処理
+                if (Collision::SphereVsSphere(enemy->GetPosition(), sb->GetPosition(), enemy->GetRadius(), atkRadius)) {
+                    if (enemy->GetHealth() > 0) {
+                        // 向きを設定
+                        direction = VecMath::sign(enemy->GetPosition().x - position.x);
+                        // 旋回処理
+                        if (direction != 0) angle.y = DirectX::XMConvertToRadians(90) * direction;
+                        // 敵とSBヒット
+                        sbhit = true;
+                        // 自分を敵の近くへ
+                        // 自機と敵の位置から左右判定　のちそこから一定距離にワープ　そして殺す
+                        sbdir = VecMath::Normalize(VecMath::Subtract(enemy->GetPosition(), position));
+                        // 到達地点
+                        // 敵の、自分方面に一定距離
+                        sbPos = enemy->GetPosition();
+                        sbPos.x += -(VecMath::sign(enemy->GetPosition().x - position.x)) * sbSpace;
+                        // 武器を壊す
+                        sb->Destroy();
+                        sbHitEmy = i;
+                    }
                 }
             }
         }
