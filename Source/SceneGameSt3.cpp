@@ -651,8 +651,8 @@ void SceneGameSt3::EnemyStatusSetting()
     enemyPos[1] = { -197.0f,29.5f };
     enemyPos[2] = { -242.0,29.0f };
     enemyPos[3] = { -285.0f,29.0f };
-    enemyPos[4] = { -350.0f,54.0f };
-    enemyPos[5] = { -305.0f,54.0f };
+    enemyPos[4] = { -305.0f,54.0f };
+    enemyPos[5] = { -350.0f, 54.0f };
     enemyPos[6] = { -270.0f,54.0f };
     enemyPos[7] = { -255.0f,54.0f };
     enemyPos[8] = { -187.0f,54.0f };
