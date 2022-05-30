@@ -89,7 +89,7 @@ void Player::Init() {
     sbLaunchPos = { 0,0,0 };
     // UŒ‚
     atk = false;
-    atkRadius = 3.0f;
+    atkRadius = 4.0f;
     atkTimer = 0.0f;
     atkPower = 8.8f;
 
