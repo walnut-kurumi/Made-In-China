@@ -8,10 +8,9 @@
 StagePenetrate4::StagePenetrate4(ID3D11Device* device)
 {
 
-    model = new Model(device, ".\\Data\\Models\\Stage\\Stage3\\Stage3_penetrate.fbx", true, 0);
+    model = new Model(device, ".\\Data\\Models\\Stage\\Stage4\\Stage4_penetrate.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
-    scale.x *= -1;
-    scale.y *= 0.7f;
+    scale.x *= -1;    
     angle.y = DirectX::XMConvertToRadians(-90);
 
     type = Type::Penetrate;

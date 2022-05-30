@@ -45,7 +45,8 @@ void SceneGameSt4::Initialize()
     player = std::make_unique<Player>(device);
     player->Init();
     player->SetSt3(true);
-    player->SetPosition(Vec3(40.0f, 0.5f, 0.0f));
+    Vec3 pos = { -33, 55, 0 };
+    player->SetPosition(pos);
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -71,23 +72,14 @@ void SceneGameSt4::Initialize()
     // ドア
     {
         DoorManager::Instance().Init();
-        static const int DOOR_MAX = 6;
-        Vec3 doorPos[DOOR_MAX] = {};
-        doorPos[0] = { 18.0f,0.5f,-3.5f };
-        doorPos[1] = { 18.0f,57.8f,-3.5f };
-        doorPos[2] = { -185.0f,29.5f,-3.5f };
-        doorPos[3] = { -250.0f,29.5f,-3.5f };
-        doorPos[4] = { -220.0f,53.6f ,-3.5f };
-        doorPos[5] = { -224.0f,85.0f,-3.5f };
+        Vec3 doorPos = { -93,54.5f,-3.5f };
 
-        for (int i = 0; i < DOOR_MAX; i++)
-        {
-            Door* door = new Door(device);
-            door->SetPos(doorPos[i]);
-            door->PlayerData(player.get());
-            DoorManager::Instance().Register(door);
-        }
+        Door* door = new Door(device);
+        door->SetPos(doorPos);
+        door->PlayerData(player.get());
+        DoorManager::Instance().Register(door);
     }
+
     // ロード％更新
     AddLoadPercent(1.0f);
 
@@ -154,8 +146,7 @@ void SceneGameSt4::Initialize()
     SetLoadPercent(10.0f);
 
     // 変数初期化
-    changeScene = false;
-    ResetPos = { 40,0.5,0 };
+    changeScene = false;    
 }
 
 // 終了化
@@ -256,9 +247,6 @@ void SceneGameSt4::Update(float elapsedTime)
         et = elapsedTime;
     }
 
-    // リセット座標更新
-    UpdateResetPos();
-
     // リセット
     if (player->GetReset()) {
         // フェードアウト
@@ -284,9 +272,7 @@ void SceneGameSt4::Update(float elapsedTime)
         // フェードアウトおわったら
         if (Fade::Instance().GetFadeOutFinish()) {
 
-            // リセット座標をリセット
-            ResetPos = { 40,0.5,0 };
-
+            
             // リセット
             Reset();
 
@@ -498,16 +484,11 @@ void SceneGameSt4::Reset()
     DoorManager::Instance().Init();
 
     // プレイヤー蘇生 ポジションリセット
-    player->Init();
-    player->SetPosition(ResetPos);
+    player->Init();    
     Menu::Instance().Initialize();
-
-    if (ResetPos != Vec3(40, 0.5, 0))
-    {
-        //EnemyManager::Instance().GetEnemy();        
-    }
-
-
+  
+    Vec3 pos = { -33, 55, 0 };
+    player->SetPosition(pos);
 }
 
 // 敵の初期化
@@ -523,20 +504,20 @@ void SceneGameSt4::EnemyInitialize(ID3D11Device* device)
             AddLoadPercent(1.0f);
         }
 
-        // 近接 01347
-        if (i == 0 || i == 1 || i == 3 || i == 5 || i == 7 || i == 10)
+        // 近接 027
+        if (i == 0 || i == 2 || i == 7)
         {
             melee = true;
             gunner = shotgunner = false;
         }
-        // 遠隔 289
-        else if (i == 2 || i == 8 || i == 9)
+        // 遠隔 1368
+        else if (i == 1 || i == 3 || i == 6 || i == 8)
         {
             gunner = true;
             melee = shotgunner = false;
         }
-        // 遠隔(散) 56
-        else if (i == 4 || i == 6)
+        // 遠隔(散) 45
+        else if (i == 4 || i == 5)
         {
             shotgunner = true;
             gunner = melee = false;
@@ -609,31 +590,27 @@ void SceneGameSt4::EnemyInitialize(ID3D11Device* device)
 // エネミー座標設定
 void SceneGameSt4::EnemyStatusSetting()
 {
-    enemyPos[0] = { -53.0f,0.6f };
-    enemyPos[1] = { -197.0f,29.5f };
-    enemyPos[2] = { -242.0,29.0f };
-    enemyPos[3] = { -285.0f,29.0f };
-    enemyPos[4] = { -350.0f,54.0f };
-    enemyPos[5] = { -305.0f,54.0f };
-    enemyPos[6] = { -270.0f,54.0f };
-    enemyPos[7] = { -255.0f,54.0f };
-    enemyPos[8] = { -187.0f,54.0f };
-    enemyPos[9] = { -150.0f,54.0f };
-    enemyPos[10] = { 11.0f,0.5f };
+    enemyPos[0] = { -125.0f,54.5f};
+    enemyPos[1] = { -160.0f,54.5f};
+    enemyPos[2] = { -140.0f,64.5f};
+    enemyPos[3] = { -123.0f,73.5f};
+    enemyPos[4] = { -75.0f,87.5f};
+    enemyPos[5] = { -30.0f,87.5f};
+    enemyPos[6] = { -190.0f,73.0f};
+    enemyPos[7] = { -210.0f,97.5f};
+   
 
     enemyGroup[0] = 0;
-    enemyGroup[1] = 1;
+    enemyGroup[1] = 0;
     enemyGroup[2] = 1;
-    enemyGroup[3] = 2;
-    enemyGroup[4] = 3;
-    enemyGroup[5] = 3;
-    enemyGroup[6] = 4;
-    enemyGroup[7] = 4;
-    enemyGroup[8] = 5;
-    enemyGroup[9] = 5;
-    enemyGroup[10] = 6;
+    enemyGroup[3] = 1;
+    enemyGroup[4] = 2;
+    enemyGroup[5] = 2;
+    enemyGroup[6] = 3;
+    enemyGroup[7] = 3;
 
-    enemyWalk[0] = false;
+
+    enemyWalk[0] = true;
     enemyWalk[1] = true;
     enemyWalk[2] = false;
     enemyWalk[3] = false;
@@ -641,21 +618,17 @@ void SceneGameSt4::EnemyStatusSetting()
     enemyWalk[5] = false;
     enemyWalk[6] = false;
     enemyWalk[7] = false;
-    enemyWalk[8] = false;
-    enemyWalk[9] = false;
-    enemyWalk[10] = false;
 
-    enemyDirection[0] = false;
-    enemyDirection[1] = false;
+
+    enemyDirection[0] = true;
+    enemyDirection[1] = true;
     enemyDirection[2] = true;
-    enemyDirection[3] = true;
-    enemyDirection[4] = true;
+    enemyDirection[3] = false;
+    enemyDirection[4] = false;
     enemyDirection[5] = false;
     enemyDirection[6] = true;
     enemyDirection[7] = true;
-    enemyDirection[8] = false;
-    enemyDirection[9] = false;
-    enemyDirection[10] = false;
+
 
 }
 
@@ -706,19 +679,4 @@ void SceneGameSt4::RenderEnemyAttack()
             enemyattack->render(dc, screenPosition.x - 32, screenPosition.y - 64, 64, 64, 1, 1, 1, 1, 0);
         }
     }
-}
-
-// リセット座標更新
-void SceneGameSt4::UpdateResetPos()
-{
-    // プレイヤーの座標によってリセットしたときの座標変える  
-    Vec3 collision = { -125.0f,30.0f,0.0f };
-    // スフィアでコリジョンとる
-    if (Collision::SphereVsSphere(collision, player->GetCenterPosition(), 4.0f, player->GetRadius()))
-    {
-        // 壊れた壁のとこ入ったら更新する
-        ResetPos = { -125.0f,34.0f,0 };
-    }
-
-    // この時点で死んでるエネミーは死んだままにする
 }

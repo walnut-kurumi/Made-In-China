@@ -134,7 +134,7 @@ void Player::Init() {
     dest.rotationFactor = 0.2f;
     dest.scaleFactor = 0.2f;
 
-    health = 1;
+    health = 100;
     oldHealth = 0;
 
     // ƒRƒXƒg‰Šú‰»

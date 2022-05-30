@@ -46,16 +46,12 @@ public:
 	// 敵の攻撃予兆
 	void RenderEnemyAttack();
 
-	// リセット時の座標更新
-	void UpdateResetPos();
 
 private:
 	std::unique_ptr<Player> player{};
 
-	// リセット用のポジション
-	Vec3 ResetPos{ 0,0,0 };
 
-	static const int ENEMY_MAX = 11;
+	static const int ENEMY_MAX = 8;
 	Vec2 enemyPos[ENEMY_MAX] = {};
 	int enemyGroup[ENEMY_MAX] = {};
 	bool enemyWalk[ENEMY_MAX] = {};

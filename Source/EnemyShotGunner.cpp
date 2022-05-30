@@ -57,6 +57,8 @@ EnemyShotGunner::~EnemyShotGunner()
 // ‰Šú‰»
 void EnemyShotGunner::Init()
 {
+    penetrate = false;
+
     angle = { 0,0,0 };
     transform = {
         1,0,0,0,

@@ -11,7 +11,7 @@ StageMain4::StageMain4(ID3D11Device* device)
 {
     back = new Sprite(device, L"./Data/Sprites/BackGround.png");
 
-    model = new Model(device, ".\\Data\\Models\\Stage\\Stage3\\Stage3.fbx", true, 0);
+    model = new Model(device, ".\\Data\\Models\\Stage\\Stage4\\Stage4.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
     scale.x *= -1;
     //scale.y *= 0.7f;
@@ -19,7 +19,7 @@ StageMain4::StageMain4(ID3D11Device* device)
 
     bgpos = { -200, -600 };
 
-    NextStagePos = { -164.0f,60.05f,0.0f };
+    NextStagePos = { -230.0f,103.5f,0.0f };
 
     type = Type::Main;
     debugRenderer = std::make_unique<DebugRenderer>(device);
