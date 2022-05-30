@@ -55,7 +55,7 @@ private:
 	// リセット用のポジション
 	Vec3 ResetPos{ 0,0,0 };
 
-	static const int ENEMY_MAX = 10;
+	static const int ENEMY_MAX = 11;
 	Vec2 enemyPos[ENEMY_MAX] = {};
 	int enemyGroup[ENEMY_MAX] = {};
 	bool enemyWalk[ENEMY_MAX] = {};

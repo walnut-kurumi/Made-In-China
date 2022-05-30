@@ -45,6 +45,7 @@ void SceneGameSt3::Initialize()
     // プレイヤー
     player = std::make_unique<Player>(device);
     player->Init();
+    player->SetPosition(Vec3(40.0f, 0.5f, 0.0f));
 
     // ロード％更新
     AddLoadPercent(1.0f);
@@ -153,7 +154,7 @@ void SceneGameSt3::Initialize()
 
     // 変数初期化
     changeScene = false;
-    ResetPos = { 0,0,0 };
+    ResetPos = { 40,0.5,0 };
 }
 
 // 終了化
@@ -254,6 +255,9 @@ void SceneGameSt3::Update(float elapsedTime)
         et = elapsedTime;
     }
 
+    // リセット座標更新
+    UpdateResetPos();
+
     // リセット
     if (player->GetReset()) {
         // フェードアウト
@@ -280,7 +284,7 @@ void SceneGameSt3::Update(float elapsedTime)
         if (Fade::Instance().GetFadeOutFinish()) {
 
             // リセット座標をリセット
-            ResetPos = { 0,0,0 };
+            ResetPos = { 40,0.5,0 };
 
             // リセット
             Reset();
@@ -317,6 +321,7 @@ void SceneGameSt3::Update(float elapsedTime)
         // 次のステージへ移る処理
         SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
     }
+    
 }
 
 // 描画処理
@@ -496,6 +501,11 @@ void SceneGameSt3::Reset()
     player->SetPosition(ResetPos);
     Menu::Instance().Initialize();
 
+    if (ResetPos != Vec3( 40,0.5,0 ))
+    {
+        //EnemyManager::Instance().GetEnemy();        
+    }
+
 
 }
 
@@ -513,7 +523,7 @@ void SceneGameSt3::EnemyInitialize(ID3D11Device* device)
         }
                 
         // 近接 01347
-        if (i == 0 || i == 1 || i == 3 || i == 4 || i == 7)
+        if (i == 0 || i == 1 || i == 3 || i == 5 || i == 7 || i == 10)
         {
             melee = true;
             gunner = shotgunner = false;
@@ -525,11 +535,11 @@ void SceneGameSt3::EnemyInitialize(ID3D11Device* device)
             melee = shotgunner = false;
         }
         // 遠隔(散) 56
-        else if (i == 5 || i == 6 )
+        else if (i == 4 || i == 6 )
         {
             shotgunner = true;
             gunner = melee = false;
-        }
+        }        
 
         // 近接
         if (melee)
@@ -598,7 +608,6 @@ void SceneGameSt3::EnemyInitialize(ID3D11Device* device)
 // エネミー座標設定
 void SceneGameSt3::EnemyStatusSetting()
 {
-
     enemyPos[0] = { -53.0f,0.6f };
     enemyPos[1] = { -197.0f,29.5f };
     enemyPos[2] = { -242.0,29.0f };
@@ -609,6 +618,7 @@ void SceneGameSt3::EnemyStatusSetting()
     enemyPos[7] = { -255.0f,54.0f };
     enemyPos[8] = { -187.0f,54.0f };
     enemyPos[9] = { -150.0f,54.0f };
+    enemyPos[10] = { 11.0f,0.5f };
 
     enemyGroup[0] = 0;
     enemyGroup[1] = 1;
@@ -618,8 +628,9 @@ void SceneGameSt3::EnemyStatusSetting()
     enemyGroup[5] = 3;
     enemyGroup[6] = 4;
     enemyGroup[7] = 4;
-    enemyGroup[8] = 4;
+    enemyGroup[8] = 5;
     enemyGroup[9] = 5;
+    enemyGroup[10] = 6;
 
     enemyWalk[0] = false;
     enemyWalk[1] = true;
@@ -631,6 +642,7 @@ void SceneGameSt3::EnemyStatusSetting()
     enemyWalk[7] = false;
     enemyWalk[8] = false;
     enemyWalk[9] = false;
+    enemyWalk[10] = false;
 
     enemyDirection[0] = false;
     enemyDirection[1] = false;
@@ -642,6 +654,7 @@ void SceneGameSt3::EnemyStatusSetting()
     enemyDirection[7] = true;
     enemyDirection[8] = false;
     enemyDirection[9] = false;
+    enemyDirection[10] = false;
 
 }
 
@@ -697,10 +710,14 @@ void SceneGameSt3::RenderEnemyAttack()
 // リセット座標更新
 void SceneGameSt3::UpdateResetPos()
 {
-    // プレイヤーの座標によってリセットしたときの座標変える
+    // プレイヤーの座標によってリセットしたときの座標変える  
+    Vec3 collision = { -125.0f,30.0f,0.0f };
+    // スフィアでコリジョンとる
+    if (Collision::SphereVsSphere(collision, player->GetCenterPosition(), 4.0f, player->GetRadius()))
+    {
+        // 壊れた壁のとこ入ったら更新する
+        ResetPos = { -125.0f,34.0f,0 };
+    }
 
-    // スフィアとかでコリジョンとる
-    
-    // 壊れた壁のとこ入ったら更新する
-    ResetPos = { 0,0,0 };
+    // この時点で死んでるエネミーは死んだままにする
 }
