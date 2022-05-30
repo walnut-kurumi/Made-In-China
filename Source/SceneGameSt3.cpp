@@ -149,6 +149,7 @@ void SceneGameSt3::Initialize()
     CBBlur.initialize(device, gfx.GetDeviceContext());
     SBBlur.initialize(device, gfx.GetDeviceContext());
     LEcol.initialize(device, gfx.GetDeviceContext());
+
     // ÉçÅ[ÉhÅì 100%
     SetLoadPercent(10.0f);
 

@@ -8,7 +8,7 @@
 StageCollision3::StageCollision3(ID3D11Device* device)
 {
 
-    model = new Model(device, ".\\Data\\Models\\Stage\\Stage3\\Stage3_collision4.fbx", true, 0);
+    model = new Model(device, ".\\Data\\Models\\Stage\\Stage3\\Stage3_collision8.fbx", true, 0);
     scale.x = scale.y = scale.z = 0.05f;
     scale.x *= -1;
     //scale.y *= 0.7f;
