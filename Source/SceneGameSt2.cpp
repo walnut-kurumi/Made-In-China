@@ -1,7 +1,6 @@
 #include "SceneGameSt2.h"
 #include "Camera/CameraManager.h"
 #include "SceneManager.h"
-#include "SceneGame.h"
 #include "Input/Input.h"
 #include "Graphics/Graphics.h"
 
@@ -11,7 +10,7 @@
 #include "EnemyMelee.h"
 
 #include"SceneLoading.h"
-#include"SceneClear.h"
+#include"SceneGameSt3.h"
 #include "SceneTitle.h"
 
 #include "Menu.h"
@@ -307,7 +306,7 @@ void SceneGameSt2::Update(float elapsedTime)
     {
         BGM.get()->Stop();
         // 次のステージへ移る処理
-        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneClear));
+        SceneManager::Instance().ChangeScene(new SceneLoading(new SceneGameSt3));
     }
 }
 

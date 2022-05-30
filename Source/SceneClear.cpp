@@ -9,9 +9,11 @@
 // 初期化
 void SceneClear::Initialize()
 {
-    SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
-    BGM = Audio::Instance().LoadAudioSource("Data\\Audio\\BGM\\title.wav", true);
     ID3D11Device* device = Graphics::Ins().GetDevice();
+
+    SEDecision = Audio::Instance().LoadAudioSource("Data\\Audio\\SE\\Decision.wav", false);
+    BGM = Audio::Instance().LoadAudioSource("Data\\Audio\\BGM\\clear.wav", true);
+
     clearSprite = new Sprite(device, L"./Data/Sprites/clear.png");
     cursorSprite = new Sprite(device, L"./Data/Sprites/cursor.png");
     gameStart = new Sprite(device, L"./Data/Sprites/scene/retry.png");
@@ -65,15 +67,12 @@ void SceneClear::Update(float elapsedTime)
         | GamePad::BTN_Y;
 
     Mouse& mouse = Input::Instance().GetMouse();
-    DirectX::XMFLOAT3 screenPosition;
-    screenPosition.x = static_cast<float>(mouse.GetPositionX());
-    screenPosition.y = static_cast<float>(mouse.GetPositionY());
-    mousepos.x = screenPosition.x;
-    mousepos.y = screenPosition.y;
 
     //マウス左クリックでマップ選択
     const mouseButton mouseClick =
         Mouse::BTN_LEFT;
+
+    if (mouse.GetButtonDown() & mouseClick) gamePad.SetUseKeybord(true);
 
     // scene選択
     SceneSelect();
@@ -85,13 +84,13 @@ void SceneClear::Update(float elapsedTime)
         if (start && (gamePad.GetButtonUp() & anyButton || mouse.GetButtonUp() & mouseClick))
         {
             SEDecision.get()->Play(0.5f);
+            BGM.get()->Stop();
             // フェードアウトする
             Fade::Instance().SetFadeOutFlag(true);
         }
         // フェードアウト終わったら
         if (Fade::Instance().GetFadeOutFinish())
         {
-            BGM.get()->Stop();
             SceneManager::Instance().ChangeScene(new SceneLoading(new SceneTitle));
         }
     }
@@ -101,6 +100,7 @@ void SceneClear::Update(float elapsedTime)
         {
             SEDecision.get()->Play(0.5f);
             BGM.get()->Stop();
+
             DestroyWindow(GetActiveWindow());
         }
     }
@@ -110,9 +110,21 @@ void SceneClear::Update(float elapsedTime)
 // 描画処理
 void SceneClear::Render(float elapsedTime)
 {
+
     ID3D11Device* device = Graphics::Ins().GetDevice();
     ID3D11DeviceContext* dc = Graphics::Ins().GetDeviceContext();
     Graphics& gfx = Graphics::Ins();
+
+    ID3D11RenderTargetView* rtv = gfx.GetRenderTargetView();
+    ID3D11DepthStencilView* dsv = gfx.GetDepthStencilView();
+
+
+    FLOAT color[] = { 0.6f,0.6f,0.6f,1.0f };
+    dc->ClearRenderTargetView(rtv, color);
+    dc->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+    // 通常レンダリング
+    dc->OMSetRenderTargets(1, &rtv, dsv);
 
     // 2D描画
     {
@@ -120,6 +132,8 @@ void SceneClear::Render(float elapsedTime)
         gameStart->render(dc, startpos.x, startpos.y, startsize.x, startsize.y, 1, 1, 1, startAlpha, 0);
         gameEnd->render(dc, endpos.x, endpos.y, endsize.x, endsize.y, 1, 1, 1, endAlpha, 0);
         cursorSprite->render(dc, mousepos.x - 12, mousepos.y - 12, 23, 24, 1, 1, 1, 1, 0);
+
+        Fade::Instance().Render(elapsedTime);
     }
 
     // モデル描画
